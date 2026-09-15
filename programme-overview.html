@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evenlode · Overview · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#ECE7DB; --line2:#DED8CA;
+  --ink:#1A0C12; --ink2:#766B62; --ink3:#A79E8D;
+  --green:#628147; --greenbg:#EAF1DE; --greend:#3F5A2B;
+  --amber:#B75A40; --amberbg:#F7E7DE; --amberd:#8A3F28;
+  --blue:#3B82F6; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --yellow:#F9DD5A;
+  --graybg:#F3EFE1; --grayd:#5F5E5A; --dark:#1A0C12;
+  --serif:'Manner','Spectral',Georgia,serif;
+  --sans:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.spacer{flex:1}
+.shell{display:flex;height:100vh;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 12px 16px;overflow:auto}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sarr{margin-left:auto;font-size:14px;color:var(--ink3);transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:var(--ink2)}
+.ssub .sitem.on{color:var(--ink)}
+.ssub.closed{display:none}
+.sarr.closed{transform:rotate(-90deg)}
+.snav.hid,body.navhid .snav{display:none}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px}
+.sworks .ti{font-size:15px;color:var(--ink3)}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:var(--graybg);color:var(--ink)}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:var(--ink);cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:var(--ink2)}
+.sitem:hover{background:#F6F3EA}
+.sdiv{height:1px;min-height:1px;flex:none;background:var(--line);margin:8px 6px}
+.sitem.on{background:var(--graybg);font-weight:500}
+.scount{margin-left:auto;font-size:11.5px;color:var(--ink3)}
+.mainc{flex:1;overflow:auto;min-width:0}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 22px;height:61px;box-sizing:border-box;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar>.ti{font-size:19px;color:var(--ink2)}
+.title{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.crumb{color:var(--ink3);font-size:16px}
+.sep{color:var(--ink3);font-size:14px}
+.livechip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--greend);background:var(--greenbg);border-radius:999px;padding:5px 13px;font-weight:600}
+.livechip .d{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(98,129,71,.45)}70%{box-shadow:0 0 0 7px rgba(98,129,71,0)}100%{box-shadow:0 0 0 0 rgba(98,129,71,0)}}
+
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+.hero{margin-bottom:26px}
+.hello{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3vw,38px);line-height:1.05;letter-spacing:-.02em}
+.hsub{font-size:15.5px;color:var(--ink2);margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 14px}
+.hsub span{display:inline-flex;align-items:center;gap:6px}
+.hsub .ti{font-size:16px;color:var(--ink3)}
+
+.statstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:38px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 18px;box-shadow:0 1px 2px rgba(26,12,18,.03)}
+.stat .sl{font-size:13px;color:var(--ink3);font-weight:500}
+.stat .sn{font-size:27px;font-weight:500;letter-spacing:-.01em;margin-top:5px;font-family:var(--serif)}
+.stat .sn small{font-size:15px;color:var(--ink3);font-weight:500;font-family:var(--sans)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:start}
+.block+.block{margin-top:34px}
+.blabel{display:flex;align-items:baseline;gap:11px;margin-bottom:13px;padding:0 2px}
+.blabel h2{font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:-.01em}
+.blabel .cnt{font-size:12px;font-weight:600;color:var(--ink3);background:var(--graybg);border-radius:999px;padding:1px 8px}
+.blabel .act{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.blabel .act:hover{color:var(--ink)}
+
+.prio{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 24px;box-shadow:0 1px 2px rgba(26,12,18,.03),0 10px 30px rgba(26,12,18,.05);position:relative;overflow:hidden}
+.prio::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--yellow)}
+.ptag{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.ptag .pd{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.ptitle{font-weight:600;font-size:18px;letter-spacing:-.01em;line-height:1.3}
+.ractions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{font-size:14.5px;font-weight:500;padding:10px 17px;border-radius:11px;border:none;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;transition:background .12s,transform .08s}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blued)}
+.btn.soft{background:var(--bluebg);color:var(--blued)}
+.btn.soft:hover{background:#D5E5F0}
+
+.list{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(26,12,18,.03)}
+.hrow{display:flex;align-items:center;gap:13px;padding:14px 18px;cursor:pointer;transition:background .12s}
+.hrow:hover{background:#FBF8EF}
+.hrow+.hrow{border-top:1px solid var(--line)}
+.hrow .rmain{flex:1;min-width:0}
+.hrow .rtag{font-size:12px;color:var(--ink3);margin-bottom:3px}
+.hrow .rtitle{font-weight:500;font-size:15.5px;letter-spacing:-.01em;line-height:1.3}
+.hrow .rwhen{font-size:13px;color:var(--ink3);flex:none;font-weight:500}
+.hrow .rwhen.due{color:var(--amberd)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex:none}
+.di{width:30px;height:30px;border-radius:8px;background:var(--bluebg);color:var(--blued);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+
+.col-side{position:sticky;top:26px}
+.kv{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 18px;box-shadow:0 1px 2px rgba(26,12,18,.03)}
+.kvr{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:14px}
+.kvr:first-child{border-top:none}
+.kvr .k{color:var(--ink3)}
+.kvr .v{color:var(--ink);font-weight:500;text-align:right}
+.side2{margin-top:26px}
+
+@media(max-width:960px){.statstrip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.grid{grid-template-columns:1fr;gap:30px}.col-side{position:static}.wrap{padding:32px 22px 90px}}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:60;display:none;max-width:80vw}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"overview","arts":"demand"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-layout-dashboard"></i>
+  <span class="crumb">Evenlode</span><span class="sep">›</span>
+  <span class="title">Overview</span>
+  <span class="spacer"></span>
+  <span class="livechip"><span class="d"></span> Live</span>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1 class="hello">Evenlode Landscape Recovery</h1>
+    <div class="hsub">
+      <span><i class="ti ti-map-pin"></i> Essex, England · 400 ha</span>
+      <span><i class="ti ti-user"></i> James Ruggles</span>
+      <span><i class="ti ti-sparkles"></i> Caitlin Ciceri</span>
+    </div>
+  </header>
+
+  <div class="statstrip">
+    <div class="stat" onclick="location.href='deliverables-landing.html'" style="cursor:pointer"><div class="sl">Workflows</div><div class="sn">1 <small>live</small></div></div>
+    <div class="stat"><div class="sl">Open items</div><div class="sn">6</div></div>
+    <div class="stat"><div class="sl">Input complete</div><div class="sn">12<small> / 14</small></div></div>
+    <div class="stat" onclick="location.href='documents-overview.html'" style="cursor:pointer"><div class="sl">Documents</div><div class="sn">5</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="col-main">
+
+      <section class="block">
+        <div class="blabel"><h2>Needs you now</h2></div>
+        <div class="prio">
+          <div class="ptag"><span class="pd"></span> Demand Mapping · Send Questionnaire</div>
+          <div class="ptitle">Send the questionnaire to James Ruggles</div>
+          <div class="ractions">
+            <button class="btn primary" onclick="location.href='demand-mapping-canvas-prototype.html'">Open the draft email</button>
+            <button class="btn soft" onclick="location.href='demand-mapping-canvas-prototype.html'">View workflow</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="blabel"><h2>Workflows</h2><span class="cnt">3</span><span class="act" onclick="location.href='deliverables-landing.html'">View all</span></div>
+        <div class="list">
+          <div class="hrow" onclick="location.href='demand-mapping-canvas-prototype.html'"><span class="dot" style="background:var(--green)"></span><div class="rmain"><div class="rtag">Caitlin · Programme-wide</div><div class="rtitle">Demand Mapping</div></div><div class="rwhen">Live</div></div>
+          <div class="hrow" onclick="location.href='investor-qa-log-canvas-prototype.html'"><span class="dot" style="background:var(--amber)"></span><div class="rmain"><div class="rtag">Kishen · Capital</div><div class="rtitle">Investor Q&amp;A Log</div></div><div class="rwhen">Draft</div></div>
+          <div class="hrow" onclick="toast('Market Readiness Assessment is not in this prototype yet')"><span class="dot" style="background:var(--line2)"></span><div class="rmain"><div class="rtag">Trade lead · Trade</div><div class="rtitle">Market Readiness Assessment</div></div><div class="rwhen">In design</div></div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="blabel"><h2>Recent activity</h2><span class="act" onclick="toast('This would open the full activity log')">View all</span></div>
+        <div class="list">
+          <div class="hrow"><div class="rmain"><div class="rtitle">Client submitted 6 of 14 items</div></div><div class="rwhen">Wed 09:05</div></div>
+          <div class="hrow"><div class="rmain"><div class="rtitle">Tenure map filed from an email reply</div></div><div class="rwhen">Wed 08:52</div></div>
+          <div class="hrow"><div class="rmain"><div class="rtitle">Caitlin approved the questionnaire</div></div><div class="rwhen">Mon 14:18</div></div>
+          <div class="hrow"><div class="rmain"><div class="rtitle">Questionnaire link created, 6 answers pre-filled</div></div><div class="rwhen">Mon 14:09</div></div>
+        </div>
+      </section>
+
+    </div>
+
+    <aside class="col-side">
+      <div class="blabel"><h2>Details</h2></div>
+      <div class="kv">
+        <div class="kvr"><span class="k">Owner</span><span class="v">James Ruggles</span></div>
+        <div class="kvr"><span class="k">GY lead</span><span class="v">Caitlin Ciceri</span></div>
+        <div class="kvr"><span class="k">Location</span><span class="v">Essex, England</span></div>
+        <div class="kvr"><span class="k">Size</span><span class="v">400 ha</span></div>
+        <div class="kvr"><span class="k">Started</span><span class="v">Jul 2026</span></div>
+        <div class="kvr"><span class="k">Status</span><span class="v" style="color:var(--greend)">Live</span></div>
+      </div>
+
+      <div class="side2">
+        <div class="blabel"><h2>People</h2><span class="act" onclick="toast('This would open the People page')">View all</span></div>
+        <div class="list">
+          <div class="hrow"><span class="av" style="background:var(--amberbg);color:var(--amberd)">JR</span><div class="rmain"><div class="rtitle">James Ruggles</div><div class="rtag">Owner</div></div></div>
+          <div class="hrow"><span class="av" style="background:var(--graybg);color:var(--grayd)">LA</span><div class="rmain"><div class="rtitle">Land agent</div><div class="rtag">Tenure</div></div></div>
+          <div class="hrow"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span><div class="rmain"><div class="rtitle">Caitlin Ciceri</div><div class="rtag">GY lead</div></div></div>
+        </div>
+      </div>
+
+      <div class="side2">
+        <div class="blabel"><h2>Documents</h2><span class="act" onclick="location.href='documents-overview.html'">View all</span></div>
+        <div class="list">
+          <div class="hrow" onclick="location.href='documents-overview.html'"><span class="di"><i class="ti ti-file-text"></i></span><div class="rmain"><div class="rtitle">estate_management_plan.pdf</div><div class="rtag">via questionnaire · 2 Jul</div></div></div>
+          <div class="hrow" onclick="location.href='documents-overview.html'"><span class="di"><i class="ti ti-file-text"></i></span><div class="rmain"><div class="rtitle">tenure_map.pdf</div><div class="rtag">email reply · Wed</div></div></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+</script>
+</body>
+</html>

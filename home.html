@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#ECE7DB; --line2:#DED8CA;
+  --ink:#1A0C12; --ink2:#766B62; --ink3:#A79E8D;
+  --green:#628147; --greenbg:#EAF1DE; --greend:#3F5A2B;
+  --amber:#B75A40; --amberbg:#F7E7DE; --amberd:#8A3F28;
+  --blue:#3B82F6; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75;
+  --yellow:#F9DD5A;
+  --graybg:#F3EFE1; --dark:#1A0C12;
+  --serif:'Manner','Spectral',Georgia,serif;
+  --sans:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.spacer{flex:1}
+.shell{display:flex;height:100vh;overflow:hidden}
+/* ── shared sidebar (rendered by gy-nav.js) ── */
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 12px 16px;overflow:auto}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sarr{margin-left:auto;font-size:14px;color:var(--ink3);transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:var(--ink2)}
+.ssub .sitem.on{color:var(--ink)}
+.ssub.closed{display:none}
+.sarr.closed{transform:rotate(-90deg)}
+.snav.hid,body.navhid .snav{display:none}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px}
+.sworks .ti{font-size:15px;color:var(--ink3)}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:var(--graybg);color:var(--ink)}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:var(--ink);cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:var(--ink2)}
+.sitem:hover{background:#F6F3EA}
+.sdiv{height:1px;min-height:1px;flex:none;background:var(--line);margin:8px 6px}
+.sitem.on{background:var(--graybg);font-weight:500}
+.scount{margin-left:auto;font-size:11.5px;color:var(--ink3)}
+/* ── main ── */
+.mainc{flex:1;overflow:auto;min-width:0}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 22px;height:61px;box-sizing:border-box;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .ti{font-size:19px;color:var(--ink2)}
+.title{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.chip{font-size:14px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--line2);color:var(--ink)}
+.chip .ti{font-size:16px}
+.scollapse.exp{display:none}
+.livechip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--greend);background:var(--greenbg);border-radius:999px;padding:5px 13px;font-weight:600}
+.livechip .d{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(98,129,71,.5);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(98,129,71,.45)}70%{box-shadow:0 0 0 7px rgba(98,129,71,0)}100%{box-shadow:0 0 0 0 rgba(98,129,71,0)}}
+
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+.hero{margin-bottom:38px}
+.hello{font-family:var(--serif);font-weight:500;font-size:clamp(30px,3.2vw,40px);line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.hsub{font-size:17px;color:var(--ink2);margin-top:14px;line-height:1.5}
+.hsub b{color:var(--ink);font-weight:600}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:start}
+.block+.block{margin-top:36px}
+.blabel{display:flex;align-items:baseline;gap:11px;margin-bottom:15px;padding:0 2px}
+.blabel h2{font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:-.01em;text-transform:none;color:var(--ink)}
+.blabel .sub{font-size:13.5px;color:var(--ink3)}
+.blabel .cnt{font-size:12px;font-weight:600;color:var(--ink3);background:var(--graybg);border-radius:999px;padding:1px 8px}
+.blabel .act{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.blabel .act:hover{color:var(--ink)}
+
+/* priority hero item */
+.prio{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 24px;box-shadow:0 1px 2px rgba(26,12,18,.03),0 10px 30px rgba(26,12,18,.05);position:relative;overflow:hidden}
+.prio::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--yellow)}
+.ptag{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.ptag .pd{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.ptitle{font-weight:600;font-size:18px;letter-spacing:-.01em;line-height:1.3;color:var(--ink)}
+.pdesc{font-size:15px;color:var(--ink2);margin-top:9px;line-height:1.5;max-width:52ch}
+.ractions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{font-size:14.5px;font-weight:500;padding:10px 17px;border-radius:11px;border:none;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;transition:background .12s,transform .08s}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blued)}
+.btn.soft{background:var(--bluebg);color:var(--blued)}
+.btn.soft:hover{background:#D5E5F0}
+
+/* list card */
+.list{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:14px;box-shadow:0 1px 2px rgba(26,12,18,.03)}
+.block .prio+.list{margin-top:12px}
+.hrow{display:flex;align-items:center;gap:13px;padding:15px 18px;cursor:pointer;transition:background .12s}
+.hrow:hover{background:#FBF8EF}
+.hrow+.hrow{border-top:1px solid var(--line)}
+.hrow .rmain{flex:1;min-width:0}
+.hrow .rtag{font-size:12px;color:var(--ink3);margin-bottom:3px}
+.hrow .rtitle{font-weight:500;font-size:16px;letter-spacing:-.01em;line-height:1.3;color:var(--ink)}
+.hrow .rwhen{font-size:13px;color:var(--ink3);flex:none;font-weight:500}
+.hrow .rwhen.due{color:var(--amberd)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.tck{width:19px;height:19px;border-radius:50%;border:1.6px solid var(--line2);flex:none}
+.tck:hover{border-color:var(--green)}
+
+/* subtle side rail */
+.col-side{position:sticky;top:26px}
+.railcard{background:transparent}
+.agenda{display:flex;flex-direction:column;margin-top:2px}
+.ag{display:flex;gap:13px;padding:12px 2px;border-top:1px solid var(--line);cursor:default}
+.ag:first-child{border-top:none}
+.agt{font-size:12.5px;color:var(--ink3);width:48px;flex:none;padding-top:2px;font-variant-numeric:tabular-nums}
+.agn{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.ag.now .agn{color:var(--blued)}
+.ag.now::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue);position:absolute}
+.sidefoot{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink3);line-height:1.5}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr;gap:30px}
+  .col-side{position:static}
+  .wrap{padding:32px 22px 90px}
+}
+
+/* ── in-page step drawer ── */
+.hdov{position:fixed;inset:0;background:transparent;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.hdov.open{opacity:1;pointer-events:auto}
+.hdrawer{position:fixed;top:0;right:0;height:100vh;width:100vw;z-index:51;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1);display:flex;flex-direction:column;pointer-events:none}
+.hdrawer.open{transform:none;pointer-events:auto}
+.hdrawer #hdframe{pointer-events:auto}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:60;display:none;max-width:80vw}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"home","arts":"demand"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-home"></i>
+  <span class="title">Home</span>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1 class="hello">Good morning, Caitlin</h1>
+  </header>
+
+  <div class="grid">
+    <!-- PRIMARY COLUMN -->
+    <div class="col-main">
+
+      <section class="block">
+        <div class="blabel"><h2>Needs you now</h2></div>
+
+        <div class="prio">
+          <div class="ptag"><span class="pd"></span> Evenlode · Demand Mapping</div>
+          <div class="ptitle">Send the questionnaire to James Ruggles</div>
+          <div class="pdesc">The AI Assistant drafted the email and pre-filled the questionnaire. It just needs your tap.</div>
+          <div class="ractions">
+            <button class="btn primary" onclick="openStepDrawer()">Open the draft email</button>
+            <button class="btn soft" onclick="location.href='demand-mapping-canvas-prototype.html'">View workflow</button>
+          </div>
+        </div>
+
+        <div class="list">
+          <div class="hrow" onclick="location.href='demand-mapping-canvas-prototype.html'">
+            <div class="rmain"><div class="rtag">Evenlode · Demand Mapping</div><div class="rtitle">Approve the gap reminder</div></div>
+            <div class="rwhen due">Today</div>
+          </div>
+          <div class="hrow" onclick="toast('Market Readiness for Spains Hall is not in this prototype yet')">
+            <div class="rmain"><div class="rtag">Spains Hall · Market Readiness</div><div class="rtitle">Confirm the shortlist</div></div>
+            <div class="rwhen">Fri</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="blabel"><h2>Your tasks</h2><span class="sub">your personal to-dos</span><span class="act" onclick="toast('This would open all your tasks')">View all</span></div>
+        <div class="list">
+          <div class="hrow" onclick="toast('This would open the task')"><span class="tck"></span><div class="rmain"><div class="rtitle">Prep talking points for the James call</div></div><div class="rwhen due">Today</div></div>
+          <div class="hrow" onclick="toast('Spains Hall is not in this prototype yet')"><span class="tck"></span><div class="rmain"><div class="rtitle">Review the Spains Hall baseline</div></div><div class="rwhen">Fri</div></div>
+          <div class="hrow" onclick="toast('This would open the task')"><span class="tck"></span><div class="rmain"><div class="rtitle">Reply to Boothby onboarding email</div></div><div class="rwhen">Yesterday</div></div>
+          <div class="hrow" onclick="toast('This would open the task')"><span class="tck"></span><div class="rmain"><div class="rtitle">Book the Q3 programme review</div></div><div class="rwhen">Next week</div></div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="blabel"><h2>Your programmes</h2><span class="cnt">3</span></div>
+        <div class="list">
+          <div class="hrow" onclick="location.href='deliverables-landing.html'"><span class="dot" style="background:var(--blue)"></span><div class="rmain"><div class="rtitle">Evenlode Landscape Recovery</div></div><div class="rwhen">Active</div></div>
+          <div class="hrow" onclick="toast('Spains Hall is not in this prototype yet')"><span class="dot" style="background:var(--amber)"></span><div class="rmain"><div class="rtitle">Spains Hall</div></div><div class="rwhen">Needs you</div></div>
+          <div class="hrow" onclick="toast('Boothby is not in this prototype yet')"><span class="dot" style="background:var(--line2)"></span><div class="rmain"><div class="rtitle">Boothby</div></div><div class="rwhen">Setting up</div></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- SECONDARY COLUMN -->
+    <aside class="col-side">
+      <div class="railcard">
+        <div class="blabel"><h2>Today</h2><span class="act" onclick="toast('This would open your calendar')">Calendar</span></div>
+        <div class="agenda">
+          <div class="ag"><span class="agt">All day</span><span class="agn">No-meeting focus</span></div>
+          <div class="ag"><span class="agt">09:30</span><span class="agn">Evenlode standup</span></div>
+          <div class="ag"><span class="agt">11:00</span><span class="agn">Trade check-in</span></div>
+          <div class="ag"><span class="agt">14:00</span><span class="agn">Client call · James Ruggles</span></div>
+        </div>
+        <div class="sidefoot">3 workflows running across your programmes. Nothing else needs you until 14:00.</div>
+      </div>
+    </aside>
+  </div>
+
+</div>
+</div>
+</div>
+
+<!-- in-page step drawer -->
+<div class="hdov" id="hdov" onclick="closeStepDrawer()"></div>
+<aside class="hdrawer" id="hdrawer" aria-hidden="true">
+  <iframe id="hdframe" title="Send Questionnaire" allowtransparency="true" style="flex:1;width:100%;border:none;background:transparent"></iframe>
+</aside>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+function openStepDrawer(){
+  const f=document.getElementById('hdframe');
+  if(!f.src)f.src='demand-mapping-canvas-prototype.html?drawer=sendq';
+  document.getElementById('hdov').classList.add('open');
+  document.getElementById('hdrawer').classList.add('open');
+}
+function closeStepDrawer(){document.getElementById('hdov').classList.remove('open');document.getElementById('hdrawer').classList.remove('open');}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+window.addEventListener('message',e=>{if(e.data==='gy-close-drawer')closeStepDrawer();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeStepDrawer();});
+</script>
+</body>
+</html>

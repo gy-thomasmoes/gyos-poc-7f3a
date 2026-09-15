@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All WCC Portfolio · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="gy-shell.css">
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"inv-wcc"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='inventory-portfolio-dashboard.html'">Ecosystem Services</span>
+    <span class="sep">›</span><span class="cr">Woodland Carbon Code</span>
+    <span class="sep">›</span><span class="cr cur">Dashboard</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead"><div class="h1">All Woodland Carbon Credits (WCC) Portfolio</div></div>
+  <div class="seg" style="margin:6px 0 4px"><button class="on">Dashboard</button><button onclick="location.href='inventory-all.html'">Inventory</button></div>
+  <div class="pmeta" style="margin-top:14px">(4 Programmes) <i class="ti ti-info-circle"></i></div>
+
+  <div class="sect">WCC Portfolio Pipeline</div>
+  <div class="statrow">
+    <div class="stat wcc"><div class="lab">Future</div><div class="val">16,300<small>units</small></div><div class="gauge"><div class="gfill" style="height:21%"></div></div></div>
+    <div class="stat wcc"><div class="lab">Available</div><div class="val">61,000<small>units</small></div><div class="sub">49,900 PIU / 11,100 WCU</div><div class="gauge"><div class="gfill" style="height:77%"></div></div></div>
+    <div class="stat wcc"><div class="lab">Reserved</div><div class="val">0<small>units</small></div><div class="sub">0 PIU / 0 WCU</div><div class="gauge"><div class="gfill" style="height:0%"></div></div></div>
+    <div class="stat wcc"><div class="lab">Sold</div><div class="val">1,500<small>units</small></div><div class="sub">900 PIU / 600 WCU</div><div class="gauge"><div class="gfill" style="height:3%"></div></div></div>
+    <div class="stat wcc total"><div class="lab">Total Planned</div><div class="val">78,800<small>units</small></div><div class="sub">50,800 PIU / 11,700 WCU</div></div>
+  </div>
+
+  <div class="sect">WCC Pipeline by Programme</div>
+  <div class="pcard w">
+    <div class="prow">
+      <span class="pnm">Denton Reserve</span>
+      <div class="pbar"><div class="pseg c-avail" style="width:18.0%">10,000</div></div>
+      <span class="ptot">10,000 units</span>
+    </div>
+    <div class="prow">
+      <span class="pnm">ELR</span>
+      <div class="pbar">
+        <div class="pseg c-fut" style="width:21.6%">12,000</div>
+        <div class="pseg c-avail" style="width:75.7%">42,000</div>
+        <div class="pseg c-sold" style="width:2.7%"></div>
+      </div>
+      <span class="ptot">55,500 units</span>
+    </div>
+    <div class="prow">
+      <span class="pnm">Spains Hall Estate</span>
+      <div class="pbar"><div class="pseg c-avail" style="width:7.7%">4,300</div></div>
+      <span class="ptot">4,300 units</span>
+    </div>
+    <div class="prow">
+      <span class="pnm">Wendling Beck</span>
+      <div class="pbar"><div class="pseg c-avail" style="width:16.2%">9,000</div></div>
+      <span class="ptot">9,000 units</span>
+    </div>
+    <div class="plegend">
+      <span><i class="pdot c-fut"></i> Available in future</span>
+      <span><i class="pdot c-avail"></i> Available</span>
+      <span><i class="pdot c-res"></i> Reserved</span>
+      <span><i class="pdot c-sold"></i> Sold</span>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+</script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q&A Pack · Investor Q&A Log · Example Output</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#EFEDE8; --card:#FFFFFF; --line:#E6E4DE; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --blue:#378ADD; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D; --purple:#5B4EA8; --purplebg:#F4F0FB;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif;background:var(--bg);color:var(--ink);font-size:16px;min-height:100vh}
+.topbar{height:61px;box-sizing:border-box;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .ti{font-size:18px;color:var(--ink2)}
+.crumb{color:var(--ink3);cursor:pointer;font-size:15px;white-space:nowrap}
+.crumb:hover{color:var(--ink2)}
+.sep{color:var(--ink3);font-size:13px}
+.ttl{font-size:16px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.spacer{flex:1}
+.stamp{font-size:12.5px;font-weight:600;padding:4px 12px;border-radius:999px;background:var(--amberbg);color:var(--amberd);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.stamp .dot{width:7px;height:7px;border-radius:50%;background:var(--amber)}
+.tabs{display:flex;gap:4px;background:var(--graybg);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabs span{font-size:13.5px;padding:6px 15px;border-radius:999px;cursor:pointer;color:var(--ink2);white-space:nowrap}
+.tabs span.on{background:var(--dark);color:#fff;font-weight:500}
+.wrap{max-width:none;margin:26px auto 70px;padding:0 34px}
+.head{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px 30px 24px;box-shadow:0 8px 30px rgba(31,31,29,.06)}
+.dlab{font-size:12.5px;letter-spacing:.08em;color:var(--blued);font-weight:600;text-transform:uppercase}
+.dtitle{font-family:Georgia,'Times New Roman',serif;font-size:28px;margin:7px 0 5px;letter-spacing:-.01em;font-weight:600}
+.dsub{color:var(--ink2);font-size:14.5px;line-height:1.6;max-width:700px}
+.stats{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.stat{border:1px solid var(--line2);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink2)}
+.stat b{font-weight:600;color:var(--ink)}
+.toolrow{position:sticky;top:63px;z-index:15;margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 4px 16px rgba(31,31,29,.06)}
+.srch{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:9px 13px;background:#FCFBF9}
+.srch:focus-within{border-color:var(--blue);background:#fff}
+.srch .ti{font-size:17px;color:var(--ink3)}
+.srch input{flex:1;border:none;background:transparent;outline:none;font-size:15px;font-family:inherit;color:var(--ink)}
+.srch .kbd{font-size:11.5px;color:var(--ink3);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.frow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.flab{font-size:11.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-right:2px}
+.fc{font-size:13px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.fc:hover{border-color:var(--line2);color:var(--ink)}
+.fc.on{background:var(--dark);border-color:var(--dark);color:#fff;font-weight:500}
+.fc .ld{width:8px;height:8px;border-radius:50%;flex:none}
+.fdiv{width:1px;height:18px;background:var(--line);margin:0 6px}
+.resline{display:flex;align-items:center;gap:10px;margin:16px 4px 8px;font-size:13px;color:var(--ink3)}
+.resline b{color:var(--ink2);font-weight:600}
+.resline .xall{margin-left:auto;cursor:pointer;color:var(--blued);display:inline-flex;align-items:center;gap:5px}
+.resline .xall:hover{text-decoration:underline}
+.cathead{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:20px 4px 8px;display:flex;align-items:center;gap:8px}
+.cathead .cnt{font-size:12px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden;transition:box-shadow .12s,border-color .12s}
+.qa:hover{border-color:var(--line2)}
+.qa.open{box-shadow:0 6px 22px rgba(31,31,29,.08)}
+.qrow{display:flex;gap:12px;padding:15px 18px;align-items:flex-start;cursor:pointer;user-select:none}
+.qmark{width:26px;height:26px;border-radius:8px;background:var(--bluebg);color:var(--blued);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;margin-top:0}
+.qtext{font-size:15px;font-weight:600;line-height:1.5;letter-spacing:-.005em;flex:1;min-width:0}
+.qtext mark{background:#FBEAA6;color:inherit;border-radius:3px;padding:0 1px}
+.qmini{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.mini{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;border-radius:999px;padding:2px 9px}
+.mini .ti{font-size:11px}
+.mini.layer-p{background:var(--greenbg);color:var(--greend)}
+.mini.layer-pr{background:var(--bluebg);color:var(--blued)}
+.mini.layer-i{background:var(--amberbg);color:var(--amberd)}
+.mini.reuse{background:var(--purplebg);color:var(--purple)}
+.mini.cat{background:var(--graybg);color:var(--grayd)}
+.chev{color:var(--ink3);font-size:16px;flex:none;margin-top:3px;transition:transform .18s}
+.qa.open .chev{transform:rotate(180deg)}
+.abody{display:none;padding:2px 18px 16px 56px}
+.qa.open .abody{display:block;animation:ain .18s ease-out}
+@keyframes ain{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.abody p{font-size:14.5px;line-height:1.7;color:var(--ink);margin:0 0 10px}
+.abody p mark{background:#FBEAA6;border-radius:3px;padding:0 1px}
+.asked{font-size:12.5px;color:var(--ink3);margin-bottom:10px}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #F3F2EE;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;border-radius:999px;padding:3px 10px}
+.tag .ti{font-size:12px}
+.tag.dr{background:var(--graybg);color:var(--grayd);cursor:pointer}
+.tag.dr:hover{background:#E9E7E0}
+.tag.conf{background:var(--tealbg);color:var(--teald)}
+.tag.conf.ind{background:var(--amberbg);color:var(--amberd)}
+.tag.appr{background:#fff;border:1px solid var(--line2);color:var(--ink2)}
+.acts{margin-left:auto;display:flex;gap:6px}
+.abtn2{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;border:1px solid var(--line2);border-radius:999px;padding:4px 12px;background:#fff;color:var(--ink2);cursor:pointer;font-family:inherit}
+.abtn2:hover{border-color:var(--ink3);color:var(--ink)}
+.abtn2 .ti{font-size:13px}
+.empty{border:1.5px dashed var(--line2);border-radius:16px;padding:40px 20px;text-align:center;color:var(--ink3);font-size:14.5px;margin-top:14px;line-height:1.6}
+.bfpbox{background:#fff;border:1px solid var(--line);border-radius:14px;margin:0 0 8px;padding:16px 18px}
+.bfpbox h4{font-size:14.5px;font-weight:600;margin-bottom:8px}
+.brow{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:7px 0;border-bottom:1px solid #F3F2EE;color:var(--ink2)}
+.brow:last-child{border:none}
+.brow b{color:var(--ink);font-weight:500;text-align:right}
+.foot{margin:30px 4px 0;font-size:12.5px;color:var(--ink3);line-height:1.7;max-width:760px}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:14.5px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+.hide{display:none!important}
+@media print{.topbar,.toolrow{display:none}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <i class="ti ti-clipboard-check"></i>
+  <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
+  <span class="crumb" onclick="location.href='investor-qa-log-canvas-prototype.html'">Investor Q&A Log</span><span class="sep">›</span>
+  <span class="ttl">Q&A Pack</span>
+  <span class="spacer"></span>
+  <div class="tabs" id="tabs">
+    <span class="on" onclick="setVariant('dd',this)">Investor DD pack</span>
+    <span onclick="setVariant('ic',this)">IC preparation</span>
+    <span onclick="setVariant('bfp',this)">BFP evidence</span>
+  </div>
+  <span class="stamp"><span class="dot"></span>Mock data</span>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="dlab" id="vlab"></div>
+    <div class="dtitle" id="vtitle"></div>
+    <div class="dsub" id="vsub"></div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="toolrow">
+    <div class="srch">
+      <i class="ti ti-search"></i>
+      <input id="q" placeholder="Search questions and answers… try 'carbon price' or 'governance'" oninput="applyFilters()">
+      <span class="kbd">/</span>
+    </div>
+    <div class="frow">
+      <span class="flab">Topic</span>
+      <span class="fc on" data-f="cat" data-v="all" onclick="setF(this)">All</span>
+      <span class="fc" data-f="cat" data-v="fm" onclick="setF(this)">Financial model</span>
+      <span class="fc" data-f="cat" data-v="str" onclick="setF(this)">Structuring &amp; risk</span>
+      <span class="fc" data-f="cat" data-v="gov" onclick="setF(this)">Governance</span>
+      <span class="fdiv"></span>
+      <span class="flab">Layer</span>
+      <span class="fc on" data-f="layer" data-v="all" onclick="setF(this)">All</span>
+      <span class="fc" data-f="layer" data-v="p" onclick="setF(this)"><span class="ld" style="background:var(--green)"></span>Portfolio</span>
+      <span class="fc" data-f="layer" data-v="pr" onclick="setF(this)"><span class="ld" style="background:var(--blue)"></span>Programme</span>
+      <span class="fc" data-f="layer" data-v="i" onclick="setF(this)"><span class="ld" style="background:var(--amber)"></span>Investor</span>
+      <span class="fdiv"></span>
+      <span class="fc" data-f="reuse" data-v="0" onclick="toggleReuse(this)"><i class="ti ti-database" style="font-size:13px"></i> From Library only</span>
+    </div>
+  </div>
+
+  <div class="resline">
+    <span id="rescount"></span>
+    <span class="xall" id="expall" onclick="toggleAll()"><i class="ti ti-arrows-diagonal" style="font-size:13px"></i> Expand all</span>
+  </div>
+
+  <div id="bfpsummary" class="hide">
+    <div class="cathead">Engagement evidence summary</div>
+    <div class="bfpbox">
+      <h4>For the Blended Finance Plan investor sections</h4>
+      <div class="brow"><span>Counterparties engaged in DD</span><b>Esmée Fairbairn Foundation · Lloyds Banking Group</b></div>
+      <div class="brow"><span>Questions logged across the raise</span><b>23 · all answered inside SLA</b></div>
+      <div class="brow"><span>Dominant themes</span><b>Revenue assumptions · delivery risk · governance · additionality</b></div>
+      <div class="brow"><span>Evidence of demand</span><b>Two counterparties progressed from questions to term discussions</b></div>
+      <div class="brow"><span>Answer consistency</span><b>Every answer cites the dataroom; all figures reconciled to FM v4.1</b></div>
+    </div>
+  </div>
+
+  <div id="list"></div>
+
+  <div id="icopen" class="hide">
+    <div class="cathead">Open items for the committee</div>
+    <div class="bfpbox">
+      <h4>Unanswered or in flight at pack generation</h4>
+      <div class="brow"><span>Additionality evidence for the eastern parcels</span><b>Drafted · with approver · SLA day 2 of 3</b></div>
+      <div class="brow"><span>Request for updated land agreement schedule</span><b>Triaged · routed to deal lead</b></div>
+      <div class="brow"><span>Theme to watch</span><b>Two investors have asked about verification cadence; candidate for a portfolio-layer canonical answer</b></div>
+    </div>
+  </div>
+
+  <div class="foot" id="vfoot"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS={fm:'Financial model',str:'Structuring and risk',gov:'Governance and track record'};
+const LAYERS={p:['layer-p','ti-world','Portfolio'],pr:['layer-pr','ti-stack-2','Programme'],i:['layer-i','ti-user','Investor']};
+
+const QA=[
+ {cat:'fm',layer:'pr',reuse:false,conf:'Validated',appr:'Kishen · 3 Jul',aud:['dd','ic','bfp'],
+  asked:'Asked 2 Jul 2026 · via dataroom Q&A · logged verbatim',
+  q:'What underpins the revenue assumptions in the financial model, and how sensitive is the model to the carbon price?',
+  a:['Revenue lines are built bottom-up per ecosystem service from the Demand Mapping analysis: indicative volume per product from site data, priced against current code benchmarks, less a buffer. No revenue line assumes a buyer that has not been qualified.',
+     'The model carries a downside case at a 30% lower carbon price; the blended structure is designed so grant and philanthropic tranches absorb early-stage price risk before investor returns are touched. Full sensitivity tables are in the dataroom reference below.'],
+  dr:'Dataroom 3.2 · FM v4.1, sensitivity tab'},
+ {cat:'fm',layer:'pr',reuse:false,conf:'Validated',appr:'Kishen · 6 Jul',aud:['dd','ic','bfp'],
+  asked:'Asked 4 Jul 2026 · site visit follow-up · logged verbatim',
+  q:'What happens to the model if BNG demand in the catchment does not materialise?',
+  a:['BNG is one of three modelled revenue streams and the model remains viable with it removed; the downside case shows the coverage ratio with BNG at zero. Demand Mapping qualified two compliance buyers in the catchment with live planning obligations, which is why it is included at all.'],
+  dr:'Dataroom 3.4 · demand evidence pack'},
+ {cat:'fm',layer:'i',reuse:false,conf:'Validated',appr:'Kishen · 9 Jul',aud:['dd','ic'],
+  asked:'Asked 8 Jul 2026 · via email · logged verbatim',
+  q:'Could you share the assumptions register behind the operating cost lines?',
+  a:['Yes. The assumptions register is maintained alongside the model and versioned with it; the dataroom holds the current extract. Each assumption carries a source, an owner and a confidence flag, so you can see which lines are contracted, benchmarked or estimated.'],
+  dr:'Dataroom 3.3 · assumptions register'},
+ {cat:'str',layer:'pr',reuse:false,conf:'Validated',appr:'Kishen · 3 Jul',aud:['dd','ic','bfp'],
+  asked:'Asked 2 Jul 2026 · via dataroom Q&A · logged verbatim',
+  q:'Who bears delivery risk if restoration outcomes underperform against the modelled volumes?',
+  a:['Delivery risk is tiered by tranche. Grant funding carries the earliest intervention risk; outcome payments only flow against verified units, so investors are not exposed to the gap between forecast and verified volumes. The structuring memo sets out the waterfall and the buffer policy per code.'],
+  dr:'Dataroom 4.1 · structuring memo'},
+ {cat:'str',layer:'i',reuse:false,conf:'Indicative',appr:'Kishen · 11 Jul',aud:['dd','ic'],
+  asked:'Asked 10 Jul 2026 · meeting · extracted from transcript, confirmed by deal lead',
+  q:'How does our capital rank relative to the other funders in the blend?',
+  a:['The indicative terms place foundation capital senior to the philanthropic tranche and alongside the other impact investor on returns, with the public grant absorbing first loss on delivery. Formal heads of terms will confirm ranking; the current indicative waterfall is in the structuring memo.'],
+  dr:'Dataroom 4.1 · structuring memo, waterfall'},
+ {cat:'gov',layer:'p',reuse:true,conf:'Validated',appr:'Kishen · 2 Jul',aud:['dd','ic','bfp'],
+  asked:'Asked 2 Jul 2026 · via email · logged verbatim',
+  q:'How is Great Yellow governed, and what relevant track record does the team have?',
+  a:['Great Yellow operates a three-vertical model (Nature, Capital, Trade) with programme-level investment decisions taken by the Investment Committee and delivery governed per programme. Team backgrounds span landscape restoration delivery, structured finance and environmental markets; bios and the governance chart are in the dataroom.'],
+  dr:'Dataroom 1.2 · governance and team'},
+ {cat:'gov',layer:'p',reuse:true,conf:'Validated',appr:'Kishen · 9 Jul',aud:['dd','ic'],
+  asked:'Asked 8 Jul 2026 · via dataroom Q&A · logged verbatim',
+  q:'What conflicts of interest exist between Great Yellow’s advisory role and its capital raise role on this programme?',
+  a:['The roles are separated: advisory work is contracted with the landholder, the raise is run for the programme entity, and fees for each are disclosed in the dataroom. Where the same team members touch both, the conflicts policy governs and the IC minute records any recusals.'],
+  dr:'Dataroom 1.4 · conflicts policy'}
+];
+
+const V={
+ dd:{lab:'Investor Q&A Log · Per-investor DD pack',
+     title:'Esmée Fairbairn Foundation · Due Diligence Q&A',
+     sub:'Every question this investor has asked, verbatim, with the approved answer Great Yellow gave. Search it, filter it, copy from it: this is the working FAQ for the counterparty, generated from the Q&A Log.',
+     foot:'Generated from the Investor Q&A Log · ELR raise · filtered to Esmée Fairbairn Foundation, due diligence stage. Every answer was approved before release; the audit trail lives on the question record in the Log. Portfolio-layer answers come from the Answer Library and stay consistent across every counterparty.'},
+ ic:{lab:'Investor Q&A Log · IC preparation pack',
+     title:'ELR raise · Investment Committee Q&A briefing',
+     sub:'What investors are asking and what we are telling them, cut for the committee: the answered record plus the items still in flight, so the IC walks in knowing where every counterparty stands.',
+     foot:'Generated from the Investor Q&A Log · ELR raise · filtered by stage for Investment Committee preparation. Includes in-flight items; nothing unapproved has reached an investor.'},
+ bfp:{lab:'Investor Q&A Log · BFP evidence extract',
+     title:'ELR raise · Investor engagement evidence',
+     sub:'The engagement evidence the Blended Finance Plan investor sections require: who asked what, how consistently it was answered, and what that says about demand. Question detail below as supporting annex.',
+     foot:'Generated from the Investor Q&A Log · ELR raise · engagement evidence cut for the Blended Finance Plan.'}
+};
+
+let VAR='dd', F={cat:'all',layer:'all',reuse:false}, OPEN=new Set(), ALLOPEN=false;
+
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function hl(t,needle){
+  const e=esc(t);
+  if(!needle)return e;
+  const i=e.toLowerCase().indexOf(needle.toLowerCase());
+  if(i<0)return e;
+  return e.slice(0,i)+'<mark>'+e.slice(i,i+needle.length)+'</mark>'+e.slice(i+needle.length);
+}
+function visible(){
+  const needle=document.getElementById('q').value.trim().toLowerCase();
+  return QA.map((x,i)=>({x,i})).filter(({x})=>{
+    if(!x.aud.includes(VAR))return false;
+    if(F.cat!=='all'&&x.cat!==F.cat)return false;
+    if(F.layer!=='all'&&x.layer!==F.layer)return false;
+    if(F.reuse&&!x.reuse)return false;
+    if(needle&&!(x.q+' '+x.a.join(' ')).toLowerCase().includes(needle))return false;
+    return true;
+  });
+}
+function render(){
+  const needle=document.getElementById('q').value.trim();
+  const vis=visible();
+  const byCat={};
+  vis.forEach(v=>{(byCat[v.x.cat]=byCat[v.x.cat]||[]).push(v)});
+  let h='';
+  Object.keys(CATS).forEach(c=>{
+    if(!byCat[c])return;
+    h+=`<div class="cathead">${CATS[c]} <span class="cnt">${byCat[c].length}</span></div>`;
+    byCat[c].forEach(({x,i})=>{
+      const open=ALLOPEN||OPEN.has(i);
+      const L=LAYERS[x.layer];
+      h+=`<div class="qa${open?' open':''}" id="qa${i}">
+        <div class="qrow" onclick="toggleQ(${i})">
+          <span class="qmark">Q</span>
+          <div class="qtext">${hl(x.q,needle)}
+            <div class="qmini">
+              <span class="mini ${L[0]}"><i class="ti ${L[1]}"></i> ${L[2]}</span>
+              ${x.reuse?'<span class="mini reuse"><i class="ti ti-database"></i> From Library</span>':''}
+              <span class="mini cat">${CATS[x.cat]}</span>
+            </div>
+          </div>
+          <i class="ti ti-chevron-down chev"></i>
+        </div>
+        <div class="abody">
+          <div class="asked">${esc(x.asked)}</div>
+          ${x.a.map(p=>`<p>${hl(p,needle)}</p>`).join('')}
+          <div class="tags">
+            <span class="tag dr" onclick="toast('Prototype: this would open the dataroom at the cited index')"><i class="ti ti-folder"></i> ${esc(x.dr)}</span>
+            <span class="tag conf${x.conf==='Indicative'?' ind':''}"><i class="ti ti-gauge"></i> ${x.conf}</span>
+            <span class="tag appr"><i class="ti ti-check"></i> Approved · ${esc(x.appr)}</span>
+            <span class="acts">
+              <button class="abtn2" onclick="copyA(${i})"><i class="ti ti-copy"></i> Copy answer</button>
+              <button class="abtn2" onclick="toast('Prototype: this would open the question record in the Log, with its full audit trail')"><i class="ti ti-external-link"></i> Open in Log</button>
+            </span>
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById('list').innerHTML=h||'';
+  document.querySelector('.empty')?.remove();
+  if(!vis.length){
+    document.getElementById('list').insertAdjacentHTML('afterend',
+      `<div class="empty">No approved answer matches. In the real product this becomes a new question record:<br><b style="color:var(--ink2)">capture it, triage it, and the Library grows.</b></div>`);
+  }
+  document.getElementById('rescount').innerHTML=`<b>${vis.length}</b> of ${QA.filter(x=>x.aud.includes(VAR)).length} answered questions`;
+  document.getElementById('expall').innerHTML=ALLOPEN
+    ?'<i class="ti ti-arrows-diagonal-minimize-2" style="font-size:13px"></i> Collapse all'
+    :'<i class="ti ti-arrows-diagonal" style="font-size:13px"></i> Expand all';
+}
+function toggleQ(i){
+  if(ALLOPEN){ALLOPEN=false;OPEN=new Set(visible().map(v=>v.i));}
+  OPEN.has(i)?OPEN.delete(i):OPEN.add(i);
+  render();
+}
+function toggleAll(){ALLOPEN=!ALLOPEN;if(!ALLOPEN)OPEN.clear();render();}
+function setF(el){
+  document.querySelectorAll(`.fc[data-f="${el.dataset.f}"]`).forEach(x=>x.classList.toggle('on',x===el));
+  F[el.dataset.f]=el.dataset.v;
+  render();
+}
+function toggleReuse(el){F.reuse=!F.reuse;el.classList.toggle('on',F.reuse);render();}
+function copyA(i){
+  const x=QA[i];
+  const txt=`Q: ${x.q}\n\nA: ${x.a.join('\n\n')}\n\nSource: ${x.dr} · Approved ${x.appr}`;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>toast('Answer copied, with its citation and approval'),()=>toast('Could not copy in this context'));
+  } else toast('Answer copied, with its citation and approval');
+}
+function setVariant(v,el){
+  VAR=v;
+  document.querySelectorAll('#tabs span').forEach(t=>t.classList.toggle('on',t===el));
+  document.getElementById('vlab').textContent=V[v].lab;
+  document.getElementById('vtitle').textContent=V[v].title;
+  document.getElementById('vsub').textContent=V[v].sub;
+  document.getElementById('vfoot').textContent=V[v].foot;
+  document.getElementById('bfpsummary').classList.toggle('hide',v!=='bfp');
+  document.getElementById('icopen').classList.toggle('hide',v!=='ic');
+  document.getElementById('stats').innerHTML=[
+    ['Raise','ELR · Evenlode Landscape Recovery'],
+    ['Stage','Due diligence'],
+    v==='dd'?['Investor','Esmée Fairbairn Foundation']:['Scope','All counterparties'],
+    ['Median turnaround','2.1 days'],
+    ['Reuse rate','57%'],
+    ['Generated','16 Jul 2026 · Log v1']
+  ].map(([k,val])=>`<span class="stat"><b>${k}</b> ${val}</span>`).join('');
+  render();
+}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3200);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==document.getElementById('q')){
+    e.preventDefault();document.getElementById('q').focus();
+  }
+  if(e.key==='Escape'){const q=document.getElementById('q');q.value='';applyFilters();q.blur();}
+});
+function applyFilters(){render();}
+setVariant('dd',document.querySelector('#tabs span.on'));
+</script>
+</body>
+</html>

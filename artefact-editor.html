@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tool editor · Demand Mapping</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#140D10; --card:#1F1519; --field:#261B20; --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.22);
+  --ink:#F4EFE9; --ink2:#B5ACA4; --ink3:#8A817A;
+  --green:#8FBF5E; --greenbg:rgba(98,129,71,.28); --greend:#B7D695;
+  --amber:#F9DD5A; --amberbg:rgba(249,221,90,.16); --amberd:#F0D467;
+  --blue:#6FA8FF; --bluebg:rgba(59,130,246,.2); --blued:#9CC2FF;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:row;overflow:hidden;font-size:16px;color-scheme:dark}
+.mainc{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid #E6E4DE;display:flex;flex-direction:column;padding:12px 12px 16px;color:#1F1F1D;color-scheme:light}
+body.navhid .snav{display:none}
+.snavpeek{position:fixed;top:0;left:0;width:14px;height:100vh;z-index:44;display:none}
+body.navhid .snavpeek{display:block}
+body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10px;width:264px;z-index:45;border:1px solid #E6E4DE;border-radius:0 14px 14px 0;box-shadow:0 12px 40px rgba(31,31,29,.3);animation:snavslide .16s ease}
+@keyframes snavslide{from{transform:translateX(-100%)}to{transform:none}}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px;color:#1F1F1D}
+.sworks .ti{font-size:15px;color:#9C9A92}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:#9C9A92;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:#EFEDE8;color:#1F1F1D}
+.scollapse .ti{font-size:17px}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:#1F1F1D;cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:#6B6A64}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:#EFEDE8;font-weight:500}
+.sarr{margin-left:auto;font-size:14px;color:#9C9A92;transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:#6B6A64}
+.ssub .sitem.on{color:#1F1F1D}
+.row1{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border-bottom:1px solid #E6E4DE;flex:none;height:61px;box-sizing:border-box;box-sizing:border-box}
+.row1.editing{background:#F9DD5A;border-bottom:1px solid #E3C93F}
+.row1.editing .ti{color:rgba(26,12,18,.75)}
+.row1.editing .crumb{color:rgba(26,12,18,.5)}
+.row1.editing .crumb:hover{color:rgba(26,12,18,.8)}
+.row1.editing .sep{color:rgba(26,12,18,.4)}
+.row1.editing .title{color:#1A0C12}
+.row1 .ti{font-size:19px;color:#6B6A64}
+.title{font-size:17px;font-weight:600;white-space:nowrap;color:#1F1F1D}
+.crumb{color:#9C9A92;cursor:pointer;font-size:16px;white-space:nowrap}
+.crumb:hover{color:#6B6A64}
+.sep{color:#9C9A92;font-size:14px}
+.row1 .chip{background:#fff;border-color:#CFCDC5;color:#6B6A64}
+.row1 .chip:hover{border-color:#9C9A92;color:#1F1F1D}
+.row2{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#1A0C12;border-bottom:1px solid rgba(255,255,255,.08);flex:none;font-size:14.5px;color:var(--ink3);height:61px;box-sizing:border-box;box-sizing:border-box}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--ink3);color:var(--ink)}
+.chip .ti{font-size:16px}
+.btn-dark{font-size:15px;font-weight:500;padding:8px 16px;border-radius:999px;background:#F9DD5A;color:#1A0C12;border:none;cursor:pointer;white-space:nowrap}
+.spacer{flex:1}
+.main{flex:1;display:flex;overflow:hidden}
+.panel{transition:width .18s ease;background:var(--card);overflow:auto;flex:none}
+.pleft{width:300px;border-right:1px solid var(--line);padding:14px 12px}
+.pright{width:330px;border-left:1px solid var(--line);padding:14px 14px;display:flex;flex-direction:column}
+.panel.col{width:48px;padding:12px 9px;overflow:hidden}
+.panel.col>*:not(.phead){display:none}
+.col .phead{justify-content:center;padding:2px 0}
+.col .phead span{display:none}
+.col .cic{display:none}
+.col .eic{display:inline}
+.eic{display:none}
+.phead{position:sticky;top:0;z-index:6;background:var(--card);display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 4px 10px;font-size:13px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.pbtn{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.pbtn:hover{color:var(--ink);background:rgba(255,255,255,.07)}
+.pbtn .ti{font-size:17px}
+.grp{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;padding:12px 8px 4px}
+.orow{display:flex;align-items:center;gap:9px;padding:8px;border-radius:10px;cursor:pointer;margin-top:2px;font-size:15px}
+.orow:hover{background:rgba(255,255,255,.05)}
+.orow.on{background:rgba(255,255,255,.09)}
+.oic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;background:rgba(255,255,255,.08);color:var(--ink2)}
+.oic .ti{font-size:14px}
+.otxt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ghost{border:1.5px dashed var(--line2);border-radius:10px;padding:9px 12px;font-size:14.5px;color:var(--ink3);display:flex;align-items:center;gap:8px;margin:10px 8px 0;cursor:pointer}
+.pl{font-size:13.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:16px 0 6px;padding:0 4px}
+.fsel,.finput{width:100%;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-size:15px;font-family:inherit;background:var(--field);color:var(--ink);outline:none}
+.tglr{display:flex;align-items:center;gap:10px;font-size:15px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.07)}
+.tglr input{width:16px;height:16px;accent-color:var(--green)}
+.nsmall{font-size:14px;color:var(--ink3);line-height:1.5;padding:0 4px}
+.stage{flex:1;overflow:auto;min-width:0}
+.paper2{max-width:660px;margin:28px auto 60px;background:#FEFAEC;color:#1A0C12;border-radius:14px;padding:34px 40px;box-shadow:0 10px 34px rgba(0,0,0,.4);font-family:'IBM Plex Sans',-apple-system,sans-serif}
+.ptitle{font-family:'Spectral',Georgia,serif;font-size:27px;font-weight:500;line-height:1.2;outline:none}
+.pmeta{font-size:13px;color:#766b62;margin-top:6px}
+.ecard{background:#fff;border-radius:14px 14px 0 0;max-width:660px;margin:40px auto 0;box-shadow:0 12px 40px rgba(0,0,0,.35);color:#1F1F1D;display:flex;flex-direction:column;min-height:calc(100vh - 166px)}
+.ecard .ebody{flex:1}
+.ebar{position:sticky;bottom:0;background:#fff;border-radius:0}
+.erow{display:flex;gap:10px;padding:11px 20px;border-bottom:1px solid #EFEDE8;font-size:14.5px;align-items:baseline}
+.elab{width:58px;color:#9C9A92;flex:none;font-size:13px}
+.ebody{padding:6px 20px 20px}
+.ebar{display:flex;gap:16px;align-items:center;padding:12px 20px;border-top:1px solid #EFEDE8;color:#9C9A92}
+.ebar .ti{font-size:17px;cursor:pointer}
+.npage{background:#fff;max-width:none;margin:34px 34px 64px;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.35);padding:52px 72px 64px;color:#1F1F1D}
+.npicon{font-size:44px;line-height:1}
+.nptitle{font-size:32px;font-weight:700;letter-spacing:-.02em;margin-top:12px;outline:none}
+.nprop{display:flex;gap:10px;align-items:center;font-size:14px;color:#787774;margin-top:10px}
+.nprop .ti{font-size:15px}
+.nprop b{color:#37352F;font-weight:400}
+.ndiv{height:1px;background:#EDECE8;margin:22px 0 8px}
+.nrow{display:flex;gap:6px;align-items:baseline;padding:5px 2px;border-radius:6px;font-size:16px;position:relative}
+.nrow .nh{opacity:0;color:#C9C7C0;font-size:15px;cursor:grab;width:18px;flex:none;letter-spacing:-2px}
+.nrow:hover .nh{opacity:1}
+.nrow:hover{background:#F7F6F3}
+.nrow .ntime{margin-left:auto;color:#9C9A92;font-size:14px;flex:none}
+.nadd{color:#C9C7C0;font-size:14.5px;padding:7px 2px 0 24px;cursor:pointer}
+.nadd:hover{color:#787774}
+.pblk{margin-top:16px;font-size:15.5px;line-height:1.65;outline:none;border-radius:6px}
+.pblk[contenteditable="true"]:hover{box-shadow:0 0 0 1px rgba(26,12,18,.15)}
+.pblk[contenteditable="true"]:focus{box-shadow:none}
+.pblk.hl{box-shadow:0 0 0 2px #F9DD5A}
+.mtok{background:#F6ECC4;border:1px solid #E3D391;border-radius:6px;padding:1px 7px;font-size:13px;color:#6B5B12;white-space:nowrap}
+.slot{background:rgba(33,82,116,.07);border:1.5px dashed #9DB4C4;border-radius:10px;padding:13px 15px;color:#215274;font-size:14px;line-height:1.55;margin-top:16px}
+.lockbox{background:#F3EDE0;border:1.5px solid #D8CFBB;border-radius:10px;padding:13px 15px;color:#766b62;font-size:14px;margin-top:16px;display:flex;gap:9px;align-items:flex-start}
+.prow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #EFE8D5;font-size:15px}
+.prow:last-child{border:none}
+.pbox{width:16px;height:16px;border:1.5px solid #C9BFA6;border-radius:4px;flex:none}
+.star{color:#B78A0E;font-weight:600}
+.mbar{height:9px;border-radius:5px;background:#EDE6D2;overflow:hidden;width:130px}
+.mbar i{display:block;height:100%;background:#628147}
+.banner{max-width:660px;margin:24px auto -12px;display:flex;gap:9px;align-items:flex-start;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--ink2);line-height:1.5}
+.banner .ti{font-size:16px;color:var(--amberd);flex:none;position:relative;top:2px}
+.ptable{width:100%;border-collapse:collapse;font-size:14px;margin-top:14px}
+.ptable th{text-align:left;font-size:12px;color:#766b62;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid #D8CFBB}
+.ptable td{padding:8px;border-bottom:1px solid #EFE8D5}
+.chat{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:2px}
+.cmsg{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:10px 13px;font-size:14.5px;line-height:1.55;max-width:95%}
+.cme{align-self:flex-end;background:rgba(255,255,255,.09);border:none;border-radius:12px;padding:9px 13px;font-size:14.5px;max-width:85%}
+.sugg{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.sugg span{font-size:14px;border:1px solid var(--line2);border-radius:999px;padding:7px 13px;cursor:pointer;color:var(--ink2)}
+.sugg span:hover{border-color:var(--amber);color:var(--ink)}
+.cin{display:flex;gap:8px;padding-top:12px}
+.cin input{flex:1;border:1px solid var(--line2);border-radius:999px;padding:10px 15px;font-size:14.5px;font-family:inherit;background:var(--field);color:var(--ink);outline:none}
+.cin button{width:40px;height:40px;border-radius:50%;background:#F9DD5A;color:#1A0C12;border:none;cursor:pointer;font-size:16px}
+.wb{position:fixed;right:18px;bottom:18px;width:352px;max-height:min(560px,calc(100vh - 100px));background:var(--card);border:1px solid var(--line2);border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,.5);z-index:48;display:flex;flex-direction:column;overflow:hidden}
+.wbhead{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14.5px;font-weight:600;flex:none}
+.wbhead .ti{font-size:16px;color:var(--amberd)}
+.wbmin{margin-left:auto;width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.wbmin:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+.wbbody{padding:12px 14px 14px;display:flex;flex-direction:column;overflow:hidden;flex:1}
+.wbpill{position:fixed;right:18px;bottom:18px;z-index:48;display:none;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:11px 18px;font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.wbpill .ti{font-size:16px;color:var(--amberd)}
+.wbpill:hover{border-color:var(--amber)}
+body.wbcol .wb{display:none}
+body.wbcol .wbpill{display:inline-flex}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#F4EFE9;color:#1A0C12;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+@keyframes sheetin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.row2,.main{animation:sheetin .32s ease-out both}
+</style>
+</head>
+<body class="wbcol">
+
+<script>window.GYNAV={"active": "demand-mapping", "arts": "demand"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="row1">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
+  <span class="crumb" onclick="backToCanvas()">Demand Mapping</span><span class="sep">›</span>
+  <span class="title" id="crumbName">Artefact</span>
+</div>
+<div class="row2">
+  <span class="chip" onclick="backToCanvas()"><i class="ti ti-x"></i> Close</span>
+  <span class="spacer"></span>
+  <button class="btn-dark" onclick="toast('Saves this tool definition to its node and versions it with the blueprint')">Save</button>
+</div>
+
+<div class="main">
+  <div class="panel pleft" id="pleft"></div>
+  <div class="stage" id="stage"></div>
+</div>
+</div>
+
+<div class="wb" id="wb"></div>
+<div class="wbpill" onclick="document.body.classList.remove('wbcol')"><i class="ti ti-sparkles"></i> AI Assistant</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const EDITM=new URLSearchParams(location.search).get('edit')==='1';
+function backToCanvas(){location.href='demand-mapping-canvas-prototype.html'+(EDITM?'?mode=edit':'?mode=run');}
+if(EDITM)document.addEventListener('DOMContentLoaded',()=>document.querySelector('.row1').classList.add('editing'));
+
+const tok=t=>`<span class="mtok" contenteditable="false">{ ${t} }</span>`;
+
+const ARTS={
+qemail:{name:'Email · Project context',kind:'Editor · document · email',cls:'doc',used:'Send Questionnaire · step 1',
+ agent:{msg:'I drafted this from Send Questionnaire › step 1 and the kick-off notes pattern. Edit the text directly on the page, or tell me what to change.',
+  chips:['Warmer sign-off','Shorter, farmers are busy','Add a deadline line']},
+ fields:['project','client_contact','first_name','deadline','sender'],
+ outline:['Subject line','Greeting','Body','Button','Sign-off'],
+ stage:()=>`<div class="ecard">
+  <div class="erow"><span class="elab">From</span><span>caitlin@greatyellow.earth</span></div>
+  <div class="erow"><span class="elab">To</span><span>${tok('client_contact')}</span></div>
+  <div class="erow"><span class="elab">Subject</span><span contenteditable="true" style="outline:none;flex:1">Mapping the demand for ${tok('project')}</span></div>
+  <div class="ebody">
+    <div class="pblk" contenteditable="true" style="margin-top:12px">
+      <p style="margin:0 0 14px">Hi ${tok('first_name')}, lovely speaking today.</p>
+      <p style="margin:0 0 14px">To map what ${tok('project')} can sell and who would buy it, we need a few things from you. This link does most of the work, and anything you upload we read for you. It takes about ten minutes.</p>
+      <p style="margin:0 0 14px"><span contenteditable="false" style="display:inline-block;background:#F9DD5A;color:#1A0C12;font-weight:500;font-size:14px;padding:10px 18px;border-radius:10px">Open your questionnaire</span></p>
+      <p style="margin:0">Anything unclear, just reply to this email. Warm regards, ${tok('sender')}</p>
+    </div>
+  </div>
+  <div class="ebar">
+    <span class="spacer" style="flex:1"></span>
+    <i class="ti ti-paperclip" onclick="toast('Attachments would ride along per run')"></i>
+    <i class="ti ti-braces" onclick="toast('Insert a merge field at the cursor')"></i>
+    <span style="display:inline-block;background:#1A0C12;color:#fff;font-weight:500;font-size:13.5px;padding:8px 18px;border-radius:999px;cursor:pointer" onclick="toast('Sends happen from the run: Send Questionnaire merges a project into this template first')">Send</span>
+  </div></div>`},
+
+agenda:{name:'Agenda · Kick-off call',kind:'Editor · agenda',cls:'doc',used:'Kick-off call · step 2',
+ agent:{msg:'This is the standing kick-off agenda. I merge ${project} data into it before every call. Edit in place, or ask me.',
+  chips:['Add a timing buffer','Section for client questions','Tighten to 30 minutes']},
+ fields:['project','client','sites','date'],
+ outline:['Header','1 · Welcome','2 · Vision','3 · Input checklist','4 · Next steps'],
+ stage:()=>`<div class="npage">
+  <div class="npicon">🤝</div>
+  <div class="nptitle" contenteditable="true">Kick-off · ${tok('project')}</div>
+  <div class="nprop"><i class="ti ti-calendar-event"></i>Date<b style="margin-left:14px">${tok('date')}</b></div>
+  <div class="nprop"><i class="ti ti-user"></i>With<b style="margin-left:18px">${tok('client')}</b></div>
+  <div class="ndiv"></div>
+  <div class="nrow"><span class="nh">⋮⋮</span><span class="pblk" contenteditable="true" style="margin:0">1 · Welcome and context</span><span class="ntime">5 min</span></div>
+  <div class="nrow"><span class="nh">⋮⋮</span><span class="pblk" contenteditable="true" style="margin:0">2 · Vision and target outcomes for ${tok('sites')}</span><span class="ntime">10 min</span></div>
+  <div class="nrow"><span class="nh">⋮⋮</span><span class="pblk" contenteditable="true" style="margin:0">3 · Walk the input checklist</span><span class="ntime">15 min</span></div>
+  <div class="nrow"><span class="nh">⋮⋮</span><span class="pblk" contenteditable="true" style="margin:0">4 · Timeline, roles, next steps</span><span class="ntime">10 min</span></div>
+  <div class="nadd" onclick="toast('Add a block: agenda item, callout, or divider')">+ Add a block</div></div>`},
+
+evidence:{name:'Template · Evidence pack',kind:'Editor · document · drafted by the AI Assistant',cls:'doc',used:'Research · step 3',
+ agent:{msg:'Most of this pack is written by the research assistant per run, one page per ecosystem service. You edit the fixed frame; the shaded slots show what I fill in, with every claim cited.',
+  chips:['Add a competitor supply slot','Confidence as traffic lights','Show me a filled example']},
+ fields:['ecosystem_service','project'],
+ outline:['Header','Rulebook slot','Eligibility slot','Pricing slot','Confidence footer'],
+ stage:()=>`<div class="paper2">
+  <div class="ptitle" contenteditable="true">${tok('ecosystem_service')} · product page</div>
+  <div class="pmeta">Evidence pack · ${tok('project')}</div>
+  <div class="slot"><b>AI Assistant writes per run:</b> the governing rulebook, version and key eligibility criteria, each with a citation.</div>
+  <div class="slot"><b>AI Assistant writes per run:</b> site eligibility against this rulebook, flagged Likely / Unclear / Unlikely with the reason.</div>
+  <div class="slot"><b>AI Assistant writes per run:</b> indicative price range and competitor supply in catchment, sources dated.</div>
+  <div class="pblk" contenteditable="true" style="font-size:13.5px;color:#766b62">Confidence: every claim above carries a source. Low-confidence findings are flagged, never blended in.</div></div>`},
+
+verdict:{name:'Template · Verdict pack',kind:'Editor · document',cls:'doc',used:'Final check prep · step 2',
+ agent:{msg:'The go / no-go pack: one readable page plus appendix. The recommendation box is locked by design; the verdict belongs to the Vertical Lead, never to a template.',
+  chips:['Add appendix outline','One-line executive summary','Why is the box locked?']},
+ fields:['project'],
+ outline:['Header','Supply summary','Demand summary','Revenue line','Verdict box · locked'],
+ stage:()=>`<div class="paper2">
+  <div class="ptitle" contenteditable="true">Verdict pack · ${tok('project')}</div>
+  <div class="slot"><b>AI Assistant compiles per run:</b> supply summary, the ranked ES shortlist with scores.</div>
+  <div class="slot"><b>AI Assistant compiles per run:</b> demand summary, hot and warm buyers per ES.</div>
+  <div class="slot"><b>AI Assistant compiles per run:</b> indicative revenue range, confidence flagged per line.</div>
+  <div class="lockbox"><i class="ti ti-lock"></i><span><b>Recommendation · locked.</b> This box is filled in the room, by the Vertical Lead, at Go / no-go. The template never pre-fills a verdict.</span></div></div>`},
+
+checklist:{name:'Checklist · Must-have input',kind:'Editor · structured list',cls:'list',used:'Send Questionnaire + Input complete? + Contents',
+ agent:{msg:'Careful here: three things read this list. The questionnaire asks it, the Input complete? gate enforces it, and Contents tracks it. Add or demote items and all three follow.',
+  chips:['Why 14 items?','Demote baselines to optional','What breaks if I remove one?']},
+ items:[['Site boundary shapefile',1],['Land ownership and tenure map',1],['Vision and target outcomes',1],['Key interventions with areas',1],['Timeline and phasing',1],['Baseline surveys, with dates',1],['Existing agreements per parcel',1],['Prior commitments on units',1],['Client constraints, red lines',1],['Location and boundary description',1],['Target outcome metrics',1],['People directory',1],['Data room access',0],['Photos and monitoring',0]],
+ stage:a=>`<div class="banner"><i class="ti ti-alert-triangle"></i><span>Three consumers: the questionnaire asks these, the Input complete? gate enforces the must-haves, Contents tracks them. Edits ripple to all three.</span></div>
+  <div class="paper2"><div class="ptitle">Must-have input · ${a.items.filter(x=>x[1]).length} of ${a.items.length} required</div>
+  ${a.items.map(x=>`<div class="prow"><span style="display:flex;gap:10px;align-items:center"><span class="pbox"></span>${x[0]}</span>${x[1]?'<span class="star">must-have</span>':'<span style="color:#9C9184;font-size:13px">optional</span>'}</div>`).join('')}</div>`},
+
+scoring:{name:'Scoring · Supply side',kind:'Editor · scoring mechanic · shared by both twins',cls:'score',used:'Shortlist ES + Shortlist qualified buyers',
+ agent:{msg:'One mechanic, two criteria sets. You are editing the shared engine: changes to weights or scale touch both twins. Criteria themselves are per set.',
+  chips:['Switch to the demand set','Why share one engine?','Add a permanence criterion']},
+ sets:{supply:[['Market maturity',80],['Site eligibility',60],['Revenue potential',80],['Delivery risk',40]],
+       demand:[['Fit',85],['Readiness',55],['Timing',45],['Relationship',70]]},
+ stage:(a,set)=>`<div class="banner"><i class="ti ti-alert-triangle"></i><span>Shared engine: Shortlist ES scores with the supply set, Shortlist qualified buyers with the demand set. The mechanic is built once.</span></div>
+  <div class="paper2"><div class="ptitle">${set==='supply'?'Supply criteria · sample: BNG units':'Demand criteria · sample: Anglian Water'}</div>
+  ${a.sets[set].map(c=>`<div class="prow"><span>${c[0]}</span><span style="display:flex;gap:10px;align-items:center"><span class="mbar"><i style="width:${c[1]}%"></i></span><span style="color:#766b62">${Math.round(c[1]/20)}/5</span></span></div>`).join('')}
+  <div class="pmeta" style="margin-top:14px">Scores 1 to 5 per criterion, equal weights, rationale required per score.</div></div>`},
+
+precall:{name:'Assistant · Pre-call brief',kind:'Editor · AI assistant · golden example',cls:'agent',used:'Kick-off call · step 1',
+ agent:{msg:'You are editing an AI Assistant. The left pane is my job spec; the page in the middle is the golden example I imitate. Edit the example until it looks right and I will match its shape, length and tone.',
+  chips:['Make examples shorter','Always name a risk','What sources do you cite?']},
+ spec:{inputs:['Workflow Brief','HubSpot history','Past call notes'],steps:['Pull project and contact history','Draft the three sections','Cite every claim','Email to the caller, morning of'],guard:'Unverifiable claims are flagged, never stated'},
+ stage:()=>`<div class="banner"><i class="ti ti-wand"></i><span>Golden example: the AI Assistant imitates this brief's shape, length and tone on every run. Edit it directly.</span></div>
+  <div class="paper2"><div class="ptitle" contenteditable="true">Pre-call brief · Spains Hall</div>
+  <div class="pmeta">Drafted by the AI Assistant · 3 sources cited · read in 4 minutes</div>
+  <div class="pblk" contenteditable="true"><b>Who they are.</b> 900 ha estate in Essex, regen-curious, second-generation owner. Met at Groundswell.</div>
+  <div class="pblk" contenteditable="true"><b>History.</b> Two HubSpot threads: an enquiry about BNG in March, a site visit request in May.</div>
+  <div class="pblk" contenteditable="true"><b>Watch for.</b> Tenancy complexity on the east parcels; the land agent joins the call.</div></div>`},
+
+gapsum:{name:'Assistant · Gap summary',kind:'Editor · AI assistant · golden example',cls:'agent',used:'Follow-up · step 1',
+ agent:{msg:'I turn a failed completeness check into a friendly chaser. The example page is my target; the job spec is on the left. The two chases then escalate rule lives on the Follow-up node, not here.',
+  chips:['Less apologetic tone','Bullet the missing items','Show a two-gap example']},
+ spec:{inputs:['Gate result, gap list','Client name and thread','Wait clock state'],steps:['Summarise what arrived, warmly','List each gap with why it matters','Offer the easy path back','Draft for approval, never send'],guard:'Always drafted, never sent without a human tap'},
+ stage:()=>`<div class="banner"><i class="ti ti-wand"></i><span>Golden example: the AI Assistant matches this tone and shape for every chaser it drafts.</span></div>
+  <div class="paper2"><div class="pmeta">Draft · for approval · to James, Spains Hall</div>
+  <div class="pblk" contenteditable="true">Hi James, thanks for everything so far. 12 of 14 items are in and looking great.</div>
+  <div class="pblk" contenteditable="true">Two things would unlock the next step: the site boundary shapefile, which fixes what we can map, and the grazing agreement for the east parcels, which decides who can sell what.</div>
+  <div class="pblk" contenteditable="true">Your questionnaire link is still live and remembers where you left off.</div></div>`},
+
+buyerdb:{name:'Database · GY buyers',kind:'Configuration · data connection · HubSpot',cls:'data',used:'Shortlist qualified buyers · step 1',
+ agent:{msg:'This is live HubSpot data, read-only here. I watch quality: right now 34 records are missing timing signals and 12 have no catchment tag, which weakens demand scoring.',
+  chips:['Which fields are weakest?','Draft a data-fix task for Trade','How is Fit computed?']},
+ map:[['Fit','industry + catchment match',1],['Readiness','budget signals, ESG commitments',1],['Timing','active enquiry or cycle date',0],['Relationship','thread history, meetings',1]],
+ stage:a=>`<div class="banner"><i class="ti ti-database"></i><span>Live connection, read-only. The left pane maps HubSpot fields onto the qualification schema.</span></div>
+  <div class="paper2"><div class="ptitle">Buyers · filtered to catchment</div>
+  <table class="ptable"><tr><th>Buyer</th><th>Fit</th><th>Timing</th><th>Owner</th></tr>
+  <tr><td>Anglian Water</td><td>8.5</td><td>active</td><td>Trade</td></tr>
+  <tr><td>Housing developer, Oxford</td><td>7.0</td><td>Q4 cycle</td><td>Trade</td></tr>
+  <tr><td>Food corporate, Scope 3</td><td>5.5</td><td>missing</td><td>Izzie</td></tr></table>
+  <div class="pmeta" style="margin-top:12px">247 records · 34 missing timing · synced 6 min ago</div></div>`},
+
+registries:{name:'Shelf · Supply registries',kind:'Configuration · source shelf · connections',cls:'data',used:'Desktop research · step 2',
+ agent:{msg:'The named registries desktop research pulls hard data from. Each entry carries the connection, the fields we take and the refresh rule. I watch freshness: ICE and EEX arrive daily, the World Bank series updated in June.',
+  chips:['Which sources are stale?','Add a registry','Which fields do we pull from Gaia?']},
+ shelf:[['DEFRA BNG register','biodiversity','weekly'],['Gaia','nature data','weekly'],['Woodland Carbon Code','carbon','weekly'],['Peatland Code','carbon','weekly'],['World Bank carbon price','pricing','updated Jun'],['ICE + EEX','pricing','daily feed']],
+ stage:a=>`<div class="banner"><i class="ti ti-database"></i><span>Connection shelf, read-only stage. Add or retire registries on the left; desktop research pulls only what lives here, and every figure lands with source, date and tier.</span></div>
+  <div class="paper2"><div class="ptitle">Registry connections</div>
+  ${a.shelf.map(s=>`<div class="prow"><span>${s[0]}</span><span style="display:flex;gap:12px"><span style="color:#766b62">${s[1]}</span><span style="color:${s[2].startsWith('updated')?'#B75A40':'#628147'};font-size:13.5px">${s[2]}</span></span></div>`).join('')}</div>`},
+rulebooks:{name:'Library · ES rule books',kind:'Configuration · source shelf',cls:'data',used:'Research · step 2',
+ agent:{msg:'The cited sources behind supply research. I monitor them: BNG statutory guidance updated in March, and two product pages still cite the old version.',
+  chips:['What changed in BNG?','Add the Replenish rulebook','Which sources are stale?']},
+ shelf:[['Peatland Code v2','carbon','current'],['Woodland Carbon Code','carbon','current'],['BNG statutory guidance','biodiversity','updated Mar'],['Nutrient neutrality guidance','nutrients','current'],['Replenish','water','current']],
+ stage:a=>`<div class="banner"><i class="ti ti-database"></i><span>Curated shelf, read-only stage. Add or retire sources on the left; research cites only what lives here.</span></div>
+  <div class="paper2"><div class="ptitle">Source shelf</div>
+  ${a.shelf.map(s=>`<div class="prow"><span>${s[0]}</span><span style="display:flex;gap:12px"><span style="color:#766b62">${s[1]}</span><span style="color:${s[2].startsWith('updated')?'#B75A40':'#628147'};font-size:13.5px">${s[2]}</span></span></div>`).join('')}</div>`}
+};
+
+let A=null, SEL=0, SET='supply';
+
+function renderLeft(){
+  const p=document.getElementById('pleft');
+  if(A.cls==='doc'){p.style.visibility='hidden';p.innerHTML='';return;}
+  p.style.visibility='';
+  let h=`<div class="phead"><span>Structure</span><button class="pbtn" onclick="tPanel('pleft')"><i class="ti ti-layout-sidebar-left-collapse cic"></i><i class="ti ti-layout-sidebar-left-expand eic"></i></button></div>`;
+  const row=(t,i,ic)=>`<div class="orow ${SEL===i?'on':''}" onclick="selBlk(${i})"><span class="oic"><i class="ti ${ic}"></i></span><span class="otxt">${t}</span></div>`;
+  if(A.cls==='list'){
+    h+=`<div class="grp">Items · ${A.items.length}</div>`+A.items.map((x,i)=>row(x[0],i,x[1]?'ti-star':'ti-circle-dashed')).join('');
+    h+=`<div class="ghost" onclick="toast('New items ripple to questionnaire, gate and Contents')"><i class="ti ti-plus"></i> Add item</div>`;
+    h+=`<div class="pl">Inspector · ${A.items[SEL][0]}</div>
+    <div class="tglr"><input type="checkbox" ${A.items[SEL][1]?'checked':''} onchange="A.items[SEL][1]=this.checked?1:0;renderLeft();renderStage()"><span>Must-have · counts toward the gate</span></div>
+    <div class="nsmall" style="margin-top:8px">Maps to schema and the questionnaire question that asks it.</div>`;
+  }
+  if(A.cls==='score'){
+    h+=`<div class="grp">Criteria set</div>
+    <div class="orow ${SET==='supply'?'on':''}" onclick="SET='supply';SEL=0;renderLeft();renderStage()"><span class="oic"><i class="ti ti-leaf"></i></span><span class="otxt">Supply · Shortlist ES</span></div>
+    <div class="orow ${SET==='demand'?'on':''}" onclick="SET='demand';SEL=0;renderLeft();renderStage()"><span class="oic"><i class="ti ti-users"></i></span><span class="otxt">Demand · Qualified buyers</span></div>`;
+    h+=`<div class="grp">Criteria</div>`+A.sets[SET].map((c,i)=>row(c[0],i,'ti-scale')).join('');
+    h+=`<div class="ghost" onclick="toast('Add a criterion to the '+SET+' set')"><i class="ti ti-plus"></i> Add criterion</div>`;
+    h+=`<div class="pl">Inspector · ${A.sets[SET][SEL][0]}</div><div class="nsmall">Weight: equal · Scale: 1 to 5 · rationale required. Changing the scale touches both twins.</div>`;
+  }
+  if(A.cls==='agent'){
+    h+=`<div class="grp">Job spec</div>
+    <div class="pl" style="margin-top:6px">Inputs</div>`+A.spec.inputs.map(x=>`<div class="orow" style="cursor:default"><span class="oic"><i class="ti ti-arrow-bar-to-down"></i></span><span class="otxt">${x}</span></div>`).join('');
+    h+=`<div class="pl">Steps</div>`+A.spec.steps.map((x,i)=>`<div class="orow" style="cursor:default"><span class="oic">${i+1}</span><span class="otxt">${x}</span></div>`).join('');
+    h+=`<div class="pl">Guardrail</div><div class="nsmall" style="padding:0 8px">${A.spec.guard}</div>`;
+  }
+  if(A.cls==='data'){
+    if(A.map){h+=`<div class="grp">Field mapping</div>`+A.map.map((m,i)=>`<div class="orow ${SEL===i?'on':''}" onclick="selBlk(${i})"><span class="oic"><i class="ti ${m[2]?'ti-check':'ti-alert-triangle'}"></i></span><span class="otxt">${m[0]} ← ${m[1]}</span></div>`).join('');
+      h+=`<div class="pl">Inspector</div><div class="nsmall">${A.map[SEL][2]?'Mapping healthy.':'Weak signal: many records missing this field.'}</div>`;}
+    if(A.shelf){h+=`<div class="grp">Sources</div>`+A.shelf.map((s,i)=>row(s[0],i,'ti-book')).join('');
+      h+=`<div class="ghost" onclick="toast('Add a source: it becomes citable by Research')"><i class="ti ti-plus"></i> Add source</div>`;}
+  }
+  p.innerHTML=h;
+}
+
+function renderStage(){
+  document.getElementById('stage').innerHTML=A.stage(A,SET);
+}
+
+function renderRight(){
+  const p=document.getElementById('wb');
+  p.innerHTML=`<div class="wbhead"><i class="ti ti-sparkles"></i> AI Assistant
+    <button class="wbmin" onclick="document.body.classList.add('wbcol')" title="Minimise"><i class="ti ti-minus"></i></button></div>
+  <div class="wbbody">
+  <div class="chat" id="chat">
+    <div class="cmsg">${A.agent.msg.replace('${project}',"{ project }")}</div>
+    <div class="sugg">${A.agent.chips.map(c=>`<span onclick="say('${c.replace(/'/g,"\\'")}')">${c}</span>`).join('')}</div>
+  </div>
+  <div class="cin"><input id="cinp" placeholder="Ask or instruct…" onkeydown="if(event.key==='Enter'&&this.value.trim()){say(this.value.trim());this.value=''}"><button onclick="const i=document.getElementById('cinp');if(i.value.trim()){say(i.value.trim());i.value=''}" aria-label="Send"><i class="ti ti-arrow-up"></i></button></div>
+  </div>`;
+}
+function toggleArts(){
+  const open=document.getElementById('artSub').classList.toggle('closed');
+  document.getElementById('artArr').classList.toggle('closed',open);
+  localStorage.setItem('gyArtsOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyArtsOpen')==='1'){
+  document.getElementById('artSub').classList.remove('closed');
+  document.getElementById('artArr').classList.remove('closed');
+}
+(function(){
+  const saved=parseInt(localStorage.getItem('gyNavW')||'',10);
+  if(saved&&!document.body.classList.contains('navhid')&&!(document.getElementById('snav')&&document.getElementById('snav').classList.contains('hid')))document.body.style.setProperty('--nav',saved+'px');
+  const grip=document.getElementById('snavgrip');
+  if(!grip)return;
+  let drag=false;
+  grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');document.body.style.userSelect='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const w=Math.min(420,Math.max(200,e.clientX));
+    document.body.style.setProperty('--nav',w+'px');
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!drag)return;
+    drag=false;grip.classList.remove('on');document.body.style.userSelect='';
+    const w=parseInt(getComputedStyle(document.body).getPropertyValue('--nav'),10);
+    if(w)localStorage.setItem('gyNavW',String(w));
+  });
+})();
+function toggleNav(){
+  document.body.classList.remove('navpeek');
+  const hid=document.body.classList.toggle('navhid');
+  document.getElementById('expandBtn').style.display=hid?'flex':'none';
+  localStorage.setItem('gyNavHid',hid?'1':'0');
+}
+(function(){
+  if(localStorage.getItem('gyNavHid')==='1'){
+    document.body.classList.add('navhid');
+    document.getElementById('expandBtn').style.display='flex';
+  }
+})();
+(function(){
+  const zone=document.createElement('div');
+  zone.className='snavpeek';
+  document.body.appendChild(zone);
+  zone.addEventListener('mouseenter',()=>{
+    if(document.body.classList.contains('navhid'))document.body.classList.add('navpeek');
+  });
+  document.querySelector('.snav').addEventListener('mouseleave',()=>document.body.classList.remove('navpeek'));
+  zone.addEventListener('mouseleave',e=>{
+    if(!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.snav')))
+      document.body.classList.remove('navpeek');
+  });
+})();
+
+function say(t){
+  const c=document.getElementById('chat');
+  c.insertAdjacentHTML('beforeend',`<div class="cme">${t}</div>
+  <div class="cmsg">In the real build I would apply that to the definition, update the stage, and log the change with provenance. Used by: ${A.used}.</div>`);
+  c.scrollTop=c.scrollHeight;
+}
+
+function selBlk(i){SEL=i;renderLeft();
+  const blocks=document.querySelectorAll('.stage .pblk, .stage .slot, .stage .prow, .stage .lockbox');
+  blocks.forEach(b=>b.classList.remove('hl'));
+  if(blocks[SEL]){blocks[SEL].classList.add('hl');blocks[SEL].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>blocks[SEL].classList.remove('hl'),1200);}
+}
+
+function tPanel(cls){document.querySelector('.'+cls).classList.toggle('col')}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3800);
+}
+
+(function(){
+  const id=new URLSearchParams(location.search).get('a')||'qemail';
+  A=ARTS[id]||ARTS.qemail;
+  document.getElementById('crumbName').textContent=A.name;
+  document.title=A.name+' · Demand Mapping';
+  renderLeft();renderStage();renderRight();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Denton Reserve · Inventory · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="gy-shell.css">
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"inv-denton"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='inventory-portfolio-dashboard.html'">Programmes</span>
+    <span class="sep">›</span><span class="cr">Denton Reserve</span>
+    <span class="sep">›</span><span class="cr cur">Inventory</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Denton Reserve</div>
+    <div class="acts">
+      <button class="btn-dark" onclick="toast('Actions: add units, import, export, reserve, list for sale')">Actions <i class="ti ti-chevron-down"></i></button>
+      <button class="btn-out" onclick="toast('Programme settings')"><i class="ti ti-settings"></i> Settings</button>
+    </div>
+  </div>
+  <div class="seg" style="margin:8px 0 18px">
+    <button onclick="toast('Denton Reserve dashboard is not in this prototype yet')">Dashboard</button>
+    <button class="on">Inventory</button>
+    <button onclick="toast('Sites view is not in this prototype yet')">Sites</button>
+  </div>
+
+  <div class="frow">
+    <span class="flab">Filters</span>
+    <div class="segmini"><button class="on">All ES Types</button><button>BNG</button><button>WCC</button></div>
+    <button class="fbtn">Availability <i class="ti ti-chevron-down"></i></button>
+  </div>
+  <div class="frow">
+    <span class="flab">BNG Filters</span>
+    <button class="fbtn muted"><i class="ti ti-info-circle"></i> BNG Types <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn">Distinctiveness <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn">Condition <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn muted"><i class="ti ti-info-circle"></i> LPA <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn muted"><i class="ti ti-info-circle"></i> NCA <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn muted"><i class="ti ti-info-circle"></i> LNRS <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn">Price</button>
+  </div>
+  <div class="frow">
+    <span class="flab">WCC Filters</span>
+    <button class="fbtn muted"><i class="ti ti-info-circle"></i> Status <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn">Vintage <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn">Price</button>
+  </div>
+
+  <div class="searchbar">
+    <div class="search"><i class="ti ti-search"></i> Search (by Status, Habitat etc)</div>
+    <span class="showing">Showing 4 of 4</span>
+  </div>
+
+  <div class="tblwrap">
+    <table class="dtbl">
+      <thead>
+        <tr>
+          <th colspan="4"></th>
+          <th colspan="8" class="vdiv"><div style="display:flex;align-items:center;justify-content:space-between;gap:20px"><span style="font-weight:600;color:var(--ink2)">BNG Data</span><span class="wccpill">WCC data <i class="ti ti-chevron-right"></i></span></div></th>
+        </tr>
+        <tr>
+          <th><span class="chkbox"></span></th>
+          <th>ES Type <span class="ca">⇅</span> <i class="ti ti-info-circle" style="font-size:13px;color:var(--ink3)"></i></th>
+          <th>Availability <span class="ca">⇅</span></th>
+          <th>Specific Type / Vintage <span class="ca">⇅</span></th>
+          <th class="vdiv">Distinctiveness <span class="ca">⇅</span></th>
+          <th>Condition <span class="ca">⇅</span></th>
+          <th>Broad Habitat</th>
+          <th>Habitat ID</th>
+          <th>LPA</th>
+          <th>NCA</th>
+          <th>LNRS</th>
+          <th>Area</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="pager">
+    <span>Page 1 of 1</span>
+    <button class="pgbtn"><i class="ti ti-chevrons-left"></i></button>
+    <button class="pgbtn"><i class="ti ti-chevron-left"></i></button>
+    <button class="pgbtn"><i class="ti ti-chevron-right"></i></button>
+    <button class="pgbtn"><i class="ti ti-chevrons-right"></i></button>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+const dash='<span class="dash">—</span>';
+const YEARS=['2024','2029','2034','2039'];
+document.getElementById('rows').innerHTML = YEARS.map(function(y){
+  return '<tr>'
+    +'<td><span class="chkbox"></span></td>'
+    +'<td><span class="estag">WCC</span></td>'
+    +'<td><span class="badge avail">Available</span></td>'
+    +'<td>'+y+'</td>'
+    +'<td class="vdiv">'+dash+'</td>'
+    +'<td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td>'
+    +'</tr>';
+}).join('');
+</script>
+</body>
+</html>

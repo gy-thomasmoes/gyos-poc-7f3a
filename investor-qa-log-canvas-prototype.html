@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investor Q&A Log · Canvas prototype</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<link rel="stylesheet" href="gy-canvas.css">
+
+<!-- per-Deliverable canvas size (defaults live in gy-canvas.css) -->
+<style>.canvas{--cw:5200px;--ch:1600px}.world{--ww:4000px;--wh:470px}</style>
+</head>
+<body>
+
+<script>window.GYNAV={"active": "investor-qa", "arts": "investor"};</script>
+<script src="gy-nav.js"></script>
+<script src="gy-canvas.js"></script>
+<script src="gy-canvas-engine.js"></script>
+
+<div class="mainc">
+
+<div class="row1" style="position:relative">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
+  <span class="title" id="crumbTitle">Investor Q&A Log</span>
+  <span style="font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--amberbg);color:var(--amberd);margin-left:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span>
+  <span class="spacer"></span>
+  <div class="avwrap">
+    <div class="avstack" id="avstack" onclick="toggleTeam(event)" title="Team on this Deliverable"></div>
+    <div class="avpop" id="avpop"></div>
+  </div>
+  <span class="chip" id="editChip" style="display:none;cursor:default"><i class="ti ti-pencil"></i> You're editing the blueprint</span>
+  <button class="chip" id="editBtn" style="font-family:inherit"></button>
+  <span class="chip" onclick="toast('Share: invite team members to view or edit, or copy a link to this run')"><i class="ti ti-share-2"></i> Share</span>
+  <span class="chip" onclick="toast('Settings: blueprint versions, autonomy defaults, notification channels, access')" aria-label="Settings"><i class="ti ti-settings"></i></span>
+</div>
+
+<div class="floatL">
+  <span class="fpill" onclick="openAboutL()"><i class="ti ti-info-circle" style="font-size:16px;color:var(--ink2)"></i> About Deliverable</span>
+  <span class="fpill" id="toolsPill" onclick="openArtefactsL()"><i class="ti ti-template" style="font-size:16px;color:var(--ink2)"></i> Artefacts</span>
+</div>
+<div class="drawer" id="drawerL"></div>
+<div class="floatR" id="floatR"></div>
+<div class="floatBL" id="floatBL"></div>
+<div class="dvov" id="dvov" onclick="closeDocViewer()"></div>
+<div class="composer" id="composer">
+  <div class="cphead" onclick="toggleComposerMin()"><i class="ti ti-mail" style="font-size:15px"></i> Answer for investor · draft
+    <span class="cpx">
+      <span onclick="event.stopPropagation();toggleComposerMin()" title="Minimise"><i class="ti ti-minus" style="font-size:14px"></i></span>
+      <span onclick="event.stopPropagation();closeComposer()" title="Close"><i class="ti ti-x" style="font-size:14px"></i></span>
+    </span>
+  </div>
+  <div class="cprow"><span class="cplab">From</span><span class="cpchip"><span class="sav" style="background:#1D9E75;color:#fff;width:16px;height:16px;font-size:9px">K</span>Kishen &lt;kishen@greatyellow.earth&gt;</span></div>
+  <div class="cprow"><span class="cplab">To</span><span class="cpchip"><span class="sav" style="background:#0F6E56;color:#fff;width:16px;height:16px;font-size:9px">I</span>Investor contact</span></div>
+  <div class="cprow"><span class="cplab">Subject</span><span class="cpval" contenteditable spellcheck="false" style="outline:none;flex:1">Re: your due diligence questions</span></div>
+  <div class="cpbody" contenteditable spellcheck="false">
+    <p>Hi, thank you for your questions on the financial model.</p>
+    <p>Please find our approved answers below, each with a reference to the relevant dataroom section.</p>
+    <p>Anything unclear, just reply to this email.<br>Warm regards, Kishen</p>
+  </div>
+  <div class="cpbar">
+    <button class="cpsend" onclick="sendDraft()">Send</button>
+    <i class="ti ti-paperclip" onclick="toast('Attachments would ride along with the send')"></i>
+    <i class="ti ti-braces" onclick="toast('Merge fields were already filled by the run: project, contact, sender')"></i>
+  </div>
+</div>
+<div class="chapnav" id="chapnav"></div>
+
+<div class="main">
+  <div class="scroll">
+    <div class="canvas">
+      <div class="world">
+        <div id="bands"></div>
+        <svg id="edges" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible" aria-hidden="true">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C9C7C0"/></marker>
+            <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#639922"/></marker>
+            <marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EF9F27"/></marker>
+            <marker id="arrl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DBD9D2"/></marker>
+          </defs>
+          <g id="edgeg"></g>
+        </svg>
+        <div id="nodes"></div>
+      </div>
+    </div>
+  </div>
+  <div class="side"><div class="sidein" id="side"></div></div>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()"></div>
+<div class="qpop" id="qpop"></div>
+<div class="docm" id="docm" onclick="if(event.target===this)closeDoc()"></div>
+<div class="qed" id="qedit"></div>
+<div id="runmenu" style="position:fixed;display:none;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(31,31,29,.12);z-index:60;overflow:hidden;font-size:15px;min-width:230px"></div>
+<div class="toast" id="toast"></div>
+<div class="dtoasts" id="dtoasts"></div>
+
+<script>
+let MODE='run', SELECTED=null, TOOL='pointer', DRAGGED=false, RUN='preview';
+{const _m=new URLSearchParams(location.search).get('mode');
+ if(_m==='edit')MODE='design'; else if(_m==='run')MODE='run';
+ if(_m)history.replaceState(null,'',location.pathname);}
+function isPrev(){return MODE==='run'&&RUN==='preview'}
+function runMenu(e){
+  e.stopPropagation();
+  const m=document.getElementById('runmenu');
+  if(m.style.display==='block'){m.style.display='none';return;}
+  const r=e.currentTarget.getBoundingClientRect();
+  m.style.left=r.left+'px'; m.style.top=(r.bottom+8)+'px';
+  const item=(id,ic,t)=>`<div onclick="setRun('${id}')" style="display:flex;gap:10px;align-items:center;padding:10px 14px;cursor:pointer;${RUN===id?'background:#F8F5ED':''}" onmouseover="this.style.background='#F8F5ED'" onmouseout="this.style.background='${RUN===id?'#F8F5ED':'#fff'}'">
+    <span style="width:18px;text-align:center;flex:none">${ic.startsWith('ti-')?`<i class="ti ${ic}" style="font-size:16px;color:var(--ink2)"></i>`:ic}</span>
+    <span style="flex:1;white-space:nowrap">${t}</span>
+    ${RUN===id?'<i class="ti ti-check" style="font-size:15px;color:var(--greend)"></i>':''}</div>`;
+  m.innerHTML=item('spains','🪺','Spains Hall')
+    +item('riverallen','🌸','River Allen')
+    +item('denton','🦡','Denton Reserve')
+    +item('wash','🐚','The Wash')
+    +item('wylye','🐞','Wylye Valley')
+    +item('norfolk','🌼','West Norfolk Nature Network')
+    +`<div onclick="setRun('new')" style="display:flex;gap:10px;align-items:center;padding:11px 14px;cursor:pointer;border-top:1px solid var(--line);color:var(--ink2)" onmouseover="this.style.background='#F8F5ED'" onmouseout="this.style.background='#fff'">
+      <i class="ti ti-plus" style="font-size:15px"></i><span>Start a new run</span></div>`;
+  m.style.display='block';
+}
+document.addEventListener('click',()=>{const m=document.getElementById('runmenu');if(m)m.style.display='none';});
+function setRun(r){
+  document.getElementById('runmenu').style.display='none';
+  if(r==='new'){toast('This would open the pre-flight brief: pick the Programme, confirm the people, launch');return;}
+  if(r!=='preview'&&r!=='spains'){toast('Prototype: only the Spains Hall run has data. The others are set dressing.');return;}
+  if(DEMOT!==null||DEMOSNAP)stopDemo();
+  RUN=r;SELECTED=null;renderAll();
+}
+
+const BANDS=[
+  {x:16,  w:650,  t:'S · Set up the raise',           short:'S · Set up',    run:'not started', cur:true},
+  {x:686, w:1150, t:'A · Capture · Answer · Respond', short:'A · Answer',    run:'not started'},
+  {x:1856,w:440,  t:'C · Curate the library',         short:'C · Curate',    run:'not started'},
+  {x:2316,w:980,  t:'M · Milestones and close-out',   short:'M · Close-out', run:'not started'}
+];
+const CHAPNAV=true;
+
+const T={
+  human:{bg:'var(--amberbg)',fg:'var(--amberd)',ic:'ti-user'},
+  agent:{bg:'var(--bluebg)', fg:'var(--blued)', ic:'ti-sparkles'},
+  det:  {bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-settings-automation'},
+  data: {bg:'var(--tealbg)', fg:'var(--teald)', ic:'ti-file-import'},
+  gate: {bg:'var(--amberbg)',fg:'var(--amberd)',ic:'ti-arrows-split-2'},
+  term: {bg:'var(--greenbg)',fg:'var(--greend)',ic:'ti-player-play'},
+  park: {bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-moon'},
+  store:{bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-database'}
+};
+
+const ARTEFACTS=[
+ {id:'protocol',ic:'ti-file-text',name:'Q&A Protocol',node:'Initialise the Q&A Log',nid:'s1',ex:false,desc:'The one-pager agreed at setup: who coordinates, who approves, response SLAs, the tag taxonomy and the capture channels for this raise.',
+  prev:`<div class="paper"><h5>Q&A Protocol · {{raise}}</h5>
+  <div class="mrow"><span>Coordinator</span><span class="pmuted">Kishen · all questions in and out</span></div>
+  <div class="mrow"><span>Approver of record</span><span class="pmuted">Kishen</span></div>
+  <div class="mrow"><span>SLA · acknowledge</span><span class="pmuted">24h</span></div>
+  <div class="mrow"><span>SLA · routine / complex</span><span class="pmuted">48-72h / 5-7 days</span></div>
+  <div class="mrow"><span>Channels</span><span class="pmuted">email · dataroom · meetings</span></div></div>`},
+ {id:'logtpl',ic:'ti-table',name:'Q&A Log template',node:'Initialise the Q&A Log',nid:'s1',ex:false,desc:'One row per question: verbatim text, investor, stage, instrument, category, layer, status, SLA clock, dataroom reference, audit trail.',
+  prev:`<div class="paper"><h5>Question record</h5>
+  <div class="mrow"><span class="pmuted">Question · verbatim</span><span>What underpins the revenue assumptions?</span></div>
+  <div class="mrow"><span class="pmuted">Investor / stage</span><span>Esmée Fairbairn · DD</span></div>
+  <div class="mrow"><span class="pmuted">Category / layer</span><span>Financial · Programme</span></div>
+  <div class="mrow"><span class="pmuted">Status</span><span>Captured → Triaged → Drafted → Approved → Answered</span></div>
+  <div class="mfld">SLA clock · dataroom ref · audit trail per record</div></div>`},
+ {id:'library',ic:'ti-database',name:'Answer Library',node:'Seed the Answer Library',nid:'s2',ex:false,desc:'The curated Asset: canonical, deduplicated, approved answers, layered Portfolio / Programme / Investor. Lower layers inherit from higher ones. The Log feeds it; every raise reuses it.',
+  prev:`<div class="paper"><h5>Canonical entry</h5>
+  <div class="mrow"><span class="pmuted">Layer</span><span>Portfolio · reusable every deal</span></div>
+  <div class="mrow"><span class="pmuted">Answer</span><span>Approved wording, investor detail stripped</span></div>
+  <div class="mrow"><span class="pmuted">Cites</span><span>Dataroom index 3.2 · FM v4.1</span></div>
+  <div class="mrow"><span class="pmuted">Owner / review date</span><span>Kishen · monthly backstop</span></div>
+  <div class="mfld">Portfolio › Programme › Investor · lower inherits from higher</div></div>`},
+ {id:'elrfaq',ic:'ti-book',name:'ELR Investor FAQs',node:'Seed the Answer Library',nid:'s2',ex:true,desc:'The consolidated FAQ document from the ELR raise: effectively a curated Answer Library already. The seed for v1, ingested as programme-layer entries.',
+  prev:`<div class="paper"><h5>ELR Investor FAQs · excerpt</h5>
+  <div class="mrow"><span>Thesis and track record</span><span class="pmuted">portfolio candidate</span></div>
+  <div class="mrow"><span>Financial model assumptions</span><span class="pmuted">programme</span></div>
+  <div class="mrow"><span>Structuring and instruments</span><span class="pmuted">programme</span></div>
+  <div class="mrow"><span>Governance</span><span class="pmuted">portfolio candidate</span></div></div>`},
+ {id:'ddlogs',ic:'ti-files',name:'Per-investor DD logs',node:'Seed the Answer Library',nid:'s2',ex:true,desc:'The Esmée Fairbairn and Lloyds Banking Group Q&A logs: real questions answered and then distilled into the FAQ set. Back-filled as the first question records.',
+  prev:`<div class="paper"><h5>DD logs · two counterparties</h5>
+  <div class="mrow"><span>Esmée Fairbairn</span><span class="pmuted">answered · distilled</span></div>
+  <div class="mrow"><span>Lloyds Banking Group</span><span class="pmuted">answered · distilled</span></div>
+  <div class="mfld">Back-filled so the Log shows how answers became canonical</div></div>`},
+ {id:'matcher',ic:'ti-search',name:'Library matcher',node:'Triage and route',nid:'a2',ex:false,desc:'AI assistant that matches an incoming question against the Answer Library, resolving investor questions to portfolio answers wherever one exists.',
+  prev:`<div class="paper"><h5>Match · incoming question</h5>
+  <div class="mrow"><span>Best match</span><span class="mbar"><i style="width:85%"></i></span><span class="pmuted">0.85</span></div>
+  <div class="mrow"><span>Layer resolved</span><span>Portfolio</span></div>
+  <div class="mrow"><span>Proposal</span><span>Reuse with light adapt</span></div>
+  <div class="mfld">Stale entries blocked from reuse until cleared</div></div>`},
+ {id:'checker',ic:'ti-shield-check',name:'Consistency checker',node:'Review and approve',nid:'a4',ex:false,desc:'Diffs a draft answer against the current Financial Model and Information Memo versions before approval, so nothing drifts.',
+  prev:`<div class="paper"><h5>Draft vs sources</h5>
+  <div class="mrow"><span>Financial Model v4.1</span><span class="pmuted">consistent</span></div>
+  <div class="mrow"><span>Information Memo v2</span><span class="pmuted">consistent</span></div>
+  <div class="mrow"><span>Dataroom reference</span><span class="pmuted">present · 3.2</span></div>
+  <div class="mfld">Flags land with the approver, never auto-fixed</div></div>`},
+ {id:'packgen',ic:'ti-clipboard-check',name:'Q&A pack generator',node:'Compile the Q&A pack',nid:'m1',ex:false,desc:'Generates the milestone cut of the Log for one audience: per-investor DD pack, IC preparation pack, or BFP investor-evidence extract.',
+  prev:`<div class="paper"><h5>Pack variants</h5>
+  <div class="mrow"><span>Per-investor DD pack</span><span class="pmuted">filtered by investor</span></div>
+  <div class="mrow"><span>IC preparation pack</span><span class="pmuted">filtered by stage</span></div>
+  <div class="mrow"><span>BFP investor-evidence extract</span><span class="pmuted">engagement evidence</span></div></div>`},
+ {id:'stats',ic:'ti-chart-bar',name:'Close-out stats',node:'Close out the thread',nid:'closeout',ex:false,desc:'Per-raise numbers: questions asked, reuse rate, median turnaround. Reuse rate is the metric that proves the Library is working.',
+  prev:`<div class="paper"><h5>Raise stats</h5>
+  <div class="mrow"><span>Questions asked</span><span class="pmuted">—</span></div>
+  <div class="mrow"><span>Reuse rate</span><span class="mbar"><i style="width:60%"></i></span><span class="pmuted">—</span></div>
+  <div class="mrow"><span>Median turnaround</span><span class="pmuted">—</span></div>
+  <div class="mfld">Reuse rate should climb raise on raise</div></div>`}
+];
+const OWNERS=['Kishen','Alex','Tim','Deal lead','Modelling lead','Capital Lead'];
+const EXECS=['Human-led','Agentic AI','Fully Automated'];
+
+const NODES=[
+{id:'start',x:40,y:136,w:132,t:T.term,title:'Start',inert:true,
+ d:{sub:'Raise kicks off'},r:{sub:'',st:'done'},
+ info:'Terminals carry no work. The Log starts when a capital raise is launched for a Programme.'},
+
+{id:'s1',x:206,y:136,w:170,t:T.human,title:'Initialise the Q&A Log',
+ d:{sub:'Protocol, roles, SLAs, tags'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Human-led',
+  what:'Instance the Log from template for this raise. Done when the protocol is agreed: roles named, SLAs set, tag taxonomy seeded, capture channels defined.',
+  needs:[['Start','Raise launched']],produces:['Q&A Protocol','Empty Log instance'],
+  done:'After this: the raise has a live Q&A Log with named roles, agreed SLAs and a seeded tag taxonomy.',
+  steps:['AI Assistant drafts the protocol from the template','Kishen names coordinator, SMEs and approver','Kishen sets the SLA defaults','AI Assistant seeds tags from Demand Mapping themes and the dataroom index','Kishen agrees capture channels with the deal lead'],
+  arts:['protocol','logtpl'],
+  guard:'? SLA defaults to confirm: industry standard is 48-72h routine, 5-7 days complex'}},
+
+{id:'s2',x:446,y:136,w:180,t:T.agent,title:'Seed the Answer Library',
+ d:{sub:'Ingest the ELR material'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Agentic AI',
+  what:'Ingest existing material so the raise does not start cold. Done when the ELR FAQs are in as programme-layer canonical entries and the two investor DD logs are back-filled.',
+  needs:[['Initialise the Q&A Log','Empty Log instance']],produces:['Answer Library v1, seeded'],
+  done:'After this: the Answer Library holds the ELR answers as canonical entries, tagged by layer, each citing its dataroom reference.',
+  steps:['AI Assistant parses the ELR FAQs and the two DD logs','AI Assistant dedupes into candidate canonical entries','AI Assistant tags layer and category, attaches dataroom references','AI Assistant flags portfolio-layer candidates','Kishen reviews and approves the batch'],
+  arts:['elrfaq','ddlogs','library'],
+  guard:'Nothing enters the Library unapproved'}},
+
+{id:'a1',x:700,y:136,w:160,t:T.data,title:'Capture the question',
+ d:{sub:'Verbatim, tagged, within 24h'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Deal lead',exec:'Fully Automated',
+  what:'Log every incoming question verbatim within 24h, tagged investor, stage, instrument, source and date. The always-on loop starts here.',
+  needs:[['Seed the Answer Library','Live Log']],produces:['Question record · Captured'],
+  done:'After this: the question sits in the Log exactly as asked, tagged, with the SLA clock running.',
+  steps:['AI Assistant logs the verbatim text from email or dataroom','AI Assistant extracts asked questions from meeting transcripts','Deal lead confirms transcript extractions','AI Assistant acknowledges receipt and starts the SLA clock'],
+  arts:['logtpl'],
+  guard:'Never paraphrase at capture; the verbatim text is the audit record'}},
+
+{id:'a2',x:930,y:136,w:160,t:T.agent,title:'Triage and route',
+ d:{sub:'Match the Library, assign an SME'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Agentic AI',
+  what:'Match each question against the Library, classify and assign. Done when it has a category, a layer, a priority flag, and a reuse proposal or a named SME.',
+  needs:[['Capture the question','Question record']],produces:['Routed question · Triaged'],
+  done:'After this: every question either points at an existing canonical answer or sits with the right expert, with the routing confirmed by the coordinator.',
+  steps:['AI Assistant searches the Answer Library for a match','AI Assistant classifies category and layer','AI Assistant flags sensitivity and priority','AI Assistant proposes reuse, adapt or draft new','Kishen confirms the routing'],
+  arts:['matcher'],
+  guard:'All questions enter and leave through the coordinator. Stale Library entries are blocked from reuse.'}},
+
+{id:'a3',x:1160,y:136,w:160,t:T.agent,title:'Draft the answer',
+ d:{sub:'Cited, layered, confidence-flagged'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Routed SME',exec:'Agentic AI',
+  what:'Produce a cited draft. Done when it answers the question, cites its dataroom index reference, states its layer, and carries a confidence flag.',
+  needs:[['Triage and route','Routed question']],produces:['Draft answer · Drafted'],
+  done:'After this: a draft exists that the approver can check, with every figure traceable to the model or the dataroom.',
+  steps:['AI Assistant pre-drafts from the Library, IM, Financial Model and dataroom','Routed SME edits and owns the draft','SME checks with Nature or Trade where the question crosses teams','AI Assistant attaches the dataroom reference and confidence flag'],
+  arts:['library'],
+  guard:'No figure leaves inconsistent with the current Financial Model version; escalate rather than estimate'}},
+
+{id:'a4',x:1390,y:136,w:180,t:T.gate,title:'Review and approve',rows:[['approve','→ respond'],['rework','→ redraft']],
+ d:{sub:'The approval gate'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Human-led',
+  what:'The approval gate. Pass the draft for accuracy, consistency with IM and model, confidentiality and tone, or bounce it back with a reason.',
+  needs:[['Draft the answer','Draft answer']],produces:['Approve → Respond and log','Rework → back to draft'],
+  done:'After this: nothing reaches an investor unapproved, and the audit trail records who approved what, when.',
+  steps:['AI Assistant diffs the draft against the IM and Financial Model','Project team reviews where flagged','Kishen approves, or returns with a reason'],
+  arts:['checker'],
+  guard:'Nothing reaches an investor unapproved'}},
+
+{id:'a5',x:1640,y:136,w:170,t:T.det,title:'Respond and log',
+ d:{sub:'Send, close the record, stop the clock'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Deal lead',exec:'Fully Automated',
+  what:'Deliver the approved answer through the agreed channel and close the record. Done when the response date is logged and the SLA clock stops.',
+  needs:[['Review and approve','Approved answer']],produces:['Answered record','Running SLA stats'],
+  done:'After this: the investor has the answer, the record is closed, and the SLA stats keep score.',
+  steps:['AI Assistant sends via the agreed channel','AI Assistant attaches dataroom references rather than loose documents','AI Assistant logs date and channel, stops the clock'],
+  arts:['logtpl'],
+  guard:'Client-facing sends always need a human tap'}},
+
+{id:'c1',x:1890,y:136,w:180,t:T.agent,title:'Promote to the Library',
+ d:{sub:'Weekly sweep · dedupe and generalise'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Agentic AI',
+  what:'Weekly sweep. Every Answered record is linked to an existing canonical entry or promoted into a new one, deduplicated, generalised to the highest layer it can honestly hold.',
+  needs:[['Respond and log','Answered records']],produces:['Updated Answer Library','Promotion audit trail'],
+  done:'After this: the bank of ready answers has grown, and research time on the next question shrinks.',
+  steps:['AI Assistant clusters the recent answers','AI Assistant proposes promotions and merges','AI Assistant drafts canonical wording stripped of investor detail','AI Assistant flags layer upgrades, ELR answer to portfolio answer','Kishen approves the batch'],
+  arts:['library'],
+  guard:'Investor-specific detail never leaks into higher layers'}},
+
+{id:'library',x:1910,y:320,w:150,t:T.store,title:'Answer Library',inert:true,
+ d:{sub:'Asset · portfolio-wide'},r:{sub:'',st:'none',dim:true},
+ info:'The Answer Library is a referenced Asset, not owned by this Deliverable. The portfolio layer is shared across every raise; programme and investor layers are populated per deal. Lower layers inherit from higher ones: an investor question resolves to a portfolio answer wherever one exists.'},
+
+{id:'c2',x:2110,y:320,w:170,t:T.agent,title:'Freshness review ↺',
+ d:{sub:'On model or IM change'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Agentic AI',
+  what:'Triggered when the Financial Model or IM version changes, plus a monthly backstop. Every Library entry citing the changed source is re-verified or flagged stale.',
+  needs:[['Answer Library','Canonical entries']],produces:['Stale flags','Re-verified entries'],
+  done:'After this: no answer citing an outdated model version can be reused unnoticed.',
+  steps:['AI Assistant watches Financial Model and IM versions','AI Assistant flags every entry citing a changed source','Kishen clears or retires the flagged entries'],
+  arts:['library'],
+  guard:'Stale entries are blocked from reuse at Triage until cleared'}},
+
+{id:'m1',x:2340,y:136,w:180,t:T.agent,title:'Compile the Q&A pack',
+ d:{sub:'The milestone cut of the Log'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Agentic AI',
+  what:'The milestone artefact: a filtered, formatted cut of the Log for one audience. Variants: per-investor DD pack, IC preparation pack, BFP investor-evidence extract.',
+  needs:[['Promote to the Library','Curated Log']],produces:['Q&A pack'],
+  done:'After this: the audience has its pack, generated from the Log rather than rebuilt by hand.',
+  steps:['AI Assistant filters the Log by investor or stage','AI Assistant generates the pack from the template','Kishen sense-checks and shares'],
+  arts:['packgen'],
+  guard:'? Pack variants and formats to confirm with the champion'}},
+
+{id:'m2',x:2590,y:136,w:190,t:T.gate,title:'Raise concluded?',rows:[['next round','→ capture'],['concluded','→ close out']],
+ d:{sub:'Rounds repeat the same loop'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Human-led',
+  what:'Milestone gate. A clarification round runs the same capture-answer loop again; a concluded raise moves to close-out.',
+  needs:[['Compile the Q&A pack','Shared pack']],produces:['Next round → Capture','Concluded → Close out'],
+  done:'After this: either a new round of questions is expected, or the raise is done and the thread closes out.',
+  steps:['Kishen reviews where each investor stands','Kishen calls the next round or the close'],
+  arts:[],
+  guard:''}},
+
+{id:'closeout',x:2850,y:136,w:190,t:T.human,title:'Close out the thread',
+ d:{sub:'Archive, harvest, keep score'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Kishen',exec:'Human-led',
+  what:'When an investor completes, declines or goes quiet: archive the thread, log the outcome, harvest remaining good answers, note the lessons.',
+  needs:[['Raise concluded?','Concluded']],produces:['Archived thread','Library harvest','Close-out stats'],
+  done:'After this: the thread is archived, the Library has harvested everything worth keeping, and the reuse rate tells us whether the Library is working.',
+  steps:['AI Assistant harvests remaining answers to the Library','AI Assistant compiles the per-raise stats','Kishen logs outcome and lessons'],
+  arts:['stats','library'],
+  guard:''}},
+
+{id:'done',x:3110,y:136,w:150,t:T.term,title:'Complete',inert:true,
+ d:{sub:'Raise closed'},r:{sub:'',st:'pending',dim:true},
+ info:'The raise closes, the Log archives, and the Answer Library carries everything learned into the next deal.'}
+];
+
+const EDGES=[
+ {x1:172,y1:162,x2:206,y2:162,s:'lock'},
+ {x1:376,y1:162,x2:446,y2:162,s:'lock'},
+ {x1:626,y1:162,x2:700,y2:162,s:'lock'},
+ {x1:860,y1:162,x2:930,y2:162,s:'lock'},
+ {x1:1090,y1:162,x2:1160,y2:162,s:'lock'},
+ {x1:1320,y1:162,x2:1390,y2:162,s:'lock'},
+ {x1:1810,y1:162,x2:1890,y2:162,s:'lock'},
+ {x1:1980,y1:200,x2:1980,y2:318,s:'lock'},
+ {x1:2060,y1:352,x2:2104,y2:352,s:'lock',dash:true,from:'c2'},
+ {d:'M2195,318 V246 H1010 V216',s:'lock',dash:true,from:'c2'},
+ {x1:2070,y1:162,x2:2340,y2:162,s:'lock'},
+ {x1:2520,y1:162,x2:2590,y2:162,s:'lock'},
+ {x1:3040,y1:162,x2:3110,y2:162,s:'lock'}
+];
+
+const BRANCHES=[
+ {n:'a4',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H1600 V162 H1634`},
+ {n:'a4',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V300 H1240 V216`},
+ {n:'m2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V396 H780 V216`},
+ {n:'m2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H2812 V162 H2844`}
+];
+
+function portPos(id,i){
+  const nodeEl=document.querySelector(`.node[data-id="${id}"]`);
+  if(!nodeEl)return null;
+  const p=nodeEl.querySelectorAll('.bport')[i];
+  if(!p)return null;
+  let x=p.offsetWidth/2,y=p.offsetHeight/2,el=p;
+  while(el&&!(el.classList&&el.classList.contains('world'))){x+=el.offsetLeft;y+=el.offsetTop;el=el.offsetParent;}
+  return{x,y:y-5};
+}
+
+const DOT={
+ done:{bg:'var(--green)',ic:'ti-check'},
+ active:{bg:'var(--blue)',ic:'ti-clock'},
+ queue:{bg:'#3B82F6',ic:'ti-user'},
+ fail:{bg:'var(--red)',ic:'ti-x'}
+};
+
+function renderTabs(){
+  document.getElementById('crumbTitle').textContent = 'Investor Q&A Log';
+  document.querySelector('.row1').classList.toggle('editing', MODE==='design');
+  document.getElementById('editChip').style.display = MODE==='design'?'inline-flex':'none';
+  var tp=document.getElementById('toolsPill'); if(tp)tp.style.display = MODE==='design'?'':'none';
+  const eb=document.getElementById('editBtn');
+  if(MODE==='design'){
+    eb.innerHTML='<i class="ti ti-check"></i> Done';
+    eb.onclick=()=>setMode('run');
+  } else {
+    eb.innerHTML='<i class="ti ti-pencil"></i> Edit';
+    eb.onclick=()=>setMode('design');
+  }
+  document.getElementById('floatR').innerHTML = MODE==='run'
+    ? (isPrev()?`<span class="chip" style="cursor:default;color:var(--amberd);border-color:#FAC775">Preview · no real project</span>`:'')
+      +`<span class="fpill" onclick="openNode(null);sideActivity()"><i class="ti ti-history" style="font-size:16px"></i> Activity</span>`
+      +`<span class="fpill" onclick="openNode(null);sideContents()"><i class="ti ti-checklist" style="font-size:16px"></i> Contents</span>` : '';
+  demoBtnLabel();
+}
+
+function renderBands(){
+  document.getElementById('bands').innerHTML=BANDS.map(b=>
+    `<div class="band${MODE==='run'&&!isPrev()&&b.cur?' cur':''}" style="left:${b.x}px;width:${b.w}px"></div>
+     <div class="bandlab${MODE==='run'&&!isPrev()&&b.cur?' cur':''}" style="left:${b.x+24}px">${b.t}${MODE==='run'&&!isPrev()?`<small>${b.cur?'<span class="livdot"></span>':''}${b.run}</small>`:''}</div>`).join('');
+}
+
+function edgeTarget(e){
+  if(e.from)return NODES.find(n=>n.id===e.from);
+  if(e.x2==null)return null;
+  return NODES.find(n=>Math.abs(n.x-e.x2)<10||Math.abs(n.x+n.w/2-e.x2)<10);
+}
+function edgeS(e){
+  const t=edgeTarget(e);
+  if(!t)return 'lock';
+  const st=t.r.st;
+  if(e.from)return st==='done'?'done':(st==='queue'||st==='active')?'hot':'lock';
+  return (st==='done')?'done':(st==='active'||st==='queue'||st==='fail')?'done':'lock';
+}
+function branchS(b){
+  const g=NODES.find(n=>n.id===b.n);
+  if(!g)return 'lock';
+  if(g.r.st==='fail'&&g.r.rowhot===b.i)return 'hot';
+  if(g.r.st==='done'&&(g.r.rowhot??0)===b.i)return 'done';
+  return 'lock';
+}
+function renderEdges(){
+  const col=s=>MODE==='design'?'#C9C7C0':isPrev()?'#DBD9D2':(s==='done'?'#639922':s==='hot'?'#EF9F27':'#DBD9D2');
+  const mk=s=>MODE==='design'?'url(#arr)':isPrev()?'url(#arrl)':(s==='done'?'url(#arrg)':s==='hot'?'url(#arra)':'url(#arrl)');
+  const branchPaths=BRANCHES.map(b=>{
+    const p=portPos(b.n,b.i);
+    if(!p)return '';
+    const s=(MODE==='run'&&!isPrev())?branchS(b):b.s;
+    const w=MODE==='run'&&s==='hot'?2:1.5;
+    return `<path d="${b.mk(Math.round(p.x),Math.round(p.y))}" fill="none" stroke="${col(s)}" stroke-width="${w}" marker-end="${mk(s)}"/>`;}).join('');
+  document.getElementById('edgeg').innerHTML=EDGES.map(e=>{
+    const s=(MODE==='run'&&!isPrev())?edgeS(e):e.s;
+    const w=MODE==='run'&&(s==='done'||s==='hot')?2:1.5;
+    const dash=e.dash?'stroke-dasharray="5 4"':'';
+    if(e.d){
+      const d=(MODE==='run'&&e.dRun)?e.dRun:e.d;
+      return `<path d="${d}" fill="none" stroke="${col(s)}" stroke-width="${w}" ${dash} marker-end="${mk(s)}"/>`;
+    }
+    return `<line x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" stroke="${col(s)}" stroke-width="${w}" ${dash} marker-end="${mk(s)}"/>`;}).join('')+branchPaths;
+}
+
+function renderNodes(){
+  document.getElementById('nodes').innerHTML=NODES.map(n=>{
+    const m=isPrev()?{sub:n.d.sub,dim:true,st:'pending'}
+      :(MODE==='design'?n.d:{...n.r,sub:(n.d.sub||'')+(n.r.who?' · '+n.r.who:'')});
+    const dim=MODE==='run'&&m.dim?' dim':'';
+    const sel=SELECTED===n.id?' sel':'';
+    const outline=MODE==='run'&&m.outline?`outline:2px solid ${m.outline};`:'';
+    const badge=(MODE==='run'&&m.badge)?`<span class="bd" style="background:${m.badge.bg};color:${m.badge.fg}">${m.badge.ic?`<i class="ti ${m.badge.ic}"></i>`:''}${m.badge.t}</span>`:'';
+    const rows=n.rows?n.rows.map((r,i)=>{
+      let c='var(--blue)', tc='var(--ink2)';
+      if(MODE==='run'){
+        if(isPrev()){c='var(--line2)';tc='var(--ink3)';}
+        else if(n.r.rowhot===i){c='var(--amber)';tc='var(--amberd)';}
+        else if(n.r.st==='fail'||n.r.st==='pending'){c='var(--line2)';tc='var(--ink3)';}
+      }
+      return `<div class="brow" style="color:${tc}"><span>${r[0]}</span><span class="bport" style="border-color:${c}"><span style="background:${c}"></span></span></div>`;}).join(''):'';
+    const dot=MODE==='run'&&DOT[m.st]?`<span class="dot" style="background:${DOT[m.st].bg}"><i class="ti ${DOT[m.st].ic}"></i></span>`:'';
+    const portDone=MODE==='run'&&m.st==='done'?' done':'';
+    const add=n.addable?`<span class="addwrap"><span class="addb" onclick="event.stopPropagation();toast('Add connecting block: extend the blueprint with a next node, e.g. a feedback loop to the client')"><i class="ti ti-plus" style="padding:0"></i></span><span class="addtip">Add connecting block</span></span>`:'';
+    const storeDone=n.id==='store'&&MODE==='run'&&!isPrev()&&m.st==='done';
+    const fade=storeDone&&STOREFADE?' okfade':'';
+    const nflash=NODEFLASH===n.id?' nflash':'';
+    const icBg=storeDone?'rgba(255,255,255,.14)':n.t.bg, icFg=storeDone?'#F4EFE9':n.t.fg;
+    return `<div class="node${n.inert&&!n.info?' inert':''}${dim}${sel}${storeDone?' storedone':''}${fade}${nflash}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;${outline}" onclick="openNode('${n.id}')">
+      <div class="hd"><div class="ic" style="background:${icBg};color:${icFg}"><i class="ti ${n.t.ic}"></i></div>
+      <div class="nt" style="padding-top:4px">${n.title}</div></div>
+      ${m.sub?`<div class="ns" style="margin-top:7px">${m.sub}</div>`:''}
+      ${badge}${rows}${dot}${n.rows?'':`<span class="port${portDone}"></span>`}${add}${storeDone?`<span class="okchk"><i class="ti ti-check"></i></span>`:''}</div>`;}).join('');
+  STOREFADE=false; NODEFLASH=null;
+}
+
+function dhead(icon,tint,fg,title,sub){
+  return `<div class="sh">
+  <div class="ic" style="background:${tint};color:${fg}"><i class="ti ${icon}"></i></div>
+  <div style="flex:1"><div class="nt">${title}</div>${sub?`<div class="ns">${sub}</div>`:''}</div>
+  <button class="x" onclick="closeDrawer()" aria-label="Close"><i class="ti ti-x"></i></button></div>`;
+}
+function closeDrawer(){document.getElementById('drawerL').style.display='none'}
+function openAboutL(){
+  const d=document.getElementById('drawerL');
+  const chap=(n,t,body,det)=>`
+  <div style="margin-top:24px">
+    <span class="dnum" style="margin:0">${n}</span>
+    <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:10px">${t}</div>
+    <div class="pt" style="margin-top:4px">${body}</div>
+    <div style="background:#F8F5ED;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;margin-top:10px;font-size:14.5px;color:var(--ink2);line-height:1.7">${det}</div>
+  </div>`;
+  d.innerHTML=dhead('ti-info-circle','var(--graybg)','var(--grayd)','About Deliverable','')
+  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">The Investor Q&A Log is the Capital team's single source of truth for the questions investors ask and the approved answers Great Yellow gives.</div>
+  <div style="height:1px;background:var(--line);margin:18px 0 2px"></div>
+  ${chap(1,'Q&A Log',
+    'The live feeder. One per capital raise. Captures every question verbatim as it comes in and tracks it through triage, drafting, approval and response.',
+    '<b>Question record</b> · verbatim text, investor, stage, instrument, source, date<br><b>Status</b> · Captured, Triaged, Drafted, Approved, Answered<br><b>SLA clock</b> · 24h acknowledge, 48-72h routine, 5-7d complex')}
+  ${chap(2,'Answer Library',
+    'The curated, deduplicated, approved answers the team draws from. A referenced Asset: the Log feeds it, every raise reuses it.',
+    '<b>Canonical entry</b> · approved wording, owner, review date, dataroom reference<br><b>Promotion</b> · good answers promoted weekly, so the bank grows and research time per deal shrinks')}
+  ${chap(3,'Layers',
+    'Answers are organised by layer so the right level of reuse is obvious. Lower layers inherit from higher ones.',
+    '<b>Portfolio</b> · thesis, team, governance, track record · shared across every deal<br><b>Programme</b> · one project, its financial model and structuring<br><b>Investor</b> · one counterparty, a particular concern')}
+  <div style="height:1px;background:var(--line);margin:22px 0 0"></div>
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Why it exists</div>
+  <div class="pt" style="margin-top:4px">Without it, answers get rebuilt from scratch each deal, sit in scattered inboxes and decks, drift from the Financial Model and Information Memo, and vary by whoever replies. Used at every touchpoint from early engagement through IC, site visits and due diligence. Unlike Demand Mapping this is not a run-once pipeline: it is an always-on loop that runs for the length of a raise.</div></div>`;
+  d.style.display='block';
+}
+const ALIST=[
+ {id:'protocol',ch:1,name:'Q&A Protocol',sub:'one-pager',ic:'ti-file-text',bg:'#378ADD',fg:'#fff'},
+ {id:'logtpl',ch:1,name:'Q&A Log template',sub:'structured record',ic:'ti-table',bg:'#F5C64B',fg:'#2C2410'},
+ {id:'elrfaq',ch:1,name:'ELR Investor FAQs',sub:'seed content',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
+ {id:'ddlogs',ch:1,name:'Per-investor DD logs',sub:'seed content',ic:'ti-files',bg:'#1D9E75',fg:'#fff'},
+ {id:'matcher',ch:2,name:'Library matcher',sub:'AI assistant',ic:'ti-search',bg:'#EF9F27',fg:'#412402'},
+ {id:'checker',ch:2,name:'Consistency checker',sub:'AI assistant',ic:'ti-shield-check',bg:'#D4537E',fg:'#fff'},
+ {id:'library',ch:3,name:'Answer Library',sub:'Asset · portfolio-wide',ic:'ti-database',bg:'#639922',fg:'#fff'},
+ {id:'packgen',ch:4,name:'Q&A pack generator',sub:'document generator',ic:'ti-clipboard-check',bg:'#378ADD',fg:'#fff'},
+ {id:'stats',ch:4,name:'Close-out stats',sub:'summary record',ic:'ti-chart-bar',bg:'#5DCAA5',fg:'#04342C'}
+];
+const ACH={1:'S · Set up',2:'A · Answer',3:'C · Curate',4:'M · Close-out'};
+function openArtefactsL(){
+  const d=document.getElementById('drawerL');
+  const row=a=>`<div class="arow" style="background:${a.bg}12;border-color:${a.bg}4D" onclick="closeDrawer();openArtefact('${a.id}')">
+    <span class="aic" style="background:${a.bg};color:${a.fg}"><i class="ti ${a.ic}"></i></span>
+    <span style="flex:1">${a.name}</span>
+    <i class="ti ti-chevron-right chvw"></i></div>`;
+  const groups=[1,2,3,4].map(c=>
+    `<div class="pl">${ACH[c]}</div>`+ALIST.filter(a=>a.ch===c).map(row).join('')).join('');
+  d.innerHTML=dhead('ti-template','var(--graybg)','var(--grayd)','Artefacts','')
+  +`<div class="sbody">`+groups+`</div>`;
+  d.style.display='block';
+}
+
+const NEXT={
+ s1:[['','s2']], s2:[['','a1']], a1:[['','a2']], a2:[['','a3']], a3:[['','a4']],
+ a4:[['approve','a5'],['rework','a3']],
+ a5:[['','c1']],
+ c1:[['','m1']],
+ c2:[['informs','a2']],
+ m1:[['','m2']],
+ m2:[['next round','a1'],['concluded','closeout']],
+ closeout:[['','done']]
+};
+function nextRows(id){
+  const nx=NEXT[id]||[];
+  if(!nx.length)return `<div class="nsmall">End of the flow.</div>`;
+  return nx.map(([lab,nid])=>{const t=NODES.find(x=>x.id===nid);
+    return `<button class="mbx" onclick="event.stopPropagation();openNode('${nid}')">
+      <span class="ic" style="width:22px;height:22px;border-radius:6px;background:${t.t.bg};color:${t.t.fg}"><i class="ti ${t.t.ic}" style="font-size:12px"></i></span>
+      ${lab?`<span style="color:var(--ink3);font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${lab}</span>`:''}
+      ${t.title}<i class="ti ti-chevron-right" style="margin-left:auto;color:var(--ink3)"></i></button>`;}).join('');
+}
+
+function setSide(visible){
+  document.querySelector('.side').classList.toggle('hidden',!visible);
+  const tb=document.querySelector('.toolbar'); if(tb)tb.classList.toggle('full',!visible);
+  document.getElementById('floatR').style.visibility = visible?'hidden':'visible';
+}
+function renderChapnav(){
+  const c=document.getElementById('chapnav');
+  if(!CHAPNAV){c.style.display='none';return;}
+  const ends=['s2','a5','c1','done'];
+  const doneArr=ends.map(id=>{const n=NODES.find(x=>x.id===id);return n&&n.r.st==='done';});
+  const firstOpen=doneArr.indexOf(false);
+  const key=MODE+RUN+doneArr.join('')+firstOpen;
+  if(c.dataset.key===key)return;
+  c.dataset.key=key;
+  c.innerHTML=BANDS.map((b,i)=>{
+    const live=MODE==='run'&&!isPrev();
+    const isDone=live&&doneArr[i];
+    const cur=live&&!isDone&&i===firstOpen;
+    const badge=isDone?'<span class="chk"><i class="ti ti-check"></i></span>':cur?'<span class="cur"></span>':'';
+    return `<span class="${cur?'curlab':''}${isDone?' donelab':''}" onclick="gotoChapter(${i})">${badge}${b.short}</span>`;}).join('');
+}
+let Z=1;
+function gotoChapter(i){
+  const b=BANDS[i], sc=document.querySelector('.scroll');
+  const target=600+(b.x+b.w/2)*Z - sc.clientWidth/2;
+  sc.scrollTo({left:target,behavior:'smooth'});
+}
+const AVA={
+ agent:{ic:'ti-sparkles',bg:'#1F1F1D',fg:'#F9DD5A',name:'AI Assistant'},
+ caitlin:{txt:'C',bg:'#1D9E75',fg:'#fff',name:'Kishen'},
+ client:{txt:'J',bg:'#0F6E56',fg:'#fff',name:'J. Ruggles'}
+};
+const ACTIVITY=[
+ ['1 JULY 2026',[
+  ['09:01','caitlin','<span class="mut">started with the</span> <b>Demand Mapping Deliverable</b> <span class="mut">for Spains Hall</span>'],
+  ['09:02','agent','<span class="mut">started</span> <b>Run #1</b> <span class="mut">from blueprint v1.0, cautious mode, Kishen owning</span>'],
+  ['09:02','agent','<span class="mut">minted the</span> <b>questionnaire</b> <span class="mut">for J. Ruggles, 6 of 14 fields pre-filled</span>'],
+  ['09:03','agent','<span class="mut">drafted the</span> <b>kick-off brief</b> <span class="mut">and emailed it to Kishen</span>'],
+  ['10:00','caitlin','<span class="mut">held the</span> <b>kick-off call</b> <span class="mut">· 40 min</span>',
+   'Scope confirmed: 400 ha floodplain meadow, nature market income. The 14-item input list agreed with James.'],
+  ['14:18','caitlin','<span class="mut">approved the</span> <b>questionnaire email</b>'],
+  ['14:20','agent','<span class="mut">sent it · acknowledged 15:02 ·</span> <b>wait clock started</b>']]],
+ ['3 JULY 2026',[
+  ['11:34','client','<span class="mut">submitted</span> <b>6 of 14 items</b> <span class="mut">through the questionnaire</span>']]],
+ ['6 JULY 2026',[
+  ['09:00','agent','<span class="mut">sent the</span> <b>first chase</b> <span class="mut">· friendly tone, as scheduled</span>']]],
+ ['8 JULY 2026',[
+  ['08:52','client','<span class="mut">sent the</span> <b>tenure map</b> <span class="mut">by email reply instead of the questionnaire</span>'],
+  ['08:53','agent','<span class="mut">filed it, mapped to the checklist ·</span> <b>12 of 14</b>']]],
+ ['9 JULY 2026',[
+  ['09:02','agent','<span class="mut">ran the</span> <b>completeness check</b> <span class="mut">· failed · gaps: site boundary, grazing agreement</span>'],
+  ['09:05','agent','<span class="mut">drafted the</span> <b>gap reminder</b> <span class="mut">· in Gmail, Kishen to review</span>',
+   'Hi James, thanks for everything so far, 12 of 14 items are in and looking great. Two things would unlock the next step: the site boundary shapefile and the grazing agreement for the east parcels.']]]
+];
+const DOCV={
+ mgmt:{ic:'ti-file-text',name:'estate_management_plan.pdf',body:`
+  <h2>Estate Management Plan</h2><div class="dvsub">Evenlode Landscape Recovery · prepared by the estate · 38 pages</div>
+  <h3>1 · Vision</h3><p>Restore the estate to good ecological condition over the next decade: cleaner water, lower flood risk, richer habitat, and a durable income from nature markets alongside continued farming.</p>
+  <h3>2 · The land today</h3><p>Six parcels across 400 ha of mixed arable, pasture and riparian corridor. Grazing is central to the current business and should continue on enrolled parcels.</p>
+  <h3>3 · Planned interventions</h3><p>Riparian buffer planting along the main watercourse, two wetland creation areas, leaky woody dams, hedgerow restoration, and reduced inputs on enrolled parcels. Phased from spring 2027.</p>`},
+ sfi:{ic:'ti-file-text',name:'sfi_agreement_2024.pdf',body:`
+  <h2>SFI Agreement 2024</h2><div class="dvsub">Sustainable Farming Incentive · agreement ref SFI-24-8841 · 12 pages</div>
+  <h3>Parties and term</h3><p>The estate and Defra. Three-year term from March 2024, covering herbal leys, hedgerow management and integrated pest management actions.</p>
+  <h3>Enrolled parcels</h3><p>Parcels 1 to 4. Actions on these parcels must be compatible with any new nature-market commitments; stacking rules apply.</p>
+  <h3>Payments</h3><p>Quarterly payments against completed actions, subject to annual declaration.</p>`},
+ tenure:{ic:'ti-map',name:'tenure_map.pdf',body:`
+  <h2>Tenure Map</h2><div class="dvsub">Six parcels · five owned, one tenanted · received Wed 08:52</div>
+  <svg viewBox="0 0 560 260" style="width:100%;margin:10px 0 16px" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="160" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="90" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 1 · owned</text>
+    <rect x="180" y="10" width="180" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="270" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 2 · owned</text>
+    <rect x="370" y="10" width="180" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="460" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 3 · owned</text>
+    <rect x="10" y="140" width="250" height="110" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="135" y="199" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 4 · owned</text>
+    <rect x="270" y="140" width="140" height="110" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="340" y="199" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 5 · owned</text>
+    <rect x="420" y="140" width="130" height="110" rx="8" fill="#FBEFD8" stroke="#D9A23F"/><text x="485" y="192" text-anchor="middle" font-size="13" fill="#8A5A10">Parcel 6 · east</text><text x="485" y="210" text-anchor="middle" font-size="13" fill="#8A5A10">tenanted</text>
+  </svg>
+  <p>The east parcel is tenanted; selling outcomes there depends on the grazing agreement (still awaited). All other parcels are held freehold with no prior commitments beyond SFI 2024.</p>`}
+};
+function openDocViewer(id){
+  const d=DOCV[id];
+  const o=document.getElementById('dvov');
+  o.innerHTML=`<div class="dvbox" onclick="event.stopPropagation()">
+    <div class="dvhead"><i class="ti ${d.ic}"></i>${d.name}
+      <span class="dvx" onclick="closeDocViewer()"><i class="ti ti-x"></i></span></div>
+    <div class="dvpage">${d.body}</div>
+    <div class="dvfoot">Prototype preview · the original file lives in the run's document store</div>
+  </div>`;
+  o.classList.add('open');
+}
+function closeDocViewer(){document.getElementById('dvov').classList.remove('open');}
+function closeDoc(){document.getElementById('docm').style.display='none';}
+function openContentsDoc(){
+  const d=document.getElementById('docm');
+  const val=(label,text,prov,opts)=>{opts=opts||{};
+    const chip=opts.inf?`<span class="pv" style="background:var(--bluebg);color:var(--blued)">AI Assistant's reading · please check</span>`
+      :`<span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span>`;
+    return `<div class="dfl">${label}${opts.nw?' <span class="pv" style="background:var(--greenbg);color:var(--greend)">new</span>':''}</div>
+    <div class="dp">${text}</div><div class="dprov">${prov} ${chip}</div>`;};
+  const ghostval=(label,note)=>`<div class="dfl" style="color:var(--ink3)">${label} <span class="pv" style="background:var(--amberbg);color:var(--amberd)">missing</span></div>
+    <div style="padding:4px 0 2px"><div class="gline" style="display:block;max-width:88%;margin-bottom:8px"></div><div class="gline" style="display:block;max-width:55%"></div></div>
+    <div class="dprov">${note}</div>`;
+  const sec=(num,title,body)=>`<div class="dsec"><div class="dh2"><span class="dnum">${num}</span>${title}</div>${body}</div>`;
+  let body;
+  body=`<div class="dchips"><span class="dchip"><b>Status</b> draft blueprint</span><span class="dchip"><b>Runs</b> none yet</span><span class="dchip"><b>Champion</b> Kishen</span></div>`
+  +sec(1,'Protocol and setup',`<div class="dghost">Roles, SLAs, tag taxonomy and capture channels for the raise.<br>Written by Initialise the Q&A Log and Seed the Answer Library.</div>`)
+  +sec(2,'Q&A Log',`<div class="dghost">One row per question: verbatim text, tags, status, SLA clock, dataroom reference, audit trail.<br>Written by the Capture, Triage, Draft, Approve and Respond loop.</div>`)
+  +sec(3,'Answer Library',`<div class="dghost">Canonical approved answers, layered Portfolio / Programme / Investor.<br>Seeded from the ELR material, grown by Promote to the Library, kept honest by the Freshness review.</div>`)
+  +sec(4,'Packs and close-out',`<div class="dghost">Per-investor DD packs, IC preparation packs, BFP extracts, and the close-out stats.<br>Written by Compile the Q&A pack and Close out the thread.</div>`);
+  d.innerHTML=`<div class="dclose" onclick="closeDoc()"><i class="ti ti-x" style="font-size:17px;color:var(--ink2)"></i></div>
+  <div class="docwrap">
+    <div class="dlab">Investor Q&A Log · Contents · Draft</div>
+    <div class="dtitle">Untitled raise</div>
+    <div class="dsub">The Log and Library this blueprint will assemble, one instance per capital raise.</div>
+    ${body}
+  </div>`;
+  d.style.display='block';
+}
+
+const STEPARTS={
+ s1:{0:['protocol'],3:['logtpl']},
+ s2:{0:['elrfaq','ddlogs'],4:['library']},
+ a1:{0:['logtpl']},
+ a2:{0:['matcher']},
+ a3:{0:['library']},
+ a4:{0:['checker']},
+ a5:{2:['logtpl']},
+ c1:{2:['library']},
+ c2:{1:['library']},
+ m1:{1:['packgen']},
+ closeout:{1:['stats']}
+};
+const STEPLOG={};
+const STEPWHO={
+ s1:['agent','human','human','agent','human'],
+ s2:['agent','agent','agent','agent','human'],
+ a1:['agent','agent','human','agent'],
+ a2:['agent','agent','agent','agent','human'],
+ a3:['agent','human','human','agent'],
+ a4:['agent','human','human'],
+ a5:['det','det','det'],
+ c1:['agent','agent','agent','agent','human'],
+ c2:['agent','agent','human'],
+ m1:['agent','agent','human'],
+ m2:['human','human'],
+ closeout:['agent','agent','human']
+};
+function initSteps(){
+  NODES.forEach(n=>{
+    if(!n.form||typeof (n.form.steps||[])[0]!=="string")return;
+    const w=STEPWHO[n.id]||[], a=STEPARTS[n.id]||{}, l=STEPLOG[n.id]||{};
+    n.form.steps=n.form.steps.map((t,i)=>({
+      t, who:w[i]||'agent', ownerN:'Kishen',
+      arts:a[i]?[...a[i]]:[], log:l[i]||null,
+      inst:'', guard:'', prod:''
+    }));
+  });
+  const g=(id,i,k,v)=>{const n=NODES.find(x=>x.id===id);if(n&&n.form.steps[i])n.form.steps[i][k]=v;};
+  g('a1',2,'ownerN','Deal lead');
+  g('a3',1,'ownerN','Routed SME');
+  g('a3',2,'ownerN','Routed SME');
+  g('a5',0,'guard','Client-facing sends always need a human tap');
+  g('a1',0,'inst','Log the question exactly as asked, from email, the dataroom Q&A module, or a meeting transcript. Tag investor, stage, instrument, source and date.');
+}
+
+
+function sendDraft(){
+  closeComposer();
+  toast('Prototype: approved answers would be sent and logged against the question record');
+}
+function openComposer(){
+  const c=document.getElementById('composer');
+  c.classList.remove('min');
+  c.classList.add('open');
+}
+function closeComposer(){document.getElementById('composer').classList.remove('open');}
+function toggleComposerMin(){document.getElementById('composer').classList.toggle('min');}
+function openNode(id){
+  if(id===null){SELECTED=null;renderNodes();return;}
+  if(TOOL==='hand'||DRAGGED)return;
+  const n=NODES.find(x=>x.id===id);
+  if(n.inert&&!n.info)return;
+  SELECTED=id;renderNodes();setSide(true);sideNode(n);
+}
+
+function openArtefact(id){
+  const a=ARTEFACTS.find(x=>x.id===id);
+  const m=document.getElementById('modal');
+  m.innerHTML=`<div class="mcard">
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="ic" style="background:${a.ex?'var(--greenbg)':'var(--amberbg)'};color:${a.ex?'var(--greend)':'var(--amberd)'}"><i class="ti ${a.ic}"></i></div>
+      <div style="flex:1"><div class="nt">${a.name}</div><div class="ns">${a.ex?'● in use':'✦ concept'}</div></div>
+      <button class="x" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="pl">What it is</div><div class="pt">${a.desc}</div>
+    <div class="pl">Preview${a.ex?'':' · concept sketch'}</div>
+    <div class="prev">${a.prev}</div>
+    <div class="pl">Used by</div>
+    <button class="abtn" onclick="closeModal();openNode('${a.nid}')"><i class="ti ti-topology-star-3" style="color:var(--ink2)"></i> ${a.node}<i class="ti ti-chevron-right" style="margin-left:auto;color:var(--ink3)"></i></button>
+    ${a.id==='packgen'
+      ?`<button class="cta" onclick="location.href='investor-qa-pack-example.html'">Open example Q&A pack · the Output</button>`
+      :`<button class="cta" onclick="toast('Prototype: the artefact editor is not wired for this Deliverable yet')">Open in artefact editor</button>`}
+  </div>`;
+  m.style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+
+function closeQEdit(){document.getElementById('qedit').style.display='none';qPopClose();}
+let QSEL=1;
+const QS=[
+ {t:'Welcome screen',schema:null,module:'Questionnaire shell',shared:true,req:null,def:'The landing moment. Sets tone and explains Share, We draft, You confirm.'},
+ {t:'Multiple choice',schema:'identity.jurisdiction',module:'Project identity',shared:true,req:true},
+ {t:'Long text',schema:'identity.vision_mission',module:'Project identity',shared:true,req:true},
+ {t:'Repeating list',schema:'identity.key_interventions',module:'Project identity',shared:true,req:true},
+ {t:'File upload',schema:'assets.manifest',module:'Evidence and assets',shared:true,req:true,pre:'Extraction pipeline reads the files'},
+ {t:'Table input',schema:'commercial.land_parcels',module:'Commercial and custodianship',shared:true,req:true},
+ {t:'Multiple choice',schema:'commercial.existing_agreements',module:'Commercial and custodianship',shared:true,req:false},
+ {t:'Long text',schema:'commercial.client_constraints',module:'Commercial and custodianship',shared:true,req:false},
+ {t:'Long text',schema:'demand.buyer_conversations',module:'Demand specifics',shared:false,req:false},
+ {t:'End screen',schema:null,module:'Questionnaire shell',shared:true,req:null,def:'Confirms receipt and tells the client what happens next.'}
+];
+function qSettings(i){
+  const s=QS[i];
+  let h=`<div class="qlab">Question type</div>
+  <div class="qfield" style="display:flex;justify-content:space-between;align-items:center">${s.t} <i class="ti ti-chevron-down" style="color:#8A887F"></i></div>`;
+  if(s.req!==null){
+    h+=`<div class="qlab">Settings</div>
+    <div style="display:flex;gap:9px;font-size:14px;align-items:flex-start;margin-top:4px">
+    <i class="ti ${s.req?'ti-square-check':'ti-square'}" style="color:${s.req?'#5DCAA5':'#8A887F'};font-size:17px"></i>
+    <span>${s.req?'Required':'Optional'}<br><span class="qnote">${s.req?'counts toward the completeness rule':'does not block the Input complete? gate'}</span></span></div>`;
+  }
+  if(s.schema){
+    h+=`<div class="qlab">Maps to schema</div><span class="qtok">{ ${s.schema} }</span>
+    <div class="qnote">Traced to the Project context questionnaire. The Input complete? gate reads this binding.</div>
+    <div class="qlab">Pre-fill</div>
+    <div class="qfield" style="display:flex;justify-content:space-between;align-items:center">${s.pre||'Pre-fill from Data Platform'} <i class="ti ti-chevron-down" style="color:#8A887F"></i></div>`;
+  }
+  h+=`<div class="qlab">Module</div>
+  <div class="qfield" style="display:flex;justify-content:space-between;align-items:center">${s.module} <span style="font-size:12px;background:${s.shared?'#26303E':'#3E3226'};color:${s.shared?'#8FB8EF':'#EFC27B'};border-radius:999px;padding:2px 9px">${s.shared?'shared':'custom'}</span></div>`;
+  h+=`<div class="qlab">This definition</div>
+  <div class="qnote">${s.def||'From Library: Questionnaire · white label module v1. Drafted by the AI Assistant from Send Questionnaire › Needs and the 14 must-have items.'}</div>`;
+  return h;
+}
+const QTITLES=['Welcome','Where is the project?','What does success look like for the land?','What are the key interventions?','Drop in any plans, surveys or agreements','Who owns and manages each parcel?','Any existing schemes on the land?','Any red lines we should know about?','Any buyer conversations already?','That is everything for now'];
+function qPopClose(){document.getElementById('qpop').style.display='none'}
+function qSel(i,el){
+  QSEL=i;
+  document.querySelectorAll('#qedit .qitem[data-qi]').forEach(x=>x.classList.toggle('on',+x.dataset.qi===i));
+  if(!el)return;
+  const p=document.getElementById('qpop');
+  p.innerHTML=`<div style="display:flex;align-items:center;gap:9px">
+    <span class="qnum">${i===0?'<i class="ti ti-hand-stop" style="font-size:12px"></i>':(i===9?'<i class="ti ti-flag" style="font-size:12px"></i>':i)}</span>
+    <span style="flex:1;font-weight:600;font-size:15px">${QTITLES[i]}</span>
+    <i class="ti ti-x" style="cursor:pointer;color:#8A887F;font-size:16px" onclick="qPopClose()"></i></div>`
+    +qSettings(i);
+  const r=el.getBoundingClientRect();
+  let top=Math.max(116,Math.min(r.top-8,window.innerHeight-440));
+  p.style.left=(r.right+16)+'px'; p.style.top=top+'px';
+  p.style.display='block';
+}
+function qChatSend(txt){
+  const log=document.getElementById('qchatlog');
+  if(!log||!txt)return;
+  log.insertAdjacentHTML('beforeend',`<div class="qbub me">${txt}</div>`);
+  setTimeout(()=>{
+    log.insertAdjacentHTML('beforeend',`<div class="qbub ai">Understood. In the real product I would edit the questionnaire definition, show you the change in the preview, and log it. This prototype stops here.</div>`);
+    log.scrollTop=log.scrollHeight;
+  },500);
+  log.scrollTop=log.scrollHeight;
+}
+function openQEdit(){
+  closeDrawer();closeModal();
+  const q=document.getElementById('qedit');
+  const li=(i,n,ic,t)=>`<div class="qitem" data-qi="${i}" onclick="qSel(${i},this)"><span class="qnum">${ic?`<i class="ti ${ic}" style="font-size:12px"></i>`:n}</span>${t}</div>`;
+  q.innerHTML=`
+  <div class="qrow1">
+    <i class="ti ti-chevron-left" style="cursor:pointer;font-size:18px;color:var(--ink2)" onclick="closeQEdit()"></i>
+    <span class="crumb" onclick="closeQEdit()">Workflows</span><span class="sep">›</span>
+    <span class="crumb" onclick="closeQEdit()">Demand Mapping</span><span class="sep">›</span>
+    <span class="title">Project context questionnaire</span>
+  </div>
+  <div class="qrow2">
+    <span class="qchip" onclick="closeQEdit()"><i class="ti ti-x"></i> Close</span>
+    <span class="spacer"></span>
+    <span class="qchip" onclick="window.open('demand-mapping-intake-poc.html')"><i class="ti ti-player-play"></i> Preview</span>
+    <button class="qbtn" onclick="toast('Saves this definition to the blueprint: Send Questionnaire mints links from it')">Save</button>
+  </div>
+  <div class="qbody">
+    <div class="qleft">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="qlab qpin" style="margin:0">Content</span>
+        <i class="ti ti-layout-sidebar-left-collapse qtg" title="Collapse panel" onclick="this.closest('.qleft').classList.toggle('col')"></i>
+      </div>
+      <div class="qpin">
+      <div class="qlab" style="margin-top:12px">Welcome</div>
+      ${li(0,'','ti-hand-stop','Let us map the demand for y…')}
+      <div class="qlab">Project identity</div>
+      ${li(1,1,'','Where is the project?')}
+      ${li(2,2,'','What does success look like f…')}
+      ${li(3,3,'','What are the key intervention…')}
+      <div class="qlab">Evidence and assets</div>
+      ${li(4,4,'','Drop in any plans, surveys or …')}
+      <div class="qlab">Commercial and custodianship</div>
+      ${li(5,5,'','Who owns and manages eac…')}
+      ${li(6,6,'','Any existing schemes on the l…')}
+      ${li(7,7,'','Any red lines we should know…')}
+      <div class="qlab">Demand specifics</div>
+      ${li(8,8,'','Any buyer conversations alre…')}
+      <div class="qlab">Ending</div>
+      ${li(9,'','ti-flag','That is everything for now')}
+      <div class="qitem" style="border:1.5px dashed #3A3936;border-radius:9px;justify-content:center;margin-top:12px" onclick="toast('Add content: the designer assistant drafts the question from what you need to know')"><i class="ti ti-plus" style="font-size:14px"></i> Add content</div>
+      </div>
+    </div>
+    <div class="qmid" style="align-items:stretch">
+      <iframe src="demand-mapping-intake-poc.html?embed=1" style="width:100%;height:100%;border:none;border-radius:16px;background:#FBF8EF;box-shadow:0 20px 60px rgba(0,0,0,.4)"></iframe>
+    </div>
+    <div class="qright" style="display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex:none">
+        <span class="qlab qpin" style="margin:0"><i class="ti ti-sparkles" style="font-size:13px;color:#F5C64B"></i> AI Assistant</span>
+        <i class="ti ti-layout-sidebar-right-collapse qtg" title="Collapse panel" onclick="this.closest('.qright').classList.toggle('col')"></i>
+      </div>
+      <div class="qpin" style="flex:1;display:flex;flex-direction:column;min-height:0;margin-top:10px">
+        <div id="qchatlog" style="flex:1;overflow:auto;min-height:0">
+          <div class="qbub ai">I drafted this questionnaire from Send Questionnaire › Needs and the 14 must-have items. Tell me what to change, or ask why a question exists.</div>
+          <div>
+            <span class="qsugg" onclick="qChatSend(this.textContent)">Farmers won't know the word additionality</span>
+            <span class="qsugg" onclick="qChatSend(this.textContent)">Make step 2 optional</span>
+            <span class="qsugg" onclick="qChatSend(this.textContent)">Which questions map to no field?</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex:none">
+          <input class="qfield" id="qchatin" style="flex:1;margin-top:0" placeholder="Ask or instruct…" onkeydown="if(event.key==='Enter'&&this.value.trim()){qChatSend(this.value.trim());this.value='';}">
+          <button class="qbtn" style="padding:8px 13px" onclick="const i=document.getElementById('qchatin');if(i.value.trim()){qChatSend(i.value.trim());i.value='';}" aria-label="Send"><i class="ti ti-arrow-up" style="font-size:15px"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  q.style.display='flex';
+  q.classList.remove('show');void q.offsetWidth;q.classList.add('show');
+  qSel(QSEL,null);
+}
+
+function setMode(m){if(DEMOT!==null||DEMOSNAP)stopDemo();MODE=m;SELECTED=null;renderAll();}
+function setTool(t){
+  TOOL=t;
+  document.getElementById('toolHand').classList.toggle('on',t==='hand');
+  document.getElementById('toolPointer').classList.toggle('on',t==='pointer');
+  document.querySelector('.scroll').classList.toggle('grab',t==='hand');
+}
+function setZoom(v){
+  Z=v/100;
+  const w=document.querySelector('.world');
+  w.style.transformOrigin='0 50%';
+  w.style.transform=`translateY(-50%) scale(${Z})`;
+}
+const TEAM=[
+ {n:'Kishen',c:'#1D9E75',captain:true,live:true,seen:'now'},
+ {n:'Alex',c:'#378ADD',live:false,seen:'yesterday'},
+ {n:'Tim',c:'#EF9F27',live:false,seen:'3 days ago'}
+];
+function avEl(m,extra){
+  if(m.agent)return `<span class="av${extra||''}" style="background:#1F1F1D"><i class="ti ti-sparkles" style="font-size:13px;color:#F9DD5A"></i></span>`;
+  return `<span class="av${extra||''}" style="background:${m.c}">${m.n[0]}</span>`;
+}
+function renderTeam(){
+  const sorted=[...TEAM].sort((a,b)=>(b.live?1:0)-(a.live?1:0));
+  const shown=sorted.slice(0,2);
+  document.getElementById('avstack').innerHTML=
+    shown.map(m=>avEl(m)).join('')
+    +(TEAM.length>shown.length?`<span class="avmore">+${TEAM.length-shown.length}</span>`:'');
+  document.getElementById('avpop').innerHTML=
+    `<h6>Deliverable team</h6>`
+    +TEAM.map(m=>`<div class="avrow">${avEl(m)}
+      <span class="nm">${m.n}</span>
+      ${m.captain?'<span class="capbadge"><i class="ti ti-crown"></i> Captain</span>':''}
+      <span class="seen">${m.seen}</span>
+    </div>`).join('')
+    +`<div style="height:1px;background:var(--line);margin:6px 0"></div>
+    <div class="avrow">${avEl({agent:true,n:'AI Assistant'})}
+      <span class="nm">AI Assistant</span>
+      <span class="seen">always on</span>
+    </div>`;
+}
+function toggleTeam(e){
+  e.stopPropagation();
+  document.getElementById('avpop').classList.toggle('open');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.avwrap'))document.getElementById('avpop').classList.remove('open');
+});
+renderTeam();
+if(location.hash==='#contents'){setTimeout(()=>{openNode(null);sideContents();},0);}
+function toggleArts(){
+  const open=document.getElementById('artSub').classList.toggle('closed');
+  document.getElementById('artArr').classList.toggle('closed',open);
+  localStorage.setItem('gyArtsOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyArtsOpen')==='1'){
+  document.getElementById('artSub').classList.remove('closed');
+  document.getElementById('artArr').classList.remove('closed');
+}
+function toggleDel(){
+  const open=document.getElementById('delSub').classList.toggle('closed');
+  document.getElementById('delArr').classList.toggle('closed',open);
+  localStorage.setItem('gyDelOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyDelOpen')==='0'){
+  document.getElementById('delSub').classList.add('closed');
+  document.getElementById('delArr').classList.add('closed');
+}
+(function(){
+  const saved=parseInt(localStorage.getItem('gyNavW')||'',10);
+  if(saved&&!document.body.classList.contains('navhid'))document.body.style.setProperty('--nav',saved+'px');
+  const grip=document.getElementById('snavgrip');
+  if(!grip)return;
+  let drag=false;
+  grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');document.body.style.userSelect='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const w=Math.min(420,Math.max(200,e.clientX));
+    document.body.style.setProperty('--nav',w+'px');
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!drag)return;
+    drag=false;grip.classList.remove('on');document.body.style.userSelect='';
+    const w=parseInt(getComputedStyle(document.body).getPropertyValue('--nav'),10);
+    if(w)localStorage.setItem('gyNavW',String(w));
+  });
+})();
+
+(function(){
+  const sc=document.querySelector('.scroll');
+  let panning=false,sx=0,sy=0,sl=0,st=0,moved=0;
+  sc.addEventListener('mousedown',e=>{
+    const onEmpty=!e.target.closest('.node');
+    if(TOOL!=='hand'&&!onEmpty)return;
+    panning=true;moved=0;sx=e.clientX;sy=e.clientY;sl=sc.scrollLeft;st=sc.scrollTop;
+    sc.classList.add('grabbing');e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!panning)return;
+    const dx=e.clientX-sx,dy=e.clientY-sy;
+    moved=Math.max(moved,Math.abs(dx)+Math.abs(dy));
+    sc.scrollLeft=sl-dx;sc.scrollTop=st-dy;
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!panning)return;
+    panning=false;sc.classList.remove('grabbing');
+    if(moved>5){DRAGGED=true;setTimeout(()=>DRAGGED=false,120);}
+  });
+})();
+
+const DEMOAV={
+ agent:{ic:'ti-sparkles',bg:'#3A2E14',fg:'#F9DD5A',n:'AI Assistant'},
+ gy:{txt:'CT',bg:'#FAEEDA',fg:'#854F0B',n:'Kishen'},
+ client:{txt:'JR',bg:'#E1F5EE',fg:'#0F6E56',n:'J. Ruggles'}
+};
+const DEMOSTEPS=[];
+let DEMOT=null, DEMOSNAP=null, DEMOI=0, DEMONEXT=null, DEMOPAUSED=false, BANDSNAP=null, STOREFADE=false, NODEFLASH=null;
+function dsched(fn,ms){
+  DEMONEXT=fn;
+  DEMOT=setTimeout(()=>{DEMOT=null;DEMONEXT=null;fn();},ms);
+}
+function pauseDemo(){
+  if(DEMOPAUSED){
+    DEMOPAUSED=false;
+    const fn=DEMONEXT; DEMONEXT=null;
+    if(fn)dsched(fn,300);
+    demoBtnLabel(); return;
+  }
+  if(DEMOT!==null){clearTimeout(DEMOT);DEMOT=null;}
+  DEMOPAUSED=true; demoBtnLabel();
+}
+function demoBtnLabel(){
+  const c=document.getElementById('floatBL'); if(!c)return;
+  if(!(MODE==='run'&&!isPrev())){c.innerHTML='';return;}
+  const ic=n=>`<i class="ti ${n}" style="font-size:14px"></i>`;
+  if(!DEMOSNAP){
+    c.innerHTML=`<span class="fdemo" id="demoBtn" onclick="playDemo()">${ic('ti-player-play')} Play demo</span>`;
+    return;
+  }
+  const running=DEMOT!==null||DEMONEXT!==null||DEMOPAUSED;
+  const pauseBtn=running
+    ?(DEMOPAUSED
+      ?`<span class="fdemo" onclick="pauseDemo()">${ic('ti-player-play')} Resume</span>`
+      :`<span class="fdemo" onclick="pauseDemo()">${ic('ti-player-pause')} Pause</span>`)
+    :'';
+  const scrub=`<span class="dscrubwrap"><input type="range" class="dscrub" id="dscrub" min="0" max="${DEMOSTEPS.length}" value="${Math.min(DEMOI,DEMOSTEPS.length)}" oninput="demoSeek(+this.value)"><span class="dcount" id="dcount">${Math.min(DEMOI,DEMOSTEPS.length)}/${DEMOSTEPS.length}</span></span>`;
+  c.innerHTML=scrub+pauseBtn+`<span class="fdemo" onclick="stopDemo()">${ic('ti-player-stop')} Stop</span>`;
+}
+function demoScrub(){
+  const s=document.getElementById('dscrub'), t=document.getElementById('dcount');
+  const v=Math.min(DEMOI,DEMOSTEPS.length);
+  if(s)s.value=v;
+  if(t)t.textContent=v+'/'+DEMOSTEPS.length;
+}
+function demoSeek(k){
+  if(!DEMOSNAP)return;
+  if(DEMOT!==null){clearTimeout(DEMOT);DEMOT=null;}
+  DEMONEXT=null;
+  NODES.forEach(n=>{n.r=n.id==='start'?{st:'done',sub:''}:{st:'pending',sub:'',dim:true};});
+  clearNavBadges();
+  let lastF=null;
+  for(let i=0;i<k;i++){
+    const st=DEMOSTEPS[i];
+    Object.entries(st.set||{}).forEach(([id,patch])=>{
+      const n=NODES.find(x=>x.id===id);
+      if(n)n.r={...n.r,...patch,dim:false};
+    });
+    if(st.nb)Object.entries(st.nb).forEach(([id,v])=>setNavBadge(id,v));
+    lastF=st.f;
+  }
+  NODES.forEach(n=>{if(n.form&&n.r.st==='done'){n.r.prog=n.form.steps?n.form.steps.length:0;n.r.cur=-1;}});
+  {const pf=NODES.find(x=>x.id==='platform'),sn=NODES.find(x=>x.id==='store');if(pf&&sn&&pf.r.st==='done')sn.r={...sn.r,st:'done',dim:false};}
+  STOREFADE=false;
+  DEMOI=k; SELECTED=lastF;
+  if(lastF){
+    const dn=NODES.find(x=>x.id===lastF);
+    const bi=BANDS.findIndex(b=>dn.x>=b.x&&dn.x<b.x+b.w);
+    if(bi>=0)BANDS.forEach((b,j)=>{b.cur=j===bi;b.run=j<bi?'done':(j===bi?'in progress':'not started');});
+  }
+  renderBands(); renderNodes(); renderEdges(); renderChapnav();
+  setSide(false);
+  if(lastF)focusNode(lastF);
+  demoScrub();
+  if(!DEMOPAUSED&&k<DEMOSTEPS.length)dsched(demoTick,1100);
+  demoBtnLabel();
+}
+function dtoast(who,msg){
+  const box=document.getElementById('dtoasts');
+  const a=DEMOAV[who];
+  const av=a.ic?`<span class="dav" style="background:${a.bg};color:${a.fg}"><i class="ti ${a.ic}" style="font-size:12px"></i></span>`
+              :`<span class="dav" style="background:${a.bg};color:${a.fg}">${a.txt}</span>`;
+  const el=document.createElement('div');
+  el.className='dtoast';
+  el.innerHTML=`${av}<span><b>${a.n}</b> ${msg}</span>`;
+  box.appendChild(el);
+  while(box.children.length>3)box.removeChild(box.firstChild);
+  setTimeout(()=>{if(el.parentNode)el.remove()},6000);
+}
+function focusNode(id){
+  const n=NODES.find(x=>x.id===id); if(!n)return;
+  const sc=document.querySelector('.scroll');
+  const cx=600+(n.x+n.w/2)*Z, cy=800+((n.y+40)-235)*Z;
+  sc.scrollTo({left:cx-sc.clientWidth/2, top:cy-sc.clientHeight/2, behavior:'smooth'});
+}
+function playDemo(){
+  if(DEMOT!==null||DEMOSNAP){stopDemo();return;}
+  if(MODE!=='run'||RUN!=='spains'){MODE='run';RUN='spains';}
+  DEMOSNAP=JSON.stringify(NODES.map(n=>n.r));
+  BANDSNAP=JSON.stringify(BANDS.map(b=>({cur:!!b.cur,run:b.run})));
+  NODES.forEach(n=>{n.r=n.id==='start'?{st:'done',sub:''}:{st:'pending',sub:'',dim:true};});
+  SELECTED=null; DEMOI=0;
+  clearNavBadges();
+  renderAll(); setSide(false);
+  focusNode('s1');
+  dsched(demoTick,900);
+  demoBtnLabel();
+}
+function setNavBadge(id,v){
+  const el=document.getElementById(id); if(!el)return;
+  if(v){el.textContent=v;el.style.display='inline-flex';}
+  else{el.textContent='';el.style.display='none';}
+}
+function clearNavBadges(){['cntTodos','cntNotes','cntDocs'].forEach(id=>setNavBadge(id,0));}
+function demoTick(){
+  const st=DEMOSTEPS[DEMOI];
+  if(!st){demoBtnLabel();dtoast('agent','Demo finished. Stop restores the live run.');return;}
+  Object.entries(st.set||{}).forEach(([id,patch])=>{
+    const n=NODES.find(x=>x.id===id);
+    if(n)n.r={...n.r,...patch,dim:false};
+  });
+  SELECTED=st.f;
+  const dn=NODES.find(x=>x.id===st.f);
+  if(dn){
+    const bi=BANDS.findIndex(b=>dn.x>=b.x&&dn.x<b.x+b.w);
+    if(bi>=0){
+      BANDS.forEach((b,j)=>{b.cur=j===bi;b.run=j<bi?'done':(j===bi?'in progress':'not started');});
+      renderBands();
+    }
+  }
+  renderNodes(); renderEdges(); renderChapnav();
+  focusNode(st.f);
+  if(st.t)dtoast(st.t[0],st.t[1]);
+  if(st.nb)Object.entries(st.nb).forEach(([id,v])=>setNavBadge(id,v));
+  DEMOI++;
+  demoScrub();
+  if(st.card){
+    const n=NODES.find(x=>x.id===st.f);
+    setSide(true);
+    if(n.form){
+      const finalSt=n.r.st;
+      if(finalSt==='done'){n.r.st='active';}
+      n.r.prog=0; n.r.cur=-1;
+      sideNode(n); renderNodes();
+      const L=n.form.steps.length;
+      let i=0;
+      const stepAnim=()=>{
+        if(!DEMOSNAP)return;
+        if(i<L){
+          n.r.prog=i; n.r.cur=i;
+          if(n.id==='platform'&&n.form.steps[i]&&n.form.steps[i].t==='AI Assistant logs who, when, version'){
+            const sn=NODES.find(x=>x.id==='store');
+            if(sn&&sn.r.st!=='done'){sn.r={...sn.r,st:'done',dim:false};STOREFADE=true;}
+          }
+          sideNode(n); renderNodes();
+          i++;
+          dsched(stepAnim,700);
+        } else {
+          n.r.st=finalSt;
+          if(finalSt==='done'){n.r.prog=L;n.r.cur=-1;}
+          sideNode(n); renderNodes(); renderEdges();
+          dsched(demoTick,1100);
+        }
+      };
+      dsched(stepAnim,600);
+      return;
+    }
+    sideNode(n);
+    dsched(demoTick,1900);
+    return;
+  }
+  setSide(false);
+  dsched(demoTick,1900);
+}
+function stopDemo(){
+  if(DEMOT!==null){clearTimeout(DEMOT);DEMOT=null;}
+  DEMONEXT=null; DEMOPAUSED=false;
+  if(DEMOSNAP){
+    const snap=JSON.parse(DEMOSNAP);
+    NODES.forEach((n,i)=>n.r=snap[i]);
+    DEMOSNAP=null;
+  }
+  if(BANDSNAP){
+    const bs=JSON.parse(BANDSNAP);
+    BANDS.forEach((b,i)=>{b.cur=bs[i].cur;b.run=bs[i].run;});
+    BANDSNAP=null;
+  }
+  SELECTED=null;
+  clearNavBadges();
+  document.getElementById('dtoasts').innerHTML='';
+  renderAll(); demoBtnLabel();
+}
+function renderAll(){renderTabs();renderBands();renderNodes();renderEdges();renderChapnav();sideDefault();}
+initSteps();
+function buildStamps(){
+  const ORDER=NODES.filter(n=>n.form&&n.form.steps&&n.form.steps.length).map(n=>n.id);
+  FLOW=ORDER.slice();
+  const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let cur=new Date(2025,5,30,9,0);
+  const fmt=d=>`${DN[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  const adv=m=>{cur=new Date(cur.getTime()+m*60000); if(cur.getHours()>=18){cur.setDate(cur.getDate()+1);cur.setHours(9,0,0,0);}};
+  STEPSTAMP={};
+  ORDER.forEach(id=>{
+    const n=NODES.find(x=>x.id===id); if(!n||!n.form||!n.form.steps)return;
+    STEPSTAMP[id]=n.form.steps.map(()=>{const s=fmt(cur);adv(8);return s;});
+    adv(22);
+  });
+}
+buildStamps();
+renderAll();
+(function(){
+  const sc=document.querySelector('.scroll');
+  sc.scrollTop=(sc.scrollHeight-sc.clientHeight)/2;
+  sc.scrollLeft=520;
+})();
+</script>
+</div>
+</body>
+</html>

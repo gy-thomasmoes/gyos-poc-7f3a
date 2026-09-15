@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demand Mapping Kick-off Call · Meeting Notes</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --field:#F5F3EF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --amber:#EF9F27; --amberd:#854F0B;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:row;overflow:hidden;font-size:16px;color-scheme:light}
+.mainc{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid #E6E4DE;display:flex;flex-direction:column;padding:12px 12px 16px;color:#1F1F1D;color-scheme:light}
+body.navhid .snav{display:none}
+.snavpeek{position:fixed;top:0;left:0;width:14px;height:100vh;z-index:44;display:none}
+body.navhid .snavpeek{display:block}
+body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10px;width:264px;z-index:45;border:1px solid #E6E4DE;border-radius:0 14px 14px 0;box-shadow:0 12px 40px rgba(31,31,29,.3);animation:snavslide .16s ease}
+@keyframes snavslide{from{transform:translateX(-100%)}to{transform:none}}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px;color:#1F1F1D}
+.sworks .ti{font-size:15px;color:#9C9A92}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:#9C9A92;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:#EFEDE8;color:#1F1F1D}
+.scollapse .ti{font-size:17px}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:#1F1F1D;cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:#6B6A64}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:#EFEDE8;font-weight:500}
+.sarr{margin-left:auto;font-size:14px;color:#9C9A92;transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.sarr.closed{transform:rotate(-90deg)}
+.ssub{margin:2px 0 4px 30px}
+.ssub.closed{display:none}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:#6B6A64}
+.ssub .sitem.on{color:#1F1F1D}
+.row1{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border-bottom:1px solid #E6E4DE;flex:none;height:61px;box-sizing:border-box;box-sizing:border-box}
+.row1 .ti{font-size:19px;color:#6B6A64}
+.title{font-size:17px;font-weight:600;white-space:nowrap;color:#1F1F1D}
+.crumb{color:#9C9A92;cursor:pointer;font-size:16px;white-space:nowrap}
+.crumb:hover{color:#6B6A64}
+.sep{color:#9C9A92;font-size:14px}
+.row2{display:flex;align-items:center;gap:10px;padding:12px 18px;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);flex:none;font-size:14.5px;color:var(--ink3);height:61px;box-sizing:border-box;box-sizing:border-box}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--ink3);color:var(--ink)}
+.chip .ti{font-size:16px}
+.btn-dark{font-size:15px;font-weight:500;padding:8px 16px;border-radius:999px;background:#F9DD5A;color:#1A0C12;border:none;cursor:pointer;white-space:nowrap}
+.spacer{flex:1}
+.attend{display:flex;align-items:center;gap:9px;cursor:default}
+.attend .avs{display:flex;align-items:center}
+.attend .av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;flex:none;border:2px solid #fff;color:#fff}
+.attend .av+.av{margin-left:-8px}
+.attend .more{font-size:14.5px;font-weight:600;color:var(--ink3);margin-left:2px}
+.stage{flex:1;overflow:auto;min-width:0}
+.stagewrap{display:flex;justify-content:center;align-items:flex-start;padding:34px 34px 72px}
+.npage{background:#fff;flex:1 1 auto;max-width:900px;width:100%;min-width:0;border-radius:10px;border:1px solid var(--line);padding:52px 72px 72px;color:#1F1F1D;font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif}
+.npicon{font-size:46px;line-height:1}
+.nptitle{font-family:var(--serif);font-size:37px;font-weight:500;letter-spacing:-.01em;line-height:1.15;margin-top:12px;outline:none}
+.nprop{display:flex;gap:10px;align-items:center;font-size:15px;color:#787774;margin-top:9px}
+.nprop .ti{font-size:15px;color:#9C9A92}
+.nprop .plab{width:88px;flex:none;display:flex;align-items:center;gap:8px}
+.nprop b{color:#37352F;font-weight:400}
+.ptag{background:#F6ECC4;border:1px solid #E3D391;border-radius:6px;padding:1px 8px;font-size:13px;color:#6B5B12}
+.ptag.run{background:#E1F5EE;border-color:#B7E3D3;color:#0F6E56;cursor:pointer}
+.ptag.run:hover{filter:brightness(.97)}
+.pav{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:600;background:#FAEEDA;color:#854F0B}
+.ndiv{height:1px;background:#EDECE8;margin:26px 0 6px}
+.callout{display:flex;gap:11px;align-items:flex-start;background:#F7F6F3;border:1px solid #EDECE8;border-radius:10px;padding:14px 16px;margin-top:18px;font-size:15.5px;line-height:1.6;color:#37352F}
+.callout .ti{font-size:17px;color:#B78A0E;flex:none;position:relative;top:1px}
+.nh2{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.005em;margin-top:32px;outline:none}
+.pblk{margin-top:11px;font-size:16.5px;line-height:1.7;outline:none;border-radius:6px;color:#2A2824}
+.pblk[contenteditable="true"]:hover{box-shadow:0 0 0 1px rgba(26,12,18,.12)}
+.pblk[contenteditable="true"]:focus{box-shadow:none}
+.bul{display:flex;gap:11px;align-items:flex-start;margin-top:10px;font-size:16.5px;line-height:1.65;color:#2A2824}
+.bul .dot{color:#9C9A92;flex:none;position:relative;top:1px}
+.bul .btxt{outline:none;border-radius:6px;flex:1}
+.mtok{background:#F6ECC4;border:1px solid #E3D391;border-radius:6px;padding:1px 7px;font-size:13px;color:#6B5B12;white-space:nowrap}
+.todo{display:flex;gap:11px;align-items:flex-start;margin-top:11px;font-size:16.5px;line-height:1.6;color:#2A2824;cursor:pointer}
+.tbox{width:18px;height:18px;border:1.5px solid #C9C7C0;border-radius:5px;flex:none;position:relative;top:1px;display:flex;align-items:center;justify-content:center}
+.tbox .ti{font-size:13px;color:#fff;opacity:0}
+.todo.done .tbox{background:#628147;border-color:#628147}
+.todo.done .tbox .ti{opacity:1}
+.todo.done .ttxt{color:#9C9A92;text-decoration:line-through}
+.towner{margin-left:6px;font-size:12.5px;color:#6B5B12;background:#F6ECC4;border:1px solid #E3D391;border-radius:999px;padding:1px 8px;white-space:nowrap}
+.nadd{color:#C9C7C0;font-size:14.5px;padding:16px 2px 0 2px;cursor:pointer}
+.nadd:hover{color:#787774}
+.wbpill{position:fixed;right:18px;bottom:18px;z-index:48;display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:11px 18px;font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.wbpill .ti{font-size:16px;color:var(--amberd)}
+.wbpill:hover{border-color:var(--amber)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1F1F1D;color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+@keyframes sheetin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stage{animation:sheetin .32s ease-out both}
+
+/* warm/Manner titles */
+:root{--serif:'Manner','Spectral',Georgia,serif}
+.title{font-weight:600}
+.grt-h{font-family:var(--serif);font-weight:500}
+</style>
+</head>
+<body>
+
+<script>window.GYNAV={"active": "meeting-notes", "arts": "demand"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="row1">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <span class="crumb" onclick="location.href='meeting-notes-landing.html'">Meeting Notes</span><span class="sep">›</span>
+  <span class="crumb" onclick="location.href='demand-mapping-canvas-prototype.html'">Demand Mapping</span><span class="sep">›</span>
+  <span class="title">Kick-off Call</span>
+  <span class="spacer"></span>
+  <span class="attend" title="Caitlin, Emily and 4 others">
+    <span class="avs"><span class="av" style="background:#5A9E6A">C</span><span class="av" style="background:#4C86D6">E</span></span>
+    <span class="more">+4</span>
+  </span>
+  <span class="chip" onclick="toast('Share: send a read-only link, or export to PDF')"><i class="ti ti-share-2"></i> Share</span>
+</div>
+
+<div class="stage">
+  <div class="stagewrap">
+  <div class="npage">
+    <div class="npicon">🤝</div>
+    <div class="nptitle" contenteditable="true">Demand Mapping Kick-off · Spains Hall</div>
+
+    <div class="nprop"><span class="plab"><i class="ti ti-calendar-event"></i>Date</span><b>Tue 1 Jul 2026 · 40 min</b></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-users"></i>With</span><b><span class="pav">JB</span> James (owner), land agent · <span class="pav">CT</span> Caitlin (GY)</b></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-topology-star-3"></i>Workflow</span><span class="ptag run" onclick="location.href='demand-mapping-canvas-prototype.html'">Demand Mapping</span></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-tag"></i>Tags</span><span class="ptag">kick-off</span> <span class="ptag">scope</span> <span class="ptag">input list</span></div>
+
+    <div class="ndiv"></div>
+
+    <div class="callout"><i class="ti ti-flag-3"></i><span><b>Outcome.</b> Scope confirmed and the 14-item input list agreed. Questionnaire to go out today. Two items flagged as likely gaps: the site boundary shapefile and the grazing agreement for the east parcels.</span></div>
+
+    <div class="nh2" contenteditable="true">1 · Welcome and context</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">900 ha estate in Essex, second-generation owner, regen-curious. We first met at Groundswell.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">History on file: a BNG enquiry in March and a site visit request in May. James wants to understand what the land can credibly sell before committing.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">The land agent joined for the tenure and agreements questions.</span></div>
+
+    <div class="nh2" contenteditable="true">2 · Vision and target outcomes for the sites</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Priority is durable income that sits alongside farming, not a wholesale change of use. Open to biodiversity and water, cautious on long carbon lock-ins.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">East parcels are the interesting ground for nature outcomes; the river corridor came up for nutrient and water interest.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Success in 12 months: a clear shortlist of what to sell and to whom, with indicative numbers.</span></div>
+
+    <div class="nh2" contenteditable="true">3 · Walk the input checklist</div>
+    <div class="pblk" contenteditable="true">Walked the 14 must-have items. 12 are ready or straightforward to pull together. Two are flagged:</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true"><b>Site boundary shapefile</b> · the current map is a PDF; James will ask the agent for the GIS file. This fixes what we can map.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true"><b>Grazing agreement, east parcels</b> · tenancy complexity here decides who can sell what. The land agent will confirm.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Everything else (vision, interventions, baseline surveys, existing agreements) is either in hand or a quick upload.</span></div>
+
+    <div class="nh2" contenteditable="true">4 · Timeline, roles, next steps</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Questionnaire link goes out today; it pre-fills what we already hold so nothing is asked twice.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Caitlin is the point of contact. Once input is complete, GY runs supply research and comes back with a first shortlist.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Target: input complete within two weeks, first read on viable supply shortly after.</span></div>
+
+    <div class="nh2" contenteditable="true">Actions</div>
+    <div class="todo done" onclick="this.classList.toggle('done')"><span class="tbox"><i class="ti ti-check"></i></span><span class="ttxt">Send the project context questionnaire to James<span class="towner">Caitlin</span></span></div>
+    <div class="todo" onclick="this.classList.toggle('done')"><span class="tbox"><i class="ti ti-check"></i></span><span class="ttxt">Send the GIS site boundary shapefile<span class="towner">James</span></span></div>
+    <div class="todo" onclick="this.classList.toggle('done')"><span class="tbox"><i class="ti ti-check"></i></span><span class="ttxt">Confirm the grazing agreement on the east parcels<span class="towner">Land agent</span></span></div>
+
+    <div class="nadd" onclick="toast('Add a block: heading, bullet, to-do, callout or divider')">+ Add a block</div>
+  </div>
+  </div>
+</div>
+</div>
+
+<div class="wbpill" onclick="toast('Ask the AI Assistant: turn these notes into actions, draft the follow-up, or summarise for the team')"><i class="ti ti-sparkles"></i> AI Assistant</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3800);
+}
+function toggleNav(){
+  document.body.classList.remove('navpeek');
+  const hid=document.body.classList.toggle('navhid');
+  document.getElementById('expandBtn').style.display=hid?'flex':'none';
+  localStorage.setItem('gyNavHid',hid?'1':'0');
+}
+(function(){
+  if(localStorage.getItem('gyNavHid')==='1'){
+    document.body.classList.add('navhid');
+    document.getElementById('expandBtn').style.display='flex';
+  }
+})();
+function toggleArts(){
+  const open=document.getElementById('artSub').classList.toggle('closed');
+  document.getElementById('artArr').classList.toggle('closed',open);
+  localStorage.setItem('gyArtsOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyArtsOpen')==='1'){
+  document.getElementById('artSub').classList.remove('closed');
+  document.getElementById('artArr').classList.remove('closed');
+}
+(function(){
+  const zone=document.createElement('div');
+  zone.className='snavpeek';
+  document.body.appendChild(zone);
+  zone.addEventListener('mouseenter',()=>{
+    if(document.body.classList.contains('navhid'))document.body.classList.add('navpeek');
+  });
+  document.querySelector('.snav').addEventListener('mouseleave',()=>document.body.classList.remove('navpeek'));
+  zone.addEventListener('mouseleave',e=>{
+    if(!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.snav')))
+      document.body.classList.remove('navpeek');
+  });
+})();
+(function(){
+  const saved=parseInt(localStorage.getItem('gyNavW')||'',10);
+  if(saved&&!document.body.classList.contains('navhid')&&!(document.getElementById('snav')&&document.getElementById('snav').classList.contains('hid')))document.body.style.setProperty('--nav',saved+'px');
+  const grip=document.getElementById('snavgrip');
+  if(!grip)return;
+  let drag=false;
+  grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');document.body.style.userSelect='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const w=Math.min(420,Math.max(200,e.clientX));
+    document.body.style.setProperty('--nav',w+'px');
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!drag)return;
+    drag=false;grip.classList.remove('on');document.body.style.userSelect='';
+    const w=parseInt(getComputedStyle(document.body).getPropertyValue('--nav'),10);
+    if(w)localStorage.setItem('gyNavW',String(w));
+  });
+})();
+</script>
+</body>
+</html>

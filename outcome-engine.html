@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outcome Engine (I2O) · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="gy-shell.css">
+<style>
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.eyebrow .live{display:inline-flex;align-items:center;gap:6px;color:var(--greend);background:var(--greenbg);border-radius:999px;padding:3px 10px;font-weight:600;letter-spacing:0;text-transform:none;font-size:12px}
+.eyebrow .live .d{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.lead{font-size:17px;color:var(--ink2);line-height:1.55;max-width:74ch;margin-top:8px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0 8px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.kpi .n{font-size:25px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.kpi .l{font-size:13.5px;color:var(--ink);margin-top:7px}
+.kpi .s{font-size:12.5px;color:var(--ink3);margin-top:2px}
+.epanel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(26,12,18,.03)}
+.eins{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:14px;align-items:end}
+.ein{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ein label{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.ein select{font-family:inherit;font-size:14.5px;color:var(--ink);background:#fff;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;cursor:pointer}
+.eresult{margin-top:22px;border-top:1px solid var(--line);padding-top:20px}
+.rlab{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.effbig{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.01em;color:var(--ink)}
+.effci{font-size:14.5px;color:var(--ink2);margin-left:8px}
+.dist{margin:16px 0 4px}
+.distbar{position:relative;height:44px;background:#F1EEE6;border-radius:10px;overflow:hidden}
+.distband{position:absolute;top:0;bottom:0;background:rgba(59,130,246,.20)}
+.distpt{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--blue);border-radius:2px}
+.distscale{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-top:6px}
+.money{display:flex;align-items:baseline;gap:10px;margin-top:16px;font-size:16px;color:var(--ink)}
+.money b{font-size:20px;font-weight:600}
+.method{font-size:13px;color:var(--ink3);margin-top:14px;line-height:1.5}
+.recs{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.rec{display:grid;grid-template-columns:26px 1fr auto;gap:14px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.rec .rk{width:26px;height:26px;border-radius:50%;background:var(--graybg);color:var(--ink2);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center}
+.rec .rn{font-size:15.5px;font-weight:500;color:var(--ink)}
+.rec .rd{font-size:13.5px;color:var(--ink2);margin-top:2px}
+.rec .rr{text-align:right;white-space:nowrap}
+.rec .re{font-size:15px;font-weight:600;color:var(--blued)}
+.rec .rc{font-size:12.5px;color:var(--ink3);margin-top:2px}
+.layers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px}
+.lstep{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 16px}
+.lstep .ln{font-size:12px;font-weight:600;color:var(--blued);letter-spacing:.04em}
+.lstep .lt{font-size:15.5px;font-weight:600;margin-top:6px;letter-spacing:-.01em}
+.lstep .lx{font-size:13px;color:var(--ink2);margin-top:5px;line-height:1.45}
+.lstep:not(:last-child)::after{content:"→";position:absolute;right:-11px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:15px;z-index:2}
+.badge.med{background:#FBF1DC;color:var(--amberd)}
+.badge.emrg{background:#F1EEE6;color:var(--ink2)}
+.badge.live{background:var(--greenbg);color:var(--greend)}
+@media(max-width:1000px){.kpis,.layers{grid-template-columns:repeat(2,1fr)}.eins{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"outcome-engine"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-flask"></i>
+  <span class="title">Outcome Engine</span>
+  <span class="spacer"></span>
+  <button class="btn-out" onclick="toast('Docs: the I2O method, four layers and validation status')"><i class="ti ti-book"></i> Method docs</button>
+</div>
+
+<div class="wrap">
+  <div class="eyebrow">I2O · Causal evidence <span class="live"><span class="d"></span> Spains Hall · live experiment</span></div>
+  <div class="h1">Outcome Engine</div>
+  <p class="lead">Links upstream nature-based interventions to downstream infrastructure outcomes — a clinical trial for catchments. Run it forward to measure what an intervention did, or in reverse to prescribe what to build for a target outcome, always with explicit uncertainty.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n">12</div><div class="l">Causal experiments</div><div class="s">across 3 catchments</div></div>
+    <div class="kpi"><div class="n">3</div><div class="l">Sites instrumented</div><div class="s">on-reach monitoring</div></div>
+    <div class="kpi"><div class="n">~£4k</div><div class="l">Cost per estimate</div><div class="s">vs ~£100k consultancy</div></div>
+    <div class="kpi"><div class="n">Spains Hall</div><div class="l">Anchor experiment</div><div class="s">R. Chelmer · 3.2-yr baseline</div></div>
+  </div>
+
+  <div class="seg" id="modeSeg" style="margin:20px 0 14px">
+    <button class="on" onclick="setMode('measure')">Measure impact</button>
+    <button onclick="setMode('prescribe')">Prescribe interventions</button>
+  </div>
+
+  <!-- MEASURE (forward) -->
+  <div class="epanel" id="panelMeasure">
+    <div class="eins">
+      <div class="ein"><label>Infrastructure asset</label>
+        <select><option>Anglian · Chelmsford WTW intake</option><option>SSEN · Chelmer substation</option><option>National Highways · A12 culvert</option></select></div>
+      <div class="ein"><label>Intervention</label>
+        <select><option>Leaky wooden dams ×12</option><option>Beaver reintroduction</option><option>Wetland reconnection</option><option>Riparian woodland</option></select></div>
+      <div class="ein"><label>Catchment</label>
+        <select><option>Spains Hall · R. Chelmer</option><option>Blackwater upper</option></select></div>
+      <button class="btn-dark" onclick="toast('Prototype: this would run the causal estimate (Layer 3 Stage 1) and return a posterior distribution')" style="height:42px">Run estimate</button>
+    </div>
+
+    <div class="eresult">
+      <div class="rlab">Estimated effect · turbidity at intake</div>
+      <div><span class="effbig">−18%</span><span class="effci">90% credible interval −9% to −26%</span></div>
+      <div class="dist">
+        <div class="distbar">
+          <div class="distband" style="left:30%;right:13.3%"></div>
+          <div class="distpt" style="left:60%"></div>
+        </div>
+        <div class="distscale"><span>0%</span><span>−15%</span><span>−30%</span></div>
+      </div>
+      <div class="money"><span>Financial outcome</span><b>≈ £42k / yr</b> avoided treatment cost <span style="color:var(--ink3)">(CI £19k – £71k)</span></div>
+      <div class="method">Layer 3 · Stage 1 · synthetic control (MarketMatching → CausalImpact) · 3.2-yr pre-intervention baseline · detection floor 9%. Uncertainty propagated from effect through to £.</div>
+    </div>
+  </div>
+
+  <!-- PRESCRIBE (reverse) -->
+  <div class="epanel" id="panelPrescribe" style="display:none">
+    <div class="eins" style="grid-template-columns:1fr 1fr 1fr auto">
+      <div class="ein"><label>Target outcome</label>
+        <select><option>Reduce turbidity at Chelmsford WTW</option><option>Cut peak flow at A12 culvert</option><option>Lower nitrate at intake</option></select></div>
+      <div class="ein"><label>Catchment</label>
+        <select><option>Spains Hall · R. Chelmer</option><option>Blackwater upper</option></select></div>
+      <div class="ein"><label>Budget</label>
+        <select><option>Up to £150k</option><option>Up to £500k</option><option>No limit</option></select></div>
+      <button class="btn-dark" onclick="toast('Prototype: this would rank interventions by predicted effect per £ (Layer 3 Stage 2) at this unseen site')" style="height:42px">Find interventions</button>
+    </div>
+    <div class="eresult">
+      <div class="rlab">Recommended interventions · ranked by predicted effect per £</div>
+      <div class="recs">
+        <div class="rec"><span class="rk">1</span><div><div class="rn">Leaky wooden dams ×15</div><div class="rd">Fast onset · analysable within 2–3 years</div></div><div class="rr"><div class="re">−20% turbidity</div><div class="rc">CI −11 to −28 · ~£38k · medium</div></div></div>
+        <div class="rec"><span class="rk">2</span><div><div class="rn">Wetland reconnection · 2.4 ha</div><div class="rd">Slower onset · higher co-benefits</div></div><div class="rr"><div class="re">−14% turbidity</div><div class="rc">CI −6 to −22 · ~£120k · emerging</div></div></div>
+        <div class="rec"><span class="rk">3</span><div><div class="rn">Riparian woodland · 6 ha</div><div class="rd">Long onset · strong carbon stack</div></div><div class="rr"><div class="re">−9% turbidity</div><div class="rc">CI −3 to −16 · ~£54k · emerging</div></div></div>
+      </div>
+      <div class="method">Layer 3 · Stage 2 · predicted effect at an unseen site from catchment + intervention characteristics. Estimates carry wider uncertainty until validated on-reach.</div>
+    </div>
+  </div>
+
+  <div class="sect">Causal experiments</div>
+  <div class="tblwrap">
+    <table class="dtbl">
+      <thead><tr>
+        <th>Site · catchment</th><th>Intervention</th><th>Outcome</th><th>Effect (90% CI)</th><th>Confidence</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Spains Hall · R. Chelmer</td><td>Leaky wooden dams ×12</td><td>Turbidity at intake</td><td>−18% (−9 to −26)</td><td><span class="badge med">Medium</span></td><td><span class="badge live">Live</span></td></tr>
+        <tr><td>Spains Hall · R. Chelmer</td><td>Beaver reintroduction</td><td>Peak flow</td><td>−11% (−4 to −19)</td><td><span class="badge emrg">Emerging</span></td><td><span class="badge emrg">Modelling</span></td></tr>
+        <tr><td>Blackwater upper</td><td>Wetland reconnection</td><td>Nitrate</td><td><span class="dash">pending baseline</span></td><td><span class="badge emrg">—</span></td><td><span class="badge emrg">Instrumenting</span></td></tr>
+        <tr><td>Anglian pilot (proposed)</td><td>Riparian woodland</td><td>Turbidity</td><td><span class="dash">scoping</span></td><td><span class="badge emrg">—</span></td><td><span class="badge emrg">Scoping</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sect">How it works · four layers</div>
+  <div class="layers">
+    <div class="lstep"><div class="ln">LAYER 1–2</div><div class="lt">Characterise &amp; counterfactual</div><div class="lx">Learn what would have happened without the intervention, from pre-intervention data.</div></div>
+    <div class="lstep"><div class="ln">LAYER 3 · STAGE 1</div><div class="lt">Measure the effect</div><div class="lx">Causal effect of an existing intervention, as a posterior distribution with a detection floor.</div></div>
+    <div class="lstep"><div class="ln">LAYER 3 · STAGE 2</div><div class="lt">Predict the effect</div><div class="lx">Estimate the effect of a proposed intervention at an unseen site.</div></div>
+    <div class="lstep"><div class="ln">LAYER 4</div><div class="lt">Translate to £</div><div class="lx">Turn the ecosystem-service outcome into the financial outcome asset managers buy on.</div></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3600);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+function setMode(m){
+  document.getElementById('panelMeasure').style.display = m==='measure'?'':'none';
+  document.getElementById('panelPrescribe').style.display = m==='prescribe'?'':'none';
+  const btns=document.querySelectorAll('#modeSeg button');
+  btns[0].classList.toggle('on',m==='measure');
+  btns[1].classList.toggle('on',m==='prescribe');
+}
+</script>
+</body>
+</html>

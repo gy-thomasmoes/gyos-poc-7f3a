@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demand Mapping · Canvas prototype</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<link rel="stylesheet" href="gy-canvas.css">
+
+<!-- per-Deliverable canvas size (defaults live in gy-canvas.css) -->
+<style>.canvas{--cw:5460px;--ch:1600px}.world{--ww:4260px;--wh:470px}</style>
+</head>
+<body>
+
+<script>window.GYNAV={"active": "demand-mapping", "arts": "demand"};</script>
+<script src="gy-nav.js"></script>
+<script src="gy-canvas.js"></script>
+<script src="gy-canvas-engine.js"></script>
+
+<div class="mainc">
+
+<div class="row1" style="position:relative">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
+  <span class="title" id="crumbTitle">Demand Mapping</span>
+  <span id="liveBadge" style="font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--greenbg);color:var(--greend);margin-left:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span>
+  <span class="spacer"></span>
+  <div class="avwrap">
+    <div class="avstack" id="avstack" onclick="toggleTeam(event)" title="Team on this Workflow"></div>
+    <div class="avpop" id="avpop"></div>
+  </div>
+  <span class="chip" id="editChip" style="display:none;cursor:default"><i class="ti ti-pencil"></i> You're editing the blueprint</span>
+  <button class="chip" id="editBtn" style="font-family:inherit;display:none"></button>
+  <span class="chip" onclick="toast('Share: invite team members to view or edit, or copy a link to this run')"><i class="ti ti-share-2"></i> Share</span>
+  <span class="chip" onclick="toast('Settings: blueprint versions, autonomy defaults, notification channels, access')" aria-label="Settings"><i class="ti ti-settings"></i></span>
+  <button class="resbtn" id="resultBtn" onclick="toggleResult()"><span class="rfill" id="rfill"></span><i id="resultIc" class="ti ti-player-play" style="font-size:12px;position:relative;z-index:1"></i><span id="resultLbl" style="position:relative;z-index:1">View result</span></button>
+</div>
+
+<div class="floatL">
+  <span class="fpill" onclick="openAboutL()"><i class="ti ti-info-circle" style="font-size:16px;color:var(--ink2)"></i> About Workflow</span>
+  <span class="fpill" id="toolsPill" onclick="openArtefactsL()"><i class="ti ti-template" style="font-size:16px;color:var(--ink2)"></i> Tools</span>
+</div>
+<div class="drawer" id="drawerL"></div>
+<div class="floatR" id="floatR"></div>
+<div class="floatBL" id="floatBL"></div>
+<div class="dvov" id="dvov" onclick="closeDocViewer()"></div>
+<div class="chapnav" id="chapnav"></div>
+
+<div class="main">
+  <div class="scroll">
+    <div class="canvas">
+      <div class="world">
+        <div id="bands"></div>
+        <svg id="edges" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible" aria-hidden="true">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C9C7C0"/></marker>
+            <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#639922"/></marker>
+            <marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EF9F27"/></marker>
+            <marker id="arrl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DBD9D2"/></marker>
+          </defs>
+          <g id="edgeg"></g>
+        </svg>
+        <div id="nodes"></div>
+      </div>
+    </div>
+  </div>
+  <div class="side"><div class="sidein" id="side"></div></div>
+</div>
+
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()"></div>
+<div class="qpop" id="qpop"></div>
+<div class="docm" id="docm" onclick="if(event.target===this)closeDoc()"></div>
+<div class="qed" id="qedit"></div>
+<div id="runmenu" style="position:fixed;display:none;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(31,31,29,.12);z-index:60;overflow:hidden;font-size:15px;min-width:230px"></div>
+<div class="toast" id="toast"></div>
+<div class="dtoasts" id="dtoasts"></div>
+
+<script>
+let MODE='run', SELECTED=null, TOOL='pointer', DRAGGED=false, RUN='spains';
+let EMBED_DRAWER=null;
+{const _q=new URLSearchParams(location.search);
+ const _m=_q.get('mode');
+ if(_m==='edit')MODE='design'; else if(_m==='run')MODE='run';
+ EMBED_DRAWER=_q.get('drawer');
+ if(EMBED_DRAWER){MODE='run';RUN='spains';document.documentElement.classList.add('embed');}
+ else if(_m)history.replaceState(null,'',location.pathname);}
+function isPrev(){return MODE==='run'&&RUN==='preview'}
+function runMenu(e){
+  e.stopPropagation();
+  const m=document.getElementById('runmenu');
+  if(m.style.display==='block'){m.style.display='none';return;}
+  const r=e.currentTarget.getBoundingClientRect();
+  m.style.left=r.left+'px'; m.style.top=(r.bottom+8)+'px';
+  const item=(id,ic,t)=>`<div onclick="setRun('${id}')" style="display:flex;gap:10px;align-items:center;padding:10px 14px;cursor:pointer;${RUN===id?'background:#F8F5ED':''}" onmouseover="this.style.background='#F8F5ED'" onmouseout="this.style.background='${RUN===id?'#F8F5ED':'#fff'}'">
+    <span style="width:18px;text-align:center;flex:none">${ic.startsWith('ti-')?`<i class="ti ${ic}" style="font-size:16px;color:var(--ink2)"></i>`:ic}</span>
+    <span style="flex:1;white-space:nowrap">${t}</span>
+    ${RUN===id?'<i class="ti ti-check" style="font-size:15px;color:var(--greend)"></i>':''}</div>`;
+  m.innerHTML=item('spains','🪺','Spains Hall')
+    +item('riverallen','🌸','River Allen')
+    +item('denton','🦡','Denton Reserve')
+    +item('wash','🐚','The Wash')
+    +item('wylye','🐞','Wylye Valley')
+    +item('norfolk','🌼','West Norfolk Nature Network')
+    +`<div onclick="setRun('new')" style="display:flex;gap:10px;align-items:center;padding:11px 14px;cursor:pointer;border-top:1px solid var(--line);color:var(--ink2)" onmouseover="this.style.background='#F8F5ED'" onmouseout="this.style.background='#fff'">
+      <i class="ti ti-plus" style="font-size:15px"></i><span>Start a new run</span></div>`;
+  m.style.display='block';
+}
+document.addEventListener('click',()=>{const m=document.getElementById('runmenu');if(m)m.style.display='none';});
+function setRun(r){
+  document.getElementById('runmenu').style.display='none';
+  if(r==='new'){toast('This would open the pre-flight brief: pick the Programme, confirm the people, launch');return;}
+  if(r!=='preview'&&r!=='spains'){toast('Prototype: only the Spains Hall run has data. The others are set dressing.');return;}
+  if(DEMOT!==null||DEMOSNAP)stopDemo();
+  RUN=r;SELECTED=null;renderAll();
+}
+
+const BANDS=[
+  {x:16,  w:1120, t:'1 · Gather project context', short:'1 · Context',  run:'in progress', cur:true},
+  {x:1196,w:980,  t:'2 · Assess supply',           short:'2 · Supply',   run:'not started'},
+  {x:2256,w:752,  t:'3 · Assess demand',           short:'3 · Demand',   run:'not started'},
+  {x:3068,w:1212, t:'4 · Finalise',                short:'4 · Finalise', run:'not started'}
+];
+const CHAPNAV=true;
+
+const T={
+  human:{bg:'var(--amberbg)',fg:'var(--amberd)',ic:'ti-user'},
+  agent:{bg:'var(--bluebg)', fg:'var(--blued)', ic:'ti-sparkles'},
+  det:  {bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-settings-automation'},
+  data: {bg:'var(--tealbg)', fg:'var(--teald)', ic:'ti-file-import'},
+  gate: {bg:'var(--amberbg)',fg:'var(--amberd)',ic:'ti-arrows-split-2'},
+  term: {bg:'var(--greenbg)',fg:'var(--greend)',ic:'ti-player-play'},
+  park: {bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-moon'},
+  store:{bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-database'}
+};
+
+const ARTEFACTS=[
+ {id:'agenda',ic:'ti-file-text',name:'Agenda · Kick-off call',node:'Kick-off call',nid:'kickoff',ex:true,desc:'The standing agenda for client kick-offs: scope walk, input checklist, timeline, next steps. The AI Assistant merges project data into it before every call.',
+  prev:`<div class="paper"><h5>Kick-off · {{project}}</h5>
+  <div class="mrow"><span>1 · Welcome and context</span><span class="pmuted">5 min</span></div>
+  <div class="mrow"><span>2 · Vision and target outcomes</span><span class="pmuted">10 min</span></div>
+  <div class="mrow"><span>3 · Walk the input checklist</span><span class="pmuted">15 min</span></div>
+  <div class="mrow"><span>4 · Timeline, roles, next steps</span><span class="pmuted">10 min</span></div>
+  <div class="mfld">Merge fields: {{project}} · {{client}} · {{sites}} · {{date}}</div></div>`},
+ {id:'checklist',ic:'ti-checklist',name:'Questionnaire · Project context',node:'Send Questionnaire',nid:'sendq',ex:true,desc:'The 14 must-have items a project must supply. Drives the questionnaire, the completeness gate and the Contents checklist.',
+  prev:`<div class="paper"><h5>Must-have input · 14 items</h5>
+  <div class="mchk"><span class="box on"></span>Site boundary shapefile</div>
+  <div class="mchk"><span class="box on"></span>Land ownership and tenure map</div>
+  <div class="mchk"><span class="box on"></span>Vision and target outcomes</div>
+  <div class="mchk"><span class="box"></span>Key interventions with areas</div>
+  <div class="mchk"><span class="box"></span>Baseline surveys, with dates</div>
+  <div class="mchk"><span class="box"></span>Existing agreements per parcel</div>
+  <div class="mchk pmuted"><span class="box"></span>+ 8 more items</div></div>`},
+ {id:'qemail',ic:'ti-mail',name:'Email · Project context',node:'Send Questionnaire',nid:'sendq',ex:true,desc:'The client-facing email carrying the intake link, with merge fields for project, contact and deadline. Always human-approved before send.',
+  prev:`<div class="paper"><div class="mrow"><span class="pmuted">From</span><span>caitlin@greatyellow.earth</span></div>
+  <div class="mrow"><span class="pmuted">To</span><span>{{client_contact}}</span></div>
+  <div class="mrow"><span class="pmuted">Subject</span><span>Mapping the demand for {{project}}</span></div>
+  <div style="margin-top:8px">Hi {{first_name}}, lovely speaking today. To map what {{project}} can sell and who would buy it, we need a few things from you. This link does most of the work, and anything you upload we read for you.</div>
+  <span class="mbtn">Open your questionnaire</span></div>`},
+ {id:'rulebooks',ic:'ti-book',name:'Library · ES rule books',node:'Desktop research',nid:'desktop',ex:true,desc:'One page per ecosystem service: static About, a nine-category readiness score, a sizing method, and a fast-moving Market dynamics half. Scored and sized per the GY methodology, seeded from the NatWest Markets Report. Open the Hive Mind Library in the sidebar to browse them.',
+  prev:`<div class="paper"><h5>🌱 Carbon · rule book</h5>
+  <div class="mrow"><span class="pmuted">About</span><span>static · definition + monetisation</span></div>
+  <div class="mrow"><span class="pmuted">Readiness</span><span>9 categories · GY methodology</span></div>
+  <div class="mrow"><span class="pmuted">Sizing method</span><span>credits × price · cited</span></div>
+  <div class="mrow"><span class="pmuted">Market dynamics</span><span>dynamic · prices, buyer signals</span></div>
+  <div class="mrow"><span class="pmuted">Last refreshed</span><span>Oct 2025 · NatWest Report</span></div>
+  <div class="mfld">8 services in the Library · refresh due every ~3 months</div></div>`},
+ {id:'buyerdb',ic:'ti-database',name:'Database · GY buyers',node:'Shortlist qualified buyers',nid:'shortbuyers',ex:true,desc:'The buyer records qualified against Fit / Readiness / Timing / Relationship. Data quality here is the biggest external dependency.',
+  prev:`<div class="paper"><h5>Buyers · filtered to catchment</h5>
+  <div class="mrow"><span>Anglian Water</span><span class="mbar"><i style="width:85%"></i></span><span class="pmuted">fit 8.5</span></div>
+  <div class="mrow"><span>Housing developer, Oxford</span><span class="mbar"><i style="width:70%"></i></span><span class="pmuted">fit 7.0</span></div>
+  <div class="mrow"><span>Food corporate, Scope 3</span><span class="mbar"><i style="width:55%"></i></span><span class="pmuted">fit 5.5</span></div>
+  <div class="mfld">Scored on Fit · Readiness · Timing · Relationship</div></div>`},
+ {id:'intake',ic:'ti-forms',name:'Questionnaire · Project context',node:'Send Questionnaire',nid:'sendq',ex:false,desc:'The client questionnaire: dump-first, extracted by the AI Assistant, pre-filled from the Data Platform so nothing is asked twice. Modular, for reuse by other Workflows.',
+  prev:`<img src="questionnaire-preview.png" alt="Project context questionnaire" style="display:block;width:100%;border:1px solid var(--line);border-radius:10px">`},
+ {id:'precall',ic:'ti-sparkles',name:'Assistant · Pre-call brief',node:'Kick-off call',nid:'kickoff',ex:false,desc:'Drafts a one-page brief from the Workflow Brief, HubSpot history and past notes, emailed before every kick-off.',
+  prev:`<div class="paper"><h5>Pre-call brief · Spains Hall</h5>
+  <div class="mchk"><span class="box on"></span>Who they are: 900 ha estate, Essex, regen-curious</div>
+  <div class="mchk"><span class="box on"></span>History: two HubSpot threads, met at Groundswell</div>
+  <div class="mchk"><span class="box on"></span>Watch for: tenancy complexity on the east parcels</div>
+  <div class="mfld">Drafted by the AI Assistant · 3 sources cited · read in 4 min</div></div>`},
+ {id:'registries',ic:'ti-database',name:'Shelf · Supply registries',node:'Desktop research',nid:'desktop',ex:true,desc:'The named registries desktop research pulls hard data from. Each entry carries the connection, the fields we take and the refresh rule. Changing this shelf versions with the blueprint; the pulls themselves are run events.',
+  prev:`<div class="paper"><h5>Source shelf · registry connections</h5>
+  <div class="mrow"><span>DEFRA BNG register</span><span class="pmuted">biodiversity · weekly</span></div>
+  <div class="mrow"><span>Gaia</span><span class="pmuted">nature data · weekly</span></div>
+  <div class="mrow"><span>Woodland Carbon Code</span><span class="pmuted">carbon · weekly</span></div>
+  <div class="mrow"><span>Peatland Code</span><span class="pmuted">carbon · weekly</span></div>
+  <div class="mrow"><span>World Bank carbon price</span><span class="pmuted">pricing · monthly</span></div>
+  <div class="mrow"><span>ICE + EEX</span><span class="pmuted">pricing · daily feed</span></div>
+  <div class="mfld">Every figure pulled carries its source, date and tier: hard/gold or soft/bronze</div></div>`},
+ {id:'reg_bng',ic:'ti-database',name:'Registry · DEFRA BNG register',node:'Desktop research',nid:'desktop',ex:true,desc:'Live biodiversity unit prices and listings from the DEFRA BNG register.',
+  prev:`<div class="paper"><h5>DEFRA BNG register</h5>
+  <div class="mrow"><span class="pmuted">Result</span><span>£37,967.48 avg · 1,204 units listed</span></div>
+  <div class="mrow"><span class="pmuted">Fields</span><span>price, units, habitat</span></div>
+  <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
+  <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
+  <div class="mfld">Pulled Mon 30 Jun · source gov.uk BNG register</div></div>`},
+ {id:'reg_gaia',ic:'ti-database',name:'Registry · Gaia',node:'Desktop research',nid:'desktop',ex:true,desc:'Biodiversity credit prices and projects from the Gaia registry.',
+  prev:`<div class="paper"><h5>Gaia</h5>
+  <div class="mrow"><span class="pmuted">Result</span><span>£28,500 avg · 12 projects</span></div>
+  <div class="mrow"><span class="pmuted">Fields</span><span>price, credits, location</span></div>
+  <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
+  <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
+  <div class="mfld">Pulled Mon 30 Jun · source Gaia registry</div></div>`},
+ {id:'reg_wcc',ic:'ti-database',name:'Registry · Woodland Carbon Code',node:'Desktop research',nid:'desktop',ex:true,desc:'Woodland carbon unit prices and issuances from the Woodland Carbon Code.',
+  prev:`<div class="paper"><h5>Woodland Carbon Code</h5>
+  <div class="mrow"><span class="pmuted">Result</span><span>£22.10 / tCO2e (WCU)</span></div>
+  <div class="mrow"><span class="pmuted">Fields</span><span>price, tonnes</span></div>
+  <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
+  <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
+  <div class="mfld">Pulled Mon 30 Jun · source WCC registry</div></div>`},
+ {id:'reg_pcc',ic:'ti-database',name:'Registry · Peatland Carbon Code',node:'Desktop research',nid:'desktop',ex:true,desc:'Peatland carbon unit prices and issuances from the Peatland Carbon Code.',
+  prev:`<div class="paper"><h5>Peatland Carbon Code</h5>
+  <div class="mrow"><span class="pmuted">Result</span><span>£24.60 / tCO2e (PCU)</span></div>
+  <div class="mrow"><span class="pmuted">Fields</span><span>price, tonnes</span></div>
+  <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
+  <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
+  <div class="mfld">Pulled Mon 30 Jun · source PCC registry</div></div>`},
+ {id:'reg_wbcp',ic:'ti-database',name:'Registry · World Bank carbon price',node:'Desktop research',nid:'desktop',ex:true,desc:'Global carbon price ranges from the World Bank Carbon Pricing Dashboard.',
+  prev:`<div class="paper"><h5>World Bank carbon price</h5>
+  <div class="mrow"><span class="pmuted">Result</span><span>$5 to $95 / tCO2e (global range)</span></div>
+  <div class="mrow"><span class="pmuted">Fields</span><span>price bands, scheme</span></div>
+  <div class="mrow"><span class="pmuted">Refresh</span><span>quarterly</span></div>
+  <div class="mrow"><span class="pmuted">Tier</span><span>soft / bronze</span></div>
+  <div class="mfld">Pulled Mon 30 Jun · source World Bank dashboard</div></div>`},
+ {id:'reg_ice',ic:'ti-database',name:'Registry · ICE',node:'Desktop research',nid:'desktop',ex:true,desc:'Compliance carbon futures prices from ICE.',
+  prev:`<div class="paper"><h5>ICE</h5>
+  <div class="mrow"><span class="pmuted">Result</span><span>€72.40 / tCO2e (EUA front-month)</span></div>
+  <div class="mrow"><span class="pmuted">Fields</span><span>price</span></div>
+  <div class="mrow"><span class="pmuted">Refresh</span><span>daily</span></div>
+  <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
+  <div class="mfld">Pulled Mon 30 Jun · source ICE feed</div></div>`},
+ {id:'reg_eex',ic:'ti-database',name:'Registry · EEX',node:'Desktop research',nid:'desktop',ex:true,desc:'Compliance carbon spot and auction prices from EEX.',
+  prev:`<div class="paper"><h5>EEX</h5>
+  <div class="mrow"><span class="pmuted">Result</span><span>€71.85 / tCO2e (EUA spot)</span></div>
+  <div class="mrow"><span class="pmuted">Fields</span><span>price</span></div>
+  <div class="mrow"><span class="pmuted">Refresh</span><span>daily</span></div>
+  <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
+  <div class="mfld">Pulled Mon 30 Jun · source EEX feed</div></div>`},
+ {id:'evidence',ic:'ti-report',name:'Template · Evidence pack',node:'Desktop research',nid:'desktop',ex:false,desc:'One page per ecosystem service: rulebook, eligibility, volume, pricing, competitor supply, funding, confidence. Every claim cited.',
+  prev:`<div class="paper"><h5>BNG units · product page</h5>
+  <div class="mrow"><span class="pmuted">Rulebook</span><span>BNG statutory framework</span></div>
+  <div class="mrow"><span class="pmuted">Eligibility</span><span>Likely · boundary pending</span></div>
+  <div class="mrow"><span class="pmuted">Indicative price</span><span>£25k per unit</span></div>
+  <div class="mrow"><span class="pmuted">Competitor supply</span><span>Low in catchment</span></div>
+  <div class="mrow"><span class="pmuted">Confidence</span><span>Medium · 2 sources</span></div></div>`},
+ {id:'scoring',ic:'ti-scale',name:'Scoring · Supply side',node:'Shortlist ES + buyers',nid:'shortes',ex:false,desc:'One mechanic, two criteria sets: scores ecosystem services on the supply side against the nine-category Market Readiness framework, and buyers on the demand side. The twins share it, built once.',
+  prev:`<div class="paper"><h5>Readiness criteria · BNG units</h5>
+  <div class="mrow"><span>Operational readiness</span><span class="mbar"><i style="width:100%"></i></span><span class="pmuted">green</span></div>
+  <div class="mrow"><span>Demand scale</span><span class="mbar"><i style="width:60%"></i></span><span class="pmuted">orange</span></div>
+  <div class="mrow"><span>Regulatory stability</span><span class="mbar"><i style="width:60%"></i></span><span class="pmuted">orange</span></div>
+  <div class="mfld">9 categories, per the GY methodology · same engine scores buyers with the demand set</div></div>`},
+ {id:'gapsum',ic:'ti-message',name:'Assistant · Gap summary',node:'Follow-up',nid:'followup',ex:false,desc:'Turns a failed completeness check into a friendly gap summary and reminder email, drafted for approval.',
+  prev:`<div class="paper"><div class="mrow"><span class="pmuted">Draft · for your approval</span><span class="pmuted">09:05</span></div>
+  <div style="margin-top:6px">Hi James, thanks for everything so far, 12 of 14 items are in and looking great. Two things would unlock the next step:</div>
+  <div class="mchk" style="margin-top:6px"><span class="box"></span>Site boundary shapefile</div>
+  <div class="mchk"><span class="box"></span>Grazing agreement, east parcels</div></div>`},
+ {id:'verdict',ic:'ti-clipboard-check',name:'Template · Verdict pack',node:'Final check prep',nid:'finalprep',ex:false,desc:'The go / no-go pack: shortlist, buyers, indicative revenue, confidence flags. One readable page plus appendix.',
+  prev:`<div class="paper"><h5>Verdict pack · one page</h5>
+  <div class="mrow"><span class="pmuted">Supply</span><span>3 viable ES, BNG leads</span></div>
+  <div class="mrow"><span class="pmuted">Demand</span><span>2 hot buyers, 5 warm</span></div>
+  <div class="mrow"><span class="pmuted">Indicative revenue</span><span>Range given, confidence flagged</span></div>
+  <div style="background:var(--greenbg);color:var(--greend);border-radius:8px;padding:8px 12px;margin-top:8px;font-weight:600;text-align:center">Recommendation: GO · decision rights: Vertical Lead</div></div>`}
+];
+
+const OWNERS=['Caitlin','Emily','Izzie','Millie','Harry','Trade rep','Vertical Lead','Josh'];
+const EXECS=['Human-led','Agentic AI','Fully Automated'];
+
+const NODES=[
+{id:'start',x:40,y:136,w:132,t:T.term,title:'Start',inert:true,
+ d:{sub:''},r:{sub:'',st:'done'},
+ info:'Terminals carry no work. A run begins here when launched from the Programme OS, from Slack, or from Claude.'},
+
+{id:'kickoff',x:206,y:136,w:160,t:T.human,title:'Kick-off call',
+ d:{sub:'Align scope with the client'},r:{who:'Caitlin',st:'done',dim:true},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Agree scope and the input list with the client.',
+  needs:[['Start','Run started']],produces:['Kick-off notes','Agreed input list'],
+  done:'After this: the project scope is agreed with the client, and the exact list of inputs we need from them is locked in.',
+  steps:['AI Assistant drafts brief and agenda','Caitlin holds call','Caitlin confirms scope, logs input list'],arts:['agenda','precall'],
+  guard:'Scope mismatch → pause, back to commercial owner'},
+ run:{status:'done · Tue 1 Jul · 40 min',happened:'Call held. Scope confirmed, 14-item input list agreed. Notes filed and linked.',log:'✓ brief sent · ✓ call held · ✓ input list logged',cta:'Open notes'}},
+
+{id:'sendq',x:436,y:136,w:172,t:T.det,title:'Send Questionnaire',
+ d:{sub:'Send the intake pack to the client'},r:{st:'active',prog:1,cur:1,note:'Sending to the client',outline:'var(--blue)'},
+ form:{owner:'Caitlin',exec:'Fully Automated',what:'Send the client the intake pack and questionnaire.',
+  needs:[['Kick-off call','Agreed input list']],produces:['Intake link','Request log entry'],
+  done:'After this: the client has the questionnaire link, and the clock on their response is running.',
+  steps:['AI Assistant prepares email and questionnaire','Caitlin sends email to client'],arts:['checklist','qemail','intake'],
+  guard:'Client-facing sends always need a human tap'},
+ run:{status:'active · sending to the client',happened:'Email and questionnaire prepared, link minted with 6 fields pre-filled. Caitlin to send.',log:'✓ prepare · ◌ send',cta:'View draft email',human:true}},
+
+{id:'receive',x:678,y:136,w:154,t:T.data,title:'Receive input',
+ d:{sub:'Client materials come in'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Fully Automated',what:'Collect the client files into one structured pack.',
+  needs:[['Send Questionnaire','Intake link']],produces:['Structured input pack','Receipt note'],
+  done:'After this: every client file is captured in one structured pack, and the client has been told we received it.',
+  steps:['AI Assistant gathers and structures input','AI Assistant confirms receipt to client'],arts:['intake'],
+  guard:'Unclear items are flagged for a human, never guessed'},
+},
+
+{id:'gate1',x:902,y:136,w:190,t:T.gate,title:'Input complete?',rows:[['yes','→ assess supply'],['no','→ follow-up']],
+ d:{sub:'Checks the 14 must-haves'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Fully Automated',what:'Check the pack has all 14 must-have items.',
+  needs:[['Receive input','Structured input pack']],produces:['Pass → Assess supply','Fail → gap list'],
+  done:'After this: we know whether the pack is complete. It either moves on to supply work, or goes back to the client as a gap list.',
+  steps:['AI Assistant checks 14 must-haves','AI Assistant sends run onward, or to Follow-up','Caitlin reviews borderline items'],arts:['checklist'],
+  guard:'Missing data is never inferred'},
+},
+
+{id:'followup',x:480,y:318,w:168,t:T.human,title:'Follow-up ↺',
+ d:{sub:'Close gaps with the client'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'? Caitlin or Emily',exec:'Human-led',what:'Chase the client for the missing items.',
+  needs:[['Input complete?','Gap list']],produces:['Updated input','Revised ETA'],
+  done:'After this: the client knows exactly what is still missing, and when they will send it.',
+  steps:['AI Assistant drafts gap summary','Caitlin calls, or sends if minor','Caitlin logs ETA, restarts wait clock'],arts:['gapsum'],
+  guard:'Two chases silent → escalate to client sponsor'},
+},
+
+{id:'desktop',x:1236,y:136,w:170,t:T.agent,title:'Desktop research',
+ d:{sub:'Registries, APIs and trend reports'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Build a cited market snapshot for each ecosystem service.',
+  needs:[['Input complete?','Complete input pack'],['Hive Mind Library','Latest ES rule books + sizing methods']],produces:['Candidate service list','Market evidence pack, cited','Indicative sizing per market','Stale rule book flags'],
+  done:'After this: the project has a candidate service list, and every candidate carries a cited market snapshot with an indicative market size.',
+  steps:['AI Assistant derives candidate services from project interventions','AI Assistant pulls hard data from registries','AI Assistant researches market signals in trend reports','AI Assistant sizes each market and compiles cited snapshots'],arts:['rulebooks','registries','evidence'],
+  guard:'Bronze soft-data findings always carry source links and are never blended with verified hard data. Estimates the methodology flags as finger-in-the-air are labelled as such.'}},
+
+{id:'qualres',x:1476,y:136,w:170,t:T.human,title:'Qualitative research',
+ d:{sub:'Buyer and trade team signals'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Sense-check the desktop findings against real market signals.',
+  needs:[['Desktop research','Market evidence pack']],produces:['Buyer and trade signals per service','Corrections to the desktop picture'],
+  done:'After this: the desktop evidence is confirmed or corrected by live buyer conversations and trade team signals.',
+  steps:['Caitlin reviews desktop snapshots','Caitlin checks signals from active buyer conversations','Trade team flags shifts desktop analysis missed','AI Assistant logs each signal against its service'],arts:['rulebooks'],
+  guard:'Tribal knowledge gets logged, never lost: every verbal signal is noted with who said it and when.'}},
+
+{id:'shortes',x:1716,y:136,w:178,t:T.agent,title:'Shortlist Ecosystem Services',
+ d:{sub:'Score and rank ecosystem services'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Score and rank the ecosystem services into a shortlist.',
+  needs:[['Qualitative research','Confirmed evidence pack']],produces:['Ranked ES shortlist','Per-category readiness scores'],
+  done:'After this: the ecosystem services are scored and ranked against the nine categories, with the reasoning behind each score.',
+  steps:['AI Assistant loads nine-category Market Readiness framework','AI Assistant scores each ES against confirmed evidence pack','AI Assistant ranks, writes rationale'],arts:['scoring'],
+  guard:'Twin of Shortlist qualified buyers: same mechanic, different criteria. Build once.'}},
+
+{id:'gate2',x:1964,y:136,w:172,t:T.gate,title:'Viable supply?',rows:[['yes','→ assess demand'],['no','→ park project']],
+ d:{sub:'The early kill gate'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'? Vertical Lead',exec:'Human-led',what:'The first kill gate: is the supply viable?',
+  needs:[['Shortlist ES','Ranked shortlist']],produces:['Yes → Assess demand','No → Park with learnings'],
+  done:'After this: a human has decided whether the supply side is strong enough to justify the demand work.',
+  steps:['Vertical Lead reviews shortlist scores','Vertical Lead decides, logs rationale'],arts:['scoring'],
+  guard:'Criteria come from the scores; the call is human.'}},
+
+{id:'park',x:1500,y:318,w:190,t:T.park,title:'Park project',
+ d:{sub:'Terminal · learnings + revisit date'},r:{sub:'empty',st:'none',dim:true},
+ info:'A stopped project never vanishes. Learnings are logged, a revisit date is set, and the record stays queryable. Receives from all three gates.'},
+
+{id:'tradecheck',x:2296,y:136,w:162,t:T.human,title:'Trade check-in',
+ d:{sub:'Sense-check demand with Trade'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'? Trade rep',exec:'Human-led',what:'Check the shortlist against live buyer conversations.',
+  needs:[['Viable supply?','Approved shortlist']],produces:['Demand flags per ES'],
+  done:'After this: Trade has flagged how hot, warm or cold real buyer demand is for each service.',
+  steps:['AI Assistant preps shortlist summary','Trade rep holds check-in call','Trade rep logs flags'],arts:[],
+  guard:'Demand-side twin of Qualitative research: human signals instead of documents.'}},
+
+{id:'shortbuyers',x:2528,y:136,w:186,t:T.agent,title:'Shortlist qualified buyers',
+ d:{sub:'Qualify buyers from the database'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Izzie',exec:'Agentic AI',what:'Find and rank likely buyers for each service.',
+  needs:[['Trade check-in','Demand flags'],['Shortlist ES','Ranked shortlist']],produces:['Qualified buyer list per ES'],
+  done:'After this: there is a ranked list of qualified buyers for each ecosystem service.',
+  steps:['AI Assistant queries buyer database','AI Assistant scores against schema','AI Assistant ranks per ES'],arts:['buyerdb','scoring'],
+  guard:'Buyer database quality is the biggest external dependency.'}},
+
+{id:'gate3',x:2784,y:136,w:164,t:T.gate,title:'Viable demand?',rows:[['yes','→ finalise'],['no','→ park project']],
+ d:{sub:'Credible demand for the shortlist?'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'? Vertical Lead',exec:'Human-led',what:'The second kill gate: is the demand credible?',
+  needs:[['Shortlist buyers','Buyer list']],produces:['Yes → Finalise','No → Park with learnings'],
+  done:'After this: a human has decided whether there is credible demand for what the land can sell.',
+  steps:['Vertical Lead reviews buyer list','Vertical Lead decides, logs rationale'],arts:[],guard:''}},
+
+{id:'finalprep',x:3108,y:136,w:170,t:T.agent,title:'Final check prep',
+ d:{sub:'Assemble the verdict pack'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Assemble the one-page go/no-go pack.',
+  needs:[['Viable demand?','Approved buyer list']],produces:['Verdict pack'],
+  done:'After this: the go / no-go pack is assembled, with the shortlist, buyers, indicative revenue and confidence flags on one page.',
+  steps:['AI Assistant compiles all outputs','AI Assistant drafts one-pager','AI Assistant flags confidence per claim'],arts:['verdict'],guard:''}},
+
+{id:'gonogo',x:3348,y:136,w:176,t:T.gate,title:'Go / no-go',rows:[['go','→ share + deposit'],['no-go','→ park project']],
+ d:{sub:'The verdict · never automated'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Vertical Lead',exec:'Human-led',what:'The final go/no-go verdict. Never automated.',
+  needs:[['Final check prep','Verdict pack']],produces:['Go → Share + deposit','No-go → Park'],
+  done:'After this: the Vertical Lead has made the call, to share the map with the client or to park the project.',
+  steps:['Champion presents pack','Vertical Lead decides','Vertical Lead logs verdict and rationale'],arts:['verdict'],
+  guard:'? Verdict format to agree with Vertical Lead'}},
+
+{id:'share',x:3594,y:136,w:164,t:T.det,title:'Share with customer',
+ d:{sub:'Deliver the map to the client'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Fully Automated',what:'Send the finished demand map to the client.',
+  needs:[['Go / no-go','Go verdict']],produces:['Delivered map','Acknowledgement'],
+  done:'After this: the client has the finished demand map, and has confirmed they received it.',
+  steps:['AI Assistant renders client pack','Caitlin approves','AI Assistant sends and logs'],arts:[],
+  guard:'Human approval before send, as always'}},
+
+{id:'platform',x:3828,y:136,w:182,t:T.det,title:'Add to GY Data Platform',
+ d:{sub:'Deposit structured data'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Harry',exec:'Fully Automated',what:'Save the finished map as structured data.',
+  needs:[['Go / no-go','Go verdict']],produces:['Platform record, provenance per field'],
+  done:'After this: the map is stored as structured data that future Workflows can build on.',
+  steps:['AI Assistant validates against schema','AI Assistant writes via API','AI Assistant logs who, when, version'],arts:[],guard:''}},
+
+{id:'store',x:3856,y:320,w:126,t:T.store,title:'Store',inert:true,
+ d:{sub:'Data store'},r:{sub:'',st:'none',dim:true},
+ info:'The GY Data Platform. Fields carry provenance chips. Pre-fills every future questionnaire, so nothing is asked twice.'},
+
+{id:'done',x:4080,y:136,w:160,t:T.term,title:'Complete',inert:true,
+ d:{sub:'Demand Map done'},r:{sub:'',st:'pending',dim:true},
+ info:'Demand Map complete. The run archives, the record lives on in the Data Platform, and the feedback hook fires for the next programme.'}
+];
+
+const EDGES=[
+ {x1:136,y1:162,x2:206,y2:162,s:'done'},
+ {x1:366,y1:162,x2:436,y2:162,s:'done'},
+ {x1:608,y1:162,x2:678,y2:162,s:'done'},
+ {x1:832,y1:162,x2:902,y2:162,s:'done'},
+ {d:'M564,318 V262 H755 V210',dRun:'M564,318 V262 H755 V254',s:'hot',dash:true,from:'followup'},
+ {x1:1406,y1:162,x2:1476,y2:162,s:'lock'},
+ {x1:1646,y1:162,x2:1716,y2:162,s:'lock'},
+ {x1:1894,y1:162,x2:1964,y2:162,s:'lock'},
+ {x1:2458,y1:162,x2:2528,y2:162,s:'lock'},
+ {x1:2714,y1:162,x2:2784,y2:162,s:'lock'},
+ {x1:3278,y1:162,x2:3348,y2:162,s:'lock'},
+ {x1:3758,y1:162,x2:3828,y2:162,s:'lock'},
+ {x1:4010,y1:162,x2:4080,y2:162,s:'lock'},
+ {x1:3919,y1:200,x2:3919,y2:318,s:'lock'}
+];
+
+const BRANCHES=[
+ {n:'gate1',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H1164 V162 H1230`},
+ {n:'gate1',i:1,s:'hot', mk:(x,y)=>`M${x},${y} H${x+26} V346 H654`},
+ {n:'gate2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H2216 V162 H2290`},
+ {n:'gate2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V340 H1696`},
+ {n:'gate3',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3028 V162 H3102`},
+ {n:'gate3',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V355 H1696`},
+ {n:'gonogo',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3560 V162 H3588`},
+ {n:'gonogo',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V370 H1696`}
+];
+
+function portPos(id,i){
+  const nodeEl=document.querySelector(`.node[data-id="${id}"]`);
+  if(!nodeEl)return null;
+  const p=nodeEl.querySelectorAll('.bport')[i];
+  if(!p)return null;
+  let x=p.offsetWidth/2,y=p.offsetHeight/2,el=p;
+  while(el&&!(el.classList&&el.classList.contains('world'))){x+=el.offsetLeft;y+=el.offsetTop;el=el.offsetParent;}
+  return{x,y:y-5};
+}
+
+const DOT={
+ done:{bg:'var(--green)',ic:'ti-check'},
+ active:{bg:'var(--blue)',ic:'ti-clock'},
+ queue:{bg:'#3B82F6',ic:'ti-user'},
+ fail:{bg:'var(--red)',ic:'ti-x'}
+};
+
+function renderTabs(){
+  document.getElementById('crumbTitle').textContent = 'Demand Mapping';
+  document.querySelector('.row1').classList.toggle('editing', MODE==='design');
+  document.getElementById('editChip').style.display = MODE==='design'?'inline-flex':'none';
+  const tp=document.getElementById('toolsPill'); if(tp)tp.style.display = MODE==='design'?'':'none';
+  const eb=document.getElementById('editBtn');
+  const rb=document.getElementById('resultBtn');
+  if(rb)rb.style.display=MODE==='design'?'none':'inline-flex';
+  if(MODE==='design'){
+    eb.style.display='inline-flex';
+    eb.innerHTML='<i class="ti ti-check"></i> Done';
+    eb.onclick=()=>setMode('run');
+  } else {
+    eb.style.display='none';
+  }
+  document.getElementById('floatR').innerHTML = MODE==='run'
+    ? (isPrev()?`<span class="chip" style="cursor:default;color:var(--amberd);border-color:#FAC775">Preview · no real project</span>`:'')
+      +`<span class="fpill" onclick="openNode(null);sideActivity()"><i class="ti ti-history" style="font-size:16px"></i> Activity</span>` : '';
+  demoBtnLabel();
+}
+function updateResultBtn(){
+  const f=document.getElementById('rfill'); if(!f)return;
+  const live=MODE==='run'&&!isPrev();
+  const steps=NODES.filter(x=>x.form);
+  const done=steps.filter(x=>x.r.st==='done').length;
+  f.style.width=live&&steps.length?Math.round(done/steps.length*100)+'%':'0%';
+}
+
+function renderBands(){
+  document.getElementById('bands').innerHTML=BANDS.map(b=>
+    `<div class="band${MODE==='run'&&!isPrev()&&b.cur?' cur':''}" style="left:${b.x}px;width:${b.w}px"></div>
+     <div class="bandlab${MODE==='run'&&!isPrev()&&b.cur?' cur':''}" style="left:${b.x+24}px">${b.t}${MODE==='run'&&!isPrev()?`<small>${b.cur?'<span class="livdot"></span>':''}${b.run}</small>`:''}</div>`).join('');
+}
+
+function edgeTarget(e){
+  if(e.from)return NODES.find(n=>n.id===e.from);
+  if(e.x2==null)return null;
+  return NODES.find(n=>Math.abs(n.x-e.x2)<10||Math.abs(n.x+n.w/2-e.x2)<10);
+}
+function edgeS(e){
+  const t=edgeTarget(e);
+  if(!t)return 'lock';
+  const st=t.r.st;
+  if(e.from)return st==='done'?'done':(st==='queue'||st==='active')?'hot':'lock';
+  return (st==='done')?'done':(st==='active'||st==='queue'||st==='fail')?'done':'lock';
+}
+function branchS(b){
+  const g=NODES.find(n=>n.id===b.n);
+  if(!g)return 'lock';
+  if(g.r.st==='fail'&&g.r.rowhot===b.i)return 'hot';
+  if(g.r.st==='done'&&(g.r.rowhot??0)===b.i)return 'done';
+  return 'lock';
+}
+function renderEdges(){
+  const col=s=>MODE==='design'?'#C9C7C0':isPrev()?'#DBD9D2':(s==='done'?'#639922':s==='hot'?'#EF9F27':'#DBD9D2');
+  const mk=s=>MODE==='design'?'url(#arr)':isPrev()?'url(#arrl)':(s==='done'?'url(#arrg)':s==='hot'?'url(#arra)':'url(#arrl)');
+  const branchPaths=BRANCHES.map(b=>{
+    const p=portPos(b.n,b.i);
+    if(!p)return '';
+    const s=(MODE==='run'&&!isPrev())?branchS(b):b.s;
+    const w=MODE==='run'&&s==='hot'?2:1.5;
+    return `<path d="${b.mk(Math.round(p.x),Math.round(p.y))}" fill="none" stroke="${col(s)}" stroke-width="${w}" marker-end="${mk(s)}"/>`;}).join('');
+  document.getElementById('edgeg').innerHTML=EDGES.map(e=>{
+    const s=(MODE==='run'&&!isPrev())?edgeS(e):e.s;
+    const w=MODE==='run'&&(s==='done'||s==='hot')?2:1.5;
+    const dash=e.dash?'stroke-dasharray="5 4"':'';
+    if(e.d){
+      const d=(MODE==='run'&&e.dRun)?e.dRun:e.d;
+      return `<path d="${d}" fill="none" stroke="${col(s)}" stroke-width="${w}" ${dash} marker-end="${mk(s)}"/>`;
+    }
+    return `<line x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" stroke="${col(s)}" stroke-width="${w}" ${dash} marker-end="${mk(s)}"/>`;}).join('')+branchPaths;
+}
+
+function renderNodes(){
+  document.getElementById('nodes').innerHTML=NODES.map(n=>{
+    const m=isPrev()?{sub:n.d.sub,dim:true,st:'pending'}
+      :(MODE==='design'?n.d:{...n.r,sub:(n.d.sub||'')+(n.r.who?' · '+n.r.who:'')});
+    const dim=MODE==='run'&&m.dim?' dim':'';
+    const sel=SELECTED===n.id?' sel':'';
+    const outline=MODE==='run'&&m.outline?`outline:2px solid ${m.outline};`:'';
+    const badge=(MODE==='run'&&m.badge)?`<span class="bd" style="background:${m.badge.bg};color:${m.badge.fg}">${m.badge.ic?`<i class="ti ${m.badge.ic}"></i>`:''}${m.badge.t}</span>`:'';
+    const rows=n.rows?n.rows.map((r,i)=>{
+      let c='var(--blue)', tc='var(--ink2)';
+      if(MODE==='run'){
+        if(isPrev()){c='var(--line2)';tc='var(--ink3)';}
+        else if(n.r.rowhot===i){c='var(--amber)';tc='var(--amberd)';}
+        else if(n.r.st==='fail'||n.r.st==='pending'){c='var(--line2)';tc='var(--ink3)';}
+      }
+      return `<div class="brow" style="color:${tc}"><span>${r[0]}</span><span class="bport" style="border-color:${c}"><span style="background:${c}"></span></span></div>`;}).join(''):'';
+    const dot=MODE==='run'&&DOT[m.st]?`<span class="dot" style="background:${DOT[m.st].bg}"><i class="ti ${DOT[m.st].ic}"></i></span>`:'';
+    const portDone=MODE==='run'&&m.st==='done'?' done':'';
+    const add=n.addable?`<span class="addwrap"><span class="addb" onclick="event.stopPropagation();toast('Add connecting block: extend the blueprint with a next step, e.g. a feedback loop to the client')"><i class="ti ti-plus" style="padding:0"></i></span><span class="addtip">Add connecting block</span></span>`:'';
+    const storeDone=n.id==='store'&&MODE==='run'&&!isPrev()&&m.st==='done';
+    const fade=storeDone&&STOREFADE?' okfade':'';
+    const nflash=NODEFLASH===n.id?' nflash':'';
+    const icBg=storeDone?'rgba(255,255,255,.14)':n.t.bg, icFg=storeDone?'#F4EFE9':n.t.fg;
+    return `<div class="node${n.inert&&!n.info?' inert':''}${dim}${sel}${storeDone?' storedone':''}${fade}${nflash}" data-id="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;${outline}" onclick="openNode('${n.id}')">
+      <div class="hd"><div class="ic" style="background:${icBg};color:${icFg}"><i class="ti ${n.t.ic}"></i></div>
+      <div class="nt" style="padding-top:4px">${n.title}</div></div>
+      ${m.sub?`<div class="ns" style="margin-top:7px">${m.sub}</div>`:''}
+      ${badge}${rows}${dot}${n.rows?'':`<span class="port${portDone}"></span>`}${add}${storeDone?`<span class="okchk"><i class="ti ti-check"></i></span>`:''}</div>`;}).join('');
+  STOREFADE=false; NODEFLASH=null;
+  updateResultBtn();
+}
+
+function dhead(icon,tint,fg,title,sub){
+  return `<div class="sh">
+  <div class="ic" style="background:${tint};color:${fg}"><i class="ti ${icon}"></i></div>
+  <div style="flex:1"><div class="nt">${title}</div>${sub?`<div class="ns">${sub}</div>`:''}</div>
+  <button class="x" onclick="closeDrawer()" aria-label="Close"><i class="ti ti-x"></i></button></div>`;
+}
+function closeDrawer(){document.getElementById('drawerL').style.display='none'}
+function openAboutL(){
+  const d=document.getElementById('drawerL');
+  const chap=(n,t,body,det)=>`
+  <div style="margin-top:24px">
+    <span class="dnum" style="margin:0">${n}</span>
+    <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:10px">${t}</div>
+    <div class="pt" style="margin-top:4px">${body}</div>
+    <div style="background:#F8F5ED;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;margin-top:10px;font-size:14.5px;color:var(--ink2);line-height:1.7">${det}</div>
+  </div>`;
+  d.innerHTML=dhead('ti-info-circle','var(--graybg)','var(--grayd)','About Workflow','')
+  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">Demand Mapping is the early-stage analysis that works out what a restoration project can sell, who would buy it, and how firm that picture is.</div>
+  <div style="height:1px;background:var(--line);margin:18px 0 2px"></div>
+  ${chap(1,'Project context',
+    'The facts from onboarding, plus the standard data-needs ask we send the client early. Sets the scene; nothing is analysed here.',
+    '<b>Questions</b> · vision, interventions, outcomes, boundary<br><b>Documents</b> · GIS shapefiles, data-room link, baseline surveys<br><b>Client ask</b> · baseline data available now, markets they pursue, who leads the ES valuation')}
+  ${chap(2,'Markets and supply',
+    'The products this land can sell. Desktop research compiles cited market snapshots from the Hive Mind Library rule books, registries and APIs; qualitative research ground-truths them with buyer and trade team signals; the shortlist then scores what remains.',
+    '<b>Desktop research</b> · rule books, Allied Offsets API, registry pulls, trend scrapes<br><b>Qualitative research</b> · buyer conversations, trade team signals<br><b>Shortlist</b> · 8 nature products, scored and ranked<br><b>Product card</b> · rulebook, eligibility, volume and method, pricing and trend, indicative revenue, competitor supply, funding, confidence and next step')}
+  ${chap(3,'Demand',
+    'Who would buy: tap the GY buyer database, filter to this catchment, and qualify each candidate. Found through six channels; a light competitor scan sits here too.',
+    '<b>Buyer database</b> · filtered to catchment<br><b>Qualification</b> · relevance, hook, contact, engagement status<br><b>Channels</b> · six discovery routes')}
+  <div style="height:1px;background:var(--line);margin:22px 0 0"></div>
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Why it exists</div>
+  <div class="pt" style="margin-top:4px">The commercial case for a project cannot be built until you know which revenue streams are real and which buyers are reachable. Without it, the Financial Model and Blended Finance Plan are guesses, and outreach is unfocused. It is also the first proof case for templatising GY's work, so getting its shape right matters beyond this one Workflow.</div></div>`;
+  d.style.display='block';
+}
+const ALIST=[
+ {id:'questionnaire',ch:1,name:'Questionnaire · Project context',sub:'from Questionnaire · white label v1',ic:'ti-forms',bg:'#F5C64B',fg:'#2C2410'},
+ {id:'agenda',ch:1,name:'Agenda · Kick-off call',sub:'document',ic:'ti-file-text',bg:'#378ADD',fg:'#fff'},
+ {id:'qemail',ch:1,name:'Email · Project context',sub:'from Client email module',ic:'ti-mail',bg:'#1D9E75',fg:'#fff'},
+ {id:'precall',ch:1,name:'Assistant · Pre-call brief',sub:'AI assistant · golden example',ic:'ti-sparkles',bg:'#EF9F27',fg:'#412402'},
+ {id:'gapsum',ch:1,name:'Assistant · Gap summary',sub:'AI assistant · golden example',ic:'ti-message',bg:'#EF9F27',fg:'#412402'},
+ {id:'rulebooks',ch:2,name:'Library · ES rule books',sub:'Hive Mind Library',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
+ {id:'registries',ch:2,name:'Shelf · Supply registries',sub:'connections from Settings',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_bng',ch:2,name:'Registry · DEFRA BNG register',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_gaia',ch:2,name:'Registry · Gaia',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_wcc',ch:2,name:'Registry · Woodland Carbon Code',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_pcc',ch:2,name:'Registry · Peatland Carbon Code',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_wbcp',ch:2,name:'Registry · World Bank carbon price',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_ice',ch:2,name:'Registry · ICE',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_eex',ch:2,name:'Registry · EEX',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'evidence',ch:2,name:'Template · Evidence pack',sub:'document',ic:'ti-report',bg:'#D4537E',fg:'#fff'},
+ {id:'scoring',ch:2,name:'Scoring · Supply side',sub:'shared engine · both twins',ic:'ti-scale',bg:'#5DCAA5',fg:'#04342C'},
+ {id:'buyerdb',ch:3,name:'Database · GY buyers',sub:'HubSpot',ic:'ti-database',bg:'#639922',fg:'#fff'},
+ {id:'verdict',ch:4,name:'Template · Verdict pack',sub:'document',ic:'ti-clipboard-check',bg:'#378ADD',fg:'#fff'}
+];
+const ACH={1:'1 · Context',2:'2 · Supply',3:'3 · Demand',4:'4 · Finalise'};
+const TOOLMETA={
+ questionnaire:{mod:'Questionnaire · white label',mv:'v1',state:'ok'},
+ agenda:{mod:null},
+ qemail:{mod:'Client email module',mv:'v2',state:'newer'},
+ precall:{mod:'Brief assistant module',mv:'v1',state:'drift'},
+ gapsum:{mod:'Chaser assistant module',mv:'v1',state:'ok'},
+ rulebooks:{mod:'Hive Mind Library shelf',mv:'v1',state:'ok'},
+ registries:{mod:'Registry connections',mv:'v1',state:'ok'},
+ evidence:{mod:null},
+ scoring:{mod:'Scoring engine',mv:'v3',state:'ok'},
+ buyerdb:{mod:'HubSpot connector',mv:'v2',state:'ok'},
+ verdict:{mod:null}
+};
+function toolUsedBy(id){
+  const norm=x=>((x==='checklist'||x==='intake')?'questionnaire':x);
+  const target=norm(id);
+  const out=[];
+  NODES.forEach(n=>{
+    if(!n.form||!n.form.steps)return;
+    const steps=[];
+    n.form.steps.forEach((sp,i)=>{
+      if((sp.arts||[]).some(a=>norm(a)===target))steps.push(i+1);
+    });
+    if(steps.length)out.push(`${n.title} · step ${steps.join(', ')}`);
+  });
+  return out;
+}
+function toolStateBadge(id){
+  const m=TOOLMETA[id]||{};
+  if(!m.mod)return `<span class="tstate custom"><i class="ti ti-pencil"></i> custom · no module</span>`;
+  if(m.state==='newer')return `<span class="tstate newer"><i class="ti ti-arrow-up-circle"></i> module update available</span>`;
+  if(m.state==='drift')return `<span class="tstate drift"><i class="ti ti-git-branch"></i> drifted from module</span>`;
+  return `<span class="tstate ok"><i class="ti ti-circle-check"></i> up to date</span>`;
+}
+function openArtefactsL(){
+  const d=document.getElementById('drawerL');
+  const row=a=>{
+    const href=a.id==='questionnaire'
+      ?`'questionnaire-editor.html${MODE==='design'?'?edit=1':''}'`
+      :`'artefact-editor.html?a=${a.id}${MODE==='design'?'&edit=1':''}'`;
+    const parts=(a.name||'').split(' · ');
+    return `<div class="arow" style="background:${a.bg}12;border-color:${a.bg}4D" onclick="location.href=${href}">
+      <span class="aic" style="background:${a.bg};color:${a.fg}"><i class="ti ${a.ic}"></i></span>
+      <span style="flex:1;min-width:0"><b style="font-weight:600">${parts[0]}</b>${parts[1]?`<span style="color:var(--ink2)">&nbsp; ${parts.slice(1).join(' · ')}</span>`:''}</span>
+      <i class="ti ti-chevron-right chvw"></i></div>`;
+  };
+  const groups=[1,2,3,4].map(c=>
+    `<div class="pl">${ACH[c]}</div>`+ALIST.filter(a=>a.ch===c).map(row).join('')).join('');
+  d.innerHTML=dhead('ti-template','var(--graybg)','var(--grayd)','Tools','')
+  +`<div class="sbody">`+groups
+  +`<div class="tadd" style="margin-top:20px" onclick="toast('Opens the Hive Mind Library: pick a module, get a fork, name your instance')"><i class="ti ti-plus"></i><span><b>Add a tool</b></span><i class="ti ti-chevron-right chvw"></i></div>
+  </div>`;
+  d.style.display='block';
+}
+
+const NEXT={
+ kickoff:[['','sendq']], sendq:[['','receive']], receive:[['','gate1']],
+ gate1:[['yes','desktop'],['no','followup']],
+ followup:[['loops to','receive']],
+ desktop:[['','qualres']], qualres:[['','shortes']], shortes:[['','gate2']],
+ gate2:[['yes','tradecheck'],['no','park']],
+ tradecheck:[['','shortbuyers']], shortbuyers:[['','gate3']],
+ gate3:[['yes','finalprep'],['no','park']],
+ finalprep:[['','gonogo']],
+ gonogo:[['go','share'],['no-go','park']],
+ share:[['','platform']], platform:[['','done']]
+};
+function nextRows(id){
+  const nx=NEXT[id]||[];
+  if(!nx.length)return `<div class="nsmall">End of the flow.</div>`;
+  return nx.map(([lab,nid])=>{const t=NODES.find(x=>x.id===nid);
+    return `<button class="mbx" onclick="event.stopPropagation();openNode('${nid}')">
+      <span class="ic" style="width:22px;height:22px;border-radius:6px;background:${t.t.bg};color:${t.t.fg}"><i class="ti ${t.t.ic}" style="font-size:12px"></i></span>
+      ${lab?`<span style="color:var(--ink3);font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${lab}</span>`:''}
+      ${t.title}<i class="ti ti-chevron-right" style="margin-left:auto;color:var(--ink3)"></i></button>`;}).join('');
+}
+
+function setSide(visible){
+  document.querySelector('.main .side').classList.toggle('hidden',!visible);
+  if(!visible&&window.svPanelHide)svPanelHide();
+  const tb=document.querySelector('.toolbar'); if(tb)tb.classList.toggle('full',!visible);
+  document.getElementById('floatR').style.visibility = visible?'hidden':'visible';
+}
+function renderChapnav(){
+  const c=document.getElementById('chapnav');
+  if(!CHAPNAV){c.style.display='none';return;}
+  const ends=['gate1','gate2','gate3','done'];
+  const doneArr=ends.map(id=>{const n=NODES.find(x=>x.id===id);return n&&n.r.st==='done';});
+  const firstOpen=doneArr.indexOf(false);
+  const key=MODE+RUN+doneArr.join('')+firstOpen;
+  if(c.dataset.key===key)return;
+  c.dataset.key=key;
+  c.innerHTML=BANDS.map((b,i)=>{
+    const live=MODE==='run'&&!isPrev();
+    const isDone=live&&doneArr[i];
+    const cur=live&&!isDone&&i===firstOpen;
+    const badge=isDone?'<span class="chk"><i class="ti ti-check"></i></span>':cur?'<span class="cur"></span>':'';
+    return `<span class="${cur?'curlab':''}${isDone?' donelab':''}" onclick="gotoChapter(${i})">${badge}${b.short}</span>`;}).join('');
+}
+let Z=1;
+function gotoChapter(i){
+  const b=BANDS[i], sc=document.querySelector('.scroll');
+  const target=600+(b.x+b.w/2)*Z - sc.clientWidth/2;
+  sc.scrollTo({left:target,behavior:'smooth'});
+}
+
+const AVA={
+ agent:{ic:'ti-sparkles',bg:'#1F1F1D',fg:'#F9DD5A',name:'AI Assistant'},
+ caitlin:{txt:'C',bg:'#1D9E75',fg:'#fff',name:'Caitlin'},
+ client:{txt:'J',bg:'#0F6E56',fg:'#fff',name:'J. Ruggles'}
+};
+const ACTIVITY=[
+ ['1 JULY 2026',[
+  ['09:01','caitlin','<span class="mut">started with the</span> <b>Demand Mapping Workflow</b> <span class="mut">for Spains Hall</span>'],
+  ['09:02','agent','<span class="mut">started</span> <b>Run #1</b> <span class="mut">from blueprint v1.0, cautious mode, Caitlin owning</span>'],
+  ['09:02','agent','<span class="mut">minted the</span> <b>questionnaire</b> <span class="mut">for J. Ruggles, 6 of 14 fields pre-filled</span>'],
+  ['09:03','agent','<span class="mut">drafted the</span> <b>kick-off brief</b> <span class="mut">and emailed it to Caitlin</span>'],
+  ['10:00','caitlin','<span class="mut">held the</span> <b>kick-off call</b> <span class="mut">· 40 min</span>',
+   'Scope confirmed: 400 ha floodplain meadow, nature market income. The 14-item input list agreed with James.'],
+  ['14:18','caitlin','<span class="mut">approved the</span> <b>questionnaire email</b>'],
+  ['14:20','agent','<span class="mut">sent it · acknowledged 15:02 ·</span> <b>wait clock started</b>']]],
+ ['3 JULY 2026',[
+  ['11:34','client','<span class="mut">submitted</span> <b>6 of 14 items</b> <span class="mut">through the questionnaire</span>']]],
+ ['6 JULY 2026',[
+  ['09:00','agent','<span class="mut">sent the</span> <b>first chase</b> <span class="mut">· friendly tone, as scheduled</span>']]],
+ ['8 JULY 2026',[
+  ['08:52','client','<span class="mut">sent the</span> <b>tenure map</b> <span class="mut">by email reply instead of the questionnaire</span>'],
+  ['08:53','agent','<span class="mut">filed it, mapped to the checklist ·</span> <b>12 of 14</b>']]],
+ ['9 JULY 2026',[
+  ['09:02','agent','<span class="mut">ran the</span> <b>completeness check</b> <span class="mut">· failed · gaps: site boundary, grazing agreement</span>'],
+  ['09:05','agent','<span class="mut">drafted the</span> <b>gap reminder</b> <span class="mut">· in Gmail, Caitlin to review</span>',
+   'Hi James, thanks for everything so far, 12 of 14 items are in and looking great. Two things would unlock the next step: the site boundary shapefile and the grazing agreement for the east parcels.']]]
+];
+const DOCV={
+ mgmt:{ic:'ti-file-text',name:'estate_management_plan.pdf',body:`
+  <h2>Estate Management Plan</h2><div class="dvsub">Evenlode Landscape Recovery · prepared by the estate · 38 pages</div>
+  <h3>1 · Vision</h3><p>Restore the estate to good ecological condition over the next decade: cleaner water, lower flood risk, richer habitat, and a durable income from nature markets alongside continued farming.</p>
+  <h3>2 · The land today</h3><p>Six parcels across 400 ha of mixed arable, pasture and riparian corridor. Grazing is central to the current business and should continue on enrolled parcels.</p>
+  <h3>3 · Planned interventions</h3><p>Riparian buffer planting along the main watercourse, two wetland creation areas, leaky woody dams, hedgerow restoration, and reduced inputs on enrolled parcels. Phased from spring 2027.</p>`},
+ sfi:{ic:'ti-file-text',name:'sfi_agreement_2024.pdf',body:`
+  <h2>SFI Agreement 2024</h2><div class="dvsub">Sustainable Farming Incentive · agreement ref SFI-24-8841 · 12 pages</div>
+  <h3>Parties and term</h3><p>The estate and Defra. Three-year term from March 2024, covering herbal leys, hedgerow management and integrated pest management actions.</p>
+  <h3>Enrolled parcels</h3><p>Parcels 1 to 4. Actions on these parcels must be compatible with any new nature-market commitments; stacking rules apply.</p>
+  <h3>Payments</h3><p>Quarterly payments against completed actions, subject to annual declaration.</p>`},
+ tenure:{ic:'ti-map',name:'tenure_map.pdf',body:`
+  <h2>Tenure Map</h2><div class="dvsub">Six parcels · five owned, one tenanted · received Wed 08:52</div>
+  <svg viewBox="0 0 560 260" style="width:100%;margin:10px 0 16px" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="160" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="90" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 1 · owned</text>
+    <rect x="180" y="10" width="180" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="270" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 2 · owned</text>
+    <rect x="370" y="10" width="180" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="460" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 3 · owned</text>
+    <rect x="10" y="140" width="250" height="110" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="135" y="199" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 4 · owned</text>
+    <rect x="270" y="140" width="140" height="110" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="340" y="199" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 5 · owned</text>
+    <rect x="420" y="140" width="130" height="110" rx="8" fill="#FBEFD8" stroke="#D9A23F"/><text x="485" y="192" text-anchor="middle" font-size="13" fill="#8A5A10">Parcel 6 · east</text><text x="485" y="210" text-anchor="middle" font-size="13" fill="#8A5A10">tenanted</text>
+  </svg>
+  <p>The east parcel is tenanted; selling outcomes there depends on the grazing agreement (still awaited). All other parcels are held freehold with no prior commitments beyond SFI 2024.</p>`}
+};
+function openDocViewer(id){
+  const d=DOCV[id];
+  const o=document.getElementById('dvov');
+  o.innerHTML=`<div class="dvbox" onclick="event.stopPropagation()">
+    <div class="dvhead"><i class="ti ${d.ic}"></i>${d.name}
+      <span class="dvx" onclick="closeDocViewer()"><i class="ti ti-x"></i></span></div>
+    <div class="dvpage">${d.body}</div>
+    <div class="dvfoot">Prototype preview · the original file lives in the run's document store</div>
+  </div>`;
+  o.classList.add('open');
+}
+function closeDocViewer(){document.getElementById('dvov').classList.remove('open');}
+function closeDoc(){document.getElementById('docm').style.display='none';syncResultBtn();}
+function toggleResult(){
+  const d=document.getElementById('docm');
+  if(d&&d.style.display==='block')closeDoc();
+  else{openNode(null);sideContents();}
+}
+function syncResultBtn(){
+  const d=document.getElementById('docm'),ic=document.getElementById('resultIc'),lb=document.getElementById('resultLbl');
+  if(!ic||!lb)return;
+  const open=d&&d.style.display==='block';
+  ic.className='ti '+(open?'ti-x':'ti-player-play');
+  ic.style.fontSize=open?'13px':'12px';
+  lb.textContent=open?'Close':'View result';
+  document.body.classList.toggle('resultmode',!!open);
+}
+function openContentsDoc(){
+  const d=document.getElementById('docm');
+  const val=(label,text,prov,opts)=>{opts=opts||{};
+    const chip=opts.inf?`<span class="pv" style="background:var(--bluebg);color:var(--blued)">AI Assistant's reading · please check</span>`
+      :`<span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span>`;
+    return `<div class="dfl">${label}${opts.nw?' <span class="pv" style="background:var(--greenbg);color:var(--greend)">new</span>':''}</div>
+    <div class="dp">${text}</div><div class="dprov">${prov} ${chip}</div>`;};
+  const ghostval=(label,note)=>`<div class="dfl" style="color:var(--ink3)">${label} <span class="pv" style="background:var(--amberbg);color:var(--amberd)">missing</span></div>
+    <div style="padding:4px 0 2px"><div class="gline" style="display:block;max-width:88%;margin-bottom:8px"></div><div class="gline" style="display:block;max-width:55%"></div></div>
+    <div class="dprov">${note}</div>`;
+  const sec=(num,title,body)=>`<div class="dsec"><div class="dh2"><span class="dnum">${num}</span>${title}</div>${body}</div>`;
+  let body;
+  if(isPrev()){
+    body=`<div class="dchips"><span class="dchip"><b>Completeness</b> 0%</span><span class="dchip"><b>Status</b> no run selected</span></div>`
+    +sec(1,'Project context',`<div class="dghost">The 14 must-have fields, written by Gather project context.<br>Filled once a Programme runs this Workflow.</div>`)
+    +sec(2,'Markets and supply',`<div class="dghost">Evidence pack per ecosystem service, ranked shortlist with scores.<br>Written by Research and Shortlist Ecosystem Services.</div>`)
+    +sec(3,'Demand',`<div class="dghost">Trade demand flags and the qualified buyer list.<br>Written by Trade check-in and Shortlist qualified buyers.</div>`)
+    +sec(4,'Verdict',`<div class="dghost">The go / no-go pack and decision.<br>Written by Final check prep, decided by the Vertical Lead.</div>`);
+  } else {
+    const ends=['gate1','gate2','gate3','done'];
+    const doneArr=ends.map(id=>{const nn=NODES.find(x=>x.id===id);return nn&&nn.r.st==='done';});
+    const complete=doneArr.every(Boolean);
+    const pct=Math.round(doneArr.filter(Boolean).length/4*100);
+    const scoreRow=(label,score,note)=>`<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span style="width:150px;flex:none;font-weight:500">${label}</span><div style="flex:1;min-width:0"><span style="display:block;height:8px;border-radius:99px;background:var(--graybg);position:relative;overflow:hidden;margin:5px 0 6px"><i style="position:absolute;inset:0;width:${Math.round(score/5*100)}%;background:var(--green);border-radius:99px"></i></span><span style="font-size:13.5px;color:var(--ink2)">${note}</span></div><span style="font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--greenbg);color:var(--greend);flex:none;font-weight:600">${score} / 5</span></div>`;
+    const buyerRow=(name,init,service,temp,note)=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span style="width:28px;height:28px;border-radius:50%;background:var(--graybg);color:var(--grayd);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex:none">${init}</span><div style="flex:1;min-width:0"><div style="font-weight:500">${name}</div><div style="font-size:13px;color:var(--ink3)">${service} · ${note}</div></div><span style="font-size:12px;padding:3px 10px;border-radius:999px;flex:none;font-weight:600;background:${temp==='hot'?'var(--amberbg)':'var(--tealbg)'};color:${temp==='hot'?'var(--amberd)':'var(--teald)'}">${temp}</span></div>`;
+    const vrow=(label,text)=>`<div style="display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span style="width:150px;flex:none;font-weight:500">${label}</span><span style="flex:1;color:var(--ink2)">${text}</span></div>`;
+    const filledSupply=`<div class="cbox" style="padding:6px 22px 18px"><div class="dfl">Ranked shortlist · 4 services scored</div>`+scoreRow('BNG units','4.6','Live DEFRA register, £37,967.48 avg unit, strong local demand')+scoreRow('Nutrient credits','3.8','Active catchment scheme with credible buyers')+scoreRow('Woodland carbon','3.2','WCU £22.10/tCO2e, moderate deliverable volume')+scoreRow('Natural flood mgmt','2.4','Early market, largely grant-dependent today')+`<div class="dprov" style="margin-top:14px">Written by Research and Shortlist Ecosystem Services · every figure cited</div></div>`;
+    const filledDemand=`<div class="cbox" style="padding:6px 22px 18px"><div class="dfl">Qualified buyers · 7 identified, ranked by fit</div>`+buyerRow('Aviva','AV','BNG units','hot','Fit 4.5 · active BNG mandate')+buyerRow('Severn Trent','ST','Nutrient credits','hot','Fit 4.2 · catchment obligation')+buyerRow('Nestle UK','NU','Woodland carbon','warm','Fit 3.4 · Scope 3 interest')+buyerRow('Local BNG broker','LB','BNG units','warm','Fit 3.1 · pipeline demand')+`<div class="dprov" style="margin-top:14px">Written by Trade check-in and Shortlist qualified buyers</div></div>`;
+    const filledVerdict=`<div class="cbox" style="padding:6px 22px 20px">`+vrow('Supply','3 viable services · BNG units lead')+vrow('Demand','7 qualified buyers · 2 hot markets')+vrow('Indicative revenue','£1.2m to £1.8m over 30 years · medium confidence')+`<div style="margin-top:16px;border-radius:10px;padding:12px 14px;background:var(--greenbg);color:var(--greend);font-weight:700;text-align:center;letter-spacing:.02em">Recommendation: GO · decided by the Vertical Lead</div><div class="dprov" style="margin-top:12px">Written by Final check prep, decided by the Vertical Lead</div></div>`;
+    body=`<div class="dchips"><span class="dchip"><b>Completeness</b> ${pct}%</span><span class="dchip"><b>Status</b> ${complete?'complete':'in progress'}</span></div>`
+    +sec(1,'Project context',
+      `<div class="cbox">`
+      +val('Vision and target outcomes','Restore the estate to good ecological condition, reducing nutrient pollution and flood risk, while creating habitat and a long-term income for the estate through nature markets. Outcomes: biodiversity uplift, natural flood management, woodland and soil carbon.','From the management plan · 2 Jul',{inf:true})
+      +val('Key interventions · 400 ha','Riparian buffer planting, two wetland creation areas, leaky woody dams, hedgerow restoration, and reduced inputs on enrolled parcels.','From the management plan · 2 Jul')
+      +val('Jurisdiction and timeline','England. Start spring 2027, three phases over ten years, 30-year agreement appetite.','From the questionnaire · 3 Jul')
+      +val('Tenure','tenure_map.pdf · 6 parcels, 5 owned, 1 tenanted (east). Existing agreements: SFI 2024. Prior commitments: none. Constraint: keep grazing.','From an email reply · Wed 08:52',{nw:true})
+      +(complete?val('Site boundary','Shapefile received · 400 ha across 6 parcels, matches the tenure map. Eligibility checks unlocked.','From the client · 14 of 14'):ghostval('Site boundary','Waiting on the client · a shapefile of the site boundary · unlocks eligibility checks in stage 2'))
+      +(complete?val('Grazing agreement · east parcels','Received · the licence allows outcome sales on the tenanted east parcel.','From the client · 14 of 14'):ghostval('Grazing agreement · east parcels','Waiting on the client · gates who can sell outcomes on the tenanted parcels'))
+      +`<div class="dfl">Documents from the client</div>
+      <div class="doclist">
+        <div class="docrow" onclick="openDocViewer('mgmt')"><span class="dtile"><i class="ti ti-file-text"></i></span><span class="docnm">estate_management_plan.pdf</span><span class="docmeta">via questionnaire · 2 Jul</span><i class="ti ti-chevron-right opn"></i></div>
+        <div class="docrow" onclick="openDocViewer('sfi')"><span class="dtile"><i class="ti ti-file-text"></i></span><span class="docnm">sfi_agreement_2024.pdf</span><span class="docmeta">via questionnaire · 3 Jul</span><i class="ti ti-chevron-right opn"></i></div>
+        <div class="docrow" onclick="openDocViewer('tenure')"><span class="dtile" style="background:var(--greenbg);color:var(--greend)"><i class="ti ti-map"></i></span><span class="docnm">tenure_map.pdf</span><span class="docmeta">by email reply · Wed 08:52</span><i class="ti ti-chevron-right opn"></i></div>
+      </div></div>`)
+    +sec(2,'Markets and supply',complete?filledSupply:`<div class="gbox">
+      <div class="grow"><span class="glab">BNG units</span><span class="gbar"><i style="--w:72%"></i></span><span class="gpill">score · /5</span></div>
+      <div class="grow"><span class="glab">Nutrient credits</span><span class="gbar"><i style="--w:55%"></i></span><span class="gpill">score · /5</span></div>
+      <div class="grow"><span class="glab">Carbon</span><span class="gbar"><i style="--w:38%"></i></span><span class="gpill">score · /5</span></div>
+      <div class="grow"><span class="glab">Natural flood mgmt</span><span class="gbar"><i style="--w:24%"></i></span><span class="gpill">score · /5</span></div>
+      <div class="gnote">An evidence pack per ecosystem service, scored and ranked into a shortlist.<br>Written by Research and Shortlist Ecosystem Services · wakes when the input pack completes.</div>
+    </div>`)
+    +sec(3,'Demand',complete?filledDemand:`<div class="gbox">
+      <div class="grow"><span class="gav"></span><span class="gline"></span><span class="gpill">hot / warm</span></div>
+      <div class="grow"><span class="gav"></span><span class="gline"></span><span class="gpill">hot / warm</span></div>
+      <div class="grow"><span class="gav"></span><span class="gline short"></span><span class="gline"></span><span class="gpill">hot / warm</span></div>
+      <div class="gnote">Trade demand flags and a qualified buyer list, ranked by fit and appetite.<br>Written by Trade check-in and Shortlist qualified buyers.</div>
+    </div>`)
+    +sec(4,'Verdict',complete?filledVerdict:`<div class="gbox">
+      <div class="grow"><span class="glab">Supply</span><span class="gline"></span></div>
+      <div class="grow"><span class="glab">Demand</span><span class="gline"></span></div>
+      <div class="grow"><span class="glab">Indicative revenue</span><span class="gline short"></span><span class="gpill">confidence</span></div>
+      <div class="gverdict">Recommendation: GO / NO-GO · decision rights: Vertical Lead</div>
+      <div class="gnote">The one-page verdict pack and the decision.<br>Written by Final check prep, decided by the Vertical Lead.</div>
+    </div>`);
+  }
+  d.innerHTML=`<div class="doclayout" onclick="if(event.target===this)closeDoc()"><nav class="dtoc" id="dtoc"></nav>
+  <div class="docwrap">
+    <div class="dlab">Demand Mapping · Contents${isPrev()?' · Preview':''}</div>
+    <div class="dtitle">${isPrev()?'Untitled project':'ELR - Evenlode Landscape Recovery'}</div>
+    ${isPrev()?'<div class="dsub">The demand map this blueprint will assemble.</div>':''}
+    ${body}
+  </div>
+  <div class="dtocpad"></div></div>`;
+  d.style.display='block';
+  syncResultBtn();
+  buildResultToc();
+}
+function resTocGo(i){const el=document.getElementById('dsec'+i);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+function buildResultToc(){
+  const d=document.getElementById('docm'),nav=document.getElementById('dtoc');
+  if(!d||!nav)return;
+  const secs=[...d.querySelectorAll('.dsec')];
+  if(!secs.length){nav.innerHTML='';return;}
+  const ends=['gate1','gate2','gate3','done'];
+  const live=MODE==='run'&&!isPrev();
+  const doneArr=ends.map(id=>{const n=NODES.find(x=>x.id===id);return live&&n&&n.r.st==='done';});
+  const firstOpen=doneArr.indexOf(false);
+  let h='<div class="tlab">On this page</div>';
+  secs.forEach((s,i)=>{
+    s.id='dsec'+i;s.style.scrollMarginTop='16px';
+    const num=(s.querySelector('.dnum')?.textContent||'').trim();
+    const t=(s.querySelector('.dh2')?.textContent||'').trim().replace(/^\d+\s*/,'');
+    const isDone=doneArr[i];
+    const cur=live&&!isDone&&i===firstOpen;
+    const badge=isDone?'<span class="tocb"><span class="tocchk"><i class="ti ti-check"></i></span></span>'
+      :cur?'<span class="tocb"><span class="toccur"></span></span>'
+      :'<span class="tocb"></span>';
+    h+=`<a data-i="${i}" onclick="resTocGo(${i})">${badge}<span class="toctxt">${num?num+' · ':''}${t}</span></a>`;
+  });
+  nav.innerHTML=h;
+  const links=[...nav.querySelectorAll('a')];
+  const upd=()=>{
+    const top=d.getBoundingClientRect().top;
+    let cur=0;
+    secs.forEach((el,i)=>{if(el.getBoundingClientRect().top-top<60)cur=i;});
+    links.forEach((a,i)=>a.classList.toggle('on',i===cur));
+  };
+  d.onscroll=upd;upd();
+}
+
+const STEPARTS={
+ kickoff:{0:['precall','agenda']},
+ sendq:{0:['qemail','intake'],1:['qemail']},
+ receive:{0:['intake']},
+ gate1:{0:['checklist']},
+ followup:{0:['gapsum']},
+ desktop:{0:['rulebooks'],1:['reg_bng','reg_gaia','reg_wcc','reg_pcc','reg_wbcp','reg_ice','reg_eex'],2:['rulebooks'],3:['evidence']},
+ qualres:{0:['rulebooks']},
+ shortes:{1:['scoring']},
+ gate2:{0:['scoring']},
+ shortbuyers:{0:['buyerdb'],1:['scoring']},
+ finalprep:{1:['verdict']},
+ gonogo:{0:['verdict']}
+};
+const STEPLOG={
+ kickoff:{0:'Brief and agenda emailed to Caitlin · Mon 08:40',1:'Held Tue 1 Jul · 40 min · notes filed',2:'Scope confirmed · 14-item input list logged · Tue 1 Jul'},
+ sendq:{0:'Mon 14:06',1:'Mon 14:09',2:'Approved by Caitlin · 14:18',3:'Sent 14:20 · acknowledged by the client 15:02'},
+ receive:{0:'14 items filed and matched to the checklist · Wed 09:06',1:'Receipt confirmed to the client · Wed 09:07'},
+ gate1:{0:'Checked 14 items · 12 present · Wed 09:07',1:'Sent to Follow-up with 2 gaps · Wed 09:07',2:'No borderline items · nothing flagged · Wed 09:07'},
+ followup:{0:'Gap summary and reminder email drafted · 09:05'}
+};
+const STEPWHO={
+ kickoff:['agent','human','human'],
+ sendq:['agent','human'],
+ receive:['agent','agent'],
+ gate1:['agent','agent','human'],
+ followup:['agent','human','human'],
+ desktop:['agent','agent','agent','agent'],
+ qualres:['human','human','human','agent'],
+ shortes:['agent','agent','agent'],
+ gate2:['human','human'],
+ tradecheck:['agent','human','human'],
+ shortbuyers:['agent','agent','agent'],
+ gate3:['human','human'],
+ finalprep:['agent','agent','agent'],
+ gonogo:['human','human','human'],
+ share:['agent','human','agent'],
+ platform:['agent','agent','agent']
+};
+function initSteps(){
+  NODES.forEach(n=>{
+    if(!n.form||typeof (n.form.steps||[])[0]!=="string")return;
+    const w=STEPWHO[n.id]||[], a=STEPARTS[n.id]||{}, l=STEPLOG[n.id]||{};
+    n.form.steps=n.form.steps.map((t,i)=>({
+      t, who:w[i]||'agent', ownerN:'Caitlin',
+      arts:a[i]?[...a[i]]:[], log:l[i]||null,
+      inst:'', guard:'', prod:''
+    }));
+  });
+  const g=(id,i,k,v)=>{const n=NODES.find(x=>x.id===id);if(n&&n.form.steps[i])n.form.steps[i][k]=v;};
+  g('sendq',1,'guard','Client-facing sends always need a human tap');
+  g('receive',0,'guard','Unclear items are flagged for a human, never guessed');
+  g('kickoff',0,'inst','Draft a one-page pre-call brief and agenda from the Workflow Brief, HubSpot history and past notes. Email both to the caller the morning of the call.');
+  g('sendq',0,'inst','Merge the agreed scope and the 14-item checklist into the questionnaire email template, and mint the pre-filled questionnaire link.');
+  g('kickoff',0,'plain','Before the call, the AI Assistant reads the Workflow Brief and past correspondence, then emails Caitlin a one-page brief and agenda, so she walks in prepared.');
+  g('sendq',0,'plain','Turns what was agreed on the call into a client email from our standard template. The questionnaire link comes pre-filled with everything we already know, so the client is never asked twice.');
+  g('sendq',1,'plain','Caitlin reads the email and questionnaire, then sends. This is the human tap that puts the questionnaire in the client\'s inbox and starts the response clock. Nothing client-facing goes out on autopilot.');
+  g('receive',0,'plain','As client files arrive, through the questionnaire or by email, the AI Assistant gathers them into one structured pack and matches each item against the 14 must-haves, so we always know what is in and what is missing. Anything ambiguous gets flagged for a person, and the system never guesses.');
+  g('receive',1,'plain','The client gets a short confirmation of what we received, so they are never left wondering whether their files arrived.');
+  g('gate1',0,'plain','Checks the pack against the 14 must-have items. Present and readable means complete.');
+  g('gate1',1,'plain','Depending on the result, the run either moves on to supply research or routes back to the client with a list of what is still missing.');
+  g('gate1',2,'plain','Anything borderline, readable but odd, present but contradictory, goes to Caitlin for a human decision.');
+  g('followup',0,'plain','The AI Assistant turns the failed check into a friendly note that explains what is missing and why it matters, drafted for review, never sent by itself.');
+  g('kickoff',0,'story',[['Reads the Workflow Brief and past correspondence'],['Drafts the','a:precall'],['and the','a:agenda'],['Emails both to','c:Caitlin']]);
+  g('kickoff',1,'story',[['Holds the kick-off call with','c:the client'],['Walks through scope, sites, timeline and the input we need']]);
+  g('kickoff',2,'story',[['Confirms the agreed scope'],['Logs the 14-item input list, so the rest of the run knows exactly what to collect']]);
+  g('sendq',0,'story',[['Creates a new','a:checklist'],['Prepares a draft','a:qemail'],['for Caitlin to send to','c:the client']]);
+  g('sendq',1,'story',[['Mints the client link for the','a:intake'],['Pre-fills every answer we already hold, so the client is never asked twice']]);
+  g('sendq',2,'story',[['Reviews the prepared email and questionnaire link'],['Approves them. Nothing client-facing goes out on autopilot']]);
+  g('sendq',3,'story',[['Presses send, putting the questionnaire in the inbox of','c:the client'],['This human tap starts the response clock']]);
+  g('receive',0,'story',[['Collects and structures incoming files from the','a:intake'],['Matches each item against the 14 must-haves, and flags anything unclear for a person']]);
+  g('receive',1,'story',[['Confirms receipt to','c:the client'],['So they are never left wondering whether their files arrived']]);
+  g('gate1',0,'story',[['Checks the pack against the','a:checklist'],['All 14 present and readable means complete, with no judgement calls']]);
+  g('gate1',1,'story',[['Routes the run onward to supply research'],['Or back to','c:Follow-up'],['with a list of what is still missing']]);
+  g('gate1',2,'story',[['Reviews anything borderline'],['Makes the human call']]);
+  g('followup',0,'story',[['Turns the failed check into a friendly','a:gapsum'],['Drafted for','c:Caitlin'],['to review before anything is sent']]);
+  g('desktop',1,'plain','Pulls figures from every connected registry, each tagged with its source, date and tier. The registry list lives on the shelf, not here.');
+  g('desktop',1,'story',[['Pulls hard data from every connection on the','a:registries'],['Files each figure with its source, date and tier']]);
+  g('desktop',0,'plain','Reads the land plan and interventions, then maps them to the rule books to see what the project could sell. Only these candidates go forward.');
+  g('desktop',2,'plain','Checks the trend reports for softer signals like buyer appetite and pricing. Bronze-tier data, kept separate from the verified figures.');
+  g('desktop',3,'plain','Applies the GY sizing method to size each market, then writes one cited snapshot per service.');
+}
+function buildStamps(){
+  const ORDER=['kickoff','sendq','receive','gate1','followup','desktop','qualres','shortes','gate2','park','tradecheck','shortbuyers','gate3','finalprep','gonogo','share','platform','done'];
+  FLOW=ORDER.filter(id=>{const n=NODES.find(x=>x.id===id);return n&&n.form&&n.form.steps&&n.form.steps.length;});
+  const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let cur=new Date(2025,5,30,9,0); // Mon 30 Jun 2025, 09:00
+  const fmt=d=>`${DN[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  const adv=m=>{cur=new Date(cur.getTime()+m*60000); if(cur.getHours()>=18){cur.setDate(cur.getDate()+1);cur.setHours(9,0,0,0);}};
+  STEPSTAMP={};
+  ORDER.forEach(id=>{
+    const n=NODES.find(x=>x.id===id); if(!n||!n.form||!n.form.steps)return;
+    STEPSTAMP[id]=n.form.steps.map(()=>{const s=fmt(cur);adv(8);return s;});
+    adv(22);
+  });
+}
+
+function sendDraft(){
+  SVSTEP.pane=false;svPanelHide();
+  const n=NODES.find(x=>x.id==='sendq');
+  const rc=NODES.find(x=>x.id==='receive');
+  if(!n)return;
+  // Phase 1: show the send step tick over to done (node still active)
+  n.form.steps[1].log='Sent just now · acknowledgement pending';
+  n.r={st:'active',prog:2,cur:-1,dim:false};
+  n.run.status='active · sent, wrapping up';
+  n.run.happened='Email and questionnaire prepared, link minted with 6 fields pre-filled. Sent by Caitlin just now.';
+  n.run.log='✓ prepare · ✓ send';
+  SELECTED='sendq';
+  renderNodes(); renderEdges();
+  sideNode(n);
+  dtoast('gy','sent the questionnaire to James Ruggles');
+  // Phase 2: complete the node with a border animation
+  setTimeout(()=>{
+    n.r={st:'done',prog:2,cur:-1,dim:false};
+    n.run.status='done · sent to the client';
+    NODEFLASH='sendq';
+    renderNodes(); renderEdges();
+    sideNode(n);
+    // Phase 3: transition to the next node, now active
+    setTimeout(()=>{
+      if(rc){
+        rc.r={st:'active',prog:0,cur:0,dim:false,note:'Waiting on the client to submit',outline:'var(--blue)'};
+        rc.run={status:'active · waiting on the client',happened:'Questionnaire sent. Waiting for the client to submit their materials.',log:'◌ awaiting client',cta:'Open intake status'};
+      }
+      SELECTED='receive';
+      renderNodes(); renderEdges();
+      setSide(true);
+      if(rc)sideNode(rc);
+      focusNode('receive');
+      dtoast('gy','wait clock running · waiting on the client');
+    },1500);
+  },1400);
+}
+function openNode(id){
+  if(id===null){SELECTED=null;renderNodes();return;}
+  if(TOOL==='hand'||DRAGGED)return;
+  const n=NODES.find(x=>x.id===id);
+  if(n.inert&&!n.info)return;
+  SELECTED=id;renderNodes();setSide(true);sideNode(n);
+}
+
+function closeModal(){document.getElementById('modal').style.display='none'}
+
+function closeQEdit(){document.getElementById('qedit').style.display='none';qPopClose();}
+let QSEL=1;
+const QS=[
+ {t:'Welcome screen',schema:null,module:'Questionnaire shell',shared:true,req:null,def:'The landing moment. Sets tone and explains Share, We draft, You confirm.'},
+ {t:'Multiple choice',schema:'identity.jurisdiction',module:'Project identity',shared:true,req:true},
+ {t:'Long text',schema:'identity.vision_mission',module:'Project identity',shared:true,req:true},
+ {t:'Repeating list',schema:'identity.key_interventions',module:'Project identity',shared:true,req:true},
+ {t:'File upload',schema:'assets.manifest',module:'Evidence and assets',shared:true,req:true,pre:'Extraction pipeline reads the files'},
+ {t:'Table input',schema:'commercial.land_parcels',module:'Commercial and custodianship',shared:true,req:true},
+ {t:'Multiple choice',schema:'commercial.existing_agreements',module:'Commercial and custodianship',shared:true,req:false},
+ {t:'Long text',schema:'commercial.client_constraints',module:'Commercial and custodianship',shared:true,req:false},
+ {t:'Long text',schema:'demand.buyer_conversations',module:'Demand specifics',shared:false,req:false},
+ {t:'End screen',schema:null,module:'Questionnaire shell',shared:true,req:null,def:'Confirms receipt and tells the client what happens next.'}
+];
+function qSettings(i){
+  const s=QS[i];
+  let h=`<div class="qlab">Question type</div>
+  <div class="qfield" style="display:flex;justify-content:space-between;align-items:center">${s.t} <i class="ti ti-chevron-down" style="color:#8A887F"></i></div>`;
+  if(s.req!==null){
+    h+=`<div class="qlab">Settings</div>
+    <div style="display:flex;gap:9px;font-size:14px;align-items:flex-start;margin-top:4px">
+    <i class="ti ${s.req?'ti-square-check':'ti-square'}" style="color:${s.req?'#5DCAA5':'#8A887F'};font-size:17px"></i>
+    <span>${s.req?'Required':'Optional'}<br><span class="qnote">${s.req?'counts toward the completeness rule':'does not block the Input complete? gate'}</span></span></div>`;
+  }
+  if(s.schema){
+    h+=`<div class="qlab">Maps to schema</div><span class="qtok">{ ${s.schema} }</span>
+    <div class="qnote">Traced to the Project context questionnaire. The Input complete? gate reads this binding.</div>
+    <div class="qlab">Pre-fill</div>
+    <div class="qfield" style="display:flex;justify-content:space-between;align-items:center">${s.pre||'Pre-fill from Data Platform'} <i class="ti ti-chevron-down" style="color:#8A887F"></i></div>`;
+  }
+  h+=`<div class="qlab">Module</div>
+  <div class="qfield" style="display:flex;justify-content:space-between;align-items:center">${s.module} <span style="font-size:12px;background:${s.shared?'#26303E':'#3E3226'};color:${s.shared?'#8FB8EF':'#EFC27B'};border-radius:999px;padding:2px 9px">${s.shared?'shared':'custom'}</span></div>`;
+  h+=`<div class="qlab">This definition</div>
+  <div class="qnote">${s.def||'From Library: Questionnaire · white label module v1. Drafted by the AI Assistant from Send Questionnaire › Needs and the 14 must-have items.'}</div>`;
+  return h;
+}
+const QTITLES=['Welcome','Where is the project?','What does success look like for the land?','What are the key interventions?','Drop in any plans, surveys or agreements','Who owns and manages each parcel?','Any existing schemes on the land?','Any red lines we should know about?','Any buyer conversations already?','That is everything for now'];
+function qPopClose(){document.getElementById('qpop').style.display='none'}
+function qSel(i,el){
+  QSEL=i;
+  document.querySelectorAll('#qedit .qitem[data-qi]').forEach(x=>x.classList.toggle('on',+x.dataset.qi===i));
+  if(!el)return;
+  const p=document.getElementById('qpop');
+  p.innerHTML=`<div style="display:flex;align-items:center;gap:9px">
+    <span class="qnum">${i===0?'<i class="ti ti-hand-stop" style="font-size:12px"></i>':(i===9?'<i class="ti ti-flag" style="font-size:12px"></i>':i)}</span>
+    <span style="flex:1;font-weight:600;font-size:15px">${QTITLES[i]}</span>
+    <i class="ti ti-x" style="cursor:pointer;color:#8A887F;font-size:16px" onclick="qPopClose()"></i></div>`
+    +qSettings(i);
+  const r=el.getBoundingClientRect();
+  let top=Math.max(116,Math.min(r.top-8,window.innerHeight-440));
+  p.style.left=(r.right+16)+'px'; p.style.top=top+'px';
+  p.style.display='block';
+}
+function qChatSend(txt){
+  const log=document.getElementById('qchatlog');
+  if(!log||!txt)return;
+  log.insertAdjacentHTML('beforeend',`<div class="qbub me">${txt}</div>`);
+  setTimeout(()=>{
+    log.insertAdjacentHTML('beforeend',`<div class="qbub ai">Understood. In the real product I would edit the questionnaire definition, show you the change in the preview, and log it. This prototype stops here.</div>`);
+    log.scrollTop=log.scrollHeight;
+  },500);
+  log.scrollTop=log.scrollHeight;
+}
+function openQEdit(){
+  closeDrawer();closeModal();
+  const q=document.getElementById('qedit');
+  const li=(i,n,ic,t)=>`<div class="qitem" data-qi="${i}" onclick="qSel(${i},this)"><span class="qnum">${ic?`<i class="ti ${ic}" style="font-size:12px"></i>`:n}</span>${t}</div>`;
+  q.innerHTML=`
+  <div class="qrow1">
+    <i class="ti ti-chevron-left" style="cursor:pointer;font-size:18px;color:var(--ink2)" onclick="closeQEdit()"></i>
+    <span class="crumb" onclick="closeQEdit()">Workflows</span><span class="sep">›</span>
+    <span class="crumb" onclick="closeQEdit()">Demand Mapping</span><span class="sep">›</span>
+    <span class="title">Project context questionnaire</span>
+  </div>
+  <div class="qrow2">
+    <span class="qchip" onclick="closeQEdit()"><i class="ti ti-x"></i> Close</span>
+    <span class="spacer"></span>
+    <span class="qchip" onclick="window.open('demand-mapping-intake-poc.html')"><i class="ti ti-player-play"></i> Preview</span>
+    <button class="qbtn" onclick="toast('Saves this definition to the blueprint: Send Questionnaire mints links from it')">Save</button>
+  </div>
+  <div class="qbody">
+    <div class="qleft">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="qlab qpin" style="margin:0">Content</span>
+        <i class="ti ti-layout-sidebar-left-collapse qtg" title="Collapse panel" onclick="this.closest('.qleft').classList.toggle('col')"></i>
+      </div>
+      <div class="qpin">
+      <div class="qlab" style="margin-top:12px">Welcome</div>
+      ${li(0,'','ti-hand-stop','Let us map the demand for y…')}
+      <div class="qlab">Project identity</div>
+      ${li(1,1,'','Where is the project?')}
+      ${li(2,2,'','What does success look like f…')}
+      ${li(3,3,'','What are the key intervention…')}
+      <div class="qlab">Evidence and assets</div>
+      ${li(4,4,'','Drop in any plans, surveys or …')}
+      <div class="qlab">Commercial and custodianship</div>
+      ${li(5,5,'','Who owns and manages eac…')}
+      ${li(6,6,'','Any existing schemes on the l…')}
+      ${li(7,7,'','Any red lines we should know…')}
+      <div class="qlab">Demand specifics</div>
+      ${li(8,8,'','Any buyer conversations alre…')}
+      <div class="qlab">Ending</div>
+      ${li(9,'','ti-flag','That is everything for now')}
+      <div class="qitem" style="border:1.5px dashed #3A3936;border-radius:9px;justify-content:center;margin-top:12px" onclick="toast('Add content: the designer assistant drafts the question from what you need to know')"><i class="ti ti-plus" style="font-size:14px"></i> Add content</div>
+      </div>
+    </div>
+    <div class="qmid" style="align-items:stretch">
+      <iframe src="demand-mapping-intake-poc.html?embed=1" style="width:100%;height:100%;border:none;border-radius:16px;background:#FBF8EF;box-shadow:0 20px 60px rgba(0,0,0,.4)"></iframe>
+    </div>
+    <div class="qright" style="display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex:none">
+        <span class="qlab qpin" style="margin:0"><i class="ti ti-sparkles" style="font-size:13px;color:#F5C64B"></i> AI Assistant</span>
+        <i class="ti ti-layout-sidebar-right-collapse qtg" title="Collapse panel" onclick="this.closest('.qright').classList.toggle('col')"></i>
+      </div>
+      <div class="qpin" style="flex:1;display:flex;flex-direction:column;min-height:0;margin-top:10px">
+        <div id="qchatlog" style="flex:1;overflow:auto;min-height:0">
+          <div class="qbub ai">I drafted this questionnaire from Send Questionnaire › Needs and the 14 must-have items. Tell me what to change, or ask why a question exists.</div>
+          <div>
+            <span class="qsugg" onclick="qChatSend(this.textContent)">Farmers won't know the word additionality</span>
+            <span class="qsugg" onclick="qChatSend(this.textContent)">Make step 2 optional</span>
+            <span class="qsugg" onclick="qChatSend(this.textContent)">Which questions map to no field?</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex:none">
+          <input class="qfield" id="qchatin" style="flex:1;margin-top:0" placeholder="Ask or instruct…" onkeydown="if(event.key==='Enter'&&this.value.trim()){qChatSend(this.value.trim());this.value='';}">
+          <button class="qbtn" style="padding:8px 13px" onclick="const i=document.getElementById('qchatin');if(i.value.trim()){qChatSend(i.value.trim());i.value='';}" aria-label="Send"><i class="ti ti-arrow-up" style="font-size:15px"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  q.style.display='flex';
+  q.classList.remove('show');void q.offsetWidth;q.classList.add('show');
+  qSel(QSEL,null);
+}
+
+function setMode(m){if(DEMOT!==null||DEMOSNAP)stopDemo();MODE=m;SELECTED=null;renderAll();}
+function setTool(t){
+  TOOL=t;
+  document.getElementById('toolHand').classList.toggle('on',t==='hand');
+  document.getElementById('toolPointer').classList.toggle('on',t==='pointer');
+  document.querySelector('.scroll').classList.toggle('grab',t==='hand');
+}
+function setZoom(v){
+  Z=v/100;
+  const w=document.querySelector('.world');
+  w.style.transformOrigin='0 50%';
+  w.style.transform=`translateY(-50%) scale(${Z})`;
+}
+const TEAM=[
+ {n:'Caitlin Ciceri',c:'#1D9E75',captain:true,live:true,seen:'now'},
+ {n:'Emily Norton',c:'#378ADD',live:true,seen:'now'},
+ {n:'Harry Fox',c:'#EF9F27',live:false,seen:'2 days ago'},
+ {n:'Izzie Bell',c:'#7F77DD',live:false,seen:'4 days ago'},
+ {n:'Millie Gray',c:'#D4537E',live:false,seen:'6 days ago'},
+ {n:'Josh Read',c:'#639922',live:false,seen:'12 days ago'}
+];
+function avEl(m,extra){
+  if(m.agent)return `<span class="av${extra||''}" style="background:#1F1F1D"><i class="ti ti-sparkles" style="font-size:13px;color:#F9DD5A"></i></span>`;
+  return `<span class="av${extra||''}" style="background:${m.c}">${m.n[0]}</span>`;
+}
+function renderTeam(){
+  const sorted=[...TEAM].sort((a,b)=>(b.live?1:0)-(a.live?1:0));
+  const shown=sorted.slice(0,2);
+  document.getElementById('avstack').innerHTML=
+    shown.map(m=>avEl(m)).join('')
+    +(TEAM.length>shown.length?`<span class="avmore">+${TEAM.length-shown.length}</span>`:'');
+  document.getElementById('avpop').innerHTML=
+    `<h6>Workflow team</h6>`
+    +TEAM.map(m=>`<div class="avrow">${avEl(m)}
+      <span class="nm">${m.n}</span>
+      ${m.captain?'<span class="capbadge"><i class="ti ti-crown"></i> Captain</span>':''}
+      <span class="seen">${m.seen}</span>
+    </div>`).join('')
+    +`<div style="height:1px;background:var(--line);margin:6px 0"></div>
+    <div class="avrow">${avEl({agent:true,n:'AI Assistant'})}
+      <span class="nm">AI Assistant</span>
+      <span class="seen">always on</span>
+    </div>`;
+}
+function toggleTeam(e){
+  e.stopPropagation();
+  document.getElementById('avpop').classList.toggle('open');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.avwrap'))document.getElementById('avpop').classList.remove('open');
+});
+renderTeam();
+if(location.hash==='#contents'){setTimeout(()=>{openNode(null);sideContents();},0);}
+function toggleArts(){
+  const open=document.getElementById('artSub').classList.toggle('closed');
+  document.getElementById('artArr').classList.toggle('closed',open);
+  localStorage.setItem('gyArtsOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyArtsOpen')==='1'){
+  document.getElementById('artSub').classList.remove('closed');
+  document.getElementById('artArr').classList.remove('closed');
+}
+function toggleDel(){
+  const open=document.getElementById('delSub').classList.toggle('closed');
+  document.getElementById('delArr').classList.toggle('closed',open);
+  localStorage.setItem('gyDelOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyDelOpen')==='0'){
+  document.getElementById('delSub').classList.add('closed');
+  document.getElementById('delArr').classList.add('closed');
+}
+(function(){
+  const saved=parseInt(localStorage.getItem('gyNavW')||'',10);
+  if(saved&&!document.body.classList.contains('navhid'))document.body.style.setProperty('--nav',saved+'px');
+  const grip=document.getElementById('snavgrip');
+  if(!grip)return;
+  let drag=false;
+  grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');document.body.style.userSelect='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const w=Math.min(420,Math.max(200,e.clientX));
+    document.body.style.setProperty('--nav',w+'px');
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!drag)return;
+    drag=false;grip.classList.remove('on');document.body.style.userSelect='';
+    const w=parseInt(getComputedStyle(document.body).getPropertyValue('--nav'),10);
+    if(w)localStorage.setItem('gyNavW',String(w));
+  });
+})();
+
+(function(){
+  const sc=document.querySelector('.scroll');
+  let panning=false,sx=0,sy=0,sl=0,st=0,moved=0;
+  sc.addEventListener('mousedown',e=>{
+    const onEmpty=!e.target.closest('.node');
+    if(TOOL!=='hand'&&!onEmpty)return;
+    panning=true;moved=0;sx=e.clientX;sy=e.clientY;sl=sc.scrollLeft;st=sc.scrollTop;
+    sc.classList.add('grabbing');e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!panning)return;
+    const dx=e.clientX-sx,dy=e.clientY-sy;
+    moved=Math.max(moved,Math.abs(dx)+Math.abs(dy));
+    sc.scrollLeft=sl-dx;sc.scrollTop=st-dy;
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!panning)return;
+    panning=false;sc.classList.remove('grabbing');
+    if(moved>5){DRAGGED=true;setTimeout(()=>DRAGGED=false,120);}
+  });
+})();
+
+const DEMOAV={
+ agent:{ic:'ti-sparkles',bg:'#3A2E14',fg:'#F9DD5A',n:'AI Assistant'},
+ gy:{txt:'CT',bg:'#FAEEDA',fg:'#854F0B',n:'Caitlin'},
+ client:{txt:'JR',bg:'#E1F5EE',fg:'#0F6E56',n:'J. Ruggles'}
+};
+const DEMOSTEPS=[
+ {f:'kickoff',set:{kickoff:{st:'active',sub:'call in progress'}},t:['gy','holds the kick-off call with James'],card:1},
+ {f:'kickoff',set:{kickoff:{st:'done',sub:'done · scope confirmed'}},t:['gy','confirms scope · 14-item input list agreed'],nb:{cntNotes:1}},
+ {f:'sendq',set:{sendq:{st:'active',sub:'AI Assistant preparing the pack'}},t:['agent','prepares the email and questionnaire · 6 of 14 fields pre-filled from the Data Platform'],card:1},
+ {f:'sendq',set:{sendq:{st:'done',sub:'sent · wait clock running'}},t:['gy','sends to J. Ruggles']},
+ {f:'receive',set:{receive:{st:'active',sub:'waiting on the client'}},t:['client','opens the questionnaire'],card:1},
+ {f:'receive',set:{receive:{st:'active',sub:'6 of 14 in'}},t:['client','submits 6 of 14 items'],nb:{cntDocs:2}},
+ {f:'receive',set:{receive:{st:'active',sub:'12 of 14 in'}},t:['agent','files the tenure map from an email reply · 12 of 14'],nb:{cntDocs:3}},
+ {f:'gate1',set:{gate1:{st:'fail',sub:'12 of 14 · 2 gaps',rowhot:1}},t:['agent','runs the completeness check · failed · 2 gaps'],card:1},
+ {f:'followup',set:{followup:{st:'queue',sub:'gap reminder drafted'}},t:['agent','drafts the gap reminder · Caitlin to review'],card:1,nb:{cntTodos:1}},
+ {f:'followup',set:{followup:{st:'done',sub:'reminder sent'}},t:['gy','approves · reminder sent']},
+ {f:'receive',set:{receive:{st:'done',sub:'14 of 14 · complete'}},t:['client','sends the boundary shapefile and grazing agreement · 14 of 14'],card:1},
+ {f:'gate1',set:{gate1:{st:'done',sub:'passed',rowhot:0}},t:['agent','re-runs the check · passed'],card:1},
+ {f:'desktop',set:{desktop:{st:'active',sub:'AI Assistant researching'}},t:['agent','pulls rule books, registries and trend feeds · every claim cited'],card:1},
+ {f:'desktop',set:{desktop:{st:'done',sub:'market snapshots drafted'}},t:['agent','finishes the market snapshots · 14 sources, 3 flagged']},
+ {f:'qualres',set:{qualres:{st:'done',sub:'trade signals logged'}},t:['gy','ground-truths with buyers and the trade team · 1 correction logged'],card:1},
+ {f:'shortes',set:{shortes:{st:'done',sub:'ranked shortlist'}},t:['agent','scores the ecosystem services · 3 viable, BNG leads'],card:1},
+ {f:'gate2',set:{gate2:{st:'done',sub:'yes · viable supply'}},t:['gy','Vertical Lead: viable supply, continue'],card:1},
+ {f:'tradecheck',set:{tradecheck:{st:'done',sub:'demand flags logged'}},t:['gy','Trade check-in held · 2 hot markets'],card:1},
+ {f:'shortbuyers',set:{shortbuyers:{st:'done',sub:'buyer list ranked'}},t:['agent','qualifies 7 buyers from HubSpot'],card:1},
+ {f:'gate3',set:{gate3:{st:'done',sub:'yes · credible demand'}},t:['gy','Vertical Lead: credible demand, continue'],card:1},
+ {f:'finalprep',set:{finalprep:{st:'done',sub:'verdict pack ready'}},t:['agent','assembles the verdict pack · one page'],card:1},
+ {f:'gonogo',set:{gonogo:{st:'done',sub:'GO',rowhot:0}},t:['gy','Vertical Lead: GO'],card:1},
+ {f:'share',set:{share:{st:'done',sub:'delivered'}},t:['gy','delivers the demand map to the client'],card:1},
+ {f:'platform',set:{platform:{st:'done',sub:'record written'}},t:['agent','writes the structured map to the Data Platform'],card:1},
+ {f:'done',set:{done:{st:'done',sub:''}},t:['agent','Demand Map complete · run archived']}
+];
+let DEMOT=null, DEMOSNAP=null, DEMOI=0, DEMONEXT=null, DEMOPAUSED=false, BANDSNAP=null, STOREFADE=false, NODEFLASH=null;
+function dsched(fn,ms){
+  DEMONEXT=fn;
+  DEMOT=setTimeout(()=>{DEMOT=null;DEMONEXT=null;fn();},ms);
+}
+function pauseDemo(){
+  if(DEMOPAUSED){
+    DEMOPAUSED=false;
+    const fn=DEMONEXT; DEMONEXT=null;
+    if(fn)dsched(fn,300);
+    demoBtnLabel(); return;
+  }
+  if(DEMOT!==null){clearTimeout(DEMOT);DEMOT=null;}
+  DEMOPAUSED=true; demoBtnLabel();
+}
+function demoBtnLabel(){
+  const c=document.getElementById('floatBL'); if(!c)return;
+  if(!(MODE==='run'&&!isPrev())){c.innerHTML='';return;}
+  const ic=n=>`<i class="ti ${n}" style="font-size:14px"></i>`;
+  if(!DEMOSNAP){
+    c.innerHTML=`<span class="fdemo" id="demoBtn" onclick="playDemo()">${ic('ti-player-play')} Play demo</span>`;
+    return;
+  }
+  const running=DEMOT!==null||DEMONEXT!==null||DEMOPAUSED;
+  const pauseBtn=running
+    ?(DEMOPAUSED
+      ?`<span class="fdemo" onclick="pauseDemo()">${ic('ti-player-play')} Resume</span>`
+      :`<span class="fdemo" onclick="pauseDemo()">${ic('ti-player-pause')} Pause</span>`)
+    :'';
+  const scrub=`<span class="dscrubwrap"><input type="range" class="dscrub" id="dscrub" min="0" max="${DEMOSTEPS.length}" value="${Math.min(DEMOI,DEMOSTEPS.length)}" oninput="demoSeek(+this.value)"><span class="dcount" id="dcount">${Math.min(DEMOI,DEMOSTEPS.length)}/${DEMOSTEPS.length}</span></span>`;
+  c.innerHTML=scrub+pauseBtn+`<span class="fdemo" onclick="stopDemo()">${ic('ti-player-stop')} Stop</span>`;
+}
+function demoScrub(){
+  const s=document.getElementById('dscrub'), t=document.getElementById('dcount');
+  const v=Math.min(DEMOI,DEMOSTEPS.length);
+  if(s)s.value=v;
+  if(t)t.textContent=v+'/'+DEMOSTEPS.length;
+}
+function demoSeek(k){
+  if(!DEMOSNAP)return;
+  if(DEMOT!==null){clearTimeout(DEMOT);DEMOT=null;}
+  DEMONEXT=null;
+  NODES.forEach(n=>{n.r=n.id==='start'?{st:'done',sub:''}:{st:'pending',sub:'',dim:true};});
+  clearNavBadges();
+  let lastF=null;
+  for(let i=0;i<k;i++){
+    const st=DEMOSTEPS[i];
+    Object.entries(st.set||{}).forEach(([id,patch])=>{
+      const n=NODES.find(x=>x.id===id);
+      if(n)n.r={...n.r,...patch,dim:false};
+    });
+    if(st.nb)Object.entries(st.nb).forEach(([id,v])=>setNavBadge(id,v));
+    lastF=st.f;
+  }
+  NODES.forEach(n=>{if(n.form&&n.r.st==='done'){n.r.prog=n.form.steps?n.form.steps.length:0;n.r.cur=-1;}});
+  {const pf=NODES.find(x=>x.id==='platform'),sn=NODES.find(x=>x.id==='store');if(pf&&sn&&pf.r.st==='done')sn.r={...sn.r,st:'done',dim:false};}
+  STOREFADE=false;
+  DEMOI=k; SELECTED=lastF;
+  if(lastF){
+    const dn=NODES.find(x=>x.id===lastF);
+    const bi=BANDS.findIndex(b=>dn.x>=b.x&&dn.x<b.x+b.w);
+    if(bi>=0)BANDS.forEach((b,j)=>{b.cur=j===bi;b.run=j<bi?'done':(j===bi?'in progress':'not started');});
+  }
+  renderBands(); renderNodes(); renderEdges(); renderChapnav();
+  setSide(false);
+  if(lastF)focusNode(lastF);
+  demoScrub();
+  if(!DEMOPAUSED&&k<DEMOSTEPS.length)dsched(demoTick,1100);
+  demoBtnLabel();
+}
+function dtoast(who,msg){
+  const box=document.getElementById('dtoasts');
+  const a=DEMOAV[who];
+  const av=a.ic?`<span class="dav" style="background:${a.bg};color:${a.fg}"><i class="ti ${a.ic}" style="font-size:12px"></i></span>`
+              :`<span class="dav" style="background:${a.bg};color:${a.fg}">${a.txt}</span>`;
+  const el=document.createElement('div');
+  el.className='dtoast';
+  el.innerHTML=`${av}<span><b>${a.n}</b> ${msg}</span>`;
+  box.appendChild(el);
+  while(box.children.length>3)box.removeChild(box.firstChild);
+  setTimeout(()=>{if(el.parentNode)el.remove()},6000);
+}
+/* keep the canvas visually pinned while the drawer opens, closes or resizes.
+   Only needed when the drawer is docked LEFT of the canvas (it then steals
+   viewport from the left, so width changes are mirrored into scrollLeft).
+   With the default right dock the canvas left edge never moves. */
+(function(){
+  const sideEl=document.querySelector('.main .side');
+  const sc=document.querySelector('.scroll');
+  if(!sideEl||!sc||!window.ResizeObserver)return;
+  let last=sideEl.getBoundingClientRect().width;
+  new ResizeObserver(()=>{
+    const r=sideEl.getBoundingClientRect();
+    const d=r.width-last; last=r.width;
+    if(d&&r.left<=sc.getBoundingClientRect().left)sc.scrollLeft+=d;
+  }).observe(sideEl);
+})();
+function focusNode(id){
+  const n=NODES.find(x=>x.id===id); if(!n)return;
+  const sc=document.querySelector('.scroll');
+  const cx=600+(n.x+n.w/2)*Z, cy=800+((n.y+40)-235)*Z;
+  sc.scrollTo({left:cx-sc.clientWidth/2, top:cy-sc.clientHeight/2, behavior:'smooth'});
+}
+function playDemo(){
+  if(DEMOT!==null||DEMOSNAP){stopDemo();return;}
+  if(MODE!=='run'||RUN!=='spains'){MODE='run';RUN='spains';}
+  DEMOSNAP=JSON.stringify(NODES.map(n=>n.r));
+  BANDSNAP=JSON.stringify(BANDS.map(b=>({cur:!!b.cur,run:b.run})));
+  NODES.forEach(n=>{n.r=n.id==='start'?{st:'done',sub:''}:{st:'pending',sub:'',dim:true};});
+  SELECTED=null; DEMOI=0;
+  clearNavBadges();
+  renderAll(); setSide(false);
+  focusNode('kickoff');
+  dsched(demoTick,900);
+  demoBtnLabel();
+}
+function setNavBadge(id,v){
+  const el=document.getElementById(id); if(!el)return;
+  if(v){el.textContent=v;el.style.display='inline-flex';}
+  else{el.textContent='';el.style.display='none';}
+}
+function clearNavBadges(){['cntTodos','cntNotes','cntDocs'].forEach(id=>setNavBadge(id,0));}
+function demoTick(){
+  const st=DEMOSTEPS[DEMOI];
+  if(!st){demoBtnLabel();dtoast('agent','Demo finished. Stop restores the live run.');return;}
+  Object.entries(st.set||{}).forEach(([id,patch])=>{
+    const n=NODES.find(x=>x.id===id);
+    if(n)n.r={...n.r,...patch,dim:false};
+  });
+  SELECTED=st.f;
+  const dn=NODES.find(x=>x.id===st.f);
+  if(dn){
+    const bi=BANDS.findIndex(b=>dn.x>=b.x&&dn.x<b.x+b.w);
+    if(bi>=0){
+      BANDS.forEach((b,j)=>{b.cur=j===bi;b.run=j<bi?'done':(j===bi?'in progress':'not started');});
+      renderBands();
+    }
+  }
+  renderNodes(); renderEdges(); renderChapnav();
+  focusNode(st.f);
+  if(st.t)dtoast(st.t[0],st.t[1]);
+  if(st.nb)Object.entries(st.nb).forEach(([id,v])=>setNavBadge(id,v));
+  DEMOI++;
+  demoScrub();
+  if(st.card){
+    const n=NODES.find(x=>x.id===st.f);
+    setSide(true);
+    if(n.form){
+      const finalSt=n.r.st;
+      if(finalSt==='done'){n.r.st='active';}
+      n.r.prog=0; n.r.cur=-1;
+      sideNode(n); renderNodes();
+      const L=n.form.steps.length;
+      let i=0;
+      const stepAnim=()=>{
+        if(!DEMOSNAP)return;
+        if(i<L){
+          n.r.prog=i; n.r.cur=i;
+          if(n.id==='platform'&&n.form.steps[i]&&n.form.steps[i].t==='AI Assistant logs who, when, version'){
+            const sn=NODES.find(x=>x.id==='store');
+            if(sn&&sn.r.st!=='done'){sn.r={...sn.r,st:'done',dim:false};STOREFADE=true;}
+          }
+          sideNode(n); renderNodes();
+          i++;
+          dsched(stepAnim,700);
+        } else {
+          n.r.st=finalSt;
+          if(finalSt==='done'){n.r.prog=L;n.r.cur=-1;}
+          sideNode(n); renderNodes(); renderEdges();
+          dsched(demoTick,1100);
+        }
+      };
+      dsched(stepAnim,600);
+      return;
+    }
+    sideNode(n);
+    dsched(demoTick,1900);
+    return;
+  }
+  setSide(false);
+  dsched(demoTick,1900);
+}
+function stopDemo(){
+  if(DEMOT!==null){clearTimeout(DEMOT);DEMOT=null;}
+  DEMONEXT=null; DEMOPAUSED=false;
+  if(DEMOSNAP){
+    const snap=JSON.parse(DEMOSNAP);
+    NODES.forEach((n,i)=>n.r=snap[i]);
+    DEMOSNAP=null;
+  }
+  if(BANDSNAP){
+    const bs=JSON.parse(BANDSNAP);
+    BANDS.forEach((b,i)=>{b.cur=bs[i].cur;b.run=bs[i].run;});
+    BANDSNAP=null;
+  }
+  SELECTED=null;
+  clearNavBadges();
+  document.getElementById('dtoasts').innerHTML='';
+  renderAll(); demoBtnLabel();
+}
+function renderAll(){renderTabs();renderBands();renderNodes();renderEdges();renderChapnav();sideDefault();}
+initSteps();
+buildStamps();
+function nodeNav(dir){
+  const fi=FLOW.indexOf(SELECTED); if(fi<0)return;
+  const t=FLOW[fi+dir]; if(!t)return;
+  focusNode(t); openNode(t);
+}
+// Arrow keys: Up/Down page through steps in the step view; Left/Right move between nodes in the node drawer
+document.addEventListener('keydown',e=>{
+  if(!/^Arrow(Up|Down|Left|Right)$/.test(e.key))return;
+  const t=e.target;
+  if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
+  const side=document.querySelector('.main .side');
+  if(!side||side.classList.contains('hidden'))return;
+  const drawerL=document.getElementById('drawerL');
+  if(drawerL&&getComputedStyle(drawerL).display!=='none')return;
+  const stepView=[...document.querySelectorAll('#side .subslide .nt')].some(el=>/^Step\s/.test(el.textContent));
+  if(e.key==='ArrowUp'||e.key==='ArrowDown'){
+    if(!stepView)return;
+    const n=NODES.find(x=>x.id===SELECTED);
+    if(!n||!n.form||!n.form.steps)return;
+    e.preventDefault();
+    stepNav(e.key==='ArrowDown'?1:-1);
+  } else { // Left / Right
+    if(stepView||SELECTED==null||FLOW.indexOf(SELECTED)<0)return;
+    e.preventDefault();
+    nodeNav(e.key==='ArrowRight'?1:-1);
+  }
+});
+renderAll();
+if(EMBED_DRAWER){
+  openNode(EMBED_DRAWER);
+  // The drawer's own X should close the drawer in the parent (Home) page.
+  document.addEventListener('click',e=>{
+    if(e.target.closest('.sh .x')){
+      e.preventDefault();e.stopPropagation();
+      try{parent.postMessage('gy-close-drawer','*');}catch(_){}
+      return;
+    }
+    // Click on the transparent area beside the drawer: close preview, else close drawer.
+    if(!e.target.closest('.side')&&!e.target.closest('.svpanel')){
+      const p=document.getElementById('svpanel');
+      if(p&&p.classList.contains('on')){svPanelClose();}
+      else{try{parent.postMessage('gy-close-drawer','*');}catch(_){}}
+    }
+  },true);
+}
+(function(){
+  if(EMBED_DRAWER)return;
+  const sc=document.querySelector('.scroll');
+  const center=()=>{
+    const now=NODES.find(n=>n.r&&n.r.outline)||NODES.find(n=>n.r&&n.r.st==='active');
+    if(now){
+      const cx=600+(now.x+now.w/2)*Z, cy=800+((now.y+40)-235)*Z;
+      sc.scrollLeft=cx-sc.clientWidth/2;
+      sc.scrollTop=cy-sc.clientHeight/2;
+    } else {
+      sc.scrollTop=(sc.scrollHeight-sc.clientHeight)/2;
+      sc.scrollLeft=520;
+    }
+  };
+  // Center now, and re-center after the drawer/ResizeObserver settle their layout
+  // (the drawer's initial resize otherwise shifts scrollLeft away from the node).
+  center();
+  requestAnimationFrame(center);
+  [60,160,320].forEach(t=>setTimeout(center,t));
+  window.addEventListener('load',()=>requestAnimationFrame(center));
+})();
+</script>
+</div>
+</body>
+</html>

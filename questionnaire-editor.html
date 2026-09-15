@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Questionnaire artefact · Customise for Demand Mapping</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#140D10; --card:#1F1519; --field:#261B20; --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.22);
+  --ink:#F4EFE9; --ink2:#B5ACA4; --ink3:#8A817A;
+  --green:#8FBF5E; --greenbg:rgba(98,129,71,.28); --greend:#B7D695;
+  --amber:#F9DD5A; --amberbg:rgba(249,221,90,.16); --amberd:#F0D467;
+  --blue:#6FA8FF; --bluebg:rgba(59,130,246,.2); --blued:#9CC2FF;
+  --purple:#9C95E8; --purplebg:rgba(127,119,221,.22); --purpled:#B9B3F0;
+  --teal:#4EC49B; --tealbg:rgba(29,158,117,.2); --teald:#7FDDBB;
+  --graybg:rgba(255,255,255,.09); --grayd:#CFC7C0; --dark:#F4EFE9;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:row;overflow:hidden;font-size:16px;color-scheme:dark}
+.mainc{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid #E6E4DE;display:flex;flex-direction:column;padding:12px 12px 16px;color:#1F1F1D;color-scheme:light}
+body.navhid .snav{display:none}
+.snavpeek{position:fixed;top:0;left:0;width:14px;height:100vh;z-index:44;display:none}
+body.navhid .snavpeek{display:block}
+body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10px;width:264px;z-index:45;border:1px solid #E6E4DE;border-radius:0 14px 14px 0;box-shadow:0 12px 40px rgba(31,31,29,.3);animation:snavslide .16s ease}
+@keyframes snavslide{from{transform:translateX(-100%)}to{transform:none}}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px;color:#1F1F1D}
+.sworks .ti{font-size:15px;color:#9C9A92}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:#9C9A92;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:#EFEDE8;color:#1F1F1D}
+.scollapse .ti{font-size:17px}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:#1F1F1D;cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:#6B6A64}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:#EFEDE8;font-weight:500}
+.sarr{margin-left:auto;font-size:14px;color:#9C9A92;transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.sarr.closed{transform:rotate(-90deg)}
+.ssub{margin:2px 0 4px 30px}
+.ssub.closed{display:none}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:#6B6A64}
+.ssub .sitem.on{color:#1F1F1D}
+.wb{position:fixed;right:18px;bottom:18px;width:352px;max-height:min(560px,calc(100vh - 100px));background:var(--card);border:1px solid var(--line2);border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,.5);z-index:48;display:flex;flex-direction:column;overflow:hidden}
+.wbhead{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14.5px;font-weight:600;flex:none}
+.wbhead .ti{font-size:16px;color:var(--amberd)}
+.wbmin{margin-left:auto;width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.wbmin:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+.wbbody{padding:12px 14px 14px;display:flex;flex-direction:column;overflow:hidden;flex:1}
+.wbpill{position:fixed;right:18px;bottom:18px;z-index:48;display:none;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:11px 18px;font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.wbpill .ti{font-size:16px;color:var(--amberd)}
+.wbpill:hover{border-color:var(--amber)}
+body.wbcol .wb{display:none}
+body.wbcol .wbpill{display:inline-flex}
+.row1{position:relative;display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border-bottom:1px solid #E6E4DE;flex:none;z-index:10;height:61px;box-sizing:border-box;box-sizing:border-box}
+.row1.editing{background:#F9DD5A;border-bottom:1px solid #E3C93F}
+.row1.editing .ti{color:rgba(26,12,18,.75)}
+.row1.editing .crumb{color:rgba(26,12,18,.5)}
+.row1.editing .crumb:hover{color:rgba(26,12,18,.8)}
+.row1.editing .sep{color:rgba(26,12,18,.4)}
+.row1.editing .title{color:#1A0C12}
+.row2{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#1A0C12;border-bottom:1px solid rgba(255,255,255,.08);flex:none;height:61px;box-sizing:border-box;box-sizing:border-box}
+.row2 .chip{background:transparent;color:#D9D7D1;border-color:rgba(255,255,255,.2)}
+.row1 .ti{font-size:19px;color:#6B6A64}
+.title{font-size:17px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;color:#1F1F1D}
+.crumb{color:#9C9A92;cursor:pointer;font-size:16px;white-space:nowrap}
+.crumb:hover{color:#6B6A64}
+.sep{color:#9C9A92;font-size:14px}
+.row1 .chip{background:#fff;border-color:#CFCDC5;color:#6B6A64}
+.row1 .chip:hover{border-color:#9C9A92;color:#1F1F1D}
+.row1 .chip .ti{color:#6B6A64}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--ink3);color:var(--ink)}
+.chip .ti{font-size:16px}
+.btn-dark{font-size:15px;font-weight:500;padding:9px 18px;border-radius:999px;background:#F9DD5A;color:#1A0C12;border:none;cursor:pointer;white-space:nowrap}
+.spacer{flex:1}
+.main{flex:1;display:flex;overflow:hidden}
+@keyframes sheetin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.main{animation:sheetin .32s ease-out both}
+.qlist{width:300px;flex:none;background:var(--card);border-right:1px solid var(--line);overflow:auto;padding:14px 12px}
+.grp{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;padding:12px 8px 4px}
+.qrow{display:flex;align-items:center;gap:9px;padding:8px;border-radius:10px;cursor:pointer;margin-top:2px}
+.qrow:hover{background:rgba(255,255,255,.05)}
+.qrow.on{background:var(--graybg)}
+.qic{width:34px;height:26px;border-radius:7px;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:3px;flex:none}
+.qic .ti{font-size:13px}
+.qtxt{font-size:15px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ghost{border:1.5px dashed var(--line2);border-radius:10px;padding:9px 12px;font-size:14.5px;color:var(--ink3);display:flex;align-items:center;gap:8px;margin:10px 8px 0;cursor:pointer}
+.pbtn{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.pbtn:hover{color:var(--ink);background:rgba(255,255,255,.07)}
+.pbtn .ti{font-size:17px}
+.phead{position:sticky;top:0;z-index:6;background:var(--card);display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 4px 10px;font-size:13px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.eic{display:none}
+.qlist,.qset{transition:width .18s ease}
+.qlist.col,.qset.col{width:48px;padding:12px 9px;overflow:hidden}
+.qlist.col>*:not(.phead),.qset.col>*:not(.phead){display:none}
+.col .phead{justify-content:center;padding:2px 0}
+.col .phead span{display:none}
+.col .cic{display:none}
+.col .eic{display:inline}
+.stage{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.stgpad{flex:1;margin:14px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#FEFAEC;box-shadow:0 4px 20px rgba(31,31,29,.05)}
+.stgpad iframe{width:115%;height:115%;transform:scale(.87);transform-origin:0 0;border:0}
+.canvasq{flex:1;display:flex;align-items:center;justify-content:center;padding:34px}
+.qcard{width:100%;max-width:660px;color:#1A0C12}
+.qnum{display:flex;gap:9px;align-items:center;font-size:14px;color:#766b62;margin-bottom:14px}
+.qnum .nd{width:22px;height:22px;border-radius:50%;background:#F9DD5A;color:#1A0C12;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.qtitle{font-family:'Spectral',Georgia,serif;font-size:32px;font-weight:500;letter-spacing:-.01em;line-height:1.18;outline:none;color:#1A0C12}
+.qtitle:focus{border-bottom:2px solid #F9DD5A}
+.qdesc{font-size:16px;color:#766b62;margin-top:10px;outline:none;line-height:1.55}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid #d8cfbb;background:#fff;border-radius:11px;padding:12px 16px;font-size:16px;margin-top:10px;max-width:440px;cursor:pointer;transition:.16s}
+.opt:hover{border-color:#1A0C12;background:#fff}
+.plab{display:block;font-size:12.5px;color:#766b62;margin:18px 0 5px}
+.pinput{background:#fff;border:1px solid #d8cfbb;border-radius:10px;padding:12px 14px;font-size:15.5px;width:100%;max-width:480px;outline:none;font-family:inherit;color:#1A0C12}
+.pinput:focus{border-color:#1A0C12}
+.drop{border:1.5px dashed #d8cfbb;border-radius:11px;padding:30px 16px;text-align:center;color:#766b62;font-size:15px;margin-top:16px;max-width:480px;background:#fff}
+.okbtn{display:inline-flex;align-items:center;gap:9px;background:#F9DD5A;color:#1A0C12;font-size:14.5px;font-weight:500;padding:11px 20px;border-radius:10px;margin-top:24px;cursor:pointer;box-shadow:0 1px 0 rgba(26,12,18,.15)}
+.pvbar{display:flex;justify-content:center;gap:5px;padding:0 0 18px}
+.pvbar i2{width:22px;height:4px;border-radius:2px;background:#e7e0d2;display:inline-block}
+.pvbar i2.on{background:#F9DD5A}
+.qset{width:330px;flex:none;background:var(--card);border-left:1px solid var(--line);overflow:auto;padding:16px 18px}
+.pl{font-size:13.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:16px 0 6px}
+.pl:first-child{margin-top:0}
+.fsel,.finput{width:100%;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-size:15px;font-family:inherit;background:var(--field);color:var(--ink);outline:none}
+.fsel:focus,.finput:focus{border-color:var(--blue)}
+.tgl{display:flex;align-items:center;gap:10px;font-size:15.5px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.tgl:last-child{border:none}
+.tgl input{width:16px;height:16px;accent-color:var(--green)}
+.tgl small{display:block;font-size:13px;color:var(--ink3)}
+.mbx{display:flex;align-items:center;gap:9px;width:100%;background:var(--field);border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-size:15px;line-height:1.4;color:var(--ink)}
+.tok{color:var(--blued);font-size:14px}
+.nsmall{font-size:14.5px;color:var(--ink3);line-height:1.5;margin-top:6px}
+.tag{font-size:12px;font-weight:500;padding:1px 8px;border-radius:999px}
+.toolbar{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 14px;box-shadow:0 4px 16px rgba(31,31,29,.08);z-index:20}
+.toolbar input{width:340px;font-size:15px;border:none;outline:none;background:transparent;color:var(--ink)}
+.toolbar .ti{font-size:17px;color:var(--amber)}
+.toast{position:fixed;bottom:74px;left:50%;transform:translateX(-50%);background:#F4EFE9;color:#1A0C12;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50}
+.ivc{width:520px;max-width:92vw;background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5);max-height:84vh;overflow:auto}
+.msg{display:flex;gap:10px;margin-top:14px;font-size:15.5px;line-height:1.55}
+.msg .av{width:28px;height:28px;border-radius:9px;background:var(--amberbg);color:var(--amberd);display:flex;align-items:center;justify-content:center;flex:none}
+.msg .av .ti{font-size:15px}
+.msg.me{justify-content:flex-end}
+.msg.me>div{background:var(--graybg);border-radius:12px;padding:8px 14px;max-width:80%}
+.sugg{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0 38px}
+.sugg span{font-size:14.5px;border:1px solid var(--line2);border-radius:999px;padding:7px 14px;cursor:pointer;background:var(--field);color:var(--ink)}
+.sugg span:hover{border-color:var(--amber);background:var(--amberbg)}
+.ivin{display:flex;gap:8px;margin:12px 0 0 38px}
+.ivin input{flex:1;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-size:15px;font-family:inherit;outline:none;background:var(--field);color:var(--ink)}
+.gen{font-size:14.5px;color:var(--ink2);margin:8px 0 0 38px;display:flex;gap:8px;align-items:center}
+.gen .ti{font-size:15px;color:var(--green)}
+@keyframes rowin{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.qrow.anim{animation:rowin .35s both}
+.spop{position:fixed;width:334px;max-height:70vh;overflow:auto;background:var(--card);border:1px solid var(--line2);border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.28);z-index:60;padding:14px 16px;display:none}
+.abub{max-width:88%;border-radius:13px;padding:9px 13px;font-size:14.5px;line-height:1.55;margin-top:10px}
+.abub.me{background:#1A0C12;color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.abub.ai{background:var(--graybg);color:var(--ink);border-bottom-left-radius:4px}
+.asugg{font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--ink2);display:inline-block;margin:6px 6px 0 0}
+.asugg:hover{border-color:var(--amber);background:var(--amberbg)}
+</style>
+</head>
+<body class="wbcol">
+
+<script>window.GYNAV={"active": "demand-mapping", "arts": "demand", "artActive": "Project context questionnaire"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="row1">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
+  <span class="crumb" onclick="backToCanvas()">Demand Mapping</span><span class="sep">›</span>
+  <span class="title">Project context questionnaire</span>
+</div>
+<div class="row2">
+  <span class="chip" onclick="backToCanvas()"><i class="ti ti-x"></i> Close</span>
+  <span class="spacer"></span>
+  <span class="chip" onclick="window.open('demand-mapping-intake-poc.html','_blank')"><i class="ti ti-player-play"></i> Preview</span>
+  <button class="btn-dark" onclick="toast('Saves this definition to the blueprint: Send Questionnaire mints links from it')">Save</button>
+</div>
+
+<div class="main">
+  <div class="qlist" id="qlist"></div>
+  <div class="stage">
+    <div class="stgpad"><iframe src="demand-mapping-intake-poc.html?embed=1" title="Client questionnaire preview"></iframe></div>
+  </div>
+</div>
+</div>
+
+<div class="wb" id="wb"></div>
+<div class="wbpill" onclick="document.body.classList.remove('wbcol')"><i class="ti ti-sparkles"></i> AI Assistant</div>
+
+<div class="spop" id="spop"></div>
+<div class="toast" id="toast"></div>
+<div class="ovl" id="ovl" onclick="if(event.target===this)endInterview()"><div class="ivc" id="ivc"></div></div>
+
+<script>
+const EDITM=new URLSearchParams(location.search).get('edit')==='1';
+function toggleNav(){
+  document.body.classList.remove('navpeek');
+  const hid=document.body.classList.toggle('navhid');
+  document.getElementById('expandBtn').style.display=hid?'flex':'none';
+  localStorage.setItem('gyNavHid',hid?'1':'0');
+}
+(function(){
+  if(localStorage.getItem('gyNavHid')==='1'){
+    document.body.classList.add('navhid');
+    document.getElementById('expandBtn').style.display='flex';
+  }
+})();
+function toggleArts(){
+  const open=document.getElementById('artSub').classList.toggle('closed');
+  document.getElementById('artArr').classList.toggle('closed',open);
+  localStorage.setItem('gyArtsOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyArtsOpen')==='1'){
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('artSub').classList.remove('closed');
+    document.getElementById('artArr').classList.remove('closed');
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const saved=parseInt(localStorage.getItem('gyNavW')||'',10);
+  if(saved&&!document.body.classList.contains('navhid')&&!(document.getElementById('snav')&&document.getElementById('snav').classList.contains('hid')))document.body.style.setProperty('--nav',saved+'px');
+  const grip=document.getElementById('snavgrip');
+  let drag=false;
+  grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');document.body.style.userSelect='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const w=Math.min(420,Math.max(200,e.clientX));
+    document.body.style.setProperty('--nav',w+'px');
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!drag)return;
+    drag=false;grip.classList.remove('on');document.body.style.userSelect='';
+    const w=parseInt(getComputedStyle(document.body).getPropertyValue('--nav'),10);
+    if(w)localStorage.setItem('gyNavW',String(w));
+  });
+  const zone=document.createElement('div');
+  zone.className='snavpeek';
+  document.body.appendChild(zone);
+  zone.addEventListener('mouseenter',()=>{
+    if(document.body.classList.contains('navhid'))document.body.classList.add('navpeek');
+  });
+  document.querySelector('.snav').addEventListener('mouseleave',()=>document.body.classList.remove('navpeek'));
+  zone.addEventListener('mouseleave',e=>{
+    if(!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.snav')))
+      document.body.classList.remove('navpeek');
+  });
+});
+function backToCanvas(){location.href='demand-mapping-canvas-prototype.html'+(EDITM?'?mode=edit':'?mode=run');}
+if(EDITM)document.addEventListener('DOMContentLoaded',()=>document.querySelector('.row1').classList.add('editing'));
+
+const TYPES={
+  welcome:{ic:'ti-hand-stop',bg:'var(--greenbg)',fg:'var(--greend)',label:'Welcome screen'},
+  choice:{ic:'ti-list-check',bg:'var(--purplebg)',fg:'var(--purpled)',label:'Multiple choice'},
+  short:{ic:'ti-cursor-text',bg:'var(--bluebg)',fg:'var(--blued)',label:'Short text'},
+  long:{ic:'ti-align-left',bg:'var(--bluebg)',fg:'var(--blued)',label:'Long text'},
+  upload:{ic:'ti-upload',bg:'var(--amberbg)',fg:'var(--amberd)',label:'File upload'},
+  ending:{ic:'ti-flag-check',bg:'var(--graybg)',fg:'var(--grayd)',label:'Ending'}
+};
+
+const QS=[
+ {id:'w',type:'welcome',mod:'',title:'Let us map the demand for your project',desc:'Share a few things and our assistant drafts your project context for you, then flags anything that still needs you.',req:false,maps:'',pre:'none'},
+ {id:'q1',type:'choice',mod:'Project identity',title:'Where is the project?',desc:'',req:true,maps:'identity.jurisdiction',pre:'platform',opts:['England','Scotland','Wales']},
+ {id:'q2',type:'long',mod:'Project identity',title:'What does success look like for this land?',desc:'A few sentences in your own words is perfect.',req:true,maps:'identity.vision_mission',pre:'extract'},
+ {id:'q3',type:'short',mod:'Project identity',title:'What are the key interventions, roughly?',desc:'For example: habitat creation, hydrology, land use change.',req:true,maps:'identity.key_interventions',pre:'extract'},
+ {id:'q4',type:'upload',mod:'Evidence and assets',title:'Drop in any plans, surveys or agreements',desc:'We read them and draft your answers, so you type less.',req:false,maps:'assets.manifest',pre:'extract'},
+ {id:'q5',type:'short',mod:'Commercial and custodianship',title:'Who owns and manages each parcel?',desc:'',req:true,maps:'commercial.land_parcels',pre:'extract'},
+ {id:'q6',type:'choice',mod:'Commercial and custodianship',title:'Any existing schemes on the land?',desc:'',req:true,maps:'commercial.existing_agreements',pre:'platform',opts:['SFI','Countryside Stewardship','Woodland grants','None']},
+ {id:'q7',type:'long',mod:'Commercial and custodianship',title:'Any red lines we should know about?',desc:'Things that rule products in or out: no land sale, keep grazing, no public access.',req:false,maps:'commercial.client_constraints',pre:'none'},
+ {id:'q8',type:'long',mod:'Demand specifics',title:'Any buyer conversations already underway?',desc:'',req:false,maps:'demand.buyer_relationships',pre:'none'},
+ {id:'e',type:'ending',mod:'',title:'That is everything for now',desc:'We will confirm what we received and come back if anything is missing.',req:false,maps:'',pre:'none'}
+];
+let SEL='q1';
+
+function renderList(){
+  const el=document.getElementById('qlist');
+  let h=`<div class="phead"><span>Content</span><button class="pbtn" title="Collapse" onclick="tPanel('qlist')"><i class="ti ti-layout-sidebar-left-collapse cic"></i><i class="ti ti-layout-sidebar-left-expand eic"></i></button></div>`,lastMod=null,idx=0;
+  QS.forEach(q=>{
+    if(q.mod&&q.mod!==lastMod){h+=`<div class="grp">${q.mod}</div>`;lastMod=q.mod;}
+    if(!q.mod&&q.type==='ending')h+=`<div class="grp">Ending</div>`;
+    if(!q.mod&&q.type==='welcome')h+=`<div class="grp">Welcome</div>`;
+    const t=TYPES[q.type];
+    const num=(q.type==='welcome'||q.type==='ending')?`<i class="ti ${t.ic}"></i>`:`<i class="ti ${t.ic}"></i>${++idx}`;
+    h+=`<div class="qrow ${SEL===q.id?'on':''}" onclick="sel('${q.id}',this)">
+      <span class="qic" style="background:${t.bg};color:${t.fg}">${num}</span>
+      <span class="qtxt">${q.title}</span></div>`;
+  });
+  h+=`<div class="ghost" onclick="toast('Add content: pick a question type, or pull a shared module from the registry')"><i class="ti ti-plus"></i> Add content</div>`;
+  el.innerHTML=h;
+}
+
+function renderStage(){}
+
+function setHtml(q){
+  const typeOpts=Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${q.type===k?'selected':''}>${v.label}</option>`).join('');
+  const preOpts=[['none','Asked fresh every time'],['platform','Pre-fill from Data Platform'],['extract','AI Assistant drafts from uploads']].map(([k,v])=>`<option value="${k}" ${q.pre===k?'selected':''}>${v}</option>`).join('');
+  return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:2px">
+    <span style="flex:1;font-weight:600;font-size:15px">${q.title}</span>
+    <i class="ti ti-x" style="cursor:pointer;color:var(--ink3);font-size:16px" onclick="spopClose()"></i></div>`
+   +`<div class="pl">Question type</div><select class="fsel" onchange="setType(this.value)">${typeOpts}</select>`
+   +((q.type!=='welcome'&&q.type!=='ending')?
+     `<div class="pl">Settings</div>
+      <div class="tgl"><input type="checkbox" ${q.req?'checked':''} onchange="QS.find(x=>x.id===SEL).req=this.checked;renderStage()"><span>Required<small>counts toward the completeness rule</small></span></div>
+      <div class="pl">Maps to schema</div>
+      <div class="mbx"><span class="tok">{ ${q.maps} }</span></div>
+      <div class="nsmall">Traced to the Project context questionnaire. The Input complete? gate reads this binding.</div>
+      <div class="pl">Pre-fill</div><select class="fsel" onchange="QS.find(x=>x.id===SEL).pre=this.value;renderStage()">${preOpts}</select>
+      <div class="pl">Module</div>
+      <div class="mbx">${q.mod}<span class="tag" style="margin-left:auto;background:${q.mod==='Demand specifics'?'var(--amberbg)':'var(--bluebg)'};color:${q.mod==='Demand specifics'?'var(--amberd)':'var(--blued)'}">${q.mod==='Demand specifics'?'custom':'shared'}</span></div>`
+    :`<div class="pl">Copy</div><div class="nsmall">Click the text on the left to edit it in place. Tone and brand accents live under Design.</div>`)
+   +`<div class="pl">This definition</div>
+     <div class="nsmall">From Library: Questionnaire · white label module v1. Drafted by the AI Assistant from Send Questionnaire › Needs and the 14 must-have items.</div>`;
+}
+let SPOS=null;
+function spopClose(){document.getElementById('spop').style.display='none'}
+function spopShow(){
+  const q=QS.find(x=>x.id===SEL), p=document.getElementById('spop');
+  p.innerHTML=setHtml(q);
+  if(SPOS){p.style.left=SPOS.left+'px';p.style.top=SPOS.top+'px';}
+  p.style.display='block';
+}
+function renderAgent(){
+  document.getElementById('wb').innerHTML=
+   `<div class="wbhead"><i class="ti ti-sparkles"></i> AI Assistant
+     <button class="wbmin" onclick="document.body.classList.add('wbcol')" title="Minimise"><i class="ti ti-minus"></i></button></div>
+   <div class="wbbody" style="display:flex;flex-direction:column">
+     <div id="alog" style="flex:1;overflow:auto;min-height:0">
+       <div class="abub ai">I drafted this questionnaire from Send Questionnaire › Needs and the 14 must-have items. Tell me what to change, ask why a question exists, or redraft it from scratch through a short interview.</div>
+       <div>
+         <span class="asugg" style="border-color:var(--amber);background:var(--amberbg);color:var(--amberd)" onclick="startInterview()"><i class="ti ti-sparkles" style="font-size:13px"></i> Redraft via designer interview</span>
+         <span class="asugg" onclick="aChat(this.textContent)">Farmers won't know the word additionality</span>
+         <span class="asugg" onclick="aChat(this.textContent)">Make the upload step required</span>
+         <span class="asugg" onclick="aChat(this.textContent)">Which questions map to no field?</span>
+       </div>
+     </div>
+     <div style="display:flex;gap:8px;margin-top:12px;flex:none">
+       <input class="fsel" id="achatin" style="flex:1" placeholder="Ask or instruct…" onkeydown="if(event.key==='Enter'&&this.value.trim()){aChat(this.value.trim());this.value='';}">
+       <button class="btn-dark" style="padding:8px 13px" onclick="const i=document.getElementById('achatin');if(i.value.trim()){aChat(i.value.trim());i.value='';}" aria-label="Send"><i class="ti ti-arrow-up" style="font-size:15px"></i></button>
+     </div>
+   </div>`;
+}
+function aChat(txt){
+  const log=document.getElementById('alog');
+  if(!log||!txt)return;
+  log.insertAdjacentHTML('beforeend',`<div class="abub me">${txt}</div>`);
+  setTimeout(()=>{
+    log.insertAdjacentHTML('beforeend',`<div class="abub ai">Understood. In the real product I would edit the definition, update the preview, and log the change. This prototype stops here.</div>`);
+    log.scrollTop=log.scrollHeight;
+  },500);
+  log.scrollTop=log.scrollHeight;
+}
+function sel(id,el){
+  SEL=id;renderList();renderStage();
+  if(el){
+    const r=el.getBoundingClientRect();
+    const panel=document.querySelector('.qlist').getBoundingClientRect();
+    SPOS={left:panel.right+14,top:Math.max(140,Math.min(r.top-8,window.innerHeight-420))};
+    spopShow();
+  }
+}
+function setType(t){QS.find(x=>x.id===SEL).type=t;renderList();renderStage();spopShow();}
+
+function tPanel(cls){
+  document.querySelector('.'+cls).classList.toggle('col');
+}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3800);
+}
+sel('q1');
+
+const IV=[
+ {q:'What decision does this questionnaire feed?',sugg:['The go / no-go on market viability','Something else']},
+ {q:'Who will usually be filling it in?',sugg:['Farmers and estate managers','Institutional landowners','Consultants']},
+ {q:'What will they have on hand?',sugg:['Plans and surveys as PDFs','GIS files and a data room','Usually very little']},
+ {q:'Anything you always want to ask, in your own words? (optional)',free:true,sugg:['Skip']}
+];
+let IVSTEP=0, IVLOG='';
+
+function startInterview(){
+  IVSTEP=0;
+  IVLOG=`<div style="display:flex;align-items:center;gap:10px">
+    <div class="av" style="width:30px;height:30px;border-radius:9px;background:var(--amberbg);color:var(--amberd);display:flex;align-items:center;justify-content:center"><i class="ti ti-sparkles"></i></div>
+    <div style="flex:1;font-weight:600;font-size:16.5px">Draft with the AI Assistant</div>
+    <button class="chip" style="padding:4px 10px" onclick="endInterview()"><i class="ti ti-x"></i></button></div>
+    <div class="nsmall" style="margin:8px 0 0 40px">I already took the schema, modules and completeness rule from the blueprint. Four questions cover the rest.</div>`;
+  document.getElementById('ovl').style.display='flex';
+  ivAsk();
+}
+function ivAsk(){
+  const s=IV[IVSTEP];
+  IVLOG+=`<div class="msg"><span class="av"><i class="ti ti-sparkles"></i></span><div>${s.q}</div></div>`;
+  let ui=`<div class="sugg" id="ivui">${s.sugg.map(x=>`<span onclick="ivAnswer('${x.replace(/'/g,"\\'")}')">${x}</span>`).join('')}</div>`;
+  if(s.free)ui+=`<div class="ivin"><input id="ivfree" placeholder="For example: how they heard about GY" onkeydown="if(event.key==='Enter'&&this.value.trim())ivAnswer(this.value.trim())"><button class="chip" onclick="const v=document.getElementById('ivfree').value.trim();if(v)ivAnswer(v)">Add</button></div>`;
+  document.getElementById('ivc').innerHTML=IVLOG+ui;
+}
+function ivAnswer(a){
+  document.getElementById('ivui')?.remove();
+  IVLOG+=`<div class="msg me"><div>${a}</div></div>`;
+  if(IVSTEP===3&&a!=='Skip'){
+    QS.splice(QS.length-1,0,{id:'qx'+Date.now(),type:'long',mod:'Demand specifics',title:a.endsWith('?')?a:(a.charAt(0).toUpperCase()+a.slice(1)+'?'),desc:'',req:false,maps:'demand.custom',pre:'none'});
+  }
+  IVSTEP++;
+  if(IVSTEP<IV.length){ivAsk();return;}
+  const lines=['Reading Send Questionnaire › Needs','Mapping Input checklist v1 → 14 schema fields','Composing shared modules from the registry','Writing questions in a warm, plain tone','Marking pre-fills: 2 from Data Platform, 4 from uploads'];
+  let i=0;
+  const tick=()=>{
+    IVLOG+=`<div class="gen"><i class="ti ti-check"></i>${lines[i]}</div>`;
+    document.getElementById('ivc').innerHTML=IVLOG;
+    if(++i<lines.length)setTimeout(tick,450);
+    else setTimeout(()=>{endInterview();animateList();toast('Definition drafted: '+(QS.length-2)+' questions across 4 modules. Correct anything on the stage.')},600);
+  };
+  setTimeout(tick,400);
+}
+function endInterview(){document.getElementById('ovl').style.display='none'}
+function animateList(){
+  renderList();renderStage();renderAgent();
+  document.querySelectorAll('.qrow').forEach((r,i)=>{r.classList.add('anim');r.style.animationDelay=(i*70)+'ms';});
+}
+renderList();renderStage();renderAgent();
+</script>
+</body>
+</html>

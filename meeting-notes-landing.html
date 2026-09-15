@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meeting Notes · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --blue:#378ADD; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px}
+.topbar{height:61px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:14px 22px;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .ti{font-size:19px;color:var(--ink2)}
+.title{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--line2);color:var(--ink)}
+.chip .ti{font-size:16px}
+.btn-dark{font-size:15px;font-weight:500;padding:9px 18px;border-radius:999px;background:var(--dark);color:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-dark .ti{font-size:16px;color:#fff}
+.spacer{flex:1}
+.shell{display:flex;height:100vh;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 12px 16px}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sarr{margin-left:auto;font-size:14px;color:var(--ink3);transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:var(--ink2)}
+.ssub .sitem.on{color:var(--ink)}
+.ssub.closed{display:none}
+.sarr.closed{transform:rotate(-90deg)}
+.snav.hid{display:none}
+.snavpeek{position:fixed;top:0;left:0;width:14px;height:100vh;z-index:44;display:none}
+body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;width:264px;z-index:45;border:1px solid var(--line);border-radius:0 14px 14px 0;box-shadow:0 12px 40px rgba(31,31,29,.18);animation:snavslide .16s ease}
+@keyframes snavslide{from{transform:translateX(-100%)}to{transform:none}}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px}
+.sworks .ti{font-size:15px;color:var(--ink3)}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:var(--graybg);color:var(--ink)}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:var(--ink);cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:var(--ink2)}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:var(--graybg);font-weight:500}
+.mainc{flex:1;overflow:auto;min-width:0}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+.clink{color:var(--blued);cursor:pointer;font-size:14.5px}
+.clink:hover{text-decoration:underline}
+.lbl{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:18px 0 8px}
+.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr .9fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
+.thead span{display:flex;align-items:center;gap:6px}
+.thead .ti{font-size:14px}
+.group{font-size:14px;color:var(--ink2);padding:10px 18px 6px;display:flex;align-items:center;gap:8px}
+.count{font-size:12.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600}
+.row{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr .9fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;font-size:15px}
+.row.click{cursor:pointer;transition:border-color .12s, box-shadow .12s}
+.row.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
+.row.dim{opacity:.55;cursor:default}
+.name{display:flex;align-items:center;gap:12px;min-width:0}
+.tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;font-size:17px}
+.nm{font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{display:block;font-weight:400;font-size:13px;color:var(--ink3)}
+.pill{font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--tealbg);color:var(--teald)}
+.who{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink2)}
+.avs{display:flex;align-items:center}
+.av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex:none;border:2px solid var(--card)}
+.av+.av{margin-left:-8px}
+.mut{color:var(--ink3);font-size:14.5px}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+
+/* warm/Manner titles */
+:root{--serif:'Manner','Spectral',Georgia,serif}
+.title{font-weight:600}
+.grt-h{font-family:var(--serif);font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active": "meeting-notes", "arts": "demand"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-note"></i>
+  <span class="title">Meeting Notes</span>
+</div>
+
+<div class="wrap">
+  <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+    <span class="spacer"></span>
+    <span class="chip" aria-label="Search"><i class="ti ti-search"></i></span>
+    <span class="chip"><i class="ti ti-layout-grid"></i> View settings</span>
+    <button class="btn-dark" onclick="toast('New note: the AI Assistant can open a blank note or start from a call recording')"><i class="ti ti-plus"></i> New note</button>
+  </div>
+
+  <div class="thead" style="margin-top:18px">
+    <span>Meeting note</span>
+    <span><i class="ti ti-stack-2"></i> Workflow</span>
+    <span><i class="ti ti-users"></i> Attendees</span>
+    <span><i class="ti ti-calendar-event"></i> Date</span>
+    <span><i class="ti ti-user"></i> Author</span>
+  </div>
+
+  <div class="row click" style="margin-top:6px" onclick="location.href='meeting-note-kickoff.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg)">🤝</div>
+      <div class="nm">Demand Mapping Kick-off Call</div>
+    </div>
+    <div><span class="pill"><i class="ti ti-topology-star-3" style="font-size:13px"></i> Demand Mapping</span></div>
+    <div class="who">
+      <span class="avs"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span><span class="av" style="background:var(--tealbg);color:var(--teald)">JB</span><span class="av" style="background:var(--graybg);color:var(--grayd)">LA</span></span>
+      <span>Caitlin, James +1</span>
+    </div>
+    <div class="mut">Tue 1 Jul</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block';
+  clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',3600);
+}
+function toggleNav(){
+  document.body.classList.remove('navpeek');
+  const n=document.getElementById('snav');
+  const hid=n.classList.toggle('hid');
+  document.getElementById('expandBtn').style.display=hid?'flex':'none';
+  const z=document.getElementById('snavpeek-zone');
+  if(z)z.style.display=hid?'block':'none';
+  localStorage.setItem('gyNavHid',hid?'1':'0');
+}
+(function(){
+  if(localStorage.getItem('gyNavHid')==='1'){
+    document.getElementById('snav').classList.add('hid');
+    document.getElementById('expandBtn').style.display='flex';
+    const z=document.getElementById('snavpeek-zone');
+    if(z)z.style.display='block';
+  }
+})();
+(function(){
+  const zone=document.createElement('div');
+  zone.className='snavpeek';
+  zone.id='snavpeek-zone';
+  document.body.appendChild(zone);
+  zone.addEventListener('mouseenter',()=>document.body.classList.add('navpeek'));
+  const nav=document.getElementById('snav');
+  nav.addEventListener('mouseleave',()=>document.body.classList.remove('navpeek'));
+  zone.addEventListener('mouseleave',e=>{
+    if(!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.snav')))
+      document.body.classList.remove('navpeek');
+  });
+  if(nav.classList.contains('hid'))zone.style.display='block';
+})();
+function toggleArts(){
+  const open=document.getElementById('artSub').classList.toggle('closed');
+  document.getElementById('artArr').classList.toggle('closed',open);
+  localStorage.setItem('gyArtsOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyArtsOpen')==='1'){
+  document.getElementById('artSub').classList.remove('closed');
+  document.getElementById('artArr').classList.remove('closed');
+}
+function toggleDel(){
+  const open=document.getElementById('delSub').classList.toggle('closed');
+  document.getElementById('delArr').classList.toggle('closed',open);
+  localStorage.setItem('gyDelOpen',open?'0':'1');
+}
+if(localStorage.getItem('gyDelOpen')==='0'){
+  document.getElementById('delSub').classList.add('closed');
+  document.getElementById('delArr').classList.add('closed');
+}
+(function(){
+  const saved=parseInt(localStorage.getItem('gyNavW')||'',10);
+  if(saved&&!document.body.classList.contains('navhid')&&!(document.getElementById('snav')&&document.getElementById('snav').classList.contains('hid')))document.body.style.setProperty('--nav',saved+'px');
+  const grip=document.getElementById('snavgrip');
+  if(!grip)return;
+  let drag=false;
+  grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');document.body.style.userSelect='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const w=Math.min(420,Math.max(200,e.clientX));
+    document.body.style.setProperty('--nav',w+'px');
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!drag)return;
+    drag=false;grip.classList.remove('on');document.body.style.userSelect='';
+    const w=parseInt(getComputedStyle(document.body).getPropertyValue('--nav'),10);
+    if(w)localStorage.setItem('gyNavW',String(w));
+  });
+})();
+</script>
+</body>
+</html>

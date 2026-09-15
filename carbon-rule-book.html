@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carbon · Rule book · Hive Mind Library</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --field:#F5F3EF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --amber:#EF9F27; --amberd:#854F0B;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:row;overflow:hidden;font-size:16px;color-scheme:light}
+.mainc{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid #E6E4DE;display:flex;flex-direction:column;padding:12px 12px 16px;color:#1F1F1D;color-scheme:light}
+body.navhid .snav{display:none}
+.snavpeek{position:fixed;top:0;left:0;width:14px;height:100vh;z-index:44;display:none}
+body.navhid .snavpeek{display:block}
+body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10px;width:264px;z-index:45;border:1px solid #E6E4DE;border-radius:0 14px 14px 0;box-shadow:0 12px 40px rgba(31,31,29,.3);animation:snavslide .16s ease}
+@keyframes snavslide{from{transform:translateX(-100%)}to{transform:none}}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px;color:#1F1F1D}
+.sworks .ti{font-size:15px;color:#9C9A92}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:#9C9A92;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:#EFEDE8;color:#1F1F1D}
+.scollapse .ti{font-size:17px}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:#1F1F1D;cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:#6B6A64}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:#EFEDE8;font-weight:500}
+.sarr{margin-left:auto;font-size:14px;color:#9C9A92;transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.sarr.closed{transform:rotate(-90deg)}
+.ssub{margin:2px 0 4px 30px}
+.ssub.closed{display:none}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:#6B6A64}
+.ssub .sitem.on{color:#1F1F1D}
+.row1{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border-bottom:1px solid #E6E4DE;flex:none;height:61px;box-sizing:border-box}
+.row1 .ti{font-size:19px;color:#6B6A64}
+.title{font-size:17px;font-weight:600;white-space:nowrap;color:#1F1F1D}
+.crumb{color:#9C9A92;cursor:pointer;font-size:16px;white-space:nowrap}
+.crumb:hover{color:#6B6A64}
+.sep{color:#9C9A92;font-size:14px}
+.esdd{position:relative;display:inline-flex;align-items:center;gap:5px;cursor:pointer;border-radius:8px;padding:3px 7px;margin-left:-3px}
+.esdd:hover{background:#F3F2EE}
+.esdd .title{font-size:17px}
+.esmenu{position:absolute;top:calc(100% + 7px);left:0;min-width:242px;background:#fff;border:1px solid var(--line2);border-radius:12px;box-shadow:0 14px 36px rgba(31,31,29,.17);padding:6px;z-index:50;display:none}
+.esmenu.open{display:block}
+.em-item{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:8px;font-size:14.5px;color:var(--ink);cursor:pointer}
+.em-item:hover{background:#F3F2EE}
+.em-item.on{font-weight:600}
+.em-item .emj{font-size:18px;width:22px;text-align:center}
+.em-item .ck{margin-left:auto;color:#639922;font-size:16px}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--ink3);color:var(--ink)}
+.chip .ti{font-size:16px}
+.spacer{flex:1}
+.attend{display:flex;align-items:center;gap:9px;cursor:default}
+.attend .avs{display:flex;align-items:center}
+.attend .av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;flex:none;border:2px solid #fff;color:#fff}
+.attend .av+.av{margin-left:-8px}
+.attend .more{font-size:14.5px;font-weight:600;color:var(--ink3);margin-left:2px}
+.stage{flex:1;overflow:auto;min-width:0}
+.stagewrap{display:flex;justify-content:flex-start;align-items:flex-start;padding:34px 34px 72px}
+.npage{background:#fff;flex:1 1 auto;max-width:none;min-width:0;border-radius:10px;border:1px solid var(--line);padding:52px 72px 72px;color:#1F1F1D;font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif}
+.npicon{font-size:46px;line-height:1}
+.nptitle{font-family:var(--serif);font-size:37px;font-weight:500;letter-spacing:-.01em;line-height:1.15;margin-top:12px}
+.nprop{display:flex;gap:10px;align-items:center;font-size:15px;color:#787774;margin-top:9px}
+.nprop .ti{font-size:15px;color:#9C9A92}
+.nprop .plab{width:104px;flex:none;display:flex;align-items:center;gap:8px}
+.nprop b{color:#37352F;font-weight:400}
+.ptag{background:#F6ECC4;border:1px solid #E3D391;border-radius:6px;padding:1px 8px;font-size:13px;color:#6B5B12}
+.ptag.g{background:#E7F1D8;border-color:#C4DBA3;color:#3F5A2B}
+.ptag.run{background:#E1F5EE;border-color:#B7E3D3;color:#0F6E56;cursor:pointer}
+.ptag.run:hover{filter:brightness(.97)}
+.ndiv{height:1px;background:#EDECE8;margin:26px 0 6px}
+.callout{display:flex;gap:11px;align-items:flex-start;background:#F7F6F3;border:1px solid #EDECE8;border-radius:10px;padding:14px 16px;margin-top:18px;font-size:15.5px;line-height:1.6;color:#37352F}
+.callout .ti{font-size:17px;color:#B78A0E;flex:none;position:relative;top:1px}
+.nh2{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.005em;margin-top:32px;display:flex;align-items:baseline;gap:10px}
+.vx{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;font-size:12px;font-weight:400;color:var(--ink3)}
+.pblk{margin-top:11px;font-size:16.5px;line-height:1.7;color:#2A2824}
+.bul{display:flex;gap:11px;align-items:flex-start;margin-top:10px;font-size:16.5px;line-height:1.65;color:#2A2824}
+.bul .dot{color:#9C9A92;flex:none;position:relative;top:1px}
+.bul .btxt{flex:1}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px 34px;margin-top:14px;font-size:16px;color:#2A2824}
+.rgrid span{display:flex;align-items:center;cursor:help}
+.rgrid .rd{width:9px;height:9px;border-radius:50%;flex:none;margin-right:9px}
+.rgrid b{margin-left:auto;font-weight:600}
+.rnote{font-size:13px;color:var(--ink3);margin-top:13px;line-height:1.55}
+.wbpill{position:fixed;right:18px;bottom:18px;z-index:48;display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:11px 18px;font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.14)}
+.wbpill .ti{font-size:16px;color:var(--amberd)}
+.wbpill:hover{border-color:var(--amber)}
+.toc{width:186px;flex:none;position:sticky;top:34px;align-self:flex-start;display:flex;flex-direction:column;gap:1px;margin-right:30px}
+.tocpad{display:none}
+.toc .tlab{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;padding:2px 10px 6px}
+.toc a{display:block;font-size:13.5px;line-height:1.35;color:var(--ink3);text-decoration:none;padding:6px 10px;border-left:2px solid var(--line);cursor:pointer;transition:color .12s,border-color .12s,background .12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc a:hover{color:var(--ink2);background:rgba(31,31,29,.04)}
+.toc a.on{color:var(--ink);border-left-color:var(--amber);font-weight:500}
+@media (max-width:1220px){.toc,.tocpad{display:none}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1F1F1D;color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+@keyframes sheetin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stage{animation:sheetin .32s ease-out both}
+
+/* warm/Manner titles */
+:root{--serif:'Manner','Spectral',Georgia,serif}
+.title{font-weight:600}
+.grt-h{font-family:var(--serif);font-weight:500}
+</style>
+</head>
+<body>
+
+<script>window.GYNAV={"active":"library"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="row1">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-books" style="font-size:20px;color:var(--ink2)"></i>
+  <span class="crumb" onclick="location.href='hive-mind-library.html'">Hive Mind Library</span><span class="sep">›</span>
+  <span class="crumb" onclick="location.href='hive-mind-library.html'">Ecosystem Services</span><span class="sep">›</span>
+  <span class="esdd" id="esdd" onclick="toggleEsdd(event)"><span class="title">Carbon</span><i class="ti ti-chevron-down" style="font-size:15px;color:var(--ink3)"></i>
+    <div class="esmenu" id="esmenu"></div>
+  </span>
+  <span class="spacer"></span>
+  <span class="chip" onclick="toast('Share: send a read-only link, or export to PDF')"><i class="ti ti-share-2"></i> Share</span>
+</div>
+
+<div class="stage">
+  <div class="stagewrap">
+  <div class="npage">
+    <div class="npicon">🌱</div>
+    <div class="nptitle">Carbon</div>
+
+    <div class="nprop"><span class="plab"><i class="ti ti-tag"></i>Type</span><b>Compliance + voluntary</b></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-activity"></i>Status</span><span class="ptag g">Active</span></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-coin"></i>Market size</span><b>£6.43B · global VCM 2024</b></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-refresh"></i>Refreshed</span><b>Oct 2025 · NatWest Markets Report</b></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-topology-star-3"></i>Read by</span><span class="ptag run" onclick="location.href='demand-mapping-canvas-prototype.html'">Demand Mapping</span></div>
+
+    <div class="ndiv"></div>
+
+    <div class="callout"><i class="ti ti-flag-3"></i><span><b>How this is used.</b> Read by <b>Desktop research</b> in every Demand Mapping run. Readiness is scored and the market sized per the GY methodology. Stale pages are flagged, never silently used.</span></div>
+
+    <div class="nh2">1 · About <span class="vx">static</span></div>
+    <div class="pblk">Companies offset unavoidable emissions by buying credits; one credit equals one tonne of CO2 sequestered or avoided. The most investable and stable of the natural capital markets, split into compliance markets (UK and EU ETS) and the voluntary carbon market.</div>
+
+    <div class="nh2">2 · How we sell it <span class="vx">static</span></div>
+    <div class="pblk">Sell verified credits under the Woodland Carbon Code, Peatland Carbon Code, Wilder Carbon or international codes. Buyers currently prefer removals credits over avoidance.</div>
+
+    <div class="nh2">3 · Market readiness <span class="vx">9 categories · GY methodology</span></div>
+    <div class="rgrid" id="rgrid"></div>
+    <div class="rnote">Hover a category for its definition. Scored <span style="color:#639922">●</span> active · <span style="color:#EF9F27">●</span> emerging · <span style="color:#D64545">●</span> nascent, per the GY Market Readiness Assessment (triangulating registry hard data, intermediary intelligence and GY deal-pipeline insight).</div>
+
+    <div class="nh2">4 · Sizing method <span class="vx">GY Market Sizing Methodology</span></div>
+    <div class="pblk">UK VCM sized from verified credits × price: 11.34M WCC credits (Forest Research + WCC registry) × £35 average = £396.9M, projected +26.7% to ~£487.5M by end 2025. Global uses the World Bank average price of £29. Combined WCC + PCC 2024 transactions = £12.14M. Sources: World Bank Carbon Pricing Dashboard, Berkeley Voluntary Registry Offset Database, Forest Research, WCC, PCC.</div>
+
+    <div class="nh2">5 · Market dynamics <span class="vx">dynamic · refresh ~3 months</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Global VCM ~£6.43B (2024). Retirements up 9% in H1 2025; issuances down 15% as developers wait for buyers.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Buyers pay premiums for high-quality credits with co-benefits; ICVCM-compliant credits command higher prices and broader access.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">UK high-quality credits sell at £75-125/tCO2; WCC typically £25-50 below Wilder Carbon.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">CDR offtakes surged ~200% year on year to ~20Mt by June 2025.</span></div>
+
+    <div class="nh2">6 · UK signals <span class="vx">dynamic</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">~2,500 live domestic projects under WCC / PCC / Wilder Carbon vs only 9 on international registries.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">WCC: 11.34M credits issued; estimated market £396.9M, rising to ~£487.5M by end 2025.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Domestic buyers: law firms, SMEs, large corporates.</span></div>
+
+    <div class="nh2">7 · Market risks</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">International buyers may not pay UK premium prices; comparable credits are cheaper in the Global South.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Lingering reputational caution from the 2022-23 critiques.</span></div>
+
+    <div class="nh2">8 · Sources and data tiers <span class="vx">hard vs soft</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Registries — DEFRA BNG, Gaia, WCC, PCC · hard data · <b>gold</b></span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Market data — World Bank, ICE, EEX, Forest Research · hard data · <b>silver</b></span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Intermediary intelligence — Earthly, Patch, Swallowtail · soft data · <b>bronze</b></span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">NatWest Markets Report (Caitlin + Harry) · <b>gold</b></span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt">Trade team and buyer signals · logged by Qualitative research · <b>gold</b></span></div>
+  </div>
+  <div class="tocpad"></div>
+  </div>
+</div>
+</div>
+
+<div class="wbpill" onclick="toast('Ask the AI Assistant: what changed since the last refresh, or how this compares to Peatland')"><i class="ti ti-sparkles"></i> AI Assistant</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3800);}
+
+// ── ecosystem-service breadcrumb dropdown ──
+const ESLIST=[['carbon','🌱','Carbon'],['bng','🏡','Biodiversity Net Gain'],['volbio','🦦','Voluntary Biodiversity'],['nn','🏞','Nutrient Neutrality'],['nfm','🌧','Natural Flood Management'],['wq','🚰','Water Quality'],['rm','💧','Replenish'],['scr','🚛','Supply Chain Resilience']];
+document.getElementById('esmenu').innerHTML=ESLIST.map(e=>`<div class="em-item${e[0]==='carbon'?' on':''}" onclick="esGo('${e[0]}',event)"><span class="emj">${e[1]}</span>${e[2]}${e[0]==='carbon'?'<i class="ti ti-check ck"></i>':''}</div>`).join('');
+function toggleEsdd(ev){ev.stopPropagation();document.getElementById('esmenu').classList.toggle('open');}
+function esGo(id,ev){ev.stopPropagation();if(id==='carbon'){document.getElementById('esmenu').classList.remove('open');return;}location.href='es-rule-book.html?es='+id;}
+document.addEventListener('click',()=>{const m=document.getElementById('esmenu');if(m)m.classList.remove('open');});
+
+// ── market readiness grid ──
+const RCOL={g:'#639922',o:'#EF9F27',r:'#D64545'}, RLAB={g:'Active',o:'Emerging',r:'Nascent'};
+const CATDEF={
+ Operational:'Operational Readiness — Evaluates the extent to which the market is active, investable, and equipped with infrastructure to support deals (e.g., registries, legal frameworks, project pipeline).',
+ Governance:'Effective Governance — Assesses the presence of governance structures that credibly oversee unit creation, transaction, and consumption. This includes clarity of roles, oversight mechanisms, and enforcement capacity.',
+ MRV:'Established MRV — Considers the availability and credibility of measurement, reporting, and verification methodologies. Priority is given to frameworks that are publicly accessible, science based, and independently verified with minimal conflicts of interest.',
+ Supply:'Supply Scale — Evaluates whether there is a sufficient and scalable pipeline of supply to meet projected demand. Considers both current activity and readiness of land, stakeholders, and project developers.',
+ Demand:'Demand Scale — Measures current and projected demand from both compliance-driven and voluntary actors. Includes buyer diversity, forward signals, and evidence of sustained interest or repeat purchasing.',
+ Regulatory:'Regulatory Stability — Captures the clarity, maturity, and enforceability of existing rules and standards. Also considers whether these rules are being implemented effectively and are adaptable to market evolution.',
+ 'Key challenges':'Key Challenges — Identifies significant barriers currently limiting market development. Challenges are rated by their severity and tractability: markets with minimal or resolvable issues are marked green; those with material, unresolved risks are flagged orange or red.',
+ 'Policy outlook':'Likely Policy Updates — Examines anticipated regulatory or policy changes and their projected impact on the market. Assesses whether forthcoming developments are likely to hinder, support, or remain neutral to market growth.'
+};
+const READY={Operational:'g',Governance:'g',MRV:'g',Supply:'g',Demand:'o',Regulatory:'g','Key challenges':'g','Policy outlook':'g'};
+document.getElementById('rgrid').innerHTML=Object.entries(READY).map(([k,v])=>
+  `<span title="${(CATDEF[k]||'').replace(/"/g,'&quot;')}"><span class="rd" style="background:${RCOL[v]}"></span>${k}<b style="color:${RCOL[v]}">${RLAB[v]}</b></span>`).join('');
+
+// ── TOC (identical to the meeting-note template) ──
+let TOCHEADS=[];
+function tocGo(i){if(TOCHEADS[i])TOCHEADS[i].scrollIntoView({behavior:'smooth',block:'start'});}
+(function(){
+  const stage=document.querySelector('.stage'), wrap=document.querySelector('.stagewrap');
+  TOCHEADS=[...document.querySelectorAll('.npage .nh2')];
+  if(!TOCHEADS.length||!stage||!wrap)return;
+  const nav=document.createElement('nav');nav.className='toc';
+  let h='<div class="tlab">On this page</div>';
+  TOCHEADS.forEach((el,i)=>{el.id='h'+i;el.style.scrollMarginTop='24px';const lab=(el.firstChild&&el.firstChild.nodeType===3)?el.firstChild.textContent.trim():el.textContent.trim();h+=`<a data-i="${i}" onclick="tocGo(${i})">${lab}</a>`;});
+  nav.innerHTML=h;
+  wrap.insertBefore(nav,wrap.firstChild);
+  const links=[...nav.querySelectorAll('a')];
+  function upd(){
+    const top=stage.getBoundingClientRect().top;let cur=0;
+    TOCHEADS.forEach((el,i)=>{if(el.getBoundingClientRect().top-top<48)cur=i;});
+    links.forEach((a,i)=>a.classList.toggle('on',i===cur));
+  }
+  stage.addEventListener('scroll',upd,{passive:true});upd();
+})();
+function toggleNav(){
+  document.body.classList.remove('navpeek');
+  const hid=document.body.classList.toggle('navhid');
+  document.getElementById('expandBtn').style.display=hid?'flex':'none';
+  localStorage.setItem('gyNavHid',hid?'1':'0');
+}
+(function(){
+  if(localStorage.getItem('gyNavHid')==='1'){
+    document.body.classList.add('navhid');
+    document.getElementById('expandBtn').style.display='flex';
+  }
+})();
+(function(){
+  const zone=document.createElement('div');zone.className='snavpeek';document.body.appendChild(zone);
+  zone.addEventListener('mouseenter',()=>{if(document.body.classList.contains('navhid'))document.body.classList.add('navpeek');});
+  const sn=document.querySelector('.snav'); if(sn) sn.addEventListener('mouseleave',()=>document.body.classList.remove('navpeek'));
+  zone.addEventListener('mouseleave',e=>{if(!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.snav')))document.body.classList.remove('navpeek');});
+})();
+</script>
+</body>
+</html>

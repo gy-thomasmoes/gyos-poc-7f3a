@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hive Mind Library · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#ECE7DB; --line2:#DED8CA;
+  --ink:#1A0C12; --ink2:#766B62; --ink3:#A79E8D;
+  --green:#628147; --greenbg:#EAF1DE; --greend:#3F5A2B;
+  --amber:#B75A40; --amberbg:#F7E7DE; --amberd:#8A3F28;
+  --blue:#3B82F6; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --graybg:#F3EFE1; --grayd:#5F5E5A; --red:#E24B4A; --dark:#1A0C12;
+  --gyNature:#628147; --gyCapital:#215274; --gyTrade:#B75A40; --gyProg:#333333;
+  --serif:'Manner','Spectral',Georgia,serif; --sans:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:row;overflow:hidden;font-size:16px;--nav:264px}
+body.navhid{--nav:0px}
+.snav{position:relative;width:var(--nav);flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 12px 16px;overflow-y:auto}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.sarr{margin-left:auto;font-size:14px;color:var(--ink3);transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:var(--ink2)}
+.ssub .sitem.on{color:var(--ink)}
+.ssub.closed{display:none}
+.sarr.closed{transform:rotate(-90deg)}
+body.navhid .snav{display:none}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px;color:var(--ink)}
+.sworks .ti{font-size:15px;color:var(--ink3)}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:var(--graybg);color:var(--ink)}
+.scollapse .ti{font-size:17px}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:var(--ink);cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:var(--ink2)}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.scount{margin-left:auto;font-size:12px;font-weight:600;background:#EFEDE8;color:var(--ink2);border-radius:999px;padding:1px 8px;display:none;line-height:1.5}
+.sitem.on{background:var(--graybg);font-weight:500}
+.mainc{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.row1{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border-bottom:1px solid var(--line);height:61px;box-sizing:border-box}
+.title{font-size:17px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.crumb{color:var(--ink3);cursor:pointer;font-size:16px}
+.crumb:hover{color:var(--ink2)}
+.sep{color:var(--ink3);font-size:14px}
+.spacer{flex:1}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:#fff;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+
+/* ── cockpit ── */
+.scroll{flex:1;overflow:auto}
+.wrap{max-width:1060px;margin:0 auto;padding:34px 32px 60px}
+.grt{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.grt-h{font-size:27px;font-weight:700;letter-spacing:-.015em}
+.grt-sub{font-size:14.5px;color:var(--ink3);margin-top:4px}
+.search{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 15px;font-size:14.5px;color:var(--ink3);min-width:320px;cursor:pointer}
+.search:hover{border-color:var(--line2)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 18px}
+.stat .n{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:-.01em}
+.stat .l{font-size:13.5px;color:var(--ink2);margin-top:3px}
+.sectitle{font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin:38px 0 14px;display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+.sectitle small{font-family:var(--sans);font-size:13.5px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink3)}
+/* book tiles, from the Lifecycle Map overview sketch */
+.books{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.book{position:relative;aspect-ratio:5/7;display:flex;flex-direction:column;justify-content:space-between;border-radius:3px 8px 8px 3px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 3px 9px rgba(0,0,0,.10),inset 4px 0 0 rgba(0,0,0,.16);padding:16px 15px 15px 20px;color:#fff}
+.book::before{display:none}
+.book:hover{transform:translateY(-3px) rotate(-.4deg);box-shadow:0 8px 18px rgba(0,0,0,.12),inset 4px 0 0 rgba(0,0,0,.22)}
+.book.sel{outline:2.5px solid var(--ink);outline-offset:2px}
+.book-ic{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;line-height:1}
+.book-ic i{font-size:21px;color:#fff}
+.book-title{font-family:var(--serif);font-size:18px;font-weight:500;line-height:1.15;letter-spacing:-.01em;margin-top:13px}
+.book-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+.book-vol{font-size:15px;font-weight:600;line-height:1.15}
+.book-vol small{display:block;font-size:11px;font-weight:500;opacity:.75;margin-top:2px}
+.bchip{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.22)}
+/* deliverable rows */
+.drow{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px;cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.drow:hover{border-color:var(--line2);box-shadow:0 4px 14px rgba(31,31,29,.06)}
+.dic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.dname{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+.dmeta{font-size:13.5px;color:var(--ink3);margin-top:2px}
+.dchip{font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.chvw{color:var(--ink3);font-size:16px}
+/* two-column lower */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.pcard-h{font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.act{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-top:1px solid #F3F0E7;font-size:14px}
+.act:first-of-type{border-top:none;padding-top:4px}
+.act .pill{width:7px;height:7px;border-radius:50%;margin-top:6px;flex:none}
+.act .mid{flex:1;min-width:0;line-height:1.45}
+.act .mid b{font-weight:600}
+.act .mid span{color:var(--ink2)}
+.act .time{font-size:12.5px;color:var(--ink3);white-space:nowrap}
+/* ── drawer (identical language to the canvas drawers) ── */
+.drawer{position:fixed;top:75px;right:12px;bottom:12px;width:424px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 28px rgba(31,31,29,.12);z-index:40;display:none;overflow:auto}
+.sh{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5;background:#fff;padding:16px 20px 12px;min-height:59px;border-bottom:1px solid var(--line);border-radius:16px 16px 0 0}
+.sh .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.sh .nt{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.sh .ns{font-size:13px;color:var(--ink3);margin-top:1px}
+.sh .x{margin-left:auto;width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.sh .x:hover{background:var(--graybg);color:var(--ink)}
+.sbody{padding:14px 20px 18px}
+.sbody>.flabel:first-child{margin-top:0}
+.flabel{font-size:13.5px;color:var(--ink2);margin:16px 0 6px;display:flex;justify-content:space-between;align-items:center}
+.flabel .vx{font-size:12px;color:var(--ink3);font-family:ui-monospace,Menlo,monospace}
+.pt{font-size:15px;line-height:1.6;color:var(--ink)}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;background:#F7F6F3;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;font-size:13.5px}
+.rgrid span b{float:right;font-weight:600}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:#fff;font-size:14.5px;padding:11px 18px;border-radius:12px;transition:transform .25s;z-index:99;max-width:70vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:1100px){.books{grid-template-columns:repeat(3,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}}
+
+/* warm/Manner titles */
+:root{--serif:'Manner','Spectral',Georgia,serif}
+.title{font-weight:600}
+.grt-h{font-family:var(--serif);font-weight:500}
+</style>
+</head>
+<body>
+
+<script>window.GYNAV={active:'library',arts:null};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+  <div class="row1">
+    <i class="ti ti-books" style="font-size:20px;color:var(--ink2)"></i>
+    <span class="title">Hive Mind Library</span>
+  </div>
+
+  <div class="scroll"><div class="wrap">
+
+    <div class="sectitle" style="margin-top:4px">Ecosystem service rule books</div>
+    <div class="books" id="books"></div>
+
+    <div class="sectitle">Deliverables <small>the workflows that read from, and write back to, the Library</small></div>
+    <div id="dels"></div>
+
+  </div></div>
+</div>
+
+<div class="drawer" id="drawer"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200)}
+
+
+/* ── ES rule books · seeded from the NatWest Markets Report Autumn 2025 ── */
+const RCOL={g:'#639922',o:'#EF9F27',r:'#D64545'};
+const RLAB={g:'Active',o:'Emerging',r:'Nascent'};
+const CATDEF={
+ Operational:'Operational Readiness — Evaluates the extent to which the market is active, investable, and equipped with infrastructure to support deals (e.g., registries, legal frameworks, project pipeline).',
+ Governance:'Effective Governance — Assesses the presence of governance structures that credibly oversee unit creation, transaction, and consumption. This includes clarity of roles, oversight mechanisms, and enforcement capacity.',
+ MRV:'Established MRV — Considers the availability and credibility of measurement, reporting, and verification methodologies. Priority is given to frameworks that are publicly accessible, science based, and independently verified with minimal conflicts of interest.',
+ Supply:'Supply Scale — Evaluates whether there is a sufficient and scalable pipeline of supply to meet projected demand. Considers both current activity and readiness of land, stakeholders, and project developers.',
+ Demand:'Demand Scale — Measures current and projected demand from both compliance-driven and voluntary actors. Includes buyer diversity, forward signals, and evidence of sustained interest or repeat purchasing.',
+ Regulatory:'Regulatory Stability — Captures the clarity, maturity, and enforceability of existing rules and standards. Also considers whether these rules are being implemented effectively and are adaptable to market evolution.',
+ 'Key challenges':'Key Challenges — Identifies significant barriers currently limiting market development. Challenges are rated by their severity and tractability: markets with minimal or resolvable issues are marked green; those with material, unresolved risks are flagged orange or red.',
+ 'Policy outlook':'Likely Policy Updates — Examines anticipated regulatory or policy changes and their projected impact on the market. Assesses whether forthcoming developments are likely to hinder, support, or remain neutral to market growth.'
+};
+const ESDATA=[
+{id:'carbon',em:'🌱',name:'Carbon',col:'#628147',type:'Compliance + voluntary',status:'g',vol:'£6.43B',volsub:'global VCM 2024',
+ about:'Companies offset unavoidable emissions by buying credits; one credit equals one tonne of CO2 sequestered or avoided. The most investable and stable of the natural capital markets, split into compliance markets (UK and EU ETS) and the voluntary carbon market.',
+ mon:'Sell verified credits under the Woodland Carbon Code, Peatland Carbon Code, Wilder Carbon or international codes. Buyers currently prefer removals credits over avoidance.',
+ ready:{Operational:'g',Governance:'g',MRV:'g',Supply:'g',Demand:'o',Regulatory:'g','Key challenges':'g','Policy outlook':'g'},
+ sizing:'UK VCM sized from verified credits × price: 11.34M WCC credits (Forest Research + WCC registry) × £35 average = £396.9M, projected +26.7% to ~£487.5M by end 2025. Global uses the World Bank average price of £29. Combined WCC + PCC 2024 transactions = £12.14M. Sources: World Bank Carbon Pricing Dashboard, Berkeley Voluntary Registry Offset Database, Forest Research, WCC, PCC.',
+ dyn:['Global VCM ~£6.43B (2024). Retirements up 9% in H1 2025; issuances down 15% as developers wait for buyers','Buyers pay premiums for high-quality credits with co-benefits; ICVCM-compliant credits command higher prices and broader access','UK high-quality credits sell at £75-125/tCO2; WCC typically £25-50 below Wilder Carbon','CDR offtakes surged ~200% year on year to ~20Mt by June 2025'],
+ uk:['~2,500 live domestic projects under WCC / PCC / Wilder Carbon vs only 9 on international registries','WCC: 11.34M credits issued; estimated market £396.9M, rising to ~£487.5M by end 2025','Domestic buyers: law firms, SMEs, large corporates'],
+ risks:['International buyers may not pay UK premium prices; comparable credits are cheaper in the Global South','Lingering reputational caution from the 2022-23 critiques']},
+{id:'bng',em:'🏡',name:'Biodiversity Net Gain',col:'#52713C',type:'Compliance · England only',status:'g',vol:'£33.8M',volsub:'since inception',
+ about:'Compliance market under the Environment Act 2021: developments approved by English planning authorities must show a 10% measurable biodiversity uplift, delivered on site or by buying off-site biodiversity units. One of the only biodiversity compliance markets in the world.',
+ mon:'Sell BNG units from habitat creation or enhancement, via direct deals or platforms such as BNGx, Gaia and Biodiversity Units UK. England only; outside England route to voluntary biodiversity.',
+ ready:{Operational:'g',Governance:'g',MRV:'g',Supply:'g',Demand:'o',Regulatory:'o','Key challenges':'o','Policy outlook':'o'},
+ sizing:'Average unit price £37,967.48, from the Gaia dataset (251 projects, 107 priced): total project value ÷ total units. Market size = 126 register projects × 188.5 average units × £37,967.48 ≈ £901.75M. Annual demand ≈ 526.76 units/yr × price × 12% growth factor ≈ £22.39M. Transacted to date: 891.62 allocated units ≈ £33.8M. Sources: DEFRA BNG register, Gaia; soft data from Swallowtail and Oxford. FOI to DEFRA outstanding for 2025 figures.',
+ dyn:['£33.8M transacted since inception; ~4% of supply allocated','Gain Site Register lags 6-12 months; 50-80% of market activity may be unreported','NSIP compliance expected to formalise in 2026 and accelerate demand: large tenders already out from National Grid and National Highways'],
+ uk:['Statutory credit sales 2024: ~£206k','Spains Hall reports £1M+ in live quotes and a completed six-figure pre-mandatory deal','Quotes can sit in progress for up to 2 years'],
+ risks:['Policy uncertainty: NSIP and small-sites consultations may delay or dampen demand','Oversupply signals against slow reported demand']},
+{id:'volbio',em:'🦦',name:'Voluntary Biodiversity',col:'#7C9861',type:'Voluntary',status:'o',vol:'£0.2-1.4M',volsub:'global credit sales',
+ about:'Voluntary funding of biodiversity uplift, driven by corporate nature-positive pledges, TNFD, ESG and CSR commitments. Takes two forms: bespoke financing deals, or the purchase of voluntary biodiversity credits.',
+ mon:'Bespoke corporate deals, or voluntary biodiversity credits via platforms such as Gaia and Earthly. Often bundled with carbon and water co-benefits, increasingly quantified with BNG metrics.',
+ ready:{Operational:'o',Governance:'o',MRV:'o',Supply:'o',Demand:'o',Regulatory:'r','Key challenges':'o','Policy outlook':'o'},
+ sizing:'Uses the BNG unit price of £37,967.48. Domestic: 125 unlisted voluntary projects on Gaia × 147.2 average units × £37,967.48 ≈ £684.74M (18,035 units). Global credit sales only £0.2-1.4M across 26k-125k ha. Sources: Gaia registry, TNFD adopters list, Earthly. Caveat: biodiversity has no single fungible unit like tCO2e, so unit-based sizing is indicative.',
+ dyn:['Global credit sales to date only £0.2-1.4M across 26k-125k ha; market fragmented','TNFD adopters rising: UK 2025 adopters passed the 2024 total by October','Corporates such as Lidl, AstraZeneca and Nestlé interested in bundles that also serve supply chain resilience'],
+ uk:['~125 projects for sale on Gaia; transactions minimal and rarely disclosed','Voluntary projects now sold alongside compliance BNG using the same quantification tools'],
+ risks:['No standard unit or MRV; all deals bespoke','TNFD demand signals not yet converting into credit purchases at scale']},
+{id:'nn',em:'🏞',name:'Nutrient Neutrality',col:'#215274',type:'Compliance · designated zones',status:'o',vol:'£102M',volsub:'traded to date',
+ about:'Compliance mechanism: developments in designated nutrient neutrality zones must buy phosphate or nitrate credits to offset nutrient pollution before building.',
+ mon:'Generate credits through wetland creation, land reversion, septic tank repair or woodland planting inside NN catchments.',
+ ready:{Operational:'o',Governance:'g',MRV:'g',Supply:'o',Demand:'g',Regulatory:'o','Key challenges':'o','Policy outlook':'o'},
+ sizing:'~1.5 credits per dwelling (PUSH data) × £3,250/credit (Natural England quote, up from £2,750 in 2022). Norfolk: 2,100 homes × 1.5 × £3,250 = £10.24M ≈ ~10% of market → ~£102M in 2025. Backlog of 50,000 homes ≈ £243M; 1.5M future homes ≈ £7.3B (finger in the air, catchment-dependent across ~73 catchments). Phosphate credits (£50k-100k) excluded. Sources: PUSH, Natural England, Norfolk Council. Caveat: P&I Bill may replace deals with a central Nature Restoration Fund.',
+ dyn:['~£102M traded; the only NatCap market where demand exceeds supply','Pricing highly variable: phosphate credits £100k+ in some areas, bundled N+P around £6k elsewhere','£400M+ government funding landscape; the 1.5M homes target drives growth'],
+ uk:['Proposed P&I Bill and Nature Restoration Fund could replace direct buyer-seller deals with a levy model'],
+ risks:['High borrowing costs, geographic constraints, limited lender expertise','P&I Bill could restructure the market entirely']},
+{id:'nfm',em:'🌧',name:'Natural Flood Management',col:'#2E6B94',type:'Voluntary · site specific',status:'r',vol:'Not sized',volsub:'bespoke deals only',
+ about:'Emerging market: public and private entities finance nature projects (tree planting, floodplain restoration, wetland management) to reduce flood risk to their assets. Flooding is the UK’s most significant climate risk.',
+ mon:'Bespoke deals with infrastructure owners and utilities; typically bundled with biodiversity and carbon co-benefits. Strictly geographically specific.',
+ ready:{Operational:'r',Governance:'r',MRV:'r',Supply:'o',Demand:'o',Regulatory:'r','Key challenges':'o','Policy outlook':'o'},
+ sizing:'Soft data only. From the £2.65B GiA flood budget (2024-26): assume the EA invests ~1% (£13M) scaling to ~10% (£130M) over 5 years, plus RFCC levies ~£3M/yr and £10M→£100M from the water sector £104B AMP8. Current market ~£28M scaling to ~£250M in 5 years. No transacted volume (rated no-data). Sources: EA GiA budget, RFCC, Ofwat AMP8.',
+ dyn:['UK flood costs ~£1.6B/yr, forecast £3.6B by 2050; Government spending £2.65B on defences over 2024-26','Network Rail, Thames Water, Anglian Water, United Utilities and South West Water exploring NFM financing','DEFRA floods funding reform consultation may unlock NFM and sustainable drainage investment'],
+ uk:[],
+ risks:['No MRV or credit system; deals bespoke and fragmented','Rigid budget cycles, land access beyond asset boundaries, grey-infrastructure inertia']},
+{id:'wq',em:'🚰',name:'Water Quality',col:'#3D7FA8',type:'Voluntary · site specific',status:'r',vol:'£22.1B',volsub:'PR24 WINEP envelope',
+ about:'Emerging market: entities pay for catchment nature projects (wetland restoration, soil management, runoff reduction) that improve water quality at source instead of at the treatment works.',
+ mon:'Deals with water companies deploying WINEP / AMP8 funding; bespoke buyer-seller agreements. Strictly geographically specific.',
+ ready:{Operational:'o',Governance:'r',MRV:'r',Supply:'o',Demand:'o',Regulatory:'r','Key challenges':'o','Policy outlook':'o'},
+ sizing:'Scaled from per-farm payments (e.g. £50k metaldehyde control) across catchment area (Anglian Water ~28,000 km²) → £380M+ per contaminant. From Ofwat £104B (2025-30), top 7 utilities board-approved £50.67B; remaining market ~£40B over 5 years assuming ~30% additional private placement. No transacted volume (rated no-data). Sources: Ofwat, WINEP/PR24, utility business plans.',
+ dyn:['PR24 WINEP: 24,000+ environmental actions 2025-2030, backed by a record £22.1B','GY in live conversation with Anglian, Thames and South West Water on WINEP deployment','NBS typically cheaper than engineered treatment, with co-benefits to bundle'],
+ uk:[],
+ risks:['No MRV or agreed market standards; every deal bespoke','Locally focused benefits limit scale']},
+{id:'rm',em:'💧',name:'Replenish',col:'#5595BC',type:'Voluntary · site specific',status:'r',vol:'Not sized',volsub:'bespoke deals only',
+ about:'The replenish market funds nature projects that improve water retention and storage to counter scarcity and drought: tree and hedgerow planting, beaver reintroduction, regenerative agriculture, river and catchment restoration.',
+ mon:'Bespoke corporate deals, often bundled with carbon and biodiversity, in the buyer’s supply chain regions.',
+ ready:null,
+ sizing:'No formal sizing: the market lacks MRV, a registry and a unit, so it is sized only by identifying demand and the corporates active in it (Coca Cola, Nestlé, AstraZeneca). Bespoke deals only.',
+ dyn:['Most underdeveloped NatCap market: no MRV, registry or supporting legislation','Coca Cola, Nestlé and AstraZeneca actively exploring replenishment investment','Coca Cola GB and The Rivers Trust have restored chalk streams and aquifers in the South East since 2012'],
+ uk:[],
+ risks:['Site-specific hydrology limits scale and aggregation','No unit or verification body; complex attribution modelling raises due diligence costs']},
+{id:'scr',em:'🚛',name:'Supply Chain Resilience',col:'#B75A40',type:'Bespoke · seventh stream',status:'r',vol:'Per buyer',volsub:'no formal market',
+ about:'The bespoke seventh stream: corporates finance nature restoration that de-risks their own supply chain (water, soil and climate resilience around sourcing areas). Not a formal market; opportunities are identified per buyer.',
+ mon:'Identified buyer by buyer, usually as the resilience angle inside a bundled carbon, biodiversity or water deal.',
+ ready:null,
+ sizing:'No formal market or sizing. Opportunities are quantified per buyer, usually as the resilience value inside a bundled carbon, biodiversity or water deal.',
+ dyn:['Emerging through bundled conversations with corporates such as Lidl, AstraZeneca and Nestlé'],
+ uk:[],
+ risks:['No rule book yet: built per buyer, logged here as signals accumulate']}
+];
+
+const ICMAP={carbon:'ti-leaf',bng:'ti-plant-2',volbio:'ti-paw',nn:'ti-molecule',nfm:'ti-cloud-rain',wq:'ti-droplet',rm:'ti-ripple',scr:'ti-truck'};
+let SEL=null;
+function renderBooks(){
+  document.getElementById('books').innerHTML=ESDATA.map(e=>`
+  <div class="book${SEL===e.id?' sel':''}" style="background:${e.col}" onclick="openES('${e.id}')">
+    <div><span class="book-ic"><i class="ti ${ICMAP[e.id]||'ti-leaf'}"></i></span>
+      <div class="book-title">${e.name}</div></div>
+    <div class="book-foot">
+      <div class="book-vol">${e.vol}<small>${e.volsub}</small></div>
+    </div>
+  </div>`).join('');
+}
+function openES(id){
+  if(id==='carbon'){location.href='carbon-rule-book.html';return;}
+  location.href='es-rule-book.html?es='+id;return;
+  SEL=id;renderBooks();
+  const e=ESDATA.find(x=>x.id===id);
+  const li=t=>`<div class="pt" style="display:flex;gap:8px;margin-top:6px"><span style="color:var(--ink3);flex:none">·</span><span>${t}</span></div>`;
+  const dot=v=>`<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${RCOL[v]};margin-right:7px"></span>`;
+  const ready=e.ready?`<div class="flabel">Market readiness <span class="vx">9 categories · GY methodology</span></div>
+    <div class="rgrid">${Object.entries(e.ready).map(([k,v])=>`<span title="${(CATDEF[k]||'').replace(/"/g,'&quot;')}" style="cursor:help">${dot(v)}${k}<b style="color:${RCOL[v]}">${RLAB[v]}</b></span>`).join('')}</div>
+    <div class="pt" style="font-size:12.5px;color:var(--ink3);margin-top:7px">Hover a category for its definition. Scored <span style="color:${RCOL.g}">●</span> active · <span style="color:${RCOL.o}">●</span> emerging · <span style="color:${RCOL.r}">●</span> nascent, per the GY Market Readiness Assessment (triangulating registry hard data, intermediary intelligence and GY deal-pipeline insight).</div>`
+    :`<div class="flabel">Market readiness</div><div class="pt" style="color:var(--ink3)">Too nascent or bespoke to assess against the nine-category framework. Sized per opportunity.</div>`;
+  const d=document.getElementById('drawer');
+  d.innerHTML=`<div class="sh">
+    <div class="ic" style="background:#F7F6F3;font-size:19px">${e.em}</div>
+    <div style="flex:1"><div class="nt">${e.name}</div><div class="ns">Rule book · refreshed Oct 2025 · NatWest Markets Report</div></div>
+    <button class="x" onclick="closeES()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+  <div class="sbody">
+    <div class="flabel">About <span class="vx">static</span></div><div class="pt">${e.about}</div>
+    <div class="flabel">How we sell it <span class="vx">static</span></div><div class="pt">${e.mon}</div>
+    ${ready}
+    ${e.sizing?`<div class="flabel">Sizing method <span class="vx">GY Market Sizing Methodology</span></div><div class="pt">${e.sizing}</div>`:''}
+    <div class="flabel">Market dynamics <span class="vx">dynamic · refresh ~3 months</span></div>${e.dyn.map(li).join('')}
+    ${e.uk.length?`<div class="flabel">UK signals <span class="vx">dynamic</span></div>${e.uk.map(li).join('')}`:''}
+    <div class="flabel">Market risks</div>${e.risks.map(li).join('')}
+    <div class="flabel">Sources and data tiers <span class="vx">hard vs soft</span></div>
+    ${li('Registries — DEFRA BNG, Gaia, WCC, PCC · hard data · <b>gold</b>')}
+    ${li('Market data — World Bank, ICE, EEX, Forest Research · hard data · <b>silver</b>')}
+    ${li('Intermediary intelligence — Earthly, Patch, Swallowtail · soft data · <b>bronze</b>')}
+    ${li('NatWest Markets Report (Caitlin + Harry) · <b>gold</b>')}
+    ${li('Trade team and buyer signals · logged by Qualitative research · <b>gold</b>')}
+    <div style="background:#F7F6F3;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;margin-top:16px;font-size:13.5px;color:var(--ink2)">Read by <b>Desktop research</b> in every Demand Mapping run · readiness scored and market sized per the GY methodology · stale pages are flagged, never silently used</div>
+  </div>`;
+  d.style.display='block';
+}
+function closeES(){SEL=null;renderBooks();document.getElementById('drawer').style.display='none'}
+
+/* deliverables under the Library */
+const DELS=[
+ {em:'🗺',bg:'var(--greenbg)',name:'Demand Mapping',meta:'Nature Advisory · reads 8 rule books · writes evidence packs back',chip:['Live','var(--greenbg)','var(--greend)'],go:()=>location.href='demand-mapping-canvas-prototype.html'},
+ {em:'💬',bg:'var(--bluebg)',name:'Investor Q&A Log',meta:'Capital · reads the Answer Library · writes canonical answers back',chip:['Live','var(--greenbg)','var(--greend)'],go:()=>location.href='investor-qa-log-canvas-prototype.html'},
+ {em:'📊',bg:'var(--graybg)',name:'Market Readiness',meta:'The NatWest report as a recurring Deliverable · would refresh these rule books automatically',chip:['Concept','var(--amberbg)','var(--amberd)'],go:()=>toast('Market Readiness Assessment is not in this prototype yet')},
+ {em:'📈',bg:'var(--graybg)',name:'Financial Model',meta:'Builds on Demand Mapping evidence packs',chip:['Concept','var(--amberbg)','var(--amberd)'],go:()=>toast('Financial Model is not in this prototype yet')},
+ {em:'🧭',bg:'var(--graybg)',name:'Commercial Strategy',meta:'Builds on the shortlist and buyer map',chip:['Concept','var(--amberbg)','var(--amberd)'],go:()=>toast('Commercial Strategy is not in this prototype yet')}
+];
+document.getElementById('dels').innerHTML=DELS.map((d,i)=>`
+ <div class="drow" onclick="DELS[${i}].go()">
+   <span class="dic" style="background:${d.bg}">${d.em}</span>
+   <div style="flex:1;min-width:0"><div class="dname">${d.name}</div><div class="dmeta">${d.meta}</div></div>
+   <span class="dchip" style="background:${d.chip[1]};color:${d.chip[2]}">${d.chip[0]}</span>
+   <i class="ti ti-chevron-right chvw"></i>
+ </div>`).join('');
+
+renderBooks();
+(function(){var p=new URLSearchParams(location.search).get('es');if(p&&p!=='carbon'&&ESDATA.find(x=>x.id===p))openES(p);})();
+</script>
+</body>
+</html>
