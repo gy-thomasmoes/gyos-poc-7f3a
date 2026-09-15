@@ -113,13 +113,76 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .col-side{position:sticky;top:26px}
 .railcard{background:transparent}
 .agenda{display:flex;flex-direction:column;margin-top:2px}
-.ag{display:flex;gap:13px;padding:12px 2px;border-top:1px solid var(--line);cursor:default}
+.ag{display:flex;gap:13px;padding:12px 2px;border-top:1px solid var(--line);cursor:pointer}
+.ag:hover .agn{color:var(--blued)}
+.agw{min-width:0}
+.agm{font-size:12.5px;color:var(--ink3);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.agm .lk{color:var(--blued)}
+.agm .pend{color:var(--amberd)}
+.agsec{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:22px 0 2px}
 .ag:first-child{border-top:none}
 .agt{font-size:12.5px;color:var(--ink3);width:48px;flex:none;padding-top:2px;font-variant-numeric:tabular-nums}
 .agn{font-size:14.5px;font-weight:500;color:var(--ink);line-height:1.35}
 .ag.now .agn{color:var(--blued)}
 .ag.now::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue);position:absolute}
 .sidefoot{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink3);line-height:1.5}
+
+
+.prio+.block{margin-top:36px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:36px}
+.two .block{margin-top:0}
+@media(max-width:820px){.two{grid-template-columns:1fr;gap:26px}}
+.ric{font-size:17px;color:var(--ink3);flex:none}
+.two .hrow{padding:13px 16px}
+.two .rtitle{font-size:15px}
+
+/* running now, as cards */
+
+/* ---- messages ---- */
+.msg{display:flex;gap:12px;padding:14px 18px;cursor:pointer}
+.msg+.msg{border-top:1px solid var(--line)}
+.msg:hover{background:#FBF8EF}
+.msg .fa{width:30px;height:30px;border-radius:999px;background:var(--fc,#9C9A92);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.msg .mw{flex:1;min-width:0}
+.msg .mh{display:flex;align-items:baseline;gap:8px}
+.msg .mh b{font-size:14.5px;font-weight:600}
+.msg .mh span{font-size:12px;color:var(--ink3)}
+.msg .mh .whr{margin-left:auto;font-size:12px;color:var(--ink3);white-space:nowrap}
+.msg .mx{font-size:14.5px;line-height:1.5;color:var(--ink2);margin-top:3px}
+.msg .mr{font-size:13px;color:var(--blued);margin-top:7px;display:inline-block}
+.msg .mr:hover{text-decoration:underline}
+/* ---- who is around ---- */
+.pres{display:flex;flex-direction:column;margin-top:2px}
+.pr{display:flex;align-items:center;gap:10px;padding:10px 2px;border-top:1px solid var(--line)}
+.pr:first-child{border-top:none}
+.pr .fa{width:26px;height:26px;border-radius:999px;background:var(--fc,#9C9A92);color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.pr .pn{font-size:14px;font-weight:500;line-height:1.3}
+.pr .pw{font-size:11.5px;color:var(--ink3);margin-top:1px}
+.pr .live{width:7px;height:7px;border-radius:999px;background:var(--green);margin-left:auto;flex:none}
+.agsec{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:24px 0 4px}
+.rcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 17px 17px;cursor:pointer;transition:border-color .12s,transform .1s,box-shadow .12s;box-shadow:0 1px 2px rgba(26,12,18,.03)}
+.rcard:hover{border-color:var(--line2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,12,18,.06)}
+.rcard .rc1{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink3);letter-spacing:.01em}
+.rcard .rc2{font-size:15.5px;font-weight:600;letter-spacing:-.01em;line-height:1.3;margin-top:7px;min-height:40px}
+.rbar{height:5px;border-radius:999px;background:#EFEDE6;overflow:hidden;margin-top:12px}
+.rbar i{display:block;height:100%;border-radius:999px;background:var(--green)}
+.rcard .rc3{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-top:9px;font-variant-numeric:tabular-nums}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none;animation:pulse 2.4s infinite}
+
+/* one merged queue, one line per row */
+.qd{width:8px;height:8px;border-radius:50%;flex:none}
+.qd.you{background:var(--amber)}
+.qd.todo{background:var(--line2)}
+.hrow .rnote{font-size:12.5px;color:var(--ink3);margin-left:9px;font-weight:400}
+
+/* side: recent */
+.rc{display:flex;align-items:center;gap:11px;padding:11px 2px;border-top:1px solid var(--line);cursor:pointer}
+.rc:first-child{border-top:none}
+.rc .ti{font-size:16px;color:var(--ink3);flex:none}
+.rc .rcn{font-size:14px;font-weight:500;line-height:1.35;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rc .rcw{font-size:12px;color:var(--ink3);flex:none;font-variant-numeric:tabular-nums}
+.rc:hover .rcn{color:var(--blued)}
 
 @media(max-width:900px){
   .grid{grid-template-columns:1fr;gap:30px}
@@ -141,6 +204,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 <div class="shell">
 <script>window.GYNAV={"active":"home","arts":"demand"};</script>
 <script src="gy-nav.js"></script>
+<script src="gy-calendar.js"></script>
+<script src="gy-todos.js"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -155,66 +220,116 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
   </header>
 
   <div class="grid">
-    <!-- PRIMARY COLUMN -->
     <div class="col-main">
 
-      <section class="block">
-        <div class="blabel"><h2>Needs you now</h2></div>
-
-        <div class="prio">
-          <div class="ptag"><span class="pd"></span> Evenlode · Demand Mapping</div>
-          <div class="ptitle">Send the questionnaire to James Ruggles</div>
-          <div class="pdesc">The AI Assistant drafted the email and pre-filled the questionnaire. It just needs your tap.</div>
-          <div class="ractions">
-            <button class="btn primary" onclick="openStepDrawer()">Open the draft email</button>
-            <button class="btn soft" onclick="location.href='demand-mapping-canvas-prototype.html'">View workflow</button>
-          </div>
+      <div class="prio">
+        <div class="ptag"><span class="pd"></span> Evenlode &middot; Customer Demand Mapping &middot; 2.4</div>
+        <div class="ptitle">Map beneficiaries and buyers</div>
+        <div class="pdesc">Supply is scored. The Trade check-in is queued behind you.</div>
+        <div class="ractions">
+          <button class="btn primary" onclick="openStepDrawer()">Open the step</button>
+          <button class="btn soft" onclick="location.href='document.html?mode=deliverable'">Open the deliverable</button>
         </div>
+      </div>
 
-        <div class="list">
-          <div class="hrow" onclick="location.href='demand-mapping-canvas-prototype.html'">
-            <div class="rmain"><div class="rtag">Evenlode · Demand Mapping</div><div class="rtitle">Approve the gap reminder</div></div>
-            <div class="rwhen due">Today</div>
+      <section class="block">
+        <div class="blabel"><h2>Running now</h2></div>
+        <div class="rcards">
+          <div class="rcard" onclick="location.href='document.html?mode=deliverable'">
+            <div class="rc1"><span class="pulse"></span> Evenlode</div>
+            <div class="rc2">Beneficiary map &amp; Buyer list</div>
+            <div class="rbar"><i style="width:50%"></i></div>
+            <div class="rc3"><span>8 of 16</span><span>AI Assistant</span></div>
           </div>
-          <div class="hrow" onclick="toast('Market Readiness for Spains Hall is not in this prototype yet')">
-            <div class="rmain"><div class="rtag">Spains Hall · Market Readiness</div><div class="rtitle">Confirm the shortlist</div></div>
-            <div class="rwhen">Fri</div>
+          <div class="rcard" onclick="toast('Spains Hall is not in this prototype yet')">
+            <div class="rc1"><span class="pulse"></span> Spains Hall</div>
+            <div class="rc2">Desktop research</div>
+            <div class="rbar"><i style="width:37%"></i></div>
+            <div class="rc3"><span>6 of 16</span><span>AI Assistant</span></div>
+          </div>
+          <div class="rcard" onclick="location.href='activity-overview.html'">
+            <div class="rc1"><span class="pulse"></span> Portfolio</div>
+            <div class="rc2">Inventory sync</div>
+            <div class="rbar"><i style="width:82%"></i></div>
+            <div class="rc3"><span>9 of 11</span><span>Automated</span></div>
           </div>
         </div>
       </section>
 
       <section class="block">
-        <div class="blabel"><h2>Your tasks</h2><span class="sub">your personal to-dos</span><span class="act" onclick="toast('This would open all your tasks')">View all</span></div>
+        <div class="blabel"><h2>Needs you</h2><span class="act" onclick="location.href='todos.html'">View all</span></div>
+        <div class="list" id="homeQueue"></div>
+      </section>
+
+
+      <section class="block">
+        <div class="blabel"><h2>Messages</h2><span class="cnt">3</span><span class="act" onclick="location.href='document.html?mode=deliverable'">Open threads</span></div>
         <div class="list">
-          <div class="hrow" onclick="toast('This would open the task')"><span class="tck"></span><div class="rmain"><div class="rtitle">Prep talking points for the James call</div></div><div class="rwhen due">Today</div></div>
-          <div class="hrow" onclick="toast('Spains Hall is not in this prototype yet')"><span class="tck"></span><div class="rmain"><div class="rtitle">Review the Spains Hall baseline</div></div><div class="rwhen">Fri</div></div>
-          <div class="hrow" onclick="toast('This would open the task')"><span class="tck"></span><div class="rmain"><div class="rtitle">Reply to Boothby onboarding email</div></div><div class="rwhen">Yesterday</div></div>
-          <div class="hrow" onclick="toast('This would open the task')"><span class="tck"></span><div class="rmain"><div class="rtitle">Book the Q3 programme review</div></div><div class="rwhen">Next week</div></div>
+          <div class="msg" onclick="location.href='document.html?mode=deliverable'">
+            <span class="fa" style="--fc:#378ADD">EN</span>
+            <div class="mw">
+              <div class="mh"><b>Emily Norton</b><span>2 hours ago</span><span class="whr">Customer Demand Mapping</span></div>
+              <div class="mx">Trade have two live buyers for units here. Worth naming them before we call this viable.</div>
+              <span class="mr" onclick="event.stopPropagation();toast('Reply to Emily')">Reply</span>
+            </div>
+          </div>
+          <div class="msg" onclick="location.href='document.html?mode=deliverable'">
+            <span class="fa" style="--fc:#EF9F27">HF</span>
+            <div class="mw">
+              <div class="mh"><b>Harry Fox</b><span>Yesterday</span><span class="whr">Customer Demand Mapping</span></div>
+              <div class="mx">Parcel 3 boundary changed after the survey. Inventory says 208 ha now.</div>
+              <span class="mr" onclick="event.stopPropagation();toast('Reply to Harry')">Reply</span>
+            </div>
+          </div>
+          <div class="msg" onclick="toast('Boothby is not in this prototype yet')">
+            <span class="fa" style="--fc:#639922">JR</span>
+            <div class="mw">
+              <div class="mh"><b>Josh Read</b><span>4 days ago</span><span class="whr">Baseline evidence pack</span></div>
+              <div class="mx">Contractor says the peat survey slips to Friday. Shall I hold the run or start without it?</div>
+              <span class="mr" onclick="event.stopPropagation();toast('Reply to Josh')">Reply</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="block">
-        <div class="blabel"><h2>Your programmes</h2><span class="cnt">3</span></div>
-        <div class="list">
-          <div class="hrow" onclick="location.href='deliverables-landing.html'"><span class="dot" style="background:var(--blue)"></span><div class="rmain"><div class="rtitle">Evenlode Landscape Recovery</div></div><div class="rwhen">Active</div></div>
-          <div class="hrow" onclick="toast('Spains Hall is not in this prototype yet')"><span class="dot" style="background:var(--amber)"></span><div class="rmain"><div class="rtitle">Spains Hall</div></div><div class="rwhen">Needs you</div></div>
-          <div class="hrow" onclick="toast('Boothby is not in this prototype yet')"><span class="dot" style="background:var(--line2)"></span><div class="rmain"><div class="rtitle">Boothby</div></div><div class="rwhen">Setting up</div></div>
-        </div>
-      </section>
+      <div class="two">
+        <section class="block">
+          <div class="blabel"><h2>Documents</h2><span class="act" onclick="location.href='documents-overview.html'">All</span></div>
+          <div class="list">
+            <div class="hrow" onclick="location.href='document.html?mode=deliverable'"><i class="ti ti-checkup-list ric"></i><div class="rmain"><div class="rtitle">Customer Demand Mapping</div></div><div class="rwhen">14 min</div></div>
+            <div class="hrow" onclick="location.href='investor-qa-pack-example.html'"><i class="ti ti-checkup-list ric"></i><div class="rmain"><div class="rtitle">Investor Q&amp;A pack</div></div><div class="rwhen">1 Jul</div></div>
+            <div class="hrow" onclick="toast('Boothby is not in this prototype yet')"><i class="ti ti-checkup-list ric"></i><div class="rmain"><div class="rtitle">Baseline evidence pack</div></div><div class="rwhen">Yest.</div></div>
+            <div class="hrow" onclick="location.href='documents-overview.html'"><i class="ti ti-file-text ric"></i><div class="rmain"><div class="rtitle">tenure_map.pdf</div></div><div class="rwhen">3 Jul</div></div>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="blabel"><h2>Meeting notes</h2><span class="act" onclick="location.href='meeting-notes.html'">All</span></div>
+          <div class="list">
+            <div class="hrow" onclick="location.href='meeting-notes.html'"><i class="ti ti-note ric"></i><div class="rmain"><div class="rtitle">Trade check-in</div></div><div class="rwhen due">11:00</div></div>
+            <div class="hrow" onclick="toast('Spains Hall is not in this prototype yet')"><i class="ti ti-note ric"></i><div class="rmain"><div class="rtitle">Spains Hall walkover</div></div><div class="rwhen">8 Sep</div></div>
+            <div class="hrow" onclick="location.href='meeting-notes.html'"><i class="ti ti-note ric"></i><div class="rmain"><div class="rtitle">Kick-off call</div></div><div class="rwhen">30 Jun</div></div>
+            <div class="hrow" onclick="location.href='todos.html'"><i class="ti ti-note ric"></i><div class="rmain"><div class="rtitle">Quarterly review</div></div><div class="rwhen">22 Sep</div></div>
+          </div>
+        </section>
+      </div>
 
     </div>
 
-    <!-- SECONDARY COLUMN -->
     <aside class="col-side">
       <div class="railcard">
-        <div class="blabel"><h2>Today</h2><span class="act" onclick="toast('This would open your calendar')">Calendar</span></div>
-        <div class="agenda">
-          <div class="ag"><span class="agt">All day</span><span class="agn">No-meeting focus</span></div>
-          <div class="ag"><span class="agt">09:30</span><span class="agn">Evenlode standup</span></div>
-          <div class="ag"><span class="agt">11:00</span><span class="agn">Trade check-in</span></div>
-          <div class="ag"><span class="agt">14:00</span><span class="agn">Client call · James Ruggles</span></div>
+        <div class="blabel"><h2>Today</h2></div>
+        <div class="agenda" id="agToday"></div>
+        <div class="agsec">Recent</div>
+        <div class="agenda" id="agPast"></div>
+
+        <div class="blabel" style="margin-top:30px"><h2>Around you</h2></div>
+        <div class="pres">
+          <div class="pr"><span class="fa" style="--fc:#378ADD">EN</span><div><div class="pn">Emily Norton</div><div class="pw">In Customer Demand Mapping</div></div><span class="live"></span></div>
+          <div class="pr"><span class="fa" style="--fc:#7F77DD">IB</span><div><div class="pn">Izzie Bell</div><div class="pw">In Investor Q&amp;A pack</div></div><span class="live"></span></div>
+          <div class="pr"><span class="fa" style="--fc:#EF9F27">HF</span><div><div class="pn">Harry Fox</div><div class="pw">Owes you unit pricing, Mon</div></div></div>
+          <div class="pr"><span class="fa" style="--fc:#5F5E5A">VL</span><div><div class="pn">Vertical Lead</div><div class="pw">Waiting on your rationale</div></div></div>
         </div>
-        <div class="sidefoot">3 workflows running across your programmes. Nothing else needs you until 14:00.</div>
       </div>
     </aside>
   </div>
@@ -223,18 +338,78 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 </div>
 </div>
 
+<script>
+/* Today and Recent both come from gy-calendar.js. A meeting with a generated
+   note opens the note; one still owed a note says so and offers to write it. */
+(function(){
+  if(!window.GY_CAL_API) return;
+  function go(m){
+    if(m.note) return "location.href='"+m.note+"'";
+    if(m.state==='pending') return "toast('Write the note for "+m.title.replace(/'/g,"")+"')";
+    return "location.href='meeting-notes.html'";
+  }
+  function meta(m){
+    var bits=['<span>'+m.attendees+'</span>'];
+    if(m.deliverable) bits.push('<span>'+m.deliverable+'</span>');
+    if(m.note)               bits.push('<span class="lk">Note ready</span>');
+    else if(m.state==='pending') bits.push('<span class="pend">Note not written</span>');
+    return bits.join('<span>&middot;</span>');
+  }
+  function row(m, showDay){
+    return '<div class="ag" onclick="'+go(m)+'">'
+      +'<span class="agt">'+(showDay ? m.when : m.at)+'</span>'
+      +'<span class="agw"><span class="agn">'+m.title+'</span>'
+      +'<span class="agm">'+meta(m)+'</span></span></div>';
+  }
+  var t=document.getElementById('agToday'), p=document.getElementById('agPast');
+  if(t) t.innerHTML = GY_CAL_API.forToday().map(function(m){return row(m,false);}).join('');
+  if(p) p.innerHTML = GY_CAL_API.past(3).map(function(m){return row(m,true);}).join('');
+})();
+</script>
+
 <!-- in-page step drawer -->
 <div class="hdov" id="hdov" onclick="closeStepDrawer()"></div>
 <aside class="hdrawer" id="hdrawer" aria-hidden="true">
-  <iframe id="hdframe" title="Send Questionnaire" allowtransparency="true" style="flex:1;width:100%;border:none;background:transparent"></iframe>
+  <iframe id="hdframe" title="Workflow step" allowtransparency="true" style="flex:1;width:100%;border:none;background:transparent"></iframe>
 </aside>
 
 <div class="toast" id="toast"></div>
 <script>
+
+
+/* Two blocking items the run is stuck on, then your own open to-dos, soonest
+   first. One list, so nothing shows up twice. */
+var BLOCKERS=[
+ {t:'Client send needs your tap', note:'Spains Hall', when:'2 days', warn:true,
+  go:"toast('Spains Hall is not in this prototype yet')"},
+ {t:'Emily asked you to name the buyers', note:'Evenlode', when:'2h', warn:false,
+  go:"location.href='document.html?mode=deliverable'"}
+];
+function homeQueue(){
+  var el=document.getElementById('homeQueue'); if(!el||!window.GYT)return;
+  var h=BLOCKERS.map(function(b){
+    return '<div class="hrow" onclick="'+b.go+'"><span class="qd you"></span>'
+      +'<div class="rmain"><div class="rtitle">'+b.t+'<span class="rnote">'+b.note+'</span></div></div>'
+      +'<div class="rwhen'+(b.warn?' due':'')+'">'+b.when+'</div></div>';
+  }).join('');
+  h+=GYT.bySoonest(GYT.myOpen()).slice(0,4).map(function(x){
+    return '<div class="hrow" onclick="homeTick(\''+x.id+'\',event)"><span class="qd todo"></span>'
+      +'<div class="rmain"><div class="rtitle">'+x.t
+      +(x.deliverable&&x.deliverable.prog?'<span class="rnote">'+x.deliverable.prog+'</span>':'')+'</div></div>'
+      +'<div class="rwhen'+(x.dstate==='over'||x.dayn===0?' due':'')+'">'+(x.when||'')+'</div></div>';
+  }).join('');
+  el.innerHTML=h;
+  var n=GYT.myOpen().length, c=document.getElementById('cntTodos'); if(c)c.textContent=n;
+
+}
+function homeTick(id,e){ e.stopPropagation(); GYT.toggle(id); homeQueue(); }
+window.addEventListener('DOMContentLoaded',homeQueue);
+if(document.readyState!=='loading')homeQueue();
+
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 function openStepDrawer(){
   const f=document.getElementById('hdframe');
-  if(!f.src)f.src='demand-mapping-canvas-prototype.html?drawer=sendq';
+  if(!f.src)f.src='demand-mapping-canvas-prototype.html?drawer=shortes';
   document.getElementById('hdov').classList.add('open');
   document.getElementById('hdrawer').classList.add('open');
 }

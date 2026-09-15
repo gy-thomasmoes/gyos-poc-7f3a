@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upper Dee · flow + list (experiment)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css">
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D; --sel:#4C6EF5;
+  --serif:'Manner','Spectral',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:16px}
+.top{display:flex;align-items:center;gap:14px;padding:13px 20px;background:rgba(255,255,255,.82);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);flex:none}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;color:var(--ink2);cursor:pointer;text-decoration:none}
+.back:hover{color:var(--ink)}
+.ttl{font-size:16.5px;font-weight:600}
+.ttl small{font-weight:400;color:var(--ink3);margin-left:8px;font-size:13px}
+.spacer{flex:1}
+.od{display:inline-flex;align-items:center;gap:7px;font-size:14.5px;font-weight:600;color:#fff;background:var(--sel);border:none;border-radius:999px;padding:9px 16px;cursor:pointer}
+.od .ti{font-size:15px}
+.body{flex:1;display:flex;min-height:0}
+
+/* LEFT: the flow / canvas map */
+.flow{flex:1;min-width:0;overflow:auto;padding:24px 26px 60px;background:
+  radial-gradient(circle at 1px 1px, rgba(31,31,29,.06) 1px, transparent 0);background-size:22px 22px}
+.hint{font-size:13px;color:var(--ink3);margin-bottom:18px;display:flex;align-items:center;gap:7px}
+.lane{margin-bottom:20px}
+.lane-h{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);font-weight:700;margin-bottom:9px}
+.lane-h small{margin-left:8px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink3)}
+.lrow{display:flex;align-items:stretch;gap:4px;flex-wrap:wrap}
+.lnode{position:relative;border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px 13px;cursor:pointer;width:186px;transition:border-color .12s,box-shadow .12s,background .12s}
+.lnode:hover{border-color:var(--line2)}
+.lnode.sel{border-color:var(--sel);box-shadow:0 0 0 1px var(--sel)}
+.lnode.done{background:var(--greenbg);border-color:#D8E4C7}
+.lnh{display:flex;align-items:center;gap:8px}
+.lnn{width:22px;height:22px;flex:none;border-radius:50%;background:var(--dark);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.lnode.done .lnn{background:var(--greend)}
+.lt{font-size:13.5px;font-weight:600;line-height:1.25}
+.lmeta{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11.5px;color:var(--ink3)}
+.pbar{flex:1;height:5px;border-radius:999px;background:var(--graybg);overflow:hidden}
+.pbar span{display:block;height:100%;background:var(--green)}
+.np{font-variant-numeric:tabular-nums;white-space:nowrap}
+.lchev{display:flex;align-items:center;color:var(--ink3);font-size:17px}
+.gatecard{width:auto;padding:12px 16px}
+.gatecard .lnn{background:#B7891F}
+
+/* RIGHT: the one long list */
+.side{width:412px;flex:none;border-left:1px solid var(--line);background:var(--card);overflow:auto;padding:16px 18px 80px}
+.side-lede{font-size:13px;color:var(--ink3);margin-bottom:14px}
+.phhead{font-family:var(--serif);font-size:17px;font-weight:500;color:var(--ink);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.phhead:first-child{margin-top:0}
+.phhead small{font-family:-apple-system,system-ui,sans-serif;font-size:12.5px;color:var(--ink3);margin-left:8px;font-weight:400}
+.ssec{scroll-margin-top:12px;border-radius:12px;margin-bottom:16px;padding:4px}
+.ssec.flash{animation:flash 1.3s ease}
+@keyframes flash{0%{background:#FBF1CE}100%{background:transparent}}
+.ssh{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.ssn{width:24px;height:24px;flex:none;border-radius:50%;background:var(--dark);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.sst{font-size:15.5px;font-weight:600;flex:1}
+.ssp{font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.swhat{font-size:13px;color:var(--ink2);line-height:1.5;margin:0 0 9px 33px}
+.swho{margin:0 0 9px 33px}
+.who{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2)}
+.av{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+.box{margin-left:33px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.tdrow{display:flex;gap:10px;align-items:flex-start;padding:10px 13px}
+.tdrow + .tdrow{border-top:1px solid var(--line)}
+.tdrow.done{background:var(--greenbg)}
+.chk{width:19px;height:19px;flex:none;border:1.6px solid var(--line2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:transparent;margin-top:1px;cursor:pointer;transition:all .12s}
+.chk .ti{font-size:13px}
+.chk:hover{border-color:var(--ink3)}
+.chk.on{background:var(--greend);border-color:var(--greend);color:#fff}
+.tt{font-size:14px;line-height:1.35;color:var(--ink)}
+.tdrow.done .tt{color:var(--ink2)}
+.sout{font-size:12px;color:var(--ink3);margin:8px 0 0 33px;display:flex;align-items:center;gap:6px}
+.sout .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none}
+.verdict{margin-left:33px;border:1px solid #F0E3A8;background:#FBF3D6;border-radius:11px;padding:12px 14px;font-size:13.5px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="back" href="deliverables-landing.html"><i class="ti ti-arrow-left"></i> Workflows</a>
+  <span class="ttl">Upper Dee<small>flow + list · experiment</small></span>
+  <span class="spacer"></span>
+  
+</div>
+<div class="body">
+  <div class="flow" id="flow"></div>
+  <div class="side" id="side"></div>
+</div>
+
+<script>
+var NOTION='https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7';
+function openDeliverable(){ window.location.href=NOTION.replace(/^https?:\/\//,'notion://'); }
+var ROSTER={Caitlin:{i:'C',bg:'#D8ECE6',fg:'#0F6E56'},George:{i:'G',bg:'#F6E7CF',fg:'#854F0B'},Katia:{i:'K',bg:'#EADFF5',fg:'#5B3E86'}};
+function who(name){var p=ROSTER[name]||{i:name.charAt(0),bg:'#E6E4DE',fg:'#5B5A54'};return '<span class="who"><span class="av" style="background:'+p.bg+';color:'+p.fg+'">'+p.i+'</span>'+name+'</span>';}
+
+var N={
+ ctx:{t:'Capture project context',who:'Caitlin',what:'The context the rest of the map builds on.',prod:'Project context',tasks:['Capture the objective','Describe the site and current land use','List the planned interventions','Note the target habitats and outcomes','Note constraints and dependencies']},
+ openq:{t:'Note open questions',who:'Caitlin',what:'The decisions and data gaps that gate the strategy.',prod:'Open questions',tasks:['Decide whether a TEV is needed','Flag demand-led vs supply-led','Note data gaps, e.g. the 2015 peat survey']},
+ candidates:{t:'Map candidate services',who:'Caitlin',what:'Turn the interventions into candidate markets.',prod:'Candidate market list',tasks:['Derive candidate markets from the interventions','Note which intervention drives each market']},
+ rulebooks:{t:'Pull market context',who:'Caitlin',what:'Add readiness, sizing and dynamics from the ES rule books.',prod:'Supply table',tasks:['Open the matching ES rule book per market','Pull readiness, sizing and dynamics','Name the anchor market']},
+ beneficiaries:{t:'Map beneficiaries',who:'Caitlin',what:'Who around the site could benefit, mapped by hand first.',prod:'Beneficiary map',tasks:['Map utilities with assets in the catchment','Map NSIPs and infrastructure at risk','Map local businesses and SMEs']},
+ demandtools:{t:'Run demand tools',who:'George',what:'The standard desktop-research tools.',prod:'Demand signals',tasks:['Run a GPAP analysis (via Rebalance)','Map abstraction licences (via Katia, GIS)','Do a quick carbon demand appraisal','Scan published TNFD / CSRD targets']},
+ buyers:{t:'Compile buyers per market',who:'Caitlin',what:'A ranked buyer list per market.',prod:'Demand tables',tasks:['Add GY relationships and trade conversations','Qualify buyers per market','Fill the buyer table per market']},
+ gate:{t:'Investable?',who:'Caitlin',what:'Decide whether the commercial case adds up.',prod:'Verdict',tasks:['Weigh supply against demand per market','Write the verdict and the go / no-go']}
+};
+var PHASES=[
+ {name:'Project context',plain:'About the project',nodes:['ctx','openq']},
+ {name:'Supply',plain:'What it can sell',nodes:['candidates','rulebooks']},
+ {name:'Demand',plain:'Who would buy it',nodes:['beneficiaries','demandtools','buyers']}
+];
+var GATE='gate';
+var SEQ=[]; PHASES.forEach(function(p){p.nodes.forEach(function(n){SEQ.push(n);});}); SEQ.push(GATE);
+
+var DONE={}; SEQ.forEach(function(n){DONE[n]=N[n].tasks.map(function(){return false;});});
+function cnt(n){var d=DONE[n];return {done:d.filter(Boolean).length,tot:d.length};}
+
+/* ---- LEFT: flow map ---- */
+function nodeCard(n,i){
+  var c=cnt(n),done=c.done===c.tot,started=c.done>0&&!done;
+  return '<div class="lnode'+(done?' done':'')+'" id="lnode-'+n+'" onclick="goNode(\''+n+'\')">'
+    +'<div class="lnh"><span class="lnn">'+(i+1)+'</span><span class="lt">'+N[n].t+'</span></div>'
+    +'<div class="lmeta"><span class="pbar"><span id="lbar-'+n+'" style="width:'+(c.done/c.tot*100)+'%"></span></span><span class="np" id="lprog-'+n+'">'+c.done+'/'+c.tot+'</span></div>'
+    +'</div>';
+}
+function renderFlow(){
+  var h='<div class="hint"><i class="ti ti-hand-finger"></i> Click any step to jump to its to-dos on the right.</div>';
+  var idx=0;
+  PHASES.forEach(function(p){
+    h+='<div class="lane"><div class="lane-h">'+p.name+'<small>'+p.plain+'</small></div><div class="lrow">';
+    p.nodes.forEach(function(n,j){ if(j>0)h+='<span class="lchev"><i class="ti ti-chevron-right"></i></span>'; h+=nodeCard(n,idx++); });
+    h+='</div></div>';
+  });
+  var gi=SEQ.length-1, gc=cnt(GATE);
+  h+='<div class="lane"><div class="lane-h">Verdict<small>Is it worth pursuing?</small></div><div class="lrow"><div class="lnode gatecard'+(gc.done===gc.tot?' done':'')+'" id="lnode-'+GATE+'" onclick="goNode(\''+GATE+'\')"><div class="lnh"><span class="lnn"><i class="ti ti-trophy" style="font-size:12px"></i></span><span class="lt">'+N[GATE].t+'</span></div><div class="lmeta"><span class="pbar"><span id="lbar-'+GATE+'" style="width:'+(gc.done/gc.tot*100)+'%"></span></span><span class="np" id="lprog-'+GATE+'">'+gc.done+'/'+gc.tot+'</span></div></div></div></div>';
+  document.getElementById('flow').innerHTML=h;
+}
+
+/* ---- RIGHT: one long list ---- */
+function taskRows(n){
+  return '<div class="box">'+N[n].tasks.map(function(t,i){
+    var d=DONE[n][i];
+    return '<div class="tdrow'+(d?' done':'')+'"><span class="chk'+(d?' on':'')+'" onclick="toggle(\''+n+'\','+i+',this)"><i class="ti ti-check"></i></span><div class="tt">'+t+'</div></div>';
+  }).join('')+'</div>';
+}
+function nodeSection(n,i){
+  var c=cnt(n);
+  return '<div class="ssec" id="side-'+n+'">'
+    +'<div class="ssh"><span class="ssn">'+(n===GATE?'<i class="ti ti-trophy" style="font-size:12px"></i>':(i+1))+'</span><span class="sst">'+N[n].t+'</span><span class="ssp" id="rprog-'+n+'">'+c.done+'/'+c.tot+'</span></div>'
+    +'<div class="swhat">'+N[n].what+'</div>'
+    +'<div class="swho">'+who(N[n].who)+'</div>'
+    +taskRows(n)
+    +'<div class="sout"><span class="dot"></span>Produces: '+N[n].prod+'</div>'
+    +'</div>';
+}
+function renderSide(){
+  var h='<div class="side-lede">Every stage in one list. Tick a to-do to complete it.</div>';
+  var idx=0;
+  PHASES.forEach(function(p){
+    h+='<div class="phhead">'+p.name+'<small>'+p.plain+'</small></div>';
+    p.nodes.forEach(function(n){ h+=nodeSection(n,idx++); });
+  });
+  h+='<div class="phhead">Verdict<small>Is it worth pursuing?</small></div>'+nodeSection(GATE,idx);
+  document.getElementById('side').innerHTML=h;
+}
+
+/* ---- interaction ---- */
+function toggle(n,i,el){
+  DONE[n][i]=!DONE[n][i];
+  el.classList.toggle('on',DONE[n][i]);
+  var row=el.closest('.tdrow'); if(row)row.classList.toggle('done',DONE[n][i]);
+  updProg(n);
+}
+function updProg(n){
+  var c=cnt(n),pct=c.done/c.tot*100;
+  var lp=document.getElementById('lprog-'+n); if(lp)lp.textContent=c.done+'/'+c.tot;
+  var rb=document.getElementById('rprog-'+n); if(rb)rb.textContent=c.done+'/'+c.tot;
+  var bar=document.getElementById('lbar-'+n); if(bar)bar.style.width=pct+'%';
+  var card=document.getElementById('lnode-'+n); if(card)card.classList.toggle('done',c.done===c.tot);
+}
+function goNode(n){
+  var sec=document.getElementById('side-'+n); if(!sec)return;
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+  sec.classList.remove('flash'); void sec.offsetWidth; sec.classList.add('flash');
+  document.querySelectorAll('.lnode.sel').forEach(function(x){x.classList.remove('sel');});
+  var card=document.getElementById('lnode-'+n); if(card)card.classList.add('sel');
+}
+
+renderFlow(); renderSide();
+</script>
+</body>
+</html>

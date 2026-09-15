@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upper Dee: Customer Demand Mapping · Deliverable</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="gy-canvas.css">
+<style>
+:root{--serif:'Manner','Spectral',Georgia,serif}
+/* top-bar tabs + to-dos button (live inside the shared .row1) */
+.tabs{display:inline-flex;background:var(--graybg);border-radius:999px;padding:3px}
+.tabs button{border:none;background:transparent;font-size:14px;font-weight:500;color:var(--ink2);padding:6px 14px;border-radius:999px;cursor:pointer;font-family:inherit}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(31,31,29,.12)}
+.todobtn,.actbtn{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:500;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;font-family:inherit}
+.todobtn:hover,.actbtn:hover{border-color:var(--line2);color:var(--ink)}
+.todobtn.on,.actbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.todobtn .ti,.actbtn .ti{font-size:15px}
+.about{max-width:720px;margin:0 auto;padding:40px 40px 90px}
+.actfeed{display:flex;flex-direction:column}
+.actitem{display:flex;gap:10px;padding:11px 4px}
+.actitem + .actitem{border-top:1px solid var(--line)}
+.attx{font-size:13.5px;color:var(--ink);line-height:1.4}
+.atm{font-size:12px;color:var(--ink3);margin-top:2px}
+/* panes */
+.area{flex:1;position:relative;min-height:0}
+.pane{position:absolute;inset:0;display:none}
+.pane.on{display:block}
+.pane.content{overflow:auto}
+#pane-workflow iframe{width:100%;height:100%;border:0;display:block}
+/* content = anchor nav + editor */
+.cwrap{display:flex;gap:0;max-width:1120px;margin:0 auto}
+.toc{width:216px;flex:none;position:sticky;top:0;align-self:flex-start;padding:38px 14px 40px;display:flex;flex-direction:column;gap:1px}
+.toc .toclab{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;padding:2px 10px 6px}
+.toc a{display:block;font-size:13.5px;color:var(--ink3);padding:6px 10px;border-left:2px solid var(--line);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc a:hover{color:var(--ink2);background:rgba(31,31,29,.04)}
+.toc a.on{color:var(--ink);border-left-color:var(--amber);font-weight:500}
+.ndoc{flex:1;min-width:0;max-width:820px;padding:34px 40px 100px;outline:none}
+.ndoc:focus{outline:none}
+.ndoc .dtitle{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.01em;line-height:1.12;display:flex;align-items:center;gap:12px}
+.ndoc .dtitle .emj{font-size:32px}
+.nh1{font-family:var(--serif);font-size:24px;font-weight:500;margin:34px 0 4px;scroll-margin-top:14px}
+.nh3{font-size:15.5px;font-weight:600;margin:18px 0 3px}
+.np{font-size:16px;line-height:1.65;color:#2A2824;margin-top:6px}
+.ndiv{height:1px;background:#EDECE8;margin:26px 0 4px}
+.ntable{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0 4px}
+.ntable th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink3);font-weight:600;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:bottom}
+.ntable td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;color:#2A2824;line-height:1.45}
+.ntable td.k{color:var(--ink3);width:180px}
+.ntable td.m{font-weight:600;color:var(--ink)}
+.rmk{font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.rmk.g{background:var(--greenbg);color:var(--greend)}.rmk.o{background:var(--amberbg);color:var(--amberd)}.rmk.r{background:#F7E7DE;color:#8a3e28}
+.callout{display:flex;gap:11px;align-items:flex-start;border-radius:12px;padding:13px 15px;margin-top:16px;font-size:15px;line-height:1.55}
+.callout .ti{font-size:17px;flex:none;position:relative;top:1px}
+.callout.gray{background:#F7F6F3;border:1px solid #EDECE8;color:#37352F}.callout.gray .ti{color:var(--ink3)}
+.callout.yellow{background:#FBF3D6;border:1px solid #F0E3A8}.callout.yellow .ti{color:#B7891F}
+.callout ul{margin:6px 0 0;padding-left:18px}.callout li{margin:3px 0}
+.ntog{border-top:1px solid var(--line)}
+.ntog summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 2px;font-size:15px;font-weight:600}
+.ntog summary::-webkit-details-marker{display:none}
+.ntog summary .ti{font-size:16px;color:var(--ink3);transition:transform .15s}
+.ntog[open] summary .ti{transform:rotate(90deg)}
+.nverdict{background:#FBF3D6;border:1px solid #F0E3A8;border-radius:14px;padding:18px 20px;margin-top:26px;scroll-margin-top:14px}
+.nverdict h2{font-family:var(--serif);font-size:21px;font-weight:500;display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.nverdict h2 .ti{color:#B7891F}
+.nverdict ul{margin:8px 0;padding-left:20px}.nverdict li{margin:4px 0;line-height:1.5}
+.nnote{font-size:13.5px;color:var(--ink3);margin:8px 0 2px;line-height:1.5}
+/* to-dos sidebar (Notion-comments style) */
+.tside{position:fixed;top:61px;right:0;bottom:0;width:400px;background:#fff;border-left:1px solid var(--line);overflow:auto;z-index:60;padding:16px 18px 70px;box-shadow:-10px 0 30px rgba(31,31,29,.10);transform:translateX(102%);transition:transform .22s ease}
+.tside.open{transform:none}
+.tsh{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.tst{font-family:var(--serif);font-size:19px;font-weight:500;display:block}
+.tss{font-size:12.5px;color:var(--ink3)}
+.tsx{margin-left:auto;width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.tsx:hover{background:var(--graybg);color:var(--ink)}.tsx .ti{font-size:17px}
+.ssec{margin-bottom:14px}
+.ssh{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.ssn{width:23px;height:23px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.sst{font-size:14.5px;font-weight:600;flex:1}
+.ssp{font-size:12px;color:var(--ink3)}
+.stlist{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.srow{display:flex;align-items:flex-start;gap:10px;padding:11px 13px}
+.srow + .srow{border-top:1px solid var(--line)}
+.srow.done{background:var(--greenbg)}
+.schk{width:19px;height:19px;flex:none;border:1.6px solid var(--line2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:transparent;margin-top:1px;cursor:pointer;transition:all .12s}
+.schk .ti{font-size:13px}.schk:hover{border-color:var(--ink3)}
+.schk.on{background:var(--greend);border-color:var(--greend);color:#fff}
+.src{flex:1;min-width:0}.stt{font-size:14px;color:var(--ink);line-height:1.3}
+.srow.done .stt{color:var(--ink2)}
+.sdesc{font-size:12px;color:var(--ink2);line-height:1.4;margin-top:2px}
+.sow{font-size:12px;color:var(--ink3);margin-top:4px;display:flex;align-items:center;gap:6px}
+.av{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex:none}
+</style>
+</head>
+<body>
+<script>window.GYNAV={"active":"upper-dee-mapping","arts":null};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+  <div class="row1" style="position:relative">
+    <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
+    <span class="title">Upper Dee: Customer Demand Mapping</span>
+    <span style="font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;background:var(--greenbg);color:var(--greend);margin-left:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span>
+    <span class="spacer"></span>
+    <span class="tabs" id="tabbar">
+      <button class="on" data-t="content" onclick="setTab('content')">Content</button>
+      <button data-t="workflow" onclick="setTab('workflow')">Workflow</button>
+      <button data-t="about" onclick="setTab('about')">About</button>
+    </span>
+    <button class="actbtn" id="actbtn" onclick="toggleAct()"><i class="ti ti-activity"></i> Activity</button>
+    <button class="todobtn" id="todobtn" onclick="toggleTodos()"><i class="ti ti-checklist"></i> To-dos</button>
+  </div>
+
+  <div class="area">
+    <div class="pane content on" id="pane-content">
+      <div class="cwrap">
+        <nav class="toc" id="toc">
+          <div class="toclab">On this page</div>
+          <a onclick="jump('s-sum')">Summary</a>
+          <a onclick="jump('s-ctx')">1 · Project context</a>
+          <a onclick="jump('s-sup')">2 · Supply</a>
+          <a onclick="jump('s-dem')">3 · Demand</a>
+          <a onclick="jump('s-ver')">Verdict</a>
+        </nav>
+        <div class="ndoc" id="ndoc" contenteditable="true" spellcheck="false">
+          <div class="dtitle"><span class="emj">🏔️</span>Upper Dee: Customer Demand Mapping</div>
+
+          <div class="nh1" id="s-sum">Summary</div>
+          <table class="ntable"><tbody>
+            <tr><td class="k">Project name</td><td class="m">Upper Dee</td></tr>
+            <tr><td class="k">Type</td><td>Lead</td></tr>
+            <tr><td class="k">Site / catchment</td><td>Upper Dee headwaters, Cairngorms National Park, Aberdeenshire</td></tr>
+            <tr><td class="k">Area</td><td>126,581 ha (estates: Balmoral, Invercauld, Mar Lodge, Glen Muick, Glentanar, Dinnet, Mar)</td></tr>
+            <tr><td class="k">Landowner(s)</td><td>Multiple estates across the upper catchment</td></tr>
+            <tr><td class="k">GY contact</td><td>Caitlin Ciceri</td></tr>
+            <tr><td class="k">Team</td><td>Caitlin Ciceri (lead), Katia (GIS), Harry Fox (market data)</td></tr>
+            <tr><td class="k">Date</td><td>2026-07-23</td></tr>
+            <tr><td class="k">Status</td><td>Lead / mapping</td></tr>
+          </tbody></table>
+          <div class="callout yellow"><i class="ti ti-notebook"></i><div><b>In short:</b> A 126,581 ha upland restoration anchored on peatland carbon, with direct water-quality relevance to Aberdeen's supply and a warm cluster of utility, distillery and institutional buyers. Recommendation: pursue, led by peatland carbon at landscape scale.</div></div>
+
+          <div class="nh1" id="s-ctx">1. Project context</div>
+          <div class="callout gray"><i class="ti ti-notebook"></i><div><b>In short:</b> A 126,581 ha upland restoration with peatland carbon at its core and direct at-source relevance to Aberdeen's drinking water supply.</div></div>
+          <div class="nh3">Objective</div>
+          <div class="np">Landscape-scale restoration of the biodiversity-rich, carbon-rich Upper Dee headwaters, improving water quality at source, sequestering carbon in peat, and delivering biodiversity uplift at a flagship, catchment scale.</div>
+          <div class="nh3">Site description and current land use</div>
+          <div class="np">Upper Dee catchment within the Cairngorms, including tributaries Muick, Geldie and Baddoch. Peat-dominated uplands with low tree cover (~8% in the upper catchment). The River Dee supplies Aberdeen, with a key abstraction point near Invercannie / Cairnton.</div>
+          <div class="nh3">Planned interventions</div>
+          <div class="np">Peatland restoration (top priority), native woodland creation, river and catchment restoration, and habitat enhancement across the estates.</div>
+          <div class="nh3">Target habitats and outcomes</div>
+          <div class="np">Reduced dissolved organic carbon ("brown water") and sediment runoff, improved flow regulation, carbon sequestration in restored peat, and biodiversity uplift.</div>
+          <div class="nh3">Constraints and dependencies</div>
+          <div class="np">Peatland condition data dates from 2015 and is likely outdated, so an updated survey is needed. A quick desktop analysis estimates ~6,217 ha of degraded peat across the estates. Two open strategy questions: is a TEV needed (commission Oliver at NAS), and is the commercial strategy demand-led or supply-led.</div>
+          <div class="callout gray"><i class="ti ti-help-circle"></i><div><b>Potential questions:</b><ul><li>Which estates are committed to delivery and over what timeline?</li><li>Can the 2015 peat condition data be resurveyed to firm up the restorable area?</li><li>Do we need a TEV before approaching buyers?</li></ul></div></div>
+
+          <div class="ndiv"></div>
+          <div class="nh1" id="s-sup">2. Supply: which ecosystem services</div>
+          <div class="np">Interventions map to five candidate markets plus a supply-chain angle. Market context is drawn from the ES rule books (refreshed Oct 2025, from the NatWest Markets Report).</div>
+          <div class="callout gray"><i class="ti ti-notebook"></i><div><b>In short:</b><ul><li><b>Carbon (peatland) is the anchor:</b> the largest, most active market, matched to the dominant intervention and supported by public co-funding through Peatland ACTION.</li><li>Water Quality has the clearest single buyer logic in Scottish Water, which abstracts directly from the Dee.</li><li>Voluntary Biodiversity carries a warm utility and renewables cluster.</li><li>Replenish and supply-chain resilience open the distillery and bottled-water buyers.</li><li>NFM is parked pending a downstream flood case.</li></ul></div></div>
+          <table class="ntable"><thead><tr><th>Candidate market</th><th>From which interventions</th><th>Readiness</th><th>Indicative sizing</th><th>Market dynamics</th></tr></thead><tbody>
+            <tr><td class="m">Carbon (peatland / soil)</td><td>Peatland restoration, woodland creation</td><td><span class="rmk g">Active</span></td><td>Global VCM £6.43B; UK VCM ~£396.9M. Project estimate ~544,000 credits over 20 yrs on 4,000 ha, ~£14.1M at £26/t</td><td>Buyers prefer removals. UK high-quality credits £75-125/t. Peatland via the Peatland Code; PIU pricing 30-50% below verified PCUs</td></tr>
+            <tr><td class="m">Water Quality</td><td>Peatland restoration, woodland, catchment restoration</td><td><span class="rmk r">Nascent</span></td><td>£22.1B PR24 WINEP envelope (England); Scotland via Scottish Water investment</td><td>Strong buyer logic: reduces DOC, sediment and treatment cost at source. Bespoke, no MRV yet</td></tr>
+            <tr><td class="m">Voluntary Biodiversity</td><td>Habitat enhancement, landscape-scale restoration</td><td><span class="rmk o">Emerging</span></td><td>Global credit sales £0.2-1.4M; domestic indicative ~£684.7M</td><td>Landscape-scale and biodiversity-rich, attractive for flagship nature-positive partnerships. TNFD adopters rising</td></tr>
+            <tr><td class="m">Replenish</td><td>Catchment and river restoration, woodland</td><td><span class="rmk r">Nascent</span></td><td>Not sized; bespoke deals only</td><td>Sized by identifying demand. Coca Cola, Nestle, AstraZeneca active elsewhere. Fits water-dependent brands sourcing from the Dee</td></tr>
+            <tr><td class="m">Natural Flood Management</td><td>Peatland restoration, flow regulation</td><td><span class="rmk r">Nascent</span></td><td>Not formally sized</td><td>Headwater flow regulation reduces flashy flows. Lower priority until downstream flood-risk assets identified</td></tr>
+          </tbody></table>
+          <div class="callout gray"><i class="ti ti-info-circle"></i><div><b>Supply Chain Resilience</b> sits underneath as a further, bespoke stream: source-water protection for distilleries and bottlers that draw from the Dee, usually framed as the resilience angle inside a bundled carbon, biodiversity or replenish deal.</div></div>
+
+          <div class="ndiv"></div>
+          <div class="nh1" id="s-dem">3. Demand</div>
+          <div class="np">Worked per market, then split by buyer type. Manual beneficiary map run first, then tools.</div>
+          <div class="callout gray"><i class="ti ti-notebook"></i><div><b>In short:</b> Real, warm buyers exist across carbon, water quality and voluntary biodiversity; replenish and supply chain add distillery interest; NFM has no buyers yet.</div></div>
+
+          <details class="ntog" open><summary><i class="ti ti-chevron-right"></i>a. Carbon (peatland / soil)</summary>
+            <table class="ntable"><thead><tr><th>Buyer</th><th>Why relevant</th><th>Hook</th><th>Relationship status</th></tr></thead><tbody>
+              <tr><td class="m">Diageo</td><td>£3M fund for UK peatland restoration; Royal Lochnagar sits on the Dee</td><td>Peatland removals plus source-water protection</td><td>Warm angle via distillery</td></tr>
+              <tr><td class="m">Peatland ACTION (NatureScot)</td><td>Public funding for peatland restoration</td><td>Blends with credit sales</td><td>Next deadline 30 Sep 2026 for post-Apr 2027 starts</td></tr>
+              <tr><td class="m">University of St Andrews</td><td>Institutional carbon buyer</td><td>Local removals</td><td>None</td></tr>
+              <tr><td class="m">University of Edinburgh</td><td>Institutional carbon buyer</td><td>Local removals</td><td>None</td></tr>
+              <tr><td class="m">University of Aberdeen</td><td>Was a target carbon buyer</td><td>Local removals</td><td>Fund shut down; parked</td></tr>
+              <tr><td class="m">BP / Shell</td><td>Large corporates seeking removals</td><td>High-integrity UK removals</td><td>None</td></tr>
+            </tbody></table>
+          </details>
+          <details class="ntog"><summary><i class="ti ti-chevron-right"></i>b. Water Quality</summary>
+            <table class="ntable"><thead><tr><th>Buyer</th><th>Why relevant</th><th>Hook</th><th>Relationship status</th></tr></thead><tbody>
+              <tr><td class="m">Scottish Water</td><td>Direct catchment reliance: abstracts from the Dee for Aberdeen near Invercannie / Cairnton; concerned about rising DOC, sediment and treatment cost</td><td>Catchment restoration to protect source water and cut treatment cost</td><td>Strongest water-quality buyer; peatland and woodland are explicitly why they invest</td></tr>
+            </tbody></table>
+            <div class="nnote">Note: Scottish Power is present but limited in the Upper Dee and driven by biodiversity targets, whereas Scottish Water has direct catchment reliance driven by water quality and supply.</div>
+          </details>
+          <details class="ntog"><summary><i class="ti ti-chevron-right"></i>c. Voluntary Biodiversity</summary>
+            <table class="ntable"><thead><tr><th>Buyer</th><th>Why relevant</th><th>Hook</th><th>Relationship status</th></tr></thead><tbody>
+              <tr><td class="m">SSEN</td><td>No net loss moving to net gain; embedding biodiversity into grid design; active BNG-style adopter in Scotland</td><td>Flagship biodiversity uplift</td><td>GY in</td></tr>
+              <tr><td class="m">Scottish Power</td><td>Net positive biodiversity by 2030; Nature Action Plan; peatland and woodland around windfarms; transmission near the lower Dee</td><td>Flagship nature-positive partnership</td><td>GY in plus cold outreach</td></tr>
+              <tr><td class="m">SSE plc</td><td>Parent of SSEN; nature-positive ambition</td><td>Group-level partnership</td><td>Via SSEN</td></tr>
+              <tr><td class="m">Network Rail</td><td>Delivering biodiversity uplift and large-scale planting</td><td>Habitat compensation</td><td>GY in</td></tr>
+              <tr><td class="m">Scottish Water</td><td>Net positive / BNG varies by programme; large landholding</td><td>Catchment-scale habitat work</td><td>Warm via water quality</td></tr>
+              <tr><td class="m">Balfour Beatty</td><td>UK-wide BNG commitments applied to Scottish projects</td><td>Infrastructure biodiversity</td><td>None</td></tr>
+              <tr><td class="m">Amey plc</td><td>Active in Scottish highways; biodiversity targets tied to Transport Scotland contracts</td><td>Contract-linked biodiversity</td><td>None</td></tr>
+            </tbody></table>
+          </details>
+          <details class="ntog"><summary><i class="ti ti-chevron-right"></i>d. Replenish / Supply Chain Resilience</summary>
+            <table class="ntable"><thead><tr><th>Buyer</th><th>Why relevant</th><th>Hook</th><th>Relationship status</th></tr></thead><tbody>
+              <tr><td class="m">Deeside Water Company</td><td>Bottled water from Deeside springs; brand is pristine Deeside water</td><td>Source protection for the brand</td><td>None; direct commercial incentive</td></tr>
+              <tr><td class="m">Diageo (Royal Lochnagar)</td><td>Distillery on the Dee near Balmoral; net-zero and water-stewardship targets</td><td>Catchment resilience for a heritage distillery</td><td>Warm</td></tr>
+              <tr><td class="m">Deeside Distillery</td><td>In the Dee catchment (Aboyne / Banchory); early-stage and flexible</td><td>Partnership pilot</td><td>None</td></tr>
+              <tr><td class="m">Lost Loch Spirits</td><td>Craft distillery on the Cairngorms edge; nature-connected positioning</td><td>Story-driven biodiversity partnership</td><td>None</td></tr>
+              <tr><td class="m">City of Aberdeen Distillery / Brown Forman</td><td>Regional distillers</td><td>Source-water resilience</td><td>To research</td></tr>
+            </tbody></table>
+            <div class="nnote">Note: distilleries were hit by drought last year (Diageo had water issues), sharpening the resilience case.</div>
+          </details>
+          <details class="ntog"><summary><i class="ti ti-chevron-right"></i>e. Natural Flood Management (parked)</summary>
+            <div class="np">No buyers identified yet. Headwater flow regulation is a genuine co-benefit, but downstream flood-risk assets have not been mapped. Park until a downstream case is built.</div>
+          </details>
+
+          <div class="nverdict" id="s-ver"><h2><i class="ti ti-trophy"></i>Verdict</h2>
+            <div class="np" style="margin-top:0"><b>Recommendation: Pursue.</b> Lead with peatland carbon at landscape scale, an indicative ~£14M over 20 years on 4,000 ha, against ~6,217 ha of degraded peat identified, with public co-funding available through Peatland ACTION.</div>
+            <ul>
+              <li><b>Water Quality</b> has the single clearest buyer in Scottish Water, which relies directly on the Dee.</li>
+              <li><b>Voluntary Biodiversity</b> brings a warm utility and renewables cluster (SSEN, Scottish Power, Network Rail).</li>
+              <li><b>Replenish and supply-chain resilience</b> add distillery and bottled-water buyers, with Diageo strongest because Royal Lochnagar sits on the river. NFM is parked.</li>
+            </ul>
+            <div class="np"><b>Gating decision:</b> whether a TEV is commissioned, and whether GY runs this demand-led or supply-led. The main data gap is the outdated 2015 peat condition survey.</div>
+            <div class="np"><b>Go / No-go: …</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pane workflow" id="pane-workflow"></div>
+    <div class="pane about scroll" id="pane-about">
+      <div class="about">
+        <div class="dtitle" style="font-size:28px"><span class="emj">ℹ️</span>About this workflow</div>
+        <div class="np">Customer Demand Mapping is GY's lead-stage assessment of whether a project is commercially investable. It answers three questions: what the project is trying to achieve, where revenue can come from, and whether the commercial case adds up.</div>
+        <div class="nh3">The three chapters</div>
+        <div class="np">1. Project context, the objective, site, interventions, outcomes and constraints.<br>2. Supply, which ecosystem-service markets the interventions can sell into, with readiness and sizing drawn from the ES rule books.<br>3. Demand, the real buyers per market, mapped by hand first and then with tools. It closes on a Verdict: pursue or park.</div>
+        <div class="nh3">How it is run</div>
+        <div class="np">Caitlin owns the run, with George and Katia supporting the demand research. It is manual-first, using tools and the rule books where they save time, and is designed to take an afternoon rather than a week.</div>
+        <div class="nh3">How the tabs fit</div>
+        <div class="np">Content is the deliverable itself, the filled-in template. Workflow is the step-by-step map. To-dos tracks progress through the steps, and Activity shows recent changes.</div>
+        <div class="callout gray"><i class="ti ti-notebook"></i><div>Type: Lead · Programme-wide · part of the Customer Demand Mapping deliverable family.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tside" id="tside">
+  <div class="tsh"><div><span class="tst">To-dos</span><span class="tss">Every step of the workflow, in one list</span></div><button class="tsx" onclick="toggleTodos()" title="Close"><i class="ti ti-x"></i></button></div>
+  <div id="tslist"></div>
+</div>
+
+<div class="tside" id="aside">
+  <div class="tsh"><div><span class="tst">Activity</span><span class="tss">Recent changes on this workflow</span></div><button class="tsx" onclick="toggleAct()" title="Close"><i class="ti ti-x"></i></button></div>
+  <div class="actfeed">
+    <div class="actitem"><span class="av" style="background:#D8ECE6;color:#0F6E56">C</span><div><div class="attx"><b>Caitlin</b> edited the Verdict</div><div class="atm">Today, 09:14</div></div></div>
+    <div class="actitem"><span class="av" style="background:#F6E7CF;color:#854F0B">G</span><div><div class="attx"><b>George</b> started “Run demand tools” (GPAP)</div><div class="atm">Yesterday, 16:02</div></div></div>
+    <div class="actitem"><span class="av" style="background:#EADFF5;color:#5B3E86">K</span><div><div class="attx"><b>Katia</b> added the abstraction-licence layer</div><div class="atm">Yesterday, 11:40</div></div></div>
+    <div class="actitem"><span class="av" style="background:#D8ECE6;color:#0F6E56">C</span><div><div class="attx"><b>Caitlin</b> confirmed the Supply table from the ES rule books</div><div class="atm">2 days ago</div></div></div>
+    <div class="actitem"><span class="av" style="background:#D8ECE6;color:#0F6E56">C</span><div><div class="attx"><b>Caitlin</b> completed “Capture the objective”</div><div class="atm">2 days ago</div></div></div>
+    <div class="actitem"><span class="av" style="background:#E1F5EE;color:#0F6E56">CC</span><div><div class="attx"><b>Caitlin</b> created this workflow from the template</div><div class="atm">3 days ago</div></div></div>
+  </div>
+</div>
+
+<script>
+var wfLoaded=false;
+function setTab(t){
+  document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t);});
+  document.getElementById('pane-content').classList.toggle('on',t==='content');
+  var wf=document.getElementById('pane-workflow'); wf.classList.toggle('on',t==='workflow');
+  document.getElementById('pane-about').classList.toggle('on',t==='about');
+  if(t==='workflow'&&!wfLoaded){ wf.innerHTML='<iframe src="upper-dee-supply-demand-mapping-canvas.html?embed=1" title="Workflow canvas"></iframe>'; wfLoaded=true; }
+}
+function jump(id){ var e=document.getElementById(id); if(e) e.scrollIntoView({behavior:'smooth',block:'start'}); }
+/* content persistence */
+(function(){ var K='ud_deliv_content', el=document.getElementById('ndoc');
+  try{var v=localStorage.getItem(K); if(v!=null)el.innerHTML=v;}catch(e){}
+  el.addEventListener('input',function(){try{localStorage.setItem(K,el.innerHTML);}catch(e){}});
+})();
+/* toc active-on-scroll */
+(function(){
+  var pane=document.getElementById('pane-content');
+  var ids=['s-sum','s-ctx','s-sup','s-dem','s-ver'];
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  function upd(){ var top=pane.getBoundingClientRect().top, cur=0;
+    ids.forEach(function(id,i){ var el=document.getElementById(id); if(el&&el.getBoundingClientRect().top-top<80)cur=i; });
+    links.forEach(function(a,i){ a.classList.toggle('on',i===cur); });
+  }
+  pane.addEventListener('scroll',upd,{passive:true}); upd();
+})();
+/* to-dos sidebar */
+function openSide(which){
+  var todos=document.getElementById('tside'),act=document.getElementById('aside'),tb=document.getElementById('todobtn'),ab=document.getElementById('actbtn');
+  if(which==='todos'){ var o=todos.classList.toggle('open'); act.classList.remove('open'); tb.classList.toggle('on',o); ab.classList.remove('on'); }
+  else { var o=act.classList.toggle('open'); todos.classList.remove('open'); ab.classList.toggle('on',o); tb.classList.remove('on'); }
+}
+function toggleTodos(){ openSide('todos'); }
+function toggleAct(){ openSide('act'); }
+var ROSTER={Caitlin:{i:'C',bg:'#D8ECE6',fg:'#0F6E56'},George:{i:'G',bg:'#F6E7CF',fg:'#854F0B'},Katia:{i:'K',bg:'#EADFF5',fg:'#5B3E86'}};
+var STEPS=[
+ {id:'ctx',title:'Capture project context',owner:'Caitlin',t:[['Capture the objective','What the project is trying to achieve, and why now.'],['Describe the site and current land use','The catchment, current land use and key features.'],['List the planned interventions','The physical changes planned on the land.'],['Note the target habitats and outcomes','The outcomes those interventions produce.'],['Note constraints and dependencies','Data gaps, valuations and open decisions.']]},
+ {id:'openq',title:'Note open questions',owner:'Caitlin',t:[['Decide whether a TEV is needed','Commission a total economic valuation, or not.'],['Flag demand-led vs supply-led','Which way GY runs the commercial strategy.'],['Note data gaps','Where the evidence is missing or stale.']]},
+ {id:'candidates',title:'Map candidate services',owner:'Caitlin',t:[['Derive candidate markets from the interventions','Which ES markets the land could sell into.'],['Note which intervention drives each market','Links each market back to an intervention.']]},
+ {id:'rulebooks',title:'Pull market context',owner:'Caitlin',t:[['Open the matching ES rule book per market','Reads the codified market context from the Hive Mind.'],['Pull readiness, sizing and dynamics','Copies the rule-book figures into the table.'],['Name the anchor market','The strongest market to lead with.']]},
+ {id:'beneficiaries',title:'Map beneficiaries',owner:'Caitlin',t:[['Map utilities with assets in the catchment','Water companies, grid and infrastructure nearby.'],['Map NSIPs and infrastructure at risk','Major schemes and assets exposed in the catchment.'],['Map local businesses and SMEs','Nearby firms with a reason to buy.']]},
+ {id:'demandtools',title:'Run demand tools',owner:'George',t:[['Run a GPAP analysis (Rebalance)','Local BNG demand, run by George.'],['Map abstraction licences (Katia, GIS)','Water demand from licence data.'],['Quick carbon demand appraisal','Who might buy the carbon, roughly.'],['Scan published TNFD / CSRD targets','Companies with published nature targets.']]},
+ {id:'buyers',title:'Compile buyers per market',owner:'Caitlin',t:[['Add GY relationships and trade conversations','Warm contacts from HubSpot and trade.'],['Qualify buyers per market','Keeps the credible buyers, drops the rest.'],['Fill the buyer table per market','Buyer, why relevant, hook, relationship status.']]},
+ {id:'gate',title:'Investable?',owner:'Caitlin',t:[['Weigh supply against demand per market','Where both a market and a buyer exist.'],['Write the verdict and the go / no-go','Pursue or park, with a one-line reason.']]}
+];
+var DKEY='ud_deliv_todos', DONE={};
+try{DONE=JSON.parse(localStorage.getItem(DKEY)||'{}');}catch(e){DONE={};}
+function isDone(id,i){return !!(DONE[id]&&DONE[id][i]);}
+function toggleStep(id,i){ if(!DONE[id])DONE[id]=[]; DONE[id][i]=!DONE[id][i]; try{localStorage.setItem(DKEY,JSON.stringify(DONE));}catch(e){} buildTodos(); }
+function buildTodos(){
+  var h='';
+  STEPS.forEach(function(s,pi){
+    var d=0; s.t.forEach(function(_,i){if(isDone(s.id,i))d++;});
+    var p=ROSTER[s.owner]||{i:s.owner.charAt(0),bg:'#E6E4DE',fg:'#5B5A54'};
+    h+='<div class="ssec"><div class="ssh"><span class="ssn">'+(pi+1)+'</span><span class="sst">'+s.title+'</span><span class="ssp">'+d+'/'+s.t.length+'</span></div><div class="stlist">';
+    s.t.forEach(function(row,i){ var on=isDone(s.id,i);
+      h+='<div class="srow'+(on?' done':'')+'"><span class="schk'+(on?' on':'')+'" onclick="toggleStep(\''+s.id+'\','+i+')"><i class="ti ti-check"></i></span><div class="src"><div class="stt">'+row[0]+'</div><div class="sdesc">'+row[1]+'</div><div class="sow"><span class="av" style="background:'+p.bg+';color:'+p.fg+'">'+p.i+'</span>'+s.owner+'</div></div></div>';
+    });
+    h+='</div></div>';
+  });
+  document.getElementById('tslist').innerHTML=h;
+}
+buildTodos();
+</script>
+</body>
+</html>

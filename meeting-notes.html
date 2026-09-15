@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meeting notes · Evenlode · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="gy-shell.css">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+
+.mlab{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px}
+.mtbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.mhd,.mrow{display:grid;grid-template-columns:minmax(200px,1.6fr) minmax(170px,1.1fr) minmax(150px,1fr) 96px 120px;
+           align-items:center;gap:14px;padding:13px 20px}
+.mhd{background:var(--graybg);border-bottom:1px solid var(--line);
+     font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.mrow{border-bottom:1px solid var(--line);cursor:pointer;padding:15px 20px}
+.mrow:last-child{border-bottom:none}
+.mrow:hover{background:#FBF8EF}
+.mrow .nm{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+.mrow .sb{font-size:13px;color:var(--ink3);margin-top:3px}
+.mrow .dl{font-size:14px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .wh{font-size:14px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .dt{font-size:14px;color:var(--ink2);white-space:nowrap}
+.mrow .ac{justify-self:end}
+.mbtn{border:1px solid var(--line2);background:#fff;border-radius:9px;padding:7px 12px;font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;white-space:nowrap}
+.mbtn:hover{border-color:var(--ink3)}
+.stag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.stag.ok{background:var(--greenbg);color:var(--greend)}
+.stag.pend{background:var(--amberbg);color:var(--amberd)}
+.stag.soon{background:var(--bluebg);color:var(--blued)}
+.mempty{padding:26px 20px;font-size:14px;color:var(--ink3);text-align:center}
+@media(max-width:940px){
+  .mhd{display:none}
+  .mrow{grid-template-columns:1fr auto;row-gap:9px;align-items:start}
+  .mrow .dl,.mrow .wh,.mrow .dt{grid-column:1;font-size:13.5px}
+  .mrow .ac{grid-column:2;grid-row:1}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"meeting-notes"};</script>
+<script src="gy-nav.js"></script>
+<script src="gy-calendar.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">›</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">›</span><span class="cr cur">Meeting notes</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Meeting notes</div>
+    <div class="acts">
+      <button class="btn-dark" onclick="toast('New note: start blank, or generate one from a call recording')"><i class="ti ti-plus"></i> New note</button>
+    </div>
+  </div>
+
+  <div class="frow" style="margin-top:16px">
+    <div class="search" style="width:400px"><i class="ti ti-search"></i>
+      <input id="q" placeholder="Search meetings and notes" oninput="render()"
+             style="border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%">
+    </div>
+    <button class="fbtn" onclick="toast('Workflow: filter to the deliverable a meeting belongs to')">Workflow · All <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn" onclick="toast('Attendee: filter by who was in the room')">Attendee · All <i class="ti ti-chevron-down"></i></button>
+  </div>
+
+  <div id="body"></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+</script>
+<script>
+function openM(id){
+  var m=GY_CAL_API.get(id);
+  if(m.note) location.href=m.note;
+  else if(m.state==='pending') toast('Write the note for '+m.title);
+  else toast(m.title+' has not happened yet');
+}
+function tag(m){
+  if(m.note) return '<span class="stag ok"><i class="ti ti-check" style="font-size:12px"></i>Note ready</span>';
+  if(m.state==='pending') return '<span class="stag pend">Not written</span>';
+  return '<span class="stag soon">'+m.when+'</span>';
+}
+function rows(list){
+  if(!list.length) return '<div class="mtbl"><div class="mempty">Nothing here.</div></div>';
+  return '<div class="mtbl"><div class="mhd"><span>Meeting</span><span>Workflow</span><span>Attendees</span>'
+    +'<span>Date</span><span></span></div>'
+    + list.map(function(m){
+        return '<div class="mrow" onclick="openM(\''+m.id+'\')">'
+          +'<span><div class="nm">'+m.title+'</div><div class="sb">'+m.at+' · '+m.mins+' min · '+m.prog+'</div></span>'
+          +'<span class="dl">'+(m.deliverable||'<span style="color:var(--ink3)">No workflow</span>')+'</span>'
+          +'<span class="wh">'+m.attendees+'</span>'
+          +'<span class="dt">'+m.date+'</span>'
+          +'<span class="ac">'+tag(m)+'</span></div>';
+      }).join('') + '</div>';
+}
+function render(){
+  var q=(document.getElementById('q').value||'').toLowerCase();
+  function match(m){ return (m.title+' '+m.deliverable+' '+m.who.join(' ')+' '+m.prog).toLowerCase().indexOf(q)>=0; }
+  var notes = GY_CAL_API.withNotes().filter(match);
+  var owed  = GY_CAL_API.awaitingNote().filter(match).sort(function(a,b){return b.on.localeCompare(a.on);});
+  var soon  = GY_CAL_API.upcoming().filter(match);
+  document.getElementById('body').innerHTML =
+      '<div class="mlab">Notes · '+notes.length+'</div>'   + rows(notes)
+    + '<div class="mlab">Awaiting a note · '+owed.length+'</div>' + rows(owed)
+    + '<div class="mlab">Upcoming · '+soon.length+'</div>' + rows(soon);
+}
+window.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>

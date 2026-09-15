@@ -108,6 +108,34 @@ body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10p
 @keyframes sheetin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .stage{animation:sheetin .32s ease-out both}
 
+/* title badge */
+.npbadge{width:62px;height:62px;border-radius:17px;background:linear-gradient(155deg,#EAF1DE,#F6ECC4);display:flex;align-items:center;justify-content:center;font-size:34px;border:1px solid #E3D9B8;box-shadow:0 2px 10px rgba(120,110,60,.08)}
+/* meta property panel */
+.metacard{margin-top:22px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(180deg,#FCFBF8,#fff);padding:4px 22px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(120,110,60,.05)}
+.metacard .nprop{margin-top:0;padding:13px 2px;font-size:15.5px;line-height:1.55;border-bottom:1px solid #F2F0EB}
+.metacard .nprop:last-child{border-bottom:none}
+.metacard .plab{width:136px;color:var(--ink3);font-weight:500}
+.metacard .plab .ti{font-size:16px;color:var(--ink3)}
+.metacard .nprop b{color:#33312C;font-weight:500}
+.metacard .ptag,.metacard .ptag.g,.metacard .ptag.r,.metacard .ptag.run{padding:3px 11px;font-size:13.5px;border-radius:7px}
+/* section tag pills */
+.tagpill{font-family:-apple-system,system-ui,Inter,sans-serif;font-size:11px;font-weight:600;letter-spacing:.02em;border-radius:999px;padding:2px 10px;display:inline-flex;align-items:center;gap:5px;position:relative;top:-2px}
+.tagpill.static{color:var(--ink3);background:var(--field);border:1px solid var(--line);font-weight:500}
+.tagpill.method{color:#6B5B12;background:#F6ECC4;border:1px solid #E3D391;font-weight:500}
+.tagpill.live{color:#2F7D45;background:#E7F1D8;border:1px solid #C4DBA3}
+.livedot{width:7px;height:7px;border-radius:50%;background:#39A85B;flex:none;animation:lpulse 2.4s infinite}
+.tagpill.live .livedot{width:6px;height:6px}
+@keyframes lpulse{0%{box-shadow:0 0 0 0 rgba(57,168,91,.5)}70%{box-shadow:0 0 0 5px rgba(57,168,91,0)}100%{box-shadow:0 0 0 0 rgba(57,168,91,0)}}
+/* dynamic data block - reads live from a source */
+.dynblock{border:1px solid var(--line);border-radius:13px;background:linear-gradient(180deg,#FCFBF8,#FFFFFF);margin-top:13px;padding:0 17px 16px;position:relative;overflow:hidden}
+.dynblock::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#639922,#EF9F27)}
+.dynhead{display:flex;align-items:center;gap:8px;padding:12px 2px 11px;border-bottom:1px dashed var(--line);font-size:12.5px;color:var(--ink2)}
+.dynhead .src{font-weight:600;color:var(--ink)}
+.dynhead .meta{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--ink3);white-space:nowrap}
+.dynhead .meta .ti{font-size:14px}
+.dynblock .bul:first-of-type{margin-top:12px}
+.dynblock .rgrid{margin-top:14px}
+
 :root{--serif:'Manner','Spectral',Georgia,serif}
 .title{font-weight:600}
 .grt-h{font-family:var(--serif);font-weight:500}
@@ -225,9 +253,8 @@ const ESDATA=[
 ];
 
 // ── resolve current service ──
-var CURRENT=(new URLSearchParams(location.search).get('es')||'bng');
-if(CURRENT==='carbon'){location.replace('carbon-rule-book.html');}
-var E=ESDATA.find(x=>x.id===CURRENT)||ESDATA.find(x=>x.id==='bng');
+var CURRENT=(new URLSearchParams(location.search).get('es')||'carbon');
+var E=ESDATA.find(x=>x.id===CURRENT)||ESDATA.find(x=>x.id==='carbon');
 CURRENT=E.id;
 
 // ── breadcrumb dropdown ──
@@ -235,42 +262,48 @@ document.getElementById('esTitle').textContent=E.name;
 document.title=E.name+' · Rule book · Hive Mind Library';
 document.getElementById('esmenu').innerHTML=ESDATA.map(e=>`<div class="em-item${e.id===CURRENT?' on':''}" onclick="esGo('${e.id}',event)"><span class="emj">${e.em}</span>${e.name}${e.id===CURRENT?'<i class="ti ti-check ck"></i>':''}</div>`).join('');
 function toggleEsdd(ev){ev.stopPropagation();document.getElementById('esmenu').classList.toggle('open');}
-function esGo(id,ev){ev.stopPropagation();if(id===CURRENT){document.getElementById('esmenu').classList.remove('open');return;}location.href=id==='carbon'?'carbon-rule-book.html':'es-rule-book.html?es='+id;}
+function esGo(id,ev){ev.stopPropagation();if(id===CURRENT){document.getElementById('esmenu').classList.remove('open');return;}location.href='es-rule-book.html?es='+id;}
 document.addEventListener('click',()=>{const m=document.getElementById('esmenu');if(m)m.classList.remove('open');});
 
 // ── build the page from the data ──
 function statusCls(s){return s==='g'?'g':(s==='r'?'r':'');}
 function bul(t){return `<div class="bul"><span class="dot">•</span><span class="btxt">${t}</span></div>`;}
+var P_STATIC='<span class="tagpill static">Static</span>';
+var P_METHOD='<span class="tagpill method">GY methodology</span>';
+var P_LIVE='<span class="tagpill live"><span class="livedot"></span>Live</span>';
+function dynblock(src,tail,meta,inner){
+  return `<div class="dynblock"><div class="dynhead"><span class="livedot"></span><span class="src">${src}</span>${tail?' · '+tail:''}<span class="meta"><i class="ti ti-refresh"></i> ${meta}</span></div>${inner}</div>`;
+}
 (function(){
   var n=0;
-  function h2(label,vx){n++;return `<div class="nh2">${n} · ${label}${vx?` <span class="vx">${vx}</span>`:''}</div>`;}
+  function h2(label,pill){n++;return `<div class="nh2">${n} · ${label}${pill?' '+pill:''}</div>`;}
   var head=''
-   +`<div class="npicon">${E.em}</div>`
+   +`<div class="npbadge">${E.em}</div>`
    +`<div class="nptitle">${E.name}</div>`
-   +`<div class="nprop"><span class="plab"><i class="ti ti-tag"></i>Type</span><b>${E.type}</b></div>`
-   +`<div class="nprop"><span class="plab"><i class="ti ti-activity"></i>Status</span><span class="ptag ${statusCls(E.status)}">${RLAB[E.status]}</span></div>`
-   +`<div class="nprop"><span class="plab"><i class="ti ti-coin"></i>Market size</span><b>${E.vol} · ${E.volsub}</b></div>`
-   +`<div class="nprop"><span class="plab"><i class="ti ti-refresh"></i>Refreshed</span><b>Oct 2025 · NatWest Markets Report</b></div>`
-   +`<div class="nprop"><span class="plab"><i class="ti ti-topology-star-3"></i>Read by</span><span class="ptag run" onclick="location.href='demand-mapping-canvas-prototype.html'">Demand Mapping</span></div>`
-   +`<div class="ndiv"></div>`
-   +`<div class="callout"><i class="ti ti-flag-3"></i><span><b>How this is used.</b> Read by <b>Desktop research</b> in every Demand Mapping run. Readiness is scored and the market sized per the GY methodology. Stale pages are flagged, never silently used.</span></div>`;
+   +`<div class="metacard">`
+     +`<div class="nprop"><span class="plab"><i class="ti ti-tag"></i>Type</span><b>${E.type}</b></div>`
+     +`<div class="nprop"><span class="plab"><i class="ti ti-activity"></i>Status</span><span class="ptag ${statusCls(E.status)}">${RLAB[E.status]}</span></div>`
+     +`<div class="nprop"><span class="plab"><i class="ti ti-coin"></i>Market size</span><b>${E.vol} · ${E.volsub}</b></div>`
+     +`<div class="nprop"><span class="plab"><i class="ti ti-refresh"></i>Refreshed</span><b>Oct 2025 · NatWest Markets Report</b></div>`
+     +`<div class="nprop"><span class="plab"><i class="ti ti-topology-star-3"></i>Read by</span><span class="ptag run" onclick="location.href='demand-mapping-canvas-prototype.html'">Demand Mapping</span></div>`
+   +`</div>`;
 
   var s='';
-  s+=h2('About','static')+`<div class="pblk">${E.about}</div>`;
-  s+=h2('How we sell it','static')+`<div class="pblk">${E.mon}</div>`;
+  s+=h2('About',P_STATIC)+`<div class="pblk">${E.about}</div>`;
+  s+=h2('How we sell it',P_STATIC)+`<div class="pblk">${E.mon}</div>`;
   if(E.ready){
     var cats=Object.keys(E.ready).length;
-    s+=h2('Market readiness',cats+' categories · GY methodology');
-    s+=`<div class="rgrid">${Object.entries(E.ready).map(([k,v])=>`<span title="${(CATDEF[k]||'').replace(/"/g,'&quot;')}"><span class="rd" style="background:${RCOL[v]}"></span>${k}<b style="color:${RCOL[v]}">${RLAB[v]}</b></span>`).join('')}</div>`;
-    s+=`<div class="rnote">Hover a category for its definition. Scored <span style="color:#639922">●</span> active · <span style="color:#EF9F27">●</span> emerging · <span style="color:#D64545">●</span> nascent, per the GY Market Readiness Assessment (triangulating registry hard data, intermediary intelligence and GY deal-pipeline insight).</div>`;
+    var grid=`<div class="rgrid">${Object.entries(E.ready).map(([k,v])=>`<span title="${(CATDEF[k]||'').replace(/"/g,'&quot;')}"><span class="rd" style="background:${RCOL[v]}"></span>${k}<b style="color:${RCOL[v]}">${RLAB[v]}</b></span>`).join('')}</div>`
+      +`<div class="rnote">Hover a category for its definition. Scored <span style="color:#639922">●</span> active · <span style="color:#EF9F27">●</span> emerging · <span style="color:#D64545">●</span> nascent, per the GY Market Readiness Assessment (triangulating registry hard data, intermediary intelligence and GY deal-pipeline insight).</div>`;
+    s+=h2('Market readiness',P_METHOD)+dynblock('GY Market Readiness Assessment',cats+' categories','scored Oct 2025',grid);
   }else{
     s+=h2('Market readiness','')+`<div class="pblk" style="color:var(--ink3)">Too nascent or bespoke to assess against the framework. Sized per opportunity as demand emerges.</div>`;
   }
-  if(E.sizing) s+=h2('Sizing method','GY Market Sizing Methodology')+`<div class="pblk">${E.sizing}</div>`;
-  if(E.dyn&&E.dyn.length) s+=h2('Market dynamics','dynamic · refresh ~3 months')+E.dyn.map(bul).join('');
-  if(E.uk&&E.uk.length) s+=h2('UK signals','dynamic')+E.uk.map(bul).join('');
-  if(E.risks&&E.risks.length) s+=h2('Market risks','')+E.risks.map(bul).join('');
-  s+=h2('Sources and data tiers','hard vs soft')
+  if(E.sizing) s+=h2('Sizing method',P_METHOD)+`<div class="pblk">${E.sizing}</div>`;
+  if(E.dyn&&E.dyn.length) s+=h2('Market dynamics',P_LIVE)+dynblock('Data Platform','market feed','synced 14 Jul 2026 · ~3-month cadence',E.dyn.map(bul).join(''));
+  if(E.uk&&E.uk.length) s+=h2('UK signals',P_LIVE)+dynblock('Data Platform · registries','WCC · PCC','synced 14 Jul 2026',E.uk.map(bul).join(''));
+  if(E.risks&&E.risks.length) s+=h2('Market risks',P_STATIC)+E.risks.map(bul).join('');
+  s+=h2('Sources and data tiers','<span class="tagpill static">Hard vs soft</span>')
    +bul('Registries · DEFRA BNG, Gaia, WCC, PCC · hard data · <b>gold</b>')
    +bul('Market data · World Bank, ICE, EEX, Forest Research · hard data · <b>silver</b>')
    +bul('Intermediary intelligence · Earthly, Patch, Swallowtail · soft data · <b>bronze</b>')

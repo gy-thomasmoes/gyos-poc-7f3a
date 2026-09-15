@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Investor Q&A Log · Canvas prototype</title>
+<title>Tender to Bid · Canvas prototype</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +13,11 @@
 <link rel="stylesheet" href="gy-canvas.css">
 
 <!-- per-Deliverable canvas size (defaults live in gy-canvas.css) -->
-<style>.canvas{--cw:5200px;--ch:1600px}.world{--ww:4000px;--wh:470px}</style>
+<style>.canvas{--cw:5600px;--ch:1600px}.world{--ww:3700px;--wh:640px}</style>
 </head>
 <body>
 
-<script>window.GYNAV={"active": "investor-qa", "arts": "investor"};</script>
+<script>window.GYNAV={"active": "tender-to-bid", "arts": "tender"};</script>
 <script src="gy-nav.js"></script>
 <script src="gy-canvas.js"></script>
 <script src="gy-canvas-engine.js"></script>
@@ -27,7 +27,7 @@
 <div class="row1" style="position:relative">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
-  <span class="title" id="crumbTitle">Investor Q&A Log</span>
+  <span class="title" id="crumbTitle">Tender to Bid</span>
   <span style="font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--amberbg);color:var(--amberd);margin-left:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span>
   <span class="spacer"></span>
   <div class="avwrap">
@@ -47,19 +47,19 @@
 <div class="floatBL" id="floatBL"></div>
 <div class="dvov" id="dvov" onclick="closeDocViewer()"></div>
 <div class="composer" id="composer">
-  <div class="cphead" onclick="toggleComposerMin()"><i class="ti ti-mail" style="font-size:15px"></i> Answer for investor · draft
+  <div class="cphead" onclick="toggleComposerMin()"><i class="ti ti-mail" style="font-size:15px"></i> Clarification question to buyer · draft
     <span class="cpx">
       <span onclick="event.stopPropagation();toggleComposerMin()" title="Minimise"><i class="ti ti-minus" style="font-size:14px"></i></span>
       <span onclick="event.stopPropagation();closeComposer()" title="Close"><i class="ti ti-x" style="font-size:14px"></i></span>
     </span>
   </div>
-  <div class="cprow"><span class="cplab">From</span><span class="cpchip"><span class="sav" style="background:#1D9E75;color:#fff;width:16px;height:16px;font-size:9px">K</span>Kishen &lt;kishen@greatyellow.earth&gt;</span></div>
-  <div class="cprow"><span class="cplab">To</span><span class="cpchip"><span class="sav" style="background:#0F6E56;color:#fff;width:16px;height:16px;font-size:9px">I</span>Investor contact</span></div>
-  <div class="cprow"><span class="cplab">Subject</span><span class="cpval" contenteditable spellcheck="false" style="outline:none;flex:1">Re: your due diligence questions</span></div>
+  <div class="cprow"><span class="cplab">From</span><span class="cpchip"><span class="sav" style="background:#1D9E75;color:#fff;width:16px;height:16px;font-size:9px">K</span>Archie &lt;archie@greatyellow.earth&gt;</span></div>
+  <div class="cprow"><span class="cplab">To</span><span class="cpchip"><span class="sav" style="background:#0F6E56;color:#fff;width:16px;height:16px;font-size:9px">B</span>Buyer procurement contact</span></div>
+  <div class="cprow"><span class="cplab">Subject</span><span class="cpval" contenteditable spellcheck="false" style="outline:none;flex:1">Clarification request · lot 3</span></div>
   <div class="cpbody" contenteditable spellcheck="false">
-    <p>Hi, thank you for your questions on the financial model.</p>
-    <p>Please find our approved answers below, each with a reference to the relevant dataroom section.</p>
-    <p>Anything unclear, just reply to this email.<br>Warm regards, Kishen</p>
+    <p>Hello, we are preparing our response to lot 3 and have two clarification questions.</p>
+    <p>Both relate to the scoring weightings in section 4 of the specification.</p>
+    <p>Grateful for a reply before the clarification window closes.<br>Kind regards, Archie</p>
   </div>
   <div class="cpbar">
     <button class="cpsend" onclick="sendDraft()">Send</button>
@@ -114,12 +114,9 @@ function runMenu(e){
     <span style="width:18px;text-align:center;flex:none">${ic.startsWith('ti-')?`<i class="ti ${ic}" style="font-size:16px;color:var(--ink2)"></i>`:ic}</span>
     <span style="flex:1;white-space:nowrap">${t}</span>
     ${RUN===id?'<i class="ti ti-check" style="font-size:15px;color:var(--greend)"></i>':''}</div>`;
-  m.innerHTML=item('spains','🪺','Spains Hall')
-    +item('riverallen','🌸','River Allen')
-    +item('denton','🦡','Denton Reserve')
-    +item('wash','🐚','The Wash')
-    +item('wylye','🐞','Wylye Valley')
-    +item('norfolk','🌼','West Norfolk Nature Network')
+  m.innerHTML=item('anglian','\ud83d\udca7','Anglian Water \u00b7 NEP lot 3')
+    +item('essexbng','\ud83c\udf3f','Essex CC \u00b7 BNG DPS')
+    +item('lr3','\ud83c\udf3e','Defra LR \u00b7 round 3')
     +`<div onclick="setRun('new')" style="display:flex;gap:10px;align-items:center;padding:11px 14px;cursor:pointer;border-top:1px solid var(--line);color:var(--ink2)" onmouseover="this.style.background='#F8F5ED'" onmouseout="this.style.background='#fff'">
       <i class="ti ti-plus" style="font-size:15px"></i><span>Start a new run</span></div>`;
   m.style.display='block';
@@ -128,16 +125,16 @@ document.addEventListener('click',()=>{const m=document.getElementById('runmenu'
 function setRun(r){
   document.getElementById('runmenu').style.display='none';
   if(r==='new'){toast('This would open the pre-flight brief: pick the Programme, confirm the people, launch');return;}
-  if(r!=='preview'&&r!=='spains'){toast('Prototype: only the Spains Hall run has data. The others are set dressing.');return;}
+  if(r!=='preview'){toast('Prototype: no live tender run yet. This Workflow is still a draft blueprint.');return;}
   if(DEMOT!==null||DEMOSNAP)stopDemo();
   RUN=r;SELECTED=null;renderAll();
 }
 
 const BANDS=[
-  {x:16,  w:650,  t:'S · Set up the raise',           short:'S · Set up',    run:'not started', cur:true},
-  {x:686, w:1150, t:'A · Capture · Answer · Respond', short:'A · Answer',    run:'not started'},
-  {x:1856,w:440,  t:'C · Curate the library',         short:'C · Curate',    run:'not started'},
-  {x:2316,w:980,  t:'M · Milestones and close-out',   short:'M · Close-out', run:'not started'}
+  {x:16,  w:700,  t:'1 · Source and discover',   short:'1 · Source',  run:'not started', cur:true},
+  {x:736, w:700,  t:'2 · Qualify',               short:'2 · Qualify', run:'not started'},
+  {x:1456,w:890,  t:'3 · Respond · Build',       short:'3 · Respond', run:'not started'},
+  {x:2354,w:1160, t:'3 · Respond · Finalise',    short:'3 · Respond', run:'not started'}
 ];
 const CHAPNAV=true;
 
@@ -153,220 +150,351 @@ const T={
 };
 
 const ARTEFACTS=[
- {id:'protocol',ic:'ti-file-text',name:'Q&A Protocol',node:'Initialise the Q&A Log',nid:'s1',ex:false,desc:'The one-pager agreed at setup: who coordinates, who approves, response SLAs, the tag taxonomy and the capture channels for this raise.',
-  prev:`<div class="paper"><h5>Q&A Protocol · {{raise}}</h5>
-  <div class="mrow"><span>Coordinator</span><span class="pmuted">Kishen · all questions in and out</span></div>
-  <div class="mrow"><span>Approver of record</span><span class="pmuted">Kishen</span></div>
-  <div class="mrow"><span>SLA · acknowledge</span><span class="pmuted">24h</span></div>
-  <div class="mrow"><span>SLA · routine / complex</span><span class="pmuted">48-72h / 5-7 days</span></div>
-  <div class="mrow"><span>Channels</span><span class="pmuted">email · dataroom · meetings</span></div></div>`},
- {id:'logtpl',ic:'ti-table',name:'Q&A Log template',node:'Initialise the Q&A Log',nid:'s1',ex:false,desc:'One row per question: verbatim text, investor, stage, instrument, category, layer, status, SLA clock, dataroom reference, audit trail.',
-  prev:`<div class="paper"><h5>Question record</h5>
-  <div class="mrow"><span class="pmuted">Question · verbatim</span><span>What underpins the revenue assumptions?</span></div>
-  <div class="mrow"><span class="pmuted">Investor / stage</span><span>Esmée Fairbairn · DD</span></div>
-  <div class="mrow"><span class="pmuted">Category / layer</span><span>Financial · Programme</span></div>
-  <div class="mrow"><span class="pmuted">Status</span><span>Captured → Triaged → Drafted → Approved → Answered</span></div>
-  <div class="mfld">SLA clock · dataroom ref · audit trail per record</div></div>`},
- {id:'library',ic:'ti-database',name:'Answer Library',node:'Seed the Answer Library',nid:'s2',ex:false,desc:'The curated Asset: canonical, deduplicated, approved answers, layered Portfolio / Programme / Investor. Lower layers inherit from higher ones. The Log feeds it; every raise reuses it.',
-  prev:`<div class="paper"><h5>Canonical entry</h5>
-  <div class="mrow"><span class="pmuted">Layer</span><span>Portfolio · reusable every deal</span></div>
-  <div class="mrow"><span class="pmuted">Answer</span><span>Approved wording, investor detail stripped</span></div>
-  <div class="mrow"><span class="pmuted">Cites</span><span>Dataroom index 3.2 · FM v4.1</span></div>
-  <div class="mrow"><span class="pmuted">Owner / review date</span><span>Kishen · monthly backstop</span></div>
-  <div class="mfld">Portfolio › Programme › Investor · lower inherits from higher</div></div>`},
- {id:'elrfaq',ic:'ti-book',name:'ELR Investor FAQs',node:'Seed the Answer Library',nid:'s2',ex:true,desc:'The consolidated FAQ document from the ELR raise: effectively a curated Answer Library already. The seed for v1, ingested as programme-layer entries.',
-  prev:`<div class="paper"><h5>ELR Investor FAQs · excerpt</h5>
-  <div class="mrow"><span>Thesis and track record</span><span class="pmuted">portfolio candidate</span></div>
-  <div class="mrow"><span>Financial model assumptions</span><span class="pmuted">programme</span></div>
-  <div class="mrow"><span>Structuring and instruments</span><span class="pmuted">programme</span></div>
-  <div class="mrow"><span>Governance</span><span class="pmuted">portfolio candidate</span></div></div>`},
- {id:'ddlogs',ic:'ti-files',name:'Per-investor DD logs',node:'Seed the Answer Library',nid:'s2',ex:true,desc:'The Esmée Fairbairn and Lloyds Banking Group Q&A logs: real questions answered and then distilled into the FAQ set. Back-filled as the first question records.',
-  prev:`<div class="paper"><h5>DD logs · two counterparties</h5>
-  <div class="mrow"><span>Esmée Fairbairn</span><span class="pmuted">answered · distilled</span></div>
-  <div class="mrow"><span>Lloyds Banking Group</span><span class="pmuted">answered · distilled</span></div>
-  <div class="mfld">Back-filled so the Log shows how answers became canonical</div></div>`},
- {id:'matcher',ic:'ti-search',name:'Library matcher',node:'Triage and route',nid:'a2',ex:false,desc:'AI assistant that matches an incoming question against the Answer Library, resolving investor questions to portfolio answers wherever one exists.',
-  prev:`<div class="paper"><h5>Match · incoming question</h5>
-  <div class="mrow"><span>Best match</span><span class="mbar"><i style="width:85%"></i></span><span class="pmuted">0.85</span></div>
-  <div class="mrow"><span>Layer resolved</span><span>Portfolio</span></div>
-  <div class="mrow"><span>Proposal</span><span>Reuse with light adapt</span></div>
-  <div class="mfld">Stale entries blocked from reuse until cleared</div></div>`},
- {id:'checker',ic:'ti-shield-check',name:'Consistency checker',node:'Review and approve',nid:'a4',ex:false,desc:'Diffs a draft answer against the current Financial Model and Information Memo versions before approval, so nothing drifts.',
-  prev:`<div class="paper"><h5>Draft vs sources</h5>
-  <div class="mrow"><span>Financial Model v4.1</span><span class="pmuted">consistent</span></div>
-  <div class="mrow"><span>Information Memo v2</span><span class="pmuted">consistent</span></div>
-  <div class="mrow"><span>Dataroom reference</span><span class="pmuted">present · 3.2</span></div>
-  <div class="mfld">Flags land with the approver, never auto-fixed</div></div>`},
- {id:'packgen',ic:'ti-clipboard-check',name:'Q&A pack generator',node:'Compile the Q&A pack',nid:'m1',ex:false,desc:'Generates the milestone cut of the Log for one audience: per-investor DD pack, IC preparation pack, or BFP investor-evidence extract.',
-  prev:`<div class="paper"><h5>Pack variants</h5>
-  <div class="mrow"><span>Per-investor DD pack</span><span class="pmuted">filtered by investor</span></div>
-  <div class="mrow"><span>IC preparation pack</span><span class="pmuted">filtered by stage</span></div>
-  <div class="mrow"><span>BFP investor-evidence extract</span><span class="pmuted">engagement evidence</span></div></div>`},
- {id:'stats',ic:'ti-chart-bar',name:'Close-out stats',node:'Close out the thread',nid:'closeout',ex:false,desc:'Per-raise numbers: questions asked, reuse rate, median turnaround. Reuse rate is the metric that proves the Library is working.',
-  prev:`<div class="paper"><h5>Raise stats</h5>
-  <div class="mrow"><span>Questions asked</span><span class="pmuted">—</span></div>
-  <div class="mrow"><span>Reuse rate</span><span class="mbar"><i style="width:60%"></i></span><span class="pmuted">—</span></div>
-  <div class="mrow"><span>Median turnaround</span><span class="pmuted">—</span></div>
-  <div class="mfld">Reuse rate should climb raise on raise</div></div>`}
+ {id:'sources',ic:'ti-rss',name:'Sourcing channels',node:'Log new opportunity',nid:'s1',ex:true,desc:'The four places opportunities arrive from today: aggregator alerts, procurement portals, framework and DPS mini-competitions, and relationship leads. Every one of them lands in the same pipeline record.',
+  prev:`<div class="paper"><h5>Where opportunities come from</h5>
+  <div class="mrow"><span>Aggregator alerts</span><span class="pmuted">Tenders Direct · BiP · Tussel</span></div>
+  <div class="mrow"><span>Procurement portals</span><span class="pmuted">Jaggaer · Ariba · ProContract · myTenders</span></div>
+  <div class="mrow"><span>Frameworks and DPS</span><span class="pmuted">CCS · ESPO · NEPO · YPO mini-comps</span></div>
+  <div class="mrow"><span>Relationships</span><span class="pmuted">word of mouth · private sector</span></div>
+  <div class="mfld">Aggregator choice still open. BiP is on trial.</div></div>`},
+ {id:'pipeline',ic:'ti-database',name:'Tender pipeline',node:'Log new opportunity',nid:'s1',ex:false,desc:'One record per opportunity, whatever channel it came from. Replaces the fragmented inbox, and it is the only place a tender can be said to exist.',
+  prev:`<div class="paper"><h5>Pipeline record</h5>
+  <div class="mrow"><span class="pmuted">Buyer / title</span><span>Anglian Water · catchment NEP lot 3</span></div>
+  <div class="mrow"><span class="pmuted">Source</span><span>Framework mini-comp</span></div>
+  <div class="mrow"><span class="pmuted">Deadline / value</span><span>clarification · submission · est. value</span></div>
+  <div class="mrow"><span class="pmuted">Stage</span><span>Sourced → Triaged → Qualified → Bidding → Submitted → Decided</span></div>
+  <div class="mfld">Renewal date carried so a monitor decision resurfaces on time</div></div>`},
+ {id:'rationale',ic:'ti-gavel',name:'Decision record',node:'Triage',nid:'g1',ex:false,desc:'The written reason behind every bid, monitor or no bid call. This is the real output of triage: without it the same opportunity gets re-litigated every quarter.',
+  prev:`<div class="paper"><h5>Decision record</h5>
+  <div class="mrow"><span class="pmuted">Call</span><span>No bid</span></div>
+  <div class="mrow"><span class="pmuted">Reason</span><span>No MRV track record in this service, and pricing would be guesswork</span></div>
+  <div class="mrow"><span class="pmuted">Revisit when</span><span>Two delivered schemes referenceable</span></div>
+  <div class="mfld">Decided by, date, and one line anyone can read in a year</div></div>`},
+
+ {id:'packman',ic:'ti-folder',name:'Tender pack manifest',node:'Collate tender pack',nid:'q1',ex:true,desc:'Every document the buyer published, stored in a standard folder with a manifest so nothing is missed and nobody hunts for the pricing schedule.',
+  prev:`<div class="paper"><h5>Manifest</h5>
+  <div class="mrow"><span>Instructions to tenderers</span><span class="pmuted">stored</span></div>
+  <div class="mrow"><span>Specification / scope</span><span class="pmuted">stored</span></div>
+  <div class="mrow"><span>Scoring and weightings</span><span class="pmuted">stored</span></div>
+  <div class="mrow"><span>Pricing schedule</span><span class="pmuted">stored</span></div>
+  <div class="mrow"><span>Terms and conditions</span><span class="pmuted">stored</span></div></div>`},
+ {id:'crm',ic:'ti-address-book',name:'HubSpot CRM',node:'Collate tender pack',nid:'q1',ex:true,desc:'Scanned for any existing relationship with the buyer, the incumbent or the named contacts. A warm route in changes the odds more than anything in the answer.',
+  prev:`<div class="paper"><h5>Relationship scan</h5>
+  <div class="mrow"><span>Buyer contacts known</span><span class="pmuted">2 · last touch 4 months</span></div>
+  <div class="mrow"><span>Incumbent</span><span class="pmuted">named · no relationship</span></div>
+  <div class="mrow"><span>Partner overlap</span><span class="pmuted">1 framework partner active</span></div>
+  <div class="mfld">All connectors scanned, not just HubSpot</div></div>`},
+ {id:'spec',ic:'ti-list-check',name:'Requirements extract',node:'Collate tender pack',nid:'q1',ex:true,desc:'The tender turned into a structured list: every requirement, every scored question, every weighting, every key date. The thing the rest of the workflow reads from.',
+  prev:`<div class="paper"><h5>Extract</h5>
+  <div class="mrow"><span class="pmuted">Scored questions</span><span>14 · weightings mapped</span></div>
+  <div class="mrow"><span class="pmuted">Mandatory requirements</span><span>9 · pass or fail</span></div>
+  <div class="mrow"><span class="pmuted">Key dates</span><span>clarification close · submission · award</span></div>
+  <div class="mfld">Extraction is the step most worth automating fully</div></div>`},
+ {id:'battenburg',ic:'ti-layout-grid',name:'Battenburg scorecard',node:'Score effort and reward',nid:'q2',ex:true,desc:'The existing go or no-go tool: effort against reward, with a RAG overlay on strategic fit, commercial viability and capability. It is deliberately incapable of drafting bid content.',
+  prev:`<div class="paper"><h5>Effort and reward</h5>
+  <div class="mrow"><span>Strategic fit</span><span class="pmuted">green</span></div>
+  <div class="mrow"><span>Commercial viability</span><span class="pmuted">amber</span></div>
+  <div class="mrow"><span>Capability</span><span class="pmuted">amber · partner needed for MRV</span></div>
+  <div class="mrow"><span>Quadrant</span><span class="pmuted">high reward · high effort</span></div>
+  <div class="mfld">Red on strategic fit or commercial viability equals decline, whatever the quadrant</div></div>`},
+ {id:'gapmatrix',ic:'ti-table',name:'Competency gap matrix',node:'Score effort and reward',nid:'q2',ex:true,desc:'Each requirement RAG rated against what Great Yellow can actually evidence today. Amber and red rows are the shortlist of what a partner has to cover.',
+  prev:`<div class="paper"><h5>Gap matrix</h5>
+  <div class="mrow"><span>Habitat design and delivery</span><span class="pmuted">green</span></div>
+  <div class="mrow"><span>Hydrological modelling</span><span class="pmuted">red · partner</span></div>
+  <div class="mrow"><span>Long term MRV</span><span class="pmuted">amber</span></div>
+  <div class="mfld">Feeds the solo, with partners, or not at all verdict</div></div>`},
+
+ {id:'partners',ic:'ti-users',name:'Partner shortlist',node:'Select delivery partner',nid:'p1',ex:false,desc:'Who covers which gap, on what commercial basis, and who fronts the bid. Standing candidates are WSP, Arup, Atkins and Binnies.',
+  prev:`<div class="paper"><h5>Partner fit</h5>
+  <div class="mrow"><span>WSP</span><span class="pmuted">covers modelling · prior framework</span></div>
+  <div class="mrow"><span>Arup</span><span class="pmuted">covers modelling · no prior work</span></div>
+  <div class="mrow"><span>Binnies</span><span class="pmuted">water sector depth</span></div>
+  <div class="mfld">Lead versus sub, and the margin split, agreed before drafting starts</div></div>`},
+ {id:'hub',ic:'ti-layout-board',name:'Bid hub',node:'Build bid hub',nid:'r1',ex:false,desc:'One workspace per tender, and one per lot where lots are scored separately. Holds the question list, the owners, the deadlines and every draft in one place.',
+  prev:`<div class="paper"><h5>Bid hub · one per lot</h5>
+  <div class="mrow"><span class="pmuted">Questions</span><span>14 · owner and status each</span></div>
+  <div class="mrow"><span class="pmuted">Attachments</span><span>compliance checklist tracked</span></div>
+  <div class="mrow"><span class="pmuted">Deadlines</span><span>internal gates ahead of buyer dates</span></div>
+  <div class="mfld">Scaffolded from template, not built by hand each time</div></div>`},
+ {id:'cvs',ic:'ti-id',name:'CV and bio library',node:'Build bid hub',nid:'r1',ex:true,desc:'Current, tender ready CVs and team bios. Almost every bid asks for them and almost every bid rewrites them from scratch.',
+  prev:`<div class="paper"><h5>Library</h5>
+  <div class="mrow"><span>Two page tender CV</span><span class="pmuted">per named person</span></div>
+  <div class="mrow"><span>Short bio</span><span class="pmuted">100 and 250 word cuts</span></div>
+  <div class="mfld">Version dated so an out of date CV cannot be pulled in</div></div>`},
+ {id:'evmap',ic:'ti-sitemap',name:'Evidence map',node:'Map evidence to questions',nid:'r2',ex:false,desc:'Every scored question mapped to the evidence that answers it, before a word gets written. Where the map is empty, that is the gap to close or the reason to withdraw.',
+  prev:`<div class="paper"><h5>Question to evidence</h5>
+  <div class="mrow"><span>Q3 approach to MRV</span><span class="pmuted">HMMP · Spains Hall metrics</span></div>
+  <div class="mrow"><span>Q7 track record</span><span class="pmuted">2 case studies · 1 gap</span></div>
+  <div class="mrow"><span>Q9 social value</span><span class="mbar"><i style="width:30%"></i></span><span class="pmuted">thin</span></div>
+  <div class="mfld">Weighting shown against each, so effort follows the marks</div></div>`},
+ {id:'evidence',ic:'ti-photo',name:'Evidence packs',node:'Map evidence to questions',nid:'r2',ex:true,desc:'The reusable proof: metric outputs, habitat management plans, legal templates and GIS outputs. Cited by answers rather than rebuilt inside them.',
+  prev:`<div class="paper"><h5>Packs</h5>
+  <div class="mrow"><span>Biodiversity metric outputs</span><span class="pmuted">per site</span></div>
+  <div class="mrow"><span>HMMP examples</span><span class="pmuted">approved</span></div>
+  <div class="mrow"><span>Legal templates</span><span class="pmuted">s106 · conservation covenant</span></div>
+  <div class="mrow"><span>GIS outputs</span><span class="pmuted">boundaries · constraints</span></div></div>`},
+ {id:'cases',ic:'ti-star',name:'Case study library',node:'Map evidence to questions',nid:'r2',ex:true,desc:'Delivered work written up once in a consistent shape, tagged by service, buyer type and scale. The single most reused asset in any bid.',
+  prev:`<div class="paper"><h5>Case study</h5>
+  <div class="mrow"><span class="pmuted">Shape</span><span>Context · what we did · outcome · numbers</span></div>
+  <div class="mrow"><span class="pmuted">Tags</span><span>service · buyer type · scale · date</span></div>
+  <div class="mfld">Numbers are the part bids get marked on, so they are mandatory</div></div>`},
+ {id:'answerbank',ic:'ti-database',name:'Answer bank',node:'Draft from answer bank',nid:'r3',ex:true,desc:'Approved answers per bid type, tagged with the outcome they came from. Won tagged content is preferred, and the reuse rate is how we know the bank is working.',
+  prev:`<div class="paper"><h5>Bank entry</h5>
+  <div class="mrow"><span class="pmuted">Question type</span><span>Approach to long term monitoring</span></div>
+  <div class="mrow"><span class="pmuted">Outcome tag</span><span>Won · Anglian 2025</span></div>
+  <div class="mrow"><span class="pmuted">Word limits</span><span>250 · 500 · 1000 cuts held</span></div>
+  <div class="mfld">Grown by the after action, never edited straight into a live bid</div></div>`},
+ {id:'ratecard',ic:'ti-receipt',name:'Rate card',node:'Set price and supply route',nid:'r4',ex:true,desc:'Standing day rates and unit prices by role and service, with the margin rules that go with them. Stops each bid inventing its own pricing.',
+  prev:`<div class="paper"><h5>Rate card</h5>
+  <div class="mrow"><span>Role day rates</span><span class="pmuted">by grade</span></div>
+  <div class="mrow"><span>Unit prices</span><span class="pmuted">per service</span></div>
+  <div class="mrow"><span>Margin floor</span><span class="pmuted">sign off below it</span></div>
+  <div class="mfld">Supply route changes the price: own sites versus referral</div></div>`},
+ {id:'naming',ic:'ti-file-symlink',name:'House naming standard',node:'Review and red team',nid:'r5',ex:true,desc:'STATUS _ PROJECT _ DOCTYPE _ YYYY.MM.DD _ V#, applied to every saved file. Nothing goes into review until it carries a version and a name.',
+  prev:`<div class="paper"><h5>Naming and save</h5>
+  <div class="mrow"><span class="pmuted">Filename</span><span>STATUS _ PROJECT _ DOCTYPE _ YYYY.MM.DD _ V#</span></div>
+  <div class="mrow"><span class="pmuted">User supplies</span><span>status and version</span></div>
+  <div class="mrow"><span class="pmuted">Assistant supplies</span><span>doctype and date</span></div>
+  <div class="mfld">Save location decided per file: private working or shared drive</div></div>`},
+ {id:'bidpack',ic:'ti-package',name:'Bid pack',node:'Assemble and submit',nid:'r6',ex:false,desc:'The Output of this workflow. Every answer, every attachment, every compliance document, in the format and order the buyer asked for.',
+  prev:`<div class="paper"><h5>Pack contents</h5>
+  <div class="mrow"><span>Scored responses</span><span class="pmuted">14 of 14</span></div>
+  <div class="mrow"><span>Compliance documents</span><span class="pmuted">insurance · policies · accounts</span></div>
+  <div class="mrow"><span>Pricing schedule</span><span class="pmuted">signed off</span></div>
+  <div class="mfld">Checked against the buyer format rules before upload</div></div>`},
+ {id:'aar',ic:'ti-clipboard-text',name:'Win loss after action',node:'Run after action',nid:'l1',ex:false,desc:'What we thought would matter against what actually mattered, plus buyer feedback and competitor intelligence. Run on wins as well as losses.',
+  prev:`<div class="paper"><h5>After action</h5>
+  <div class="mrow"><span class="pmuted">Outcome</span><span>Lost · second of five</span></div>
+  <div class="mrow"><span class="pmuted">Buyer feedback</span><span>Price competitive, MRV thin</span></div>
+  <div class="mrow"><span class="pmuted">What we misread</span><span>Weighting on social value</span></div>
+  <div class="mfld">Writes to the answer bank and the lessons register, never to a folder</div></div>`},
+ {id:'lessons',ic:'ti-book',name:'Lessons register',node:'Run after action',nid:'l1',ex:false,desc:'The running record of what wins and what loses, by buyer type and bid type. Read at scoring time, which is the only place it can change a decision.',
+  prev:`<div class="paper"><h5>Register</h5>
+  <div class="mrow"><span>Water sector buyers</span><span class="pmuted">MRV depth decides it</span></div>
+  <div class="mrow"><span>Local authority DPS</span><span class="pmuted">price led · thin margin</span></div>
+  <div class="mrow"><span>Reuse rate</span><span class="mbar"><i style="width:45%"></i></span><span class="pmuted">climbing</span></div>
+  <div class="mfld">Informs the Battenburg score, so the loop actually closes</div></div>`}
 ];
-const OWNERS=['Kishen','Alex','Tim','Deal lead','Modelling lead','Capital Lead'];
+const OWNERS=['Archie','Cat','Bid lead','Pricing lead','Vertical lead'];
 const EXECS=['Human-led','Agentic AI','Fully Automated'];
 
 const NODES=[
-{id:'start',x:40,y:136,w:132,t:T.term,title:'Start',inert:true,
- d:{sub:'Raise kicks off'},r:{sub:'',st:'done'},
- info:'Terminals carry no work. The Log starts when a capital raise is launched for a Programme.'},
+{id:'start',x:40,y:136,w:132,t:T.term,title:'Always on',inert:true,
+ d:{sub:'Sourcing never stops'},r:{sub:'',st:'done'},
+ info:'Terminals carry no work. Sourcing runs continuously in the background; a tender instance of this Workflow begins the moment an opportunity is logged.'},
 
-{id:'s1',x:206,y:136,w:170,t:T.human,title:'Initialise the Q&A Log',
- d:{sub:'Protocol, roles, SLAs, tags'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'Instance the Log from template for this raise. Done when the protocol is agreed: roles named, SLAs set, tag taxonomy seeded, capture channels defined.',
-  needs:[['Start','Raise launched']],produces:['Q&A Protocol','Empty Log instance'],
-  done:'After this: the raise has a live Q&A Log with named roles, agreed SLAs and a seeded tag taxonomy.',
-  steps:['AI Assistant drafts the protocol from the template','Kishen names coordinator, SMEs and approver','Kishen sets the SLA defaults','AI Assistant seeds tags from Demand Mapping themes and the dataroom index','Kishen agrees capture channels with the deal lead'],
-  arts:['protocol','logtpl'],
-  guard:'? SLA defaults to confirm: industry standard is 48-72h routine, 5-7 days complex'}},
+{id:'s1',x:206,y:136,w:186,t:T.det,title:'Log new opportunity',
+ d:{sub:'One record, whatever the channel'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Fully Automated',
+  what:'Every lead becomes one record in one pipeline, whichever of the four channels it arrived through. Done when the record carries buyer, title, source, deadlines and estimated value.',
+  needs:[['Always on','Alert, portal notice, framework mini-comp or relationship lead']],produces:['Pipeline record'],
+  done:'After this: the opportunity exists in one place, with its dates, and the fragmented inbox problem is gone.',
+  steps:['Assistant ingests alerts and portal notices','Assistant dedupes against open records','Assistant extracts buyer, dates and value','Assistant creates pipeline record','Archie adds relationship leads by hand'],
+  arts:['sources','pipeline'],
+  guard:'✦ Gap to build. ? Aggregator choice still open: BiP is on trial against Tenders Direct and Tussel.'}},
 
-{id:'s2',x:446,y:136,w:180,t:T.agent,title:'Seed the Answer Library',
- d:{sub:'Ingest the ELR material'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Ingest existing material so the raise does not start cold. Done when the ELR FAQs are in as programme-layer canonical entries and the two investor DD logs are back-filled.',
-  needs:[['Initialise the Q&A Log','Empty Log instance']],produces:['Answer Library v1, seeded'],
-  done:'After this: the Answer Library holds the ELR answers as canonical entries, tagged by layer, each citing its dataroom reference.',
-  steps:['AI Assistant parses the ELR FAQs and the two DD logs','AI Assistant dedupes into candidate canonical entries','AI Assistant tags layer and category, attaches dataroom references','AI Assistant flags portfolio-layer candidates','Kishen reviews and approves the batch'],
-  arts:['elrfaq','ddlogs','library'],
-  guard:'Nothing enters the Library unapproved'}},
+{id:'g1',x:426,y:136,w:200,t:T.gate,title:'Triage',rows:[['bid','→ qualify'],['monitor','→ watching brief'],['no bid','→ close']],
+ d:{sub:'First gate, minutes not days'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Human-led',
+  what:'A fast read on whether this is worth any further effort. The output that matters is not the call, it is the written reason behind it.',
+  needs:[['Log new opportunity','Pipeline record']],produces:['Decision and written rationale'],
+  done:'After this: the record carries a call and a reason anyone can read in a year without reopening the argument.',
+  steps:['Assistant drafts a first read from the record','Archie calls bid, monitor or no bid','Archie writes the rationale'],
+  arts:['rationale'],
+  guard:'✦ Gap to build. No call closes without a rationale. Without it the same opportunity gets re-litigated every quarter.'}},
 
-{id:'a1',x:700,y:136,w:160,t:T.data,title:'Capture the question',
- d:{sub:'Verbatim, tagged, within 24h'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Deal lead',exec:'Fully Automated',
-  what:'Log every incoming question verbatim within 24h, tagged investor, stage, instrument, source and date. The always-on loop starts here.',
-  needs:[['Seed the Answer Library','Live Log']],produces:['Question record · Captured'],
-  done:'After this: the question sits in the Log exactly as asked, tagged, with the SLA clock running.',
-  steps:['AI Assistant logs the verbatim text from email or dataroom','AI Assistant extracts asked questions from meeting transcripts','Deal lead confirms transcript extractions','AI Assistant acknowledges receipt and starts the SLA clock'],
-  arts:['logtpl'],
-  guard:'Never paraphrase at capture; the verbatim text is the audit record'}},
+{id:'watch',x:426,y:330,w:200,t:T.park,title:'Hold watching brief',
+ d:{sub:'Parked with a renewal date'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Fully Automated',
+  what:'Not now, but not never. The record is parked with a renewal date so it resurfaces before the real deadline rather than after it.',
+  needs:[['Triage','Monitor call']],produces:['Watching brief with renewal date'],
+  done:'After this: nothing is lost by saying not yet, because the record comes back on its own.',
+  steps:['Archie sets renewal date','Assistant watches for reissue or contract end','Assistant reopens record at renewal'],
+  arts:['pipeline'],
+  guard:'✦ Gap to build. A monitor with no renewal date is a no bid pretending to be a maybe.'}},
 
-{id:'a2',x:930,y:136,w:160,t:T.agent,title:'Triage and route',
- d:{sub:'Match the Library, assign an SME'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Match each question against the Library, classify and assign. Done when it has a category, a layer, a priority flag, and a reuse proposal or a named SME.',
-  needs:[['Capture the question','Question record']],produces:['Routed question · Triaged'],
-  done:'After this: every question either points at an existing canonical answer or sits with the right expert, with the routing confirmed by the coordinator.',
-  steps:['AI Assistant searches the Answer Library for a match','AI Assistant classifies category and layer','AI Assistant flags sensitivity and priority','AI Assistant proposes reuse, adapt or draft new','Kishen confirms the routing'],
-  arts:['matcher'],
-  guard:'All questions enter and leave through the coordinator. Stale Library entries are blocked from reuse.'}},
+{id:'close',x:426,y:490,w:210,t:T.park,title:'Log rationale and close',
+ d:{sub:'Closed, and on the record'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Human-led',
+  what:'The end of the road for this opportunity, reached either at triage or at the rating gate. The rationale stays on the record.',
+  needs:[['Triage','No bid call'],['Rating','Decline']],produces:['Closed record with rationale'],
+  done:'After this: the decision is searchable, and the next similar tender starts from a reason rather than a blank page.',
+  steps:['Archie confirms close','Assistant files rationale on record'],
+  arts:['rationale'],
+  guard:'✦ Gap to build. Closed is a state on the record, not a deleted row.'}},
 
-{id:'a3',x:1160,y:136,w:160,t:T.agent,title:'Draft the answer',
- d:{sub:'Cited, layered, confidence-flagged'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Routed SME',exec:'Agentic AI',
-  what:'Produce a cited draft. Done when it answers the question, cites its dataroom index reference, states its layer, and carries a confidence flag.',
-  needs:[['Triage and route','Routed question']],produces:['Draft answer · Drafted'],
-  done:'After this: a draft exists that the approver can check, with every figure traceable to the model or the dataroom.',
-  steps:['AI Assistant pre-drafts from the Library, IM, Financial Model and dataroom','Routed SME edits and owns the draft','SME checks with Nature or Trade where the question crosses teams','AI Assistant attaches the dataroom reference and confidence flag'],
-  arts:['library'],
-  guard:'No figure leaves inconsistent with the current Financial Model version; escalate rather than estimate'}},
+{id:'dbPipe',x:206,y:330,w:186,t:T.store,title:'Tender pipeline',inert:true,
+ d:{sub:'Asset · shared'},r:{sub:'',st:'none',dim:true},
+ info:'The single pipeline every channel feeds. It is an Asset rather than an output of this Workflow: one record per opportunity, carrying stage, dates, decisions and rationale for as long as the opportunity is live.'},
 
-{id:'a4',x:1390,y:136,w:180,t:T.gate,title:'Review and approve',rows:[['approve','→ respond'],['rework','→ redraft']],
- d:{sub:'The approval gate'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'The approval gate. Pass the draft for accuracy, consistency with IM and model, confidentiality and tone, or bounce it back with a reason.',
-  needs:[['Draft the answer','Draft answer']],produces:['Approve → Respond and log','Rework → back to draft'],
-  done:'After this: nothing reaches an investor unapproved, and the audit trail records who approved what, when.',
-  steps:['AI Assistant diffs the draft against the IM and Financial Model','Project team reviews where flagged','Kishen approves, or returns with a reason'],
-  arts:['checker'],
-  guard:'Nothing reaches an investor unapproved'}},
+{id:'q1',x:760,y:136,w:190,t:T.agent,title:'Collate tender pack',
+ d:{sub:'Documents, spec and relationships'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Agentic AI',
+  what:'Everything the buyer published, stored in one standard place, turned into a structured list of requirements, and cross-checked against who we already know. Done when the requirements extract and the relationship scan are both on the record.',
+  needs:[['Triage','Bid call']],produces:['Tender pack manifest','Requirements extract','Relationship scan'],
+  done:'After this: the tender is legible as a list of requirements and weightings, and we know whether there is a warm route in.',
+  steps:['Assistant stores documents to standard folder','Assistant extracts requirements and weightings','Assistant lists key dates','Assistant scans connectors for relationships','Archie checks extract against source'],
+  arts:['packman','spec','crm'],
+  guard:'● Exists today inside the assessment tool. Extraction is checked by a human before scoring.'}},
 
-{id:'a5',x:1640,y:136,w:170,t:T.det,title:'Respond and log',
- d:{sub:'Send, close the record, stop the clock'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Deal lead',exec:'Fully Automated',
-  what:'Deliver the approved answer through the agreed channel and close the record. Done when the response date is logged and the SLA clock stops.',
-  needs:[['Review and approve','Approved answer']],produces:['Answered record','Running SLA stats'],
-  done:'After this: the investor has the answer, the record is closed, and the SLA stats keep score.',
-  steps:['AI Assistant sends via the agreed channel','AI Assistant attaches dataroom references rather than loose documents','AI Assistant logs date and channel, stops the clock'],
-  arts:['logtpl'],
-  guard:'Client-facing sends always need a human tap'}},
+{id:'q2',x:984,y:136,w:190,t:T.agent,title:'Score effort and reward',
+ d:{sub:'Battenburg with a RAG overlay'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Agentic AI',
+  what:'Requirements rated against what we can actually evidence, then effort scored against reward. Done when there is a rating and a competency verdict: solo, with partners, or not at all.',
+  needs:[['Collate tender pack','Requirements extract']],produces:['Competency gap matrix','Battenburg score','Competency verdict'],
+  done:'After this: the decision at the gate is a reading of two named things rather than a feeling in the room.',
+  steps:['Assistant rates each requirement against capability','Assistant scores effort and reward','Assistant reads lessons register for this buyer type','Archie reviews and adjusts','Archie sets competency verdict'],
+  arts:['gapmatrix','battenburg','lessons'],
+  guard:'● Exists today as Archie\'s tool. It stops here by design and refuses to draft bid content, which is why Respond is its own workflow.'}},
 
-{id:'c1',x:1890,y:136,w:180,t:T.agent,title:'Promote to the Library',
- d:{sub:'Weekly sweep · dedupe and generalise'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Weekly sweep. Every Answered record is linked to an existing canonical entry or promoted into a new one, deduplicated, generalised to the highest layer it can honestly hold.',
-  needs:[['Respond and log','Answered records']],produces:['Updated Answer Library','Promotion audit trail'],
-  done:'After this: the bank of ready answers has grown, and research time on the next question shrinks.',
-  steps:['AI Assistant clusters the recent answers','AI Assistant proposes promotions and merges','AI Assistant drafts canonical wording stripped of investor detail','AI Assistant flags layer upgrades, ELR answer to portfolio answer','Kishen approves the batch'],
-  arts:['library'],
-  guard:'Investor-specific detail never leaks into higher layers'}},
+{id:'g2',x:1208,y:136,w:200,t:T.gate,title:'Rating',rows:[['pursue','→ respond'],['with partners','→ partner'],['decline','→ close']],
+ d:{sub:'Second gate, the expensive one'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Human-led',
+  what:'The gate that commits real drafting effort. Pursue, pursue with partners, or decline.',
+  needs:[['Score effort and reward','Rating and competency verdict']],produces:['Pursue → Respond','With partners → Partner selection','Decline → Closed record'],
+  done:'After this: either the bid is resourced and started, or it is closed with a reason.',
+  steps:['Archie reads score and verdict together','Archie tests the hard rule','Archie calls pursue, partner or decline'],
+  arts:['battenburg','rationale'],
+  guard:'● Exists today. Hard rule: red on strategic fit or commercial viability equals decline, whatever the effort and reward quadrant says.'}},
 
-{id:'library',x:1910,y:320,w:150,t:T.store,title:'Answer Library',inert:true,
+{id:'dbLess',x:984,y:330,w:190,t:T.store,title:'Lessons register',inert:true,
  d:{sub:'Asset · portfolio-wide'},r:{sub:'',st:'none',dim:true},
- info:'The Answer Library is a referenced Asset, not owned by this Deliverable. The portfolio layer is shared across every raise; programme and investor layers are populated per deal. Lower layers inherit from higher ones: an investor question resolves to a portfolio answer wherever one exists.'},
+ info:'What wins and what loses, by buyer type and bid type. It is read at scoring time, which is the only point in the workflow where it can change a decision. Written by the after action at the far end of the chapter.'},
 
-{id:'c2',x:2110,y:320,w:170,t:T.agent,title:'Freshness review ↺',
- d:{sub:'On model or IM change'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Triggered when the Financial Model or IM version changes, plus a monthly backstop. Every Library entry citing the changed source is re-verified or flagged stale.',
-  needs:[['Answer Library','Canonical entries']],produces:['Stale flags','Re-verified entries'],
-  done:'After this: no answer citing an outdated model version can be reused unnoticed.',
-  steps:['AI Assistant watches Financial Model and IM versions','AI Assistant flags every entry citing a changed source','Kishen clears or retires the flagged entries'],
-  arts:['library'],
-  guard:'Stale entries are blocked from reuse at Triage until cleared'}},
+{id:'p1',x:1480,y:330,w:190,t:T.human,title:'Select delivery partner',
+ d:{sub:'Only when capability is short'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Human-led',
+  what:'A detour taken only when the competency verdict says with partners. Who covers which gap, who leads the bid, and on what commercial terms.',
+  needs:[['Rating','With partners'],['Score effort and reward','Competency gap matrix']],produces:['Partner agreed','Lead and sub roles set'],
+  done:'After this: every red row in the gap matrix has a named owner, and the commercial split is agreed before anyone drafts.',
+  steps:['Assistant matches gaps to partner capability','Archie approaches shortlisted partners','Archie agrees lead, sub and margin split'],
+  arts:['partners','gapmatrix'],
+  guard:'✦ Gap to build. Standing candidates are WSP, Arup, Atkins and Binnies. Terms agreed before drafting, never during.'}},
 
-{id:'m1',x:2340,y:136,w:180,t:T.agent,title:'Compile the Q&A pack',
- d:{sub:'The milestone cut of the Log'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'The milestone artefact: a filtered, formatted cut of the Log for one audience. Variants: per-investor DD pack, IC preparation pack, BFP investor-evidence extract.',
-  needs:[['Promote to the Library','Curated Log']],produces:['Q&A pack'],
-  done:'After this: the audience has its pack, generated from the Log rather than rebuilt by hand.',
-  steps:['AI Assistant filters the Log by investor or stage','AI Assistant generates the pack from the template','Kishen sense-checks and shares'],
-  arts:['packgen'],
-  guard:'? Pack variants and formats to confirm with the champion'}},
+{id:'r1',x:1704,y:136,w:180,t:T.det,title:'Build bid hub',
+ d:{sub:'One per tender, one per lot'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Bid lead',exec:'Fully Automated',
+  what:'Scaffold the workspace this bid will live in, one per tender and one per lot where lots are scored separately. Done when every scored question has an owner and an internal deadline.',
+  needs:[['Rating','Pursue'],['Collate tender pack','Requirements extract']],produces:['Bid hub','Question list with owners'],
+  done:'After this: there is one place holding every question, owner, deadline and draft for this bid.',
+  steps:['Assistant creates hub from template','Assistant loads questions and weightings','Assistant sets internal gates before buyer dates','Bid lead assigns owners','Assistant pulls current CVs and bios'],
+  arts:['hub','cvs'],
+  guard:'✦ Gap to build. Lots scored separately get their own hub, or answers drift between them.'}},
 
-{id:'m2',x:2590,y:136,w:190,t:T.gate,title:'Raise concluded?',rows:[['next round','→ capture'],['concluded','→ close out']],
- d:{sub:'Rounds repeat the same loop'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'Milestone gate. A clarification round runs the same capture-answer loop again; a concluded raise moves to close-out.',
-  needs:[['Compile the Q&A pack','Shared pack']],produces:['Next round → Capture','Concluded → Close out'],
-  done:'After this: either a new round of questions is expected, or the raise is done and the thread closes out.',
-  steps:['Kishen reviews where each investor stands','Kishen calls the next round or the close'],
-  arts:[],
-  guard:''}},
+{id:'r2',x:1918,y:136,w:190,t:T.agent,title:'Map evidence to questions',
+ d:{sub:'Before a word gets written'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Bid lead',exec:'Agentic AI',
+  what:'Every scored question mapped to the evidence that answers it, with the weighting shown against each. Done when every question has either evidence behind it or a named gap.',
+  needs:[['Build bid hub','Question list']],produces:['Evidence map','Named evidence gaps'],
+  done:'After this: effort follows the marks, and any question we cannot evidence is visible while there is still time to act on it.',
+  steps:['Assistant matches questions to evidence packs','Assistant proposes case studies per question','Assistant flags questions with no evidence','Bid lead confirms or reassigns','Bid lead escalates unfillable gaps'],
+  arts:['evmap','evidence','cases'],
+  guard:'✦ Gap to build. An unfillable gap on a heavily weighted question is a reason to reopen the rating, not to write around it.'}},
 
-{id:'closeout',x:2850,y:136,w:190,t:T.human,title:'Close out the thread',
- d:{sub:'Archive, harvest, keep score'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'When an investor completes, declines or goes quiet: archive the thread, log the outcome, harvest remaining good answers, note the lessons.',
-  needs:[['Raise concluded?','Concluded']],produces:['Archived thread','Library harvest','Close-out stats'],
-  done:'After this: the thread is archived, the Library has harvested everything worth keeping, and the reuse rate tells us whether the Library is working.',
-  steps:['AI Assistant harvests remaining answers to the Library','AI Assistant compiles the per-raise stats','Kishen logs outcome and lessons'],
-  arts:['stats','library'],
-  guard:''}},
+{id:'r3',x:2142,y:136,w:190,t:T.agent,title:'Draft from answer bank',
+ d:{sub:'Reuse first, write last'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Bid lead',exec:'Agentic AI',
+  what:'Draft each answer from approved bank content, preferring entries tagged Won, and write from scratch only where the bank is empty. Done when every scored question has a draft inside its word limit.',
+  needs:[['Map evidence to questions','Evidence map']],produces:['Drafted answers','New bank candidates'],
+  done:'After this: every question has a draft, and we know which answers were reused and which had to be written new.',
+  steps:['Assistant pulls best bank match per question','Assistant adapts draft to buyer language','Assistant writes new drafts where bank is empty','Assistant checks word and character limits','Bid lead reviews each draft'],
+  arts:['answerbank','evmap'],
+  guard:'✦ Gap to build. Reuse rate is the metric here, the same one the Investor Q&A Log uses. Nothing is edited straight into the bank from a live bid.'}},
 
-{id:'done',x:3110,y:136,w:150,t:T.term,title:'Complete',inert:true,
- d:{sub:'Raise closed'},r:{sub:'',st:'pending',dim:true},
- info:'The raise closes, the Log archives, and the Answer Library carries everything learned into the next deal.'}
+{id:'r4',x:1918,y:330,w:190,t:T.human,title:'Set price and supply route',
+ d:{sub:'Commercial track, runs alongside'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Pricing lead',exec:'Human-led',
+  what:'Price the bid from the rate card, and on BNG bids decide the supply route first because it changes the price. Done when the price is set and sits above the margin floor or has sign-off below it.',
+  needs:[['Build bid hub','Scope and lots']],produces:['Priced schedule','Supply route decision'],
+  done:'After this: the commercial answer is ready at the same time as the narrative, not two days after it.',
+  steps:['Pricing lead sets supply route on BNG bids','Assistant builds price from rate card','Pricing lead tests against margin floor','Pricing lead seeks sign-off below floor'],
+  arts:['ratecard'],
+  guard:'✦ Gap to build. Runs in parallel with the narrative track and converges at review. Own sites versus referral is decided here, under the standard referral agreement.'}},
+
+{id:'r5',x:2366,y:136,w:190,t:T.human,title:'Review and red team',
+ d:{sub:'Both tracks converge here'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Vertical lead',exec:'Human-led',
+  what:'Nothing is reviewed until it is versioned and named to the house standard. Then a multi-stage review, a red team read against the scoring criteria, and sign-off on pricing and legal.',
+  needs:[['Draft from answer bank','Drafted answers'],['Set price and supply route','Priced schedule']],produces:['Reviewed answers','Pricing and legal sign-off'],
+  done:'After this: the bid has been read by someone marking it rather than writing it, and the commercial and legal risk is signed for.',
+  steps:['Assistant versions and names every file','Vertical lead runs technical review','Red team scores bid against criteria','Bid lead applies red team findings','Vertical lead signs off pricing and legal'],
+  arts:['naming','answerbank'],
+  guard:'✦ Gap to build. Naming and versioning is the entry condition for review, not a tidy-up afterwards.'}},
+
+{id:'r6',x:2590,y:136,w:190,t:T.human,title:'Assemble and submit',
+ d:{sub:'Pack, check, upload'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Bid lead',exec:'Human-led',
+  what:'Assemble the pack with every compliance document and attachment, check it against the buyer format rules, and submit through the portal before the deadline. Done when the portal confirms receipt.',
+  needs:[['Review and red team','Signed-off answers']],produces:['Bid pack','Portal submission receipt'],
+  done:'After this: the bid is in, and the pack is stored exactly as submitted for the after action to read.',
+  steps:['Assistant assembles pack from hub','Assistant checks compliance documents present','Assistant validates buyer format rules','Bid lead submits via portal','Assistant files receipt on record'],
+  arts:['bidpack','naming'],
+  guard:'✦ Gap to build. Submit early enough that a portal failure is recoverable.'}},
+
+{id:'g3',x:3038,y:136,w:190,t:T.gate,title:'Outcome',rows:[['won','→ delivery'],['lost','→ closed']],
+ d:{sub:'Two different exits'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Human-led',
+  what:'The award is already recorded and the learning is already banked. This gate only decides how the instance ends: a win hands the work to delivery, a loss closes the record.',
+  needs:[['Run after action','Outcome on record and lessons banked']],produces:['Won → delivery handoff','Lost → closed record'],
+  done:'After this: the tender instance is finished, and either delivery owns the work or the record is closed with everything learned kept.',
+  steps:['Archie confirms outcome on record','Archie routes to delivery or close'],
+  arts:['pipeline'],
+  guard:'✦ Gap to build. Both routes end this Workflow. Delivery is a separate Deliverable, not a later chapter of this one.'}},
+
+{id:'l1',x:2814,y:136,w:190,t:T.human,title:'Run after action',
+ d:{sub:'Where the bank gets better'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Archie',exec:'Human-led',
+  what:'Record the award, then ask what we thought would matter against what actually mattered. Runs on wins as well as losses, and is done when the answer bank and the lessons register have both been written to.',
+  needs:[['Assemble and submit','Submitted bid'],['Outcome','Award decision from the buyer']],produces:['Outcome on record','After action note','Promoted bank entries','Lessons register update'],
+  done:'After this: the next bid starts from a better bank and a shorter list of unknowns. This is the only step that makes the workflow compound.',
+  steps:['Archie records award decision','Archie captures buyer feedback','Archie compares expected against actual','Assistant promotes strong answers to bank','Assistant tags entries with outcome','Assistant writes lessons register entry'],
+  arts:['pipeline','aar','answerbank','lessons'],
+  guard:'✦ Gap to build. Runs before the exit gate on purpose: skipping it on a win is how a lucky bid gets mistaken for a repeatable one.'}},
+
+{id:'dbBank',x:2142,y:330,w:190,t:T.store,title:'Answer bank',inert:true,
+ d:{sub:'Asset · portfolio-wide'},r:{sub:'',st:'none',dim:true},
+ info:'Approved answers per bid type, tagged with the outcome they came from. Drafting reads from it, the after action writes to it, and reuse rate is how we know it is working. It is a referenced Asset, not an output of this Workflow.'},
+
+{id:'handoff',x:3262,y:136,w:200,t:T.term,title:'Hand off to delivery',inert:true,
+ d:{sub:'Won · out of scope here'},r:{sub:'',st:'pending',dim:true},
+ info:'A win ends this Workflow and starts another. Mobilisation and delivery are a separate Deliverable, so the handoff is the terminal rather than a further chapter.'},
+
+{id:'done',x:3262,y:330,w:180,t:T.term,title:'Closed',inert:true,
+ d:{sub:'Lost · instance archived'},r:{sub:'',st:'pending',dim:true},
+ info:'A loss closes the record. What the bid learned already sits in the answer bank and the lessons register, which is the whole point of running it this way.'}
 ];
 
 const EDGES=[
  {x1:172,y1:162,x2:206,y2:162,s:'lock'},
- {x1:376,y1:162,x2:446,y2:162,s:'lock'},
- {x1:626,y1:162,x2:700,y2:162,s:'lock'},
- {x1:860,y1:162,x2:930,y2:162,s:'lock'},
- {x1:1090,y1:162,x2:1160,y2:162,s:'lock'},
- {x1:1320,y1:162,x2:1390,y2:162,s:'lock'},
- {x1:1810,y1:162,x2:1890,y2:162,s:'lock'},
- {x1:1980,y1:200,x2:1980,y2:318,s:'lock'},
- {x1:2060,y1:352,x2:2104,y2:352,s:'lock',dash:true,from:'c2'},
- {d:'M2195,318 V246 H1010 V216',s:'lock',dash:true,from:'c2'},
- {x1:2070,y1:162,x2:2340,y2:162,s:'lock'},
- {x1:2520,y1:162,x2:2590,y2:162,s:'lock'},
- {x1:3040,y1:162,x2:3110,y2:162,s:'lock'}
+ {x1:392,y1:162,x2:426,y2:162,s:'lock'},
+ {x1:950,y1:162,x2:984,y2:162,s:'lock'},
+ {x1:1174,y1:162,x2:1208,y2:162,s:'lock'},
+ {d:'M1670,356 H1687 V162 H1704',s:'lock'},
+ {x1:1884,y1:162,x2:1918,y2:162,s:'lock'},
+ {x1:2108,y1:162,x2:2142,y2:162,s:'lock'},
+ {x1:2332,y1:162,x2:2366,y2:162,s:'lock'},
+ {d:'M1884,162 H1901 V356 H1918',s:'lock'},
+ {d:'M2108,356 H2124 V310 H2352 V178 H2366',s:'lock'},
+ {x1:2556,y1:162,x2:2590,y2:162,s:'lock'},
+ {x1:2780,y1:162,x2:2814,y2:162,s:'lock'},
+ {x1:3004,y1:162,x2:3038,y2:162,s:'lock'},
+ {d:'M299,247 V326',s:'lock',dash:true,from:'s1'},
+ {d:'M426,356 H396',s:'lock',dash:true,from:'watch'},
+ {d:'M1079,330 V251',s:'lock',dash:true,from:'dbLess'},
+ {d:'M2237,330 V232',s:'lock',dash:true,from:'dbBank'},
+ {d:'M2899,247 V450 H2237 V414',s:'lock',dash:true,from:'l1'},
+ {d:'M2929,247 V500 H1079 V426',s:'lock',dash:true,from:'l1'}
 ];
 
 const BRANCHES=[
- {n:'a4',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H1600 V162 H1634`},
- {n:'a4',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V300 H1240 V216`},
- {n:'m2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V396 H780 V216`},
- {n:'m2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H2812 V162 H2844`}
+ {n:'g1',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H690 V162 H760`},
+ {n:'g1',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+30} V316 H526 V330`},
+ {n:'g1',i:2,s:'lock',mk:(x,y)=>`M${x},${y} H${x+52} V470 H531 V490`},
+ {n:'g2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H1440 V162 H1704`},
+ {n:'g2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+30} V316 H1575 V330`},
+ {n:'g2',i:2,s:'lock',mk:(x,y)=>`M${x},${y} H${x+52} V600 H531 V582`},
+ {n:'g3',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3244 V162 H3262`},
+ {n:'g3',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V316 H3352 V330`}
 ];
 
 function portPos(id,i){
@@ -387,7 +515,7 @@ const DOT={
 };
 
 function renderTabs(){
-  document.getElementById('crumbTitle').textContent = 'Investor Q&A Log';
+  document.getElementById('crumbTitle').textContent = 'Tender to Bid';
   document.querySelector('.row1').classList.toggle('editing', MODE==='design');
   document.getElementById('editChip').style.display = MODE==='design'?'inline-flex':'none';
   var tp=document.getElementById('toolsPill'); if(tp)tp.style.display = MODE==='design'?'':'none';
@@ -499,41 +627,55 @@ function openAboutL(){
     <div style="background:#F8F5ED;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;margin-top:10px;font-size:14.5px;color:var(--ink2);line-height:1.7">${det}</div>
   </div>`;
   d.innerHTML=dhead('ti-info-circle','var(--graybg)','var(--grayd)','About Deliverable','')
-  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">The Investor Q&A Log is the Capital team's single source of truth for the questions investors ask and the approved answers Great Yellow gives.</div>
+  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">Tender to Bid takes an opportunity from the moment it appears to the moment we know why we won or lost, and banks the answer either way.</div>
+  <div class="pt" style="margin-top:10px">It runs on two clocks. Chapter 1 and the Assets are continuous, running whether or not a tender is live. Chapters 2 and 3 run once per tender, starting the moment triage says bid.</div>
   <div style="height:1px;background:var(--line);margin:18px 0 2px"></div>
-  ${chap(1,'Q&A Log',
-    'The live feeder. One per capital raise. Captures every question verbatim as it comes in and tracks it through triage, drafting, approval and response.',
-    '<b>Question record</b> · verbatim text, investor, stage, instrument, source, date<br><b>Status</b> · Captured, Triaged, Drafted, Approved, Answered<br><b>SLA clock</b> · 24h acknowledge, 48-72h routine, 5-7d complex')}
-  ${chap(2,'Answer Library',
-    'The curated, deduplicated, approved answers the team draws from. A referenced Asset: the Log feeds it, every raise reuses it.',
-    '<b>Canonical entry</b> · approved wording, owner, review date, dataroom reference<br><b>Promotion</b> · good answers promoted weekly, so the bank grows and research time per deal shrinks')}
-  ${chap(3,'Layers',
-    'Answers are organised by layer so the right level of reuse is obvious. Lower layers inherit from higher ones.',
-    '<b>Portfolio</b> · thesis, team, governance, track record · shared across every deal<br><b>Programme</b> · one project, its financial model and structuring<br><b>Investor</b> · one counterparty, a particular concern')}
+  ${chap(1,'Source and discover',
+    'Continuous. Every lead becomes one record in one pipeline, whichever channel it came from, then gets a fast bid, monitor or no bid call.',
+    '<b>Four channels</b> · aggregator alerts, procurement portals, framework and DPS mini-comps, relationship leads<br><b>The real output</b> · the written rationale, not the call. Without it the same opportunity is re-litigated every quarter<br><b>Monitor</b> · parked with a renewal date so it resurfaces on its own')}
+  ${chap(2,'Qualify',
+    'Per tender. The tender pack becomes a structured list of requirements, capability is rated against it, and effort is scored against reward.',
+    '<b>Exists today</b> · this is the Battenburg tool, already built and in use<br><b>Hard rule</b> · red on strategic fit or commercial viability equals decline, whatever the effort and reward quadrant says<br><b>Verdict</b> · solo, with partners, or not at all. With partners routes through partner selection before drafting starts')}
+  ${chap(3,'Respond',
+    'Per tender, and the chapter that builds the answer bank. It runs in two beats: Build assembles the bid, Finalise gets it out of the door and banks what it taught us.',
+    '<b>Build</b> · bid hub, evidence map, drafting, and pricing on a parallel commercial track that converges at review<br><b>Finalise</b> · review and red team, assemble and submit, then the after action<br><b>Entry condition</b> · nothing is reviewed until it is versioned and named to the house standard<br><b>Order that matters</b> · the after action runs before the exit gate, so a win gets reviewed as hard as a loss')}
   <div style="height:1px;background:var(--line);margin:22px 0 0"></div>
-  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Why it exists</div>
-  <div class="pt" style="margin-top:4px">Without it, answers get rebuilt from scratch each deal, sit in scattered inboxes and decks, drift from the Financial Model and Information Memo, and vary by whoever replies. Used at every touchpoint from early engagement through IC, site visits and due diligence. Unlike Demand Mapping this is not a run-once pipeline: it is an always-on loop that runs for the length of a raise.</div></div>`;
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Assets it reads and writes</div>
+  <div class="pt" style="margin-top:4px">Three Assets carry the loop: the tender pipeline, the answer bank and the lessons register. Drafting reads the bank, the after action writes to it, and the lessons register is read at scoring time, which is the only point where it can change a decision. Rate cards, evidence packs, case studies, CVs and HubSpot are read only.</div>
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Where it stands</div>
+  <div class="pt" style="margin-top:4px">Qualify exists as a working tool. Source is partly in place, with the aggregator choice still open. Respond exists as material but not as a workflow, and the after action loop does not exist at all, which is why nothing compounds yet.</div></div>`;
   d.style.display='block';
 }
 const ALIST=[
- {id:'protocol',ch:1,name:'Q&A Protocol',sub:'one-pager',ic:'ti-file-text',bg:'#378ADD',fg:'#fff'},
- {id:'logtpl',ch:1,name:'Q&A Log template',sub:'structured record',ic:'ti-table',bg:'#F5C64B',fg:'#2C2410'},
- {id:'elrfaq',ch:1,name:'ELR Investor FAQs',sub:'seed content',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
- {id:'ddlogs',ch:1,name:'Per-investor DD logs',sub:'seed content',ic:'ti-files',bg:'#1D9E75',fg:'#fff'},
- {id:'matcher',ch:2,name:'Library matcher',sub:'AI assistant',ic:'ti-search',bg:'#EF9F27',fg:'#412402'},
- {id:'checker',ch:2,name:'Consistency checker',sub:'AI assistant',ic:'ti-shield-check',bg:'#D4537E',fg:'#fff'},
- {id:'library',ch:3,name:'Answer Library',sub:'Asset · portfolio-wide',ic:'ti-database',bg:'#639922',fg:'#fff'},
- {id:'packgen',ch:4,name:'Q&A pack generator',sub:'document generator',ic:'ti-clipboard-check',bg:'#378ADD',fg:'#fff'},
- {id:'stats',ch:4,name:'Close-out stats',sub:'summary record',ic:'ti-chart-bar',bg:'#5DCAA5',fg:'#04342C'}
+ {id:'sources',ch:1,name:'Sourcing channels',sub:'four routes in',ic:'ti-rss',bg:'#7F77DD',fg:'#fff'},
+ {id:'pipeline',ch:1,name:'Tender pipeline',sub:'Asset · shared',ic:'ti-database',bg:'#639922',fg:'#fff'},
+ {id:'rationale',ch:1,name:'Decision record',sub:'the written reason',ic:'ti-gavel',bg:'#D4537E',fg:'#fff'},
+ {id:'packman',ch:2,name:'Tender pack manifest',sub:'standard folder',ic:'ti-folder',bg:'#F5C64B',fg:'#2C2410'},
+ {id:'spec',ch:2,name:'Requirements extract',sub:'structured list',ic:'ti-list-check',bg:'#378ADD',fg:'#fff'},
+ {id:'crm',ch:2,name:'HubSpot CRM',sub:'relationship scan',ic:'ti-address-book',bg:'#EF9F27',fg:'#412402'},
+ {id:'gapmatrix',ch:2,name:'Competency gap matrix',sub:'RAG vs capability',ic:'ti-table',bg:'#5DCAA5',fg:'#04342C'},
+ {id:'battenburg',ch:2,name:'Battenburg scorecard',sub:'effort and reward',ic:'ti-layout-grid',bg:'#215274',fg:'#fff'},
+ {id:'partners',ch:3,name:'Partner shortlist',sub:'who covers what',ic:'ti-users',bg:'#7F77DD',fg:'#fff'},
+ {id:'hub',ch:3,name:'Bid hub',sub:'per tender, per lot',ic:'ti-layout-board',bg:'#378ADD',fg:'#fff'},
+ {id:'cvs',ch:3,name:'CV and bio library',sub:'tender ready',ic:'ti-id',bg:'#F5C64B',fg:'#2C2410'},
+ {id:'evmap',ch:3,name:'Evidence map',sub:'question by question',ic:'ti-sitemap',bg:'#1D9E75',fg:'#fff'},
+ {id:'evidence',ch:3,name:'Evidence packs',sub:'metric, HMMP, legal, GIS',ic:'ti-photo',bg:'#5DCAA5',fg:'#04342C'},
+ {id:'cases',ch:3,name:'Case study library',sub:'delivered work',ic:'ti-star',bg:'#EF9F27',fg:'#412402'},
+ {id:'answerbank',ch:3,name:'Answer bank',sub:'Asset · Won-tagged',ic:'ti-database',bg:'#639922',fg:'#fff'},
+ {id:'ratecard',ch:3,name:'Rate card',sub:'rates and margin floor',ic:'ti-receipt',bg:'#D4537E',fg:'#fff'},
+ {id:'naming',ch:3,name:'House naming standard',sub:'every saved file',ic:'ti-file-symlink',bg:'#215274',fg:'#fff'},
+ {id:'bidpack',ch:3,name:'Bid pack',sub:'the Output',ic:'ti-package',bg:'#378ADD',fg:'#fff'},
+ {id:'aar',ch:3,name:'Win loss after action',sub:'what actually mattered',ic:'ti-clipboard-text',bg:'#7F77DD',fg:'#fff'},
+ {id:'lessons',ch:3,name:'Lessons register',sub:'Asset · portfolio-wide',ic:'ti-book',bg:'#1D9E75',fg:'#fff'}
 ];
-const ACH={1:'S · Set up',2:'A · Answer',3:'C · Curate',4:'M · Close-out'};
+const ACH={1:'1 · Source and discover',2:'2 · Qualify',3:'3 · Respond'};
 function openArtefactsL(){
   const d=document.getElementById('drawerL');
   const row=a=>`<div class="arow" style="background:${a.bg}12;border-color:${a.bg}4D" onclick="closeDrawer();openArtefact('${a.id}')">
     <span class="aic" style="background:${a.bg};color:${a.fg}"><i class="ti ${a.ic}"></i></span>
     <span style="flex:1">${a.name}</span>
     <i class="ti ti-chevron-right chvw"></i></div>`;
-  const groups=[1,2,3,4].map(c=>
+  const groups=[1,2,3].map(c=>
     `<div class="pl">${ACH[c]}</div>`+ALIST.filter(a=>a.ch===c).map(row).join('')).join('');
   d.innerHTML=dhead('ti-template','var(--graybg)','var(--grayd)','Artefacts','')
   +`<div class="sbody">`+groups+`</div>`;
@@ -541,14 +683,17 @@ function openArtefactsL(){
 }
 
 const NEXT={
- s1:[['','s2']], s2:[['','a1']], a1:[['','a2']], a2:[['','a3']], a3:[['','a4']],
- a4:[['approve','a5'],['rework','a3']],
- a5:[['','c1']],
- c1:[['','m1']],
- c2:[['informs','a2']],
- m1:[['','m2']],
- m2:[['next round','a1'],['concluded','closeout']],
- closeout:[['','done']]
+ s1:[['','g1']],
+ g1:[['bid','q1'],['monitor','watch'],['no bid','close']],
+ watch:[['renewal','s1']],
+ q1:[['','q2']], q2:[['','g2']],
+ g2:[['pursue','r1'],['with partners','p1'],['decline','close']],
+ p1:[['','r1']],
+ r1:[['narrative','r2'],['commercial','r4']],
+ r2:[['','r3']], r3:[['','r5']], r4:[['','r5']],
+ r5:[['','r6']], r6:[['','l1']],
+ l1:[['','g3']],
+ g3:[['won','handoff'],['lost','done']]
 };
 function nextRows(id){
   const nx=NEXT[id]||[];
@@ -568,19 +713,27 @@ function setSide(visible){
 function renderChapnav(){
   const c=document.getElementById('chapnav');
   if(!CHAPNAV){c.style.display='none';return;}
-  const ends=['s2','a5','c1','done'];
-  const doneArr=ends.map(id=>{const n=NODES.find(x=>x.id===id);return n&&n.r.st==='done';});
+  /* Chapter 3 is DRAWN as two bands (Build, Finalise) but stays ONE chapter,
+     so the nav shows three chips, not four. `band` is the scroll target. */
+  const CHAPTERS=[
+    {band:0, short:'1 · Source',  ends:['g1']},
+    {band:1, short:'2 · Qualify', ends:['g2']},
+    {band:2, short:'3 · Respond', ends:['handoff','done']}
+  ];
+  const doneArr=CHAPTERS.map(ch=>ch.ends.some(id=>{
+    const n=NODES.find(x=>x.id===id); return n&&n.r.st==='done';}));
   const firstOpen=doneArr.indexOf(false);
   const key=MODE+RUN+doneArr.join('')+firstOpen;
   if(c.dataset.key===key)return;
   c.dataset.key=key;
-  c.innerHTML=BANDS.map((b,i)=>{
+  c.innerHTML=CHAPTERS.map((ch,i)=>{
     const live=MODE==='run'&&!isPrev();
     const isDone=live&&doneArr[i];
     const cur=live&&!isDone&&i===firstOpen;
     const badge=isDone?'<span class="chk"><i class="ti ti-check"></i></span>':cur?'<span class="cur"></span>':'';
-    return `<span class="${cur?'curlab':''}${isDone?' donelab':''}" onclick="gotoChapter(${i})">${badge}${b.short}</span>`;}).join('');
+    return `<span class="${cur?'curlab':''}${isDone?' donelab':''}" onclick="gotoChapter(${ch.band})">${badge}${ch.short}</span>`;}).join('');
 }
+
 let Z=1;
 function gotoChapter(i){
   const b=BANDS[i], sc=document.querySelector('.scroll');
@@ -589,31 +742,11 @@ function gotoChapter(i){
 }
 const AVA={
  agent:{ic:'ti-sparkles',bg:'#1F1F1D',fg:'#F9DD5A',name:'AI Assistant'},
- caitlin:{txt:'C',bg:'#1D9E75',fg:'#fff',name:'Kishen'},
+ caitlin:{txt:'A',bg:'#EF9F27',fg:'#412402',name:'Archie'},
  client:{txt:'J',bg:'#0F6E56',fg:'#fff',name:'J. Ruggles'}
 };
-const ACTIVITY=[
- ['1 JULY 2026',[
-  ['09:01','caitlin','<span class="mut">started with the</span> <b>Demand Mapping Deliverable</b> <span class="mut">for Spains Hall</span>'],
-  ['09:02','agent','<span class="mut">started</span> <b>Run #1</b> <span class="mut">from blueprint v1.0, cautious mode, Kishen owning</span>'],
-  ['09:02','agent','<span class="mut">minted the</span> <b>questionnaire</b> <span class="mut">for J. Ruggles, 6 of 14 fields pre-filled</span>'],
-  ['09:03','agent','<span class="mut">drafted the</span> <b>kick-off brief</b> <span class="mut">and emailed it to Kishen</span>'],
-  ['10:00','caitlin','<span class="mut">held the</span> <b>kick-off call</b> <span class="mut">· 40 min</span>',
-   'Scope confirmed: 400 ha floodplain meadow, nature market income. The 14-item input list agreed with James.'],
-  ['14:18','caitlin','<span class="mut">approved the</span> <b>questionnaire email</b>'],
-  ['14:20','agent','<span class="mut">sent it · acknowledged 15:02 ·</span> <b>wait clock started</b>']]],
- ['3 JULY 2026',[
-  ['11:34','client','<span class="mut">submitted</span> <b>6 of 14 items</b> <span class="mut">through the questionnaire</span>']]],
- ['6 JULY 2026',[
-  ['09:00','agent','<span class="mut">sent the</span> <b>first chase</b> <span class="mut">· friendly tone, as scheduled</span>']]],
- ['8 JULY 2026',[
-  ['08:52','client','<span class="mut">sent the</span> <b>tenure map</b> <span class="mut">by email reply instead of the questionnaire</span>'],
-  ['08:53','agent','<span class="mut">filed it, mapped to the checklist ·</span> <b>12 of 14</b>']]],
- ['9 JULY 2026',[
-  ['09:02','agent','<span class="mut">ran the</span> <b>completeness check</b> <span class="mut">· failed · gaps: site boundary, grazing agreement</span>'],
-  ['09:05','agent','<span class="mut">drafted the</span> <b>gap reminder</b> <span class="mut">· in Gmail, Kishen to review</span>',
-   'Hi James, thanks for everything so far, 12 of 14 items are in and looking great. Two things would unlock the next step: the site boundary shapefile and the grazing agreement for the east parcels.']]]
-];
+const ACTIVITY=[];
+
 const DOCV={
  mgmt:{ic:'ti-file-text',name:'estate_management_plan.pdf',body:`
   <h2>Estate Management Plan</h2><div class="dvsub">Evenlode Landscape Recovery · prepared by the estate · 38 pages</div>
@@ -662,71 +795,90 @@ function openContentsDoc(){
     <div class="dprov">${note}</div>`;
   const sec=(num,title,body)=>`<div class="dsec"><div class="dh2"><span class="dnum">${num}</span>${title}</div>${body}</div>`;
   let body;
-  body=`<div class="dchips"><span class="dchip"><b>Status</b> draft blueprint</span><span class="dchip"><b>Runs</b> none yet</span><span class="dchip"><b>Champion</b> Kishen</span></div>`
-  +sec(1,'Protocol and setup',`<div class="dghost">Roles, SLAs, tag taxonomy and capture channels for the raise.<br>Written by Initialise the Q&A Log and Seed the Answer Library.</div>`)
-  +sec(2,'Q&A Log',`<div class="dghost">One row per question: verbatim text, tags, status, SLA clock, dataroom reference, audit trail.<br>Written by the Capture, Triage, Draft, Approve and Respond loop.</div>`)
-  +sec(3,'Answer Library',`<div class="dghost">Canonical approved answers, layered Portfolio / Programme / Investor.<br>Seeded from the ELR material, grown by Promote to the Library, kept honest by the Freshness review.</div>`)
-  +sec(4,'Packs and close-out',`<div class="dghost">Per-investor DD packs, IC preparation packs, BFP extracts, and the close-out stats.<br>Written by Compile the Q&A pack and Close out the thread.</div>`);
+  body=`<div class="dchips"><span class="dchip"><b>Status</b> draft blueprint</span><span class="dchip"><b>Runs</b> none yet</span><span class="dchip"><b>Champion</b> Archie</span></div>`
+  +sec(1,'Opportunity and decision',`<div class="dghost">The pipeline record, the triage call and the written rationale behind it.<br>Written by Log new opportunity and Triage.</div>`)
+  +sec(2,'Qualification',`<div class="dghost">Requirements extract, relationship scan, competency gap matrix, Battenburg score and the rating.<br>Written by Collate tender pack, Score effort and reward and Rating.</div>`)
+  +sec(3,'Bid pack',`<div class="dghost">Evidence map, drafted answers, price and supply route, then the assembled pack as submitted.<br>Written by the Respond chapter, from Build bid hub through Assemble and submit.</div>`)
+  +sec(4,'After action',`<div class="dghost">Award, buyer feedback, competitor intelligence, and what got promoted to the answer bank and the lessons register.<br>Written by Run after action, before the Outcome gate routes the instance to delivery or to closed.</div>`);
   d.innerHTML=`<div class="dclose" onclick="closeDoc()"><i class="ti ti-x" style="font-size:17px;color:var(--ink2)"></i></div>
   <div class="docwrap">
-    <div class="dlab">Investor Q&A Log · Contents · Draft</div>
-    <div class="dtitle">Untitled raise</div>
-    <div class="dsub">The Log and Library this blueprint will assemble, one instance per capital raise.</div>
+    <div class="dlab">Tender to Bid · Contents · Draft</div>
+    <div class="dtitle">Untitled tender</div>
+    <div class="dsub">What this blueprint assembles, one instance per tender. Sourcing and the Assets run continuously behind it.</div>
     ${body}
   </div>`;
   d.style.display='block';
 }
 
 const STEPARTS={
- s1:{0:['protocol'],3:['logtpl']},
- s2:{0:['elrfaq','ddlogs'],4:['library']},
- a1:{0:['logtpl']},
- a2:{0:['matcher']},
- a3:{0:['library']},
- a4:{0:['checker']},
- a5:{2:['logtpl']},
- c1:{2:['library']},
- c2:{1:['library']},
- m1:{1:['packgen']},
- closeout:{1:['stats']}
+ s1:{0:['sources'],3:['pipeline']},
+ g1:{2:['rationale']},
+ watch:{0:['pipeline']},
+ close:{1:['rationale']},
+ q1:{0:['packman'],1:['spec'],3:['crm']},
+ q2:{0:['gapmatrix'],1:['battenburg'],2:['lessons']},
+ g2:{0:['battenburg'],2:['rationale']},
+ p1:{0:['partners']},
+ r1:{0:['hub'],4:['cvs']},
+ r2:{0:['evidence'],1:['cases'],3:['evmap']},
+ r3:{0:['answerbank'],2:['answerbank']},
+ r4:{1:['ratecard']},
+ r5:{0:['naming'],2:['answerbank']},
+ r6:{0:['bidpack'],1:['bidpack']},
+ g3:{0:['pipeline']},
+ l1:{0:['pipeline'],1:['aar'],3:['answerbank'],5:['lessons']}
 };
 const STEPLOG={};
 const STEPWHO={
- s1:['agent','human','human','agent','human'],
- s2:['agent','agent','agent','agent','human'],
- a1:['agent','agent','human','agent'],
- a2:['agent','agent','agent','agent','human'],
- a3:['agent','human','human','agent'],
- a4:['agent','human','human'],
- a5:['det','det','det'],
- c1:['agent','agent','agent','agent','human'],
- c2:['agent','agent','human'],
- m1:['agent','agent','human'],
- m2:['human','human'],
- closeout:['agent','agent','human']
+ s1:['det','det','det','det','human'],
+ g1:['agent','human','human'],
+ watch:['human','det','det'],
+ close:['human','det'],
+ q1:['det','agent','agent','det','human'],
+ q2:['agent','agent','agent','human','human'],
+ g2:['human','human','human'],
+ p1:['agent','human','human'],
+ r1:['det','det','det','human','det'],
+ r2:['agent','agent','agent','human','human'],
+ r3:['agent','agent','agent','det','human'],
+ r4:['human','agent','human','human'],
+ r5:['det','human','human','human','human'],
+ r6:['det','det','det','human','det'],
+ g3:['human','human'],
+ l1:['human','human','human','agent','agent','agent']
 };
 function initSteps(){
   NODES.forEach(n=>{
     if(!n.form||typeof (n.form.steps||[])[0]!=="string")return;
     const w=STEPWHO[n.id]||[], a=STEPARTS[n.id]||{}, l=STEPLOG[n.id]||{};
     n.form.steps=n.form.steps.map((t,i)=>({
-      t, who:w[i]||'agent', ownerN:'Kishen',
+      t, who:w[i]||'agent', ownerN:'Archie',
       arts:a[i]?[...a[i]]:[], log:l[i]||null,
       inst:'', guard:'', prod:''
     }));
   });
   const g=(id,i,k,v)=>{const n=NODES.find(x=>x.id===id);if(n&&n.form.steps[i])n.form.steps[i][k]=v;};
-  g('a1',2,'ownerN','Deal lead');
-  g('a3',1,'ownerN','Routed SME');
-  g('a3',2,'ownerN','Routed SME');
-  g('a5',0,'guard','Client-facing sends always need a human tap');
-  g('a1',0,'inst','Log the question exactly as asked, from email, the dataroom Q&A module, or a meeting transcript. Tag investor, stage, instrument, source and date.');
+  g('r1',3,'ownerN','Bid lead');
+  g('r2',3,'ownerN','Bid lead');
+  g('r2',4,'ownerN','Bid lead');
+  g('r3',4,'ownerN','Bid lead');
+  g('r4',0,'ownerN','Pricing lead');
+  g('r4',2,'ownerN','Pricing lead');
+  g('r4',3,'ownerN','Pricing lead');
+  g('r5',1,'ownerN','Vertical lead');
+  g('r5',2,'ownerN','Red team');
+  g('r5',3,'ownerN','Bid lead');
+  g('r5',4,'ownerN','Vertical lead');
+  g('r6',3,'ownerN','Bid lead');
+  g('g1',1,'guard','No call closes without a written reason');
+  g('r5',0,'guard','Nothing enters review unnamed or unversioned');
+  g('s1',0,'inst','Aggregator alerts, portal notices, framework mini-comps and relationship leads all land as one record shape, so nothing depends on which inbox it arrived in.');
+  g('r3',0,'inst','Prefer bank entries tagged Won for this bid type. Where nothing matches, say so rather than stretching a near miss.');
 }
-
 
 function sendDraft(){
   closeComposer();
-  toast('Prototype: approved answers would be sent and logged against the question record');
+  toast('Prototype: the clarification would be sent and logged against the pipeline record');
 }
 function openComposer(){
   const c=document.getElementById('composer');
@@ -757,9 +909,7 @@ function openArtefact(id){
     <div class="prev">${a.prev}</div>
     <div class="pl">Used by</div>
     <button class="abtn" onclick="closeModal();openNode('${a.nid}')"><i class="ti ti-topology-star-3" style="color:var(--ink2)"></i> ${a.node}<i class="ti ti-chevron-right" style="margin-left:auto;color:var(--ink3)"></i></button>
-    ${a.id==='packgen'
-      ?`<button class="cta" onclick="location.href='investor-qa-pack-example.html'">Open example Q&A pack · the Output</button>`
-      :`<button class="cta" onclick="toast('Prototype: the artefact editor is not wired for this Deliverable yet')">Open in artefact editor</button>`}
+    <button class="cta" onclick="toast('Prototype: the artefact editor is not wired for this Workflow yet')">Open in artefact editor</button>
   </div>`;
   m.style.display='flex';
 }
@@ -914,9 +1064,9 @@ function setZoom(v){
   w.style.transform=`translateY(-50%) scale(${Z})`;
 }
 const TEAM=[
- {n:'Kishen',c:'#1D9E75',captain:true,live:true,seen:'now'},
- {n:'Alex',c:'#378ADD',live:false,seen:'yesterday'},
- {n:'Tim',c:'#EF9F27',live:false,seen:'3 days ago'}
+ {n:'Archie',c:'#EF9F27',captain:true,live:true,seen:'now'},
+ {n:'Cat',c:'#7F77DD',live:false,seen:'yesterday'},
+ {n:'Thomas',c:'#378ADD',live:false,seen:'2 days ago'}
 ];
 function avEl(m,extra){
   if(m.agent)return `<span class="av${extra||''}" style="background:#1F1F1D"><i class="ti ti-sparkles" style="font-size:13px;color:#F9DD5A"></i></span>`;
@@ -1012,7 +1162,7 @@ if(localStorage.getItem('gyDelOpen')==='0'){
 
 const DEMOAV={
  agent:{ic:'ti-sparkles',bg:'#3A2E14',fg:'#F9DD5A',n:'AI Assistant'},
- gy:{txt:'CT',bg:'#FAEEDA',fg:'#854F0B',n:'Kishen'},
+ gy:{txt:'AR',bg:'#FAEEDA',fg:'#854F0B',n:'Archie'},
  client:{txt:'JR',bg:'#E1F5EE',fg:'#0F6E56',n:'J. Ruggles'}
 };
 const DEMOSTEPS=[];
@@ -1106,7 +1256,7 @@ function focusNode(id){
 }
 function playDemo(){
   if(DEMOT!==null||DEMOSNAP){stopDemo();return;}
-  if(MODE!=='run'||RUN!=='spains'){MODE='run';RUN='spains';}
+  if(MODE!=='run'){MODE='run';}
   DEMOSNAP=JSON.stringify(NODES.map(n=>n.r));
   BANDSNAP=JSON.stringify(BANDS.map(b=>({cur:!!b.cur,run:b.run})));
   NODES.forEach(n=>{n.r=n.id==='start'?{st:'done',sub:''}:{st:'pending',sub:'',dim:true};});
@@ -1236,7 +1386,7 @@ renderAll();
     var setCrumb=function(){var el=document.getElementById('crumbTitle');if(el&&d.n)el.textContent=d.n;};
     setCrumb();
     if(typeof renderTabs==='function'){var _rt=renderTabs;renderTabs=function(){_rt.apply(this,arguments);setCrumb();};}
-    var COL={'Caitlin':'#1D9E75','Harry':'#EF9F27','Katia':'#7F77DD','Emily':'#378ADD','Josh':'#639922','Izzie':'#D4537E','Trade lead':'#3B82F6','Kishen':'#215274','Thomas':'#378ADD'};
+    var COL={'Caitlin':'#1D9E75','Harry':'#EF9F27','Katia':'#7F77DD','Emily':'#378ADD','Josh':'#639922','Izzie':'#D4537E','Trade lead':'#3B82F6','Kishen':'#215274','Archie':'#EF9F27','Cat':'#7F77DD','Thomas':'#378ADD'};
     if(typeof TEAM!=='undefined'&&Array.isArray(TEAM)){
       TEAM.length=0;
       TEAM.push({n:(d.champ||'Caitlin'),c:COL[d.champ]||'#1D9E75',captain:true,live:true,seen:'now'});

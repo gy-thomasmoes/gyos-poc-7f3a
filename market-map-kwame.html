@@ -373,7 +373,7 @@ var NATINFRA=[
 var map=L.map('map',{zoomControl:false,attributionControl:true,minZoom:5}).setView([52.9,-1.6],6);
 L.control.zoom({position:'topleft'}).addTo(map);
 var bases={
-  map:L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap · &copy; CARTO'}),
+  map:L.tileLayer((window.gyCartoTiles?gyCartoTiles('light_all'):'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'),{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap · &copy; CARTO'}),
   terrain:L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,subdomains:'abc',attribution:'&copy; OpenTopoMap (CC-BY-SA)'}),
   sat:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles &copy; Esri, Maxar, Earthstar Geographics'})
 };

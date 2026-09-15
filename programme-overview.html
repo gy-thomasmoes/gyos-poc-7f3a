@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{
   --bg:#FCFAF4; --card:#FFFFFF; --line:#ECE7DB; --line2:#DED8CA;
@@ -67,13 +69,25 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .hsub span{display:inline-flex;align-items:center;gap:6px}
 .hsub .ti{font-size:16px;color:var(--ink3)}
 
-.statstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:38px}
+.statstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:38px}
+.stat.click{cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.stat.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(26,12,18,.06)}
+@media(max-width:1100px){.statstrip{grid-template-columns:repeat(3,1fr)}}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 18px;box-shadow:0 1px 2px rgba(26,12,18,.03)}
 .stat .sl{font-size:13px;color:var(--ink3);font-weight:500}
 .stat .sn{font-size:27px;font-weight:500;letter-spacing:-.01em;margin-top:5px;font-family:var(--serif)}
 .stat .sn small{font-size:15px;color:var(--ink3);font-weight:500;font-family:var(--sans)}
 
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:start}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.secthead{display:flex;align-items:baseline;gap:12px;font-family:var(--serif);font-size:21px;font-weight:500;letter-spacing:-.01em;margin:46px 2px 18px;padding-bottom:11px;border-bottom:1px solid var(--line)}
+.secthead .sub{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;font-size:13px;font-weight:400;color:var(--ink3)}
+.secthead+.block{margin-top:0}
+.wfprog{margin-top:7px;display:flex;align-items:center;gap:9px}
+.wfbar{flex:1;min-width:0;max-width:220px;height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
+.wfbar i{display:block;height:100%;border-radius:999px;background:var(--ink2)}
+.wfnum{font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
+.two .block+.block{margin-top:0}
+.two+.block{margin-top:34px}
 .block+.block{margin-top:34px}
 .blabel{display:flex;align-items:baseline;gap:11px;margin-bottom:13px;padding:0 2px}
 .blabel h2{font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:-.01em}
@@ -106,17 +120,37 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
 .av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex:none}
 .di{width:30px;height:30px;border-radius:8px;background:var(--bluebg);color:var(--blued);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.rmore{padding:12px 18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2);cursor:pointer}
+.rmore:hover{color:var(--ink);background:#FBF8EF}
+.prank{font-size:13px;color:var(--ink3);width:12px;flex:none;font-variant-numeric:tabular-nums}
+.pval{font-size:13.5px;font-weight:600;flex:none}
+.pval.none{font-weight:400;color:var(--ink3)}
 
-.col-side{position:sticky;top:26px}
 .kv{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 18px;box-shadow:0 1px 2px rgba(26,12,18,.03)}
 .kvr{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:14px}
 .kvr:first-child{border-top:none}
 .kvr .k{color:var(--ink3)}
 .kvr .v{color:var(--ink);font-weight:500;text-align:right}
 .side2{margin-top:26px}
+.esrow{display:flex;align-items:flex-start;gap:13px;padding:15px 18px;background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:8px;box-shadow:0 1px 2px rgba(26,12,18,.03);cursor:pointer}
+.esrow:hover{border-color:var(--line2)}
+.esrow .em{flex:1;min-width:0}
+.esnm{font-weight:600;font-size:15px;letter-spacing:-.01em}
+.essub{font-size:12.5px;color:var(--ink3);margin-top:1px}
+.sitemaphd{display:flex;align-items:baseline;gap:9px;padding:14px 18px 10px;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.sitemaphd small{font-weight:400;font-size:12.5px;color:var(--ink3)}
+.sitemap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(26,12,18,.03);margin-bottom:8px}
+#siteMapFallback{display:block;width:100%;height:auto;background:#FBFAF5}
+#siteMap{height:290px;width:100%;background:#FBFAF5}
+.pclabel{font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);white-space:nowrap;background:none;border:none;box-shadow:none;padding:0}
+.pclabel::before{display:none}
+.leaflet-control-attribution{font-size:10px!important;background:rgba(255,255,255,.75)!important}
+.sitekey{display:flex;gap:18px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink2)}
+.sitekey span{display:inline-flex;align-items:center;gap:7px}
+.sitekey i{width:10px;height:10px;border-radius:3px;flex:none}
 
 @media(max-width:960px){.statstrip{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:900px){.grid{grid-template-columns:1fr;gap:30px}.col-side{position:static}.wrap{padding:32px 22px 90px}}
+@media(max-width:900px){.two{grid-template-columns:1fr}.wrap{padding:32px 22px 90px}}
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:60;display:none;max-width:80vw}
 </style>
 </head>
@@ -125,6 +159,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 <div class="shell">
 <script>window.GYNAV={"active":"overview","arts":"demand"};</script>
 <script src="gy-nav.js"></script>
+<script src="gy-projects.js"></script>
+<script src="gy-sites.js"></script>
+<script src="gy-calendar.js"></script>
+<script src="gy-inventory.js"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -140,84 +178,113 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
   <header class="hero">
     <h1 class="hello">Evenlode Landscape Recovery</h1>
     <div class="hsub">
-      <span><i class="ti ti-map-pin"></i> Essex, England · 400 ha</span>
+      <span><i class="ti ti-map-pin"></i> Oxfordshire, England · 187.8 ha</span>
       <span><i class="ti ti-user"></i> James Ruggles</span>
       <span><i class="ti ti-sparkles"></i> Caitlin Ciceri</span>
+      <span><i class="ti ti-calendar"></i> Started Jul 2026</span>
     </div>
   </header>
 
   <div class="statstrip">
-    <div class="stat" onclick="location.href='deliverables-landing.html'" style="cursor:pointer"><div class="sl">Workflows</div><div class="sn">1 <small>live</small></div></div>
-    <div class="stat"><div class="sl">Open items</div><div class="sn">6</div></div>
-    <div class="stat"><div class="sl">Input complete</div><div class="sn">12<small> / 14</small></div></div>
-    <div class="stat" onclick="location.href='documents-overview.html'" style="cursor:pointer"><div class="sl">Documents</div><div class="sn">5</div></div>
+    <div class="stat click" onclick="location.href='deliverables-landing.html'"><div class="sl">Workflows</div><div class="sn">1 <small>live</small></div></div>
+    <div class="stat click" onclick="location.href='projects.html'"><div class="sl">Projects</div><div class="sn" id="stProj">9</div></div>
+    <div class="stat click" onclick="location.href='sites.html'"><div class="sl">Sites</div><div class="sn">7</div></div>
+    <div class="stat click" onclick="location.href='inventory-overview.html'"><div class="sl">Inventory</div><div class="sn"><span id="stUnits">1,450</span> <small>units</small></div></div>
+    <div class="stat click" onclick="location.href='documents-overview.html'"><div class="sl">Documents</div><div class="sn">5</div></div>
   </div>
 
-  <div class="grid">
-    <div class="col-main">
-
-      <section class="block">
-        <div class="blabel"><h2>Needs you now</h2></div>
-        <div class="prio">
-          <div class="ptag"><span class="pd"></span> Demand Mapping · Send Questionnaire</div>
-          <div class="ptitle">Send the questionnaire to James Ruggles</div>
-          <div class="ractions">
-            <button class="btn primary" onclick="location.href='demand-mapping-canvas-prototype.html'">Open the draft email</button>
-            <button class="btn soft" onclick="location.href='demand-mapping-canvas-prototype.html'">View workflow</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="block">
-        <div class="blabel"><h2>Workflows</h2><span class="cnt">3</span><span class="act" onclick="location.href='deliverables-landing.html'">View all</span></div>
-        <div class="list">
-          <div class="hrow" onclick="location.href='demand-mapping-canvas-prototype.html'"><span class="dot" style="background:var(--green)"></span><div class="rmain"><div class="rtag">Caitlin · Programme-wide</div><div class="rtitle">Demand Mapping</div></div><div class="rwhen">Live</div></div>
-          <div class="hrow" onclick="location.href='investor-qa-log-canvas-prototype.html'"><span class="dot" style="background:var(--amber)"></span><div class="rmain"><div class="rtag">Kishen · Capital</div><div class="rtitle">Investor Q&amp;A Log</div></div><div class="rwhen">Draft</div></div>
-          <div class="hrow" onclick="toast('Market Readiness Assessment is not in this prototype yet')"><span class="dot" style="background:var(--line2)"></span><div class="rmain"><div class="rtag">Trade lead · Trade</div><div class="rtitle">Market Readiness Assessment</div></div><div class="rwhen">In design</div></div>
-        </div>
-      </section>
-
-      <section class="block">
-        <div class="blabel"><h2>Recent activity</h2><span class="act" onclick="toast('This would open the full activity log')">View all</span></div>
-        <div class="list">
-          <div class="hrow"><div class="rmain"><div class="rtitle">Client submitted 6 of 14 items</div></div><div class="rwhen">Wed 09:05</div></div>
-          <div class="hrow"><div class="rmain"><div class="rtitle">Tenure map filed from an email reply</div></div><div class="rwhen">Wed 08:52</div></div>
-          <div class="hrow"><div class="rmain"><div class="rtitle">Caitlin approved the questionnaire</div></div><div class="rwhen">Mon 14:18</div></div>
-          <div class="hrow"><div class="rmain"><div class="rtitle">Questionnaire link created, 6 answers pre-filled</div></div><div class="rwhen">Mon 14:09</div></div>
-        </div>
-      </section>
-
-    </div>
-
-    <aside class="col-side">
-      <div class="blabel"><h2>Details</h2></div>
-      <div class="kv">
-        <div class="kvr"><span class="k">Owner</span><span class="v">James Ruggles</span></div>
-        <div class="kvr"><span class="k">GY lead</span><span class="v">Caitlin Ciceri</span></div>
-        <div class="kvr"><span class="k">Location</span><span class="v">Essex, England</span></div>
-        <div class="kvr"><span class="k">Size</span><span class="v">400 ha</span></div>
-        <div class="kvr"><span class="k">Started</span><span class="v">Jul 2026</span></div>
-        <div class="kvr"><span class="k">Status</span><span class="v" style="color:var(--greend)">Live</span></div>
-      </div>
-
-      <div class="side2">
-        <div class="blabel"><h2>People</h2><span class="act" onclick="toast('This would open the People page')">View all</span></div>
-        <div class="list">
-          <div class="hrow"><span class="av" style="background:var(--amberbg);color:var(--amberd)">JR</span><div class="rmain"><div class="rtitle">James Ruggles</div><div class="rtag">Owner</div></div></div>
-          <div class="hrow"><span class="av" style="background:var(--graybg);color:var(--grayd)">LA</span><div class="rmain"><div class="rtitle">Land agent</div><div class="rtag">Tenure</div></div></div>
-          <div class="hrow"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span><div class="rmain"><div class="rtitle">Caitlin Ciceri</div><div class="rtag">GY lead</div></div></div>
+    <section class="block">
+      <div class="blabel"><h2>Needs you now</h2></div>
+      <div class="prio">
+        <div class="ptag"><span class="pd"></span> Customer Demand Mapping · Send Questionnaire</div>
+        <div class="ptitle">Send the questionnaire to James Ruggles</div>
+        <div class="ractions">
+          <button class="btn primary" onclick="location.href='demand-mapping-canvas-prototype.html'">Open the draft email</button>
+          <button class="btn soft" onclick="location.href='demand-mapping-canvas-prototype.html'">View workflow</button>
         </div>
       </div>
+    </section>
 
-      <div class="side2">
-        <div class="blabel"><h2>Documents</h2><span class="act" onclick="location.href='documents-overview.html'">View all</span></div>
-        <div class="list">
-          <div class="hrow" onclick="location.href='documents-overview.html'"><span class="di"><i class="ti ti-file-text"></i></span><div class="rmain"><div class="rtitle">estate_management_plan.pdf</div><div class="rtag">via questionnaire · 2 Jul</div></div></div>
-          <div class="hrow" onclick="location.href='documents-overview.html'"><span class="di"><i class="ti ti-file-text"></i></span><div class="rmain"><div class="rtitle">tenure_map.pdf</div><div class="rtag">email reply · Wed</div></div></div>
-        </div>
+  <div class="secthead">Manage</div>
+
+  <div class="two">
+<section class="block">
+      <div class="blabel"><h2>Inventory</h2><span class="act" onclick="location.href='inventory-overview.html'">View all</span></div>
+      <div id="esRows"></div>
+    </section>
+<section class="block">
+      <div class="blabel"><h2>Workflows</h2><span class="cnt">3</span><span class="act" onclick="location.href='deliverables-landing.html'">View all</span></div>
+      <div class="list">
+        <div class="hrow" onclick="location.href='demand-mapping-canvas-prototype.html'"><span class="dot" style="background:var(--green)"></span><div class="rmain"><div class="rtitle">Customer Demand Mapping</div><div class="wfprog"><span class="wfbar"><i style="width:37.5%"></i></span><span class="wfnum">6 of 16 steps</span></div></div><div class="rwhen">Live</div></div>
+        <div class="hrow" onclick="location.href='investor-qa-log-canvas-prototype.html'"><span class="dot" style="background:var(--amber)"></span><div class="rmain"><div class="rtitle">Investor Q&amp;A Log</div><div class="wfprog"><span class="wfnum">12 steps · not started</span></div></div><div class="rwhen">Draft</div></div>
+        <div class="hrow" onclick="toast('Market Readiness Assessment is not in this prototype yet')"><span class="dot" style="background:var(--line2)"></span><div class="rmain"><div class="rtitle">Market Readiness Assessment</div></div><div class="rwhen">In design</div></div>
       </div>
-    </aside>
+    </section>
   </div>
+
+<section class="block">
+      <div class="blabel"><h2>Projects and sites</h2><span class="cnt" id="psCnt">9 · 7</span><span class="act" onclick="location.href='projects.html'">View all</span></div>
+      <div class="sitemap">
+        <div class="sitemaphd">Sites</div>
+        <div id="siteMap"></div>
+        <svg id="siteMapFallback" viewBox="0 0 320 148" role="img" aria-label="Site map of the Evenlode holding">
+          <rect x="0" y="0" width="320" height="148" fill="#FBFAF5"/>
+          <path d="M0,96 C46,84 74,108 114,100 C158,91 186,112 230,104 C268,97 292,106 320,100" fill="none" stroke="#CFE0EC" stroke-width="6" stroke-linecap="round"/>
+          <path d="M0,96 C46,84 74,108 114,100 C158,91 186,112 230,104 C268,97 292,106 320,100" fill="none" stroke="#8FB8D4" stroke-width="1.4" stroke-linecap="round"/>
+          <polygon points="18,22 96,14 108,54 30,64" fill="#F1EFE8" stroke="#9C9A92" stroke-width="1.3"/>
+          <polygon points="104,14 168,20 172,58 112,54" fill="#FAEEDA" stroke="#C67F16" stroke-width="1.3"/>
+          <polygon points="182,18 268,26 262,62 178,56" fill="#E3F2EB" stroke="#1E8A63" stroke-width="1.3"/>
+          <polygon points="196,66 288,70 284,110 200,102" fill="#E3F2EB" stroke="#1E8A63" stroke-width="1.3"/>
+          <polygon points="216,114 300,118 296,140 214,136" fill="#E3F2EB" stroke="#1E8A63" stroke-width="1.3"/>
+          <polygon points="24,74 112,66 118,96 30,104" fill="#E3F2EB" stroke="#1E8A63" stroke-width="1.3"/>
+          <polygon points="34,110 146,106 150,138 38,140" fill="#F1EFE8" stroke="#9C9A92" stroke-width="1.3"/>
+          <text x="26" y="40" font-size="9" fill="#5F5E5A" font-family="system-ui">Fifield</text>
+          <text x="118" y="40" font-size="9" fill="#854F0B" font-family="system-ui">Charlbury</text>
+          <text x="188" y="44" font-size="9" fill="#0F6E56" font-family="system-ui">Ascott</text>
+          <text x="204" y="90" font-size="9" fill="#0F6E56" font-family="system-ui">Wychwood</text>
+          <text x="222" y="132" font-size="9" fill="#0F6E56" font-family="system-ui">Bruern</text>
+          <text x="34" y="92" font-size="9" fill="#0F6E56" font-family="system-ui">Coldron</text>
+          <text x="44" y="128" font-size="9" fill="#5F5E5A" font-family="system-ui">Kingham Hill</text>
+        </svg>
+        <div class="sitekey">
+          <span id="skBng"><i style="background:#1E8A63"></i>BNG units</span>
+          <span id="skWcc"><i style="background:#C67F16"></i>Woodland carbon</span>
+          <span id="skSoc"><i style="background:#7A6248"></i>Soil carbon</span>
+          <span id="skNone"><i style="background:#9C9A92"></i>Unallocated</span>
+        </div>
+      </div>
+      <div class="list" id="projRows"></div>
+      <div class="rmore" onclick="location.href='projects.html'" id="allProj">All 9 projects, in selling-priority order ›</div>
+    </section>
+
+<div class="secthead">Records</div>
+
+  <div class="two">
+    <section class="block">
+      <div class="blabel"><h2>Documents</h2><span class="act" onclick="location.href='documents-overview.html'">View all</span></div>
+      <div class="list">
+        <div class="hrow" onclick="location.href='document.html?mode=deliverable'"><span class="di" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-checkup-list"></i></span><div class="rmain"><div class="rtitle">Customer Demand Mapping</div><div class="rtag">6 of 16 steps</div></div><div class="rwhen">Draft</div></div>
+        <div class="hrow" onclick="location.href='document.html?mode=deliverable'"><span class="di" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-checkup-list"></i></span><div class="rmain"><div class="rtitle">Investor Q&amp;A pack</div><div class="rtag">Not started</div></div></div>
+        <div class="hrow" onclick="location.href='documents-overview.html'"><span class="di"><i class="ti ti-file-text"></i></span><div class="rmain"><div class="rtitle">estate_management_plan.pdf</div><div class="rtag">2 Jul</div></div></div>
+        <div class="hrow" onclick="location.href='documents-overview.html'"><span class="di"><i class="ti ti-file-text"></i></span><div class="rmain"><div class="rtitle">tenure_map.pdf</div><div class="rtag">Wed</div></div></div>
+      </div>
+    </section>
+    <section class="block">
+      <div class="blabel"><h2>Meetings</h2><span class="cnt" id="mtgCnt"></span><span class="act" onclick="location.href='meeting-notes.html'">View all</span></div>
+      <div class="list" id="mtgRows"></div>
+    </section>
+  </div>
+
+    <section class="block">
+      <div class="blabel"><h2>Recent activity</h2><span class="act" onclick="location.href='activity-overview.html'">View all</span></div>
+      <div class="list">
+        <div class="hrow" onclick="location.href='activity-overview.html'"><div class="rmain"><div class="rtitle">Inventory sync completed</div><div class="rtag">40 BNG units verified</div></div><div class="rwhen">Wed 09:41</div></div>
+        <div class="hrow" onclick="location.href='activity-overview.html'"><div class="rmain"><div class="rtitle">Client submitted 6 of 14 items</div><div class="rtag">Customer Demand Mapping</div></div><div class="rwhen">Wed 09:05</div></div>
+        <div class="hrow" onclick="location.href='activity-overview.html'"><div class="rmain"><div class="rtitle">Tenure map filed from an email reply</div><div class="rtag">Documents</div></div><div class="rwhen">Wed 08:52</div></div>
+        <div class="hrow" onclick="location.href='activity-overview.html'"><div class="rmain"><div class="rtitle">Registry check completed</div><div class="rtag">No changes</div></div><div class="rwhen">Tue 06:00</div></div>
+        <div class="hrow" onclick="location.href='activity-overview.html'"><div class="rmain"><div class="rtitle">Caitlin approved the questionnaire</div><div class="rtag">Customer Demand Mapping</div></div><div class="rwhen">Mon 14:18</div></div>
+      </div>
+    </section>
 
 </div>
 </div>
@@ -227,6 +294,112 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+</script>
+<script>
+/* Projects: the top three by selling priority, straight off gy-projects.js.
+   projects.html renders the same list in full, so these can never disagree. */
+(function(){
+  /* Meetings: the next one due and the most recent past ones, off gy-calendar.js.
+     A meeting with a note opens it; one still owed a note says so. */
+  var el=document.getElementById('mtgRows');
+  if(!el || !window.GY_CAL_API) return;
+  var list = GY_CAL_API.forToday().concat(GY_CAL_API.upcoming(1)).concat(GY_CAL_API.past(2)).slice(0,4);
+  el.innerHTML = list.map(function(m){
+    var go = m.note ? "location.href='"+m.note+"'"
+           : m.state==='pending' ? "toast('Write the note for "+m.title.replace(/'/g,'')+"')"
+           : "location.href='meeting-notes.html'";
+    var st = m.note ? '<span style="color:var(--greend)">Note ready</span>'
+           : m.state==='pending' ? '<span style="color:var(--amberd)">Note not written</span>'
+           : '<span>'+m.attendees+'</span>';
+    return '<div class="hrow" onclick="'+go+'">'
+      +'<span class="di" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-'+(m.note?'note':'calendar-event')+'"></i></span>'
+      +'<div class="rmain"><div class="rtitle">'+m.title+'</div><div class="rtag">'+st+'</div></div>'
+      +'<div class="rwhen">'+(m.today?m.at:m.when)+'</div></div>';
+  }).join('');
+  var c=document.getElementById('mtgCnt');
+  if(c) c.textContent = GY_CAL_API.withNotes().length+' · '+GY_CAL_API.awaitingNote().length+' owed';
+})();
+(function(){
+  /* the stat strip reads the shared lists, so adding a project or a site moves it */
+  if(window.GY_PROJECTS_API){
+    var e1=document.getElementById('stProj'); if(e1) e1.textContent=GY_PROJECTS_API.count();
+    var e2=document.getElementById('stUnits');
+    if(e2) e2.textContent=(window.GY_INV_API
+      ? GY_INV_API.total('Evenlode')
+      : GY_PROJECTS_API.units()).toLocaleString();
+    var e4=document.getElementById('allProj');
+    if(e4) e4.textContent='All '+GY_PROJECTS_API.count()+' projects, in selling-priority order \u203a';
+    if(window.GY_SITES_API){
+      var e3=document.getElementById('psCnt');
+      if(e3) e3.textContent=GY_PROJECTS_API.count()+' \u00b7 '+GY_SITES_API.count();
+    }
+  }
+})();
+(function(){
+  if(!window.GY_SITES_API) return;
+  var A=GY_SITES_API, set=function(id,t){var e=document.getElementById(id); if(e) e.lastChild.textContent=t;};
+  set('skBng','BNG units · '+A.parcelsByEs('bng')+' parcels');
+  set('skWcc','Woodland carbon · '+A.parcelsByEs('wcc')+' parcels');
+  set('skSoc','Soil carbon · '+A.parcelsByEs('soc')+' parcels');
+  set('skNone','Unallocated · '+A.unallocatedParcels()+' parcels');
+})();
+(function(){
+  var el=document.getElementById('projRows');
+  if(!el || !window.GY_PROJECTS_API || !window.gyEsTile) return;
+  el.innerHTML = GY_PROJECTS_API.top(3).map(function(p){
+    return '<div class="hrow" onclick="location.href=\'projects.html\'">'
+      +'<span class="prank">'+p.rank+'</span>'
+      + gyEsTile(p.es, true)
+      +'<div class="rmain"><div class="rtitle">'+p.name+'</div>'
+      +'<div class="rtag">'+p.stage+' · '+p.units+' units</div></div>'
+      +'<div class="pval'+(p.value?'':' none')+'">'+(p.value||'not sellable yet')+'</div></div>';
+  }).join('');
+})();
+(function(){
+  var rows = window.GY_INV_API ? GY_INV_API.services().map(function(es){
+      var p=GY_INV_API.pipeline(es);
+      return [es, '', p.projected.u + p.available.u + p.reserved.u + p.sold.u,
+              p.available.u, p.sold.u];
+    }) : [];
+  var el = document.getElementById('esRows'); if(!el || !window.gyEsMeter) return;
+  el.innerHTML = rows.map(function(r){
+    var e = GY_ES[r[0]];
+    return '<div class="esrow" onclick="location.href=\'inventory-overview.html\'">' + gyEsTile(r[0])
+      + '<div class="em"><div class="esnm">' + e.name + '</div>'
+      + '<div class="essub">' + r[1] + '</div>'
+      + gyEsMeter(r[0], r[2], r[3], r[4]) + '</div></div>';
+  }).join('');
+})();
+</script>
+<script>
+/* Real basemap, real coordinates: the parcels are drawn over CARTO's muted
+   tiles, which sit better with the GY palette than standard OSM. If the tiles
+   cannot be reached the schematic underneath stays visible, so the card never
+   shows an empty box. */
+(function(){
+  var host = document.getElementById('siteMap'), fb = document.getElementById('siteMapFallback');
+  if(!host) return;
+  if(!window.L){ host.style.display = 'none'; return; }
+  if(fb) fb.style.display = 'none';
+  var ES = {bng:'#1E8A63', wcc:'#C67F16', soc:'#7A6248', none:'#9C9A92'};
+  var parcels = (window.GY_SITES_API ? GY_SITES_API.geo() : {type:"FeatureCollection",features:[]});
+  var map = L.map(host, {scrollWheelZoom:false, zoomSnap:0.25, zoomDelta:0.5});
+  L.tileLayer(window.gyCartoTiles ? gyCartoTiles('light_all') : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; OpenStreetMap contributors &copy; CARTO', subdomains:'abcd', maxZoom:19
+  }).addTo(map);
+  var layer = L.geoJSON(parcels, {
+    style: function(f){
+      var c = ES[f.properties.es] || '#6B6A64';
+      return {color:c, weight:2, fillColor:c, fillOpacity:.20, lineJoin:'round', lineCap:'round'};
+    },
+    onEachFeature: function(f, l){
+      l.bindTooltip(f.properties.ref, {permanent:true, direction:'center', className:'pclabel', opacity:1});
+      l.on('click', function(){ location.href='sites.html'; });
+    }
+  }).addTo(map);
+  map.fitBounds(layer.getBounds(), {padding:[18,18]});
+  setTimeout(function(){ map.invalidateSize(); map.fitBounds(layer.getBounds(), {padding:[18,18]}); }, 250);
+})();
 </script>
 </body>
 </html>

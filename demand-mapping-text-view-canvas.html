@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Demand Mapping · Canvas prototype</title>
+<title>Customer S&D mapping: text view (experiment) · Canvas</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,11 +19,84 @@
 /* PDF export: keep groups whole across page breaks */
 .dgrp,.docrow,.dsec .cbox>div,.gbox>.grow{break-inside:avoid;page-break-inside:avoid}
 .dh2{break-after:avoid;page-break-after:avoid}
-.dsec{break-inside:auto;page-break-inside:auto}</style>
+.dsec{break-inside:auto;page-break-inside:auto}
+.vtoggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;margin-left:8px;vertical-align:middle}
+.vtoggle button{font:inherit;font-size:14px;font-weight:500;padding:8px 15px;border:none;background:transparent;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.vtoggle button .ti{font-size:15px}
+.vtoggle button.on{background:var(--dark);color:#fff}
+.main{position:relative}
+.textview{display:none;position:absolute;inset:0;overflow:auto;background:transparent;z-index:6}
+body.textmode .textview{display:block}
+body.textmode .scroll,body.textmode .side{visibility:hidden}
+body.textmode #chapnav{display:none}
+body.textmode .floatL{display:none}
+body.textmode #floatR .fpill,body.textmode #floatR .chip{display:none}
+body.textmode .accact{display:none}
+.tv-doc{display:flex;gap:40px;max-width:1080px;margin:0 auto;padding:64px 40px 120px;align-items:flex-start}
+.tv-toc{width:210px;flex:none;position:sticky;top:22px;display:flex;flex-direction:column;gap:1px}
+.tv-toc-lab{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;padding:2px 10px 8px}
+.tv-toc a{display:block;font-size:13.5px;line-height:1.35;color:var(--ink3);text-decoration:none;padding:7px 10px;border-left:2px solid var(--line);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .12s,border-color .12s,background .12s}
+.tv-toc a:hover{color:var(--ink2);background:rgba(31,31,29,.04)}
+.tv-toc a.on{color:var(--ink);border-left-color:var(--amber,#EF9F27);font-weight:500}
+@media (max-width:1080px){.tv-toc{display:none}}
+.tv-wrap{flex:1;min-width:0;max-width:760px;line-height:1.6;color:var(--ink)}
+.tv-title{font-family:'Manner','Spectral',Georgia,serif;font-size:33px;font-weight:500;letter-spacing:-.01em;margin:0 0 8px}
+.tv-sub{color:var(--ink3);font-size:15px;margin:0 0 56px}
+.tv-stage{margin:0 0 22px;border:1px solid var(--line);border-radius:16px;padding:26px 30px;background:var(--card,#fff)}
+.tv-stage .tv-node:last-child{margin-bottom:0}
+.tv-h2{font-family:'Manner','Spectral',Georgia,serif;font-size:22px;font-weight:500;letter-spacing:-.005em;color:var(--ink);margin:0 0 24px;display:flex;align-items:baseline;gap:10px}
+.tv-pill{font-size:11px;font-weight:600;letter-spacing:.02em;border-radius:999px;padding:2px 10px;position:relative;top:-2px}
+.tv-pill.live{background:#E4F0DC;color:#3F5C2E}
+.tv-pill.prog{background:#FCEFD3;color:#8A5A12}
+.tv-pill.none{background:var(--graybg,#EFEDE8);color:var(--ink3)}
+.tv-node{margin:0 0 42px}
+.tv-node-h{display:flex;align-items:baseline;gap:8px}
+.tv-node-t{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.tv-badge{font-size:14px;font-weight:400;color:var(--ink3)}
+.tv-node-sub{color:var(--ink3);font-size:15px;margin-top:4px}
+.tv-info{color:var(--ink3);font-size:15px;margin-top:8px}
+.tv-lab{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:22px 0 10px}
+.tv-tasks{margin:0;padding-left:24px}
+.tv-tasks li{margin:0 0 18px}
+.tv-tasks li::marker{color:var(--ink3)}
+.tv-task-t{font-weight:400;font-size:15px}
+.tv-exec{font-size:15px;color:var(--ink3);margin-top:3px}
+.tv-prompt{font-size:15px;color:var(--ink3);margin-top:8px;padding-left:14px;border-left:2px solid var(--line);line-height:1.6}
+.tv-list{margin:0;padding-left:24px}
+.tv-list li{margin:8px 0;font-size:15px}
+.tv-list li::marker{color:var(--ink3)}
+.tv-from{color:var(--ink3)}
+.tv-meta{font-size:15px;color:var(--ink3);margin-top:10px}
+.tv-checklist{list-style:none;margin:0;padding:0}
+.tv-item{display:flex;gap:11px;align-items:flex-start;margin:0 0 18px}
+.tv-item-b{flex:1;min-width:0}
+.tv-check{flex:none;width:22px;height:22px;margin-top:0;padding:0;border:none;background:transparent;color:var(--ink3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.tv-check .ti{font-size:21px}
+.tv-check:hover{color:var(--ink2)}
+.tv-check.on{color:#639922}
+.tv-item.done .tv-task-t{color:var(--ink3);text-decoration:line-through}
+.tv-tasks-drawer{margin-top:18px}
+.tv-tlbox .tacc:first-of-type{border-radius:14px 14px 0 0}
+.tv-tlbox .tacc:last-of-type{border-radius:0 0 14px 14px}
+.tv-check{border:none;background:transparent;color:var(--ink3);cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px}
+.tv-check .ti{font-size:19px}
+.tv-check:hover{color:var(--ink2)}
+.tv-check.on{color:#639922}
+.tv-tacc.done .acctitle{color:var(--ink3);text-decoration:line-through}
+.tv-gate{display:flex;flex-direction:column;gap:8px;margin:16px 0 4px}
+.tv-gopt{text-align:left;font:inherit;font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;display:flex;gap:8px;align-items:baseline;line-height:1.4}
+.tv-gopt:hover{border-color:#c9c6bd}
+.tv-gopt.on{border-color:#639922;background:#F1F7EA}
+.tv-gopt-k{font-weight:600;text-transform:capitalize;color:var(--ink)}
+.tv-nav-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:9px;vertical-align:middle}
+.tv-nav-dot.prog{background:var(--amber,#EF9F27)}
+.tv-nav-dot.none{background:#d9d6cd}
+.tv-nav-ic.done{color:#639922;font-size:14px;margin-right:7px;vertical-align:middle}
+.tv-nav-next{font-size:11.5px;color:var(--ink3);padding:3px 10px 9px 21px;line-height:1.4}</style>
 </head>
 <body>
 
-<script>window.GYNAV={"active": "demand-mapping", "arts": "demand"};</script>
+<script>window.GYNAV={"active": "demand-textview", "arts": "demand"};</script>
 <script src="gy-nav.js"></script>
 <script src="gy-canvas.js"></script>
 <script src="gy-canvas-engine.js"></script>
@@ -75,6 +148,7 @@
     </div>
   </div>
   <div class="side"><div class="sidein" id="side"></div></div>
+  <div class="textview" id="textview"></div>
 </div>
 
 
@@ -484,9 +558,10 @@ function renderTabs(){
   } else {
     eb.style.display='none';
   }
-  document.getElementById('floatR').innerHTML = MODE==='run'
+  document.getElementById('floatR').innerHTML = (MODE==='run'
     ? (isPrev()?`<span class="chip" style="cursor:default;color:var(--amberd);border-color:#FAC775">Preview · no real project</span>`:'')
-      +`<span class="fpill" onclick="openNode(null);sideActivity()"><i class="ti ti-history" style="font-size:16px"></i> Activity</span>` : '';
+      +`<span class="fpill" onclick="openNode(null);sideActivity()"><i class="ti ti-history" style="font-size:16px"></i> Activity</span>` : '')
+    + viewToggleHtml();
   demoBtnLabel();
 }
 function updateResultBtn(){
@@ -1768,10 +1843,6 @@ document.addEventListener('keydown',e=>{
 renderAll();
 if(EMBED_DRAWER){
   openNode(EMBED_DRAWER);
-  // Host pages can switch the drawer to another node without reloading this page.
-  window.addEventListener('message',function(e){
-    if(e.data&&e.data.gy==='open'&&e.data.id) openNode(e.data.id);
-  });
   // The drawer's own X should close the drawer in the parent (Home) page.
   document.addEventListener('click',e=>{
     if(e.target.closest('.sh .x')){
@@ -1787,11 +1858,6 @@ if(EMBED_DRAWER){
     }
   },true);
 }
-/* ?zoom=NN : start the canvas at a reduced scale. Used by the document page's
-   workflow drawer, where the flow is a calm backdrop, not the workspace. */
-try{ var _qz=new URLSearchParams(location.search).get('zoom');
-     if(_qz) setZoom(parseFloat(_qz)); }catch(_){}
-
 (function(){
   if(EMBED_DRAWER)return;
   const sc=document.querySelector('.scroll');
@@ -1834,6 +1900,85 @@ try{ var _qz=new URLSearchParams(location.search).get('zoom');
     }
   }catch(e){}
 })();
+
+/* Experiment: Canvas | Text view toggle. Text view is a read-only textual
+   render of the same stages, steps, tasks and links shown on the canvas. */
+var VIEW='canvas';
+var TVKEY='tvDone_textview';
+var TVDONE={}; try{TVDONE=JSON.parse(localStorage.getItem(TVKEY)||'{}');}catch(e){TVDONE={};}
+function tvToggle(id,i){ var k=id+':'+i; if(TVDONE[k])delete TVDONE[k]; else TVDONE[k]=1; try{localStorage.setItem(TVKEY,JSON.stringify(TVDONE));}catch(e){} renderTextView(); }
+var TVGKEY='tvGate_textview';
+var TVGATE={}; try{TVGATE=JSON.parse(localStorage.getItem(TVGKEY)||'{}');}catch(e){TVGATE={};}
+function tvGate(id,choice){ TVGATE[id]=choice; try{localStorage.setItem(TVGKEY,JSON.stringify(TVGATE));}catch(e){} renderTextView(); }
+function tvActiveIdx(n){ var s=(n.form&&n.form.steps)||[]; for(var i=0;i<s.length;i++){ if(!TVDONE[n.id+':'+i])return i; } return -1; }
+function tvTasks(n){
+  var e=tvEsc, f=n.form, steps=f.steps, act=tvActiveIdx(n), h='<div class="tlbox accbox tv-tlbox">';
+  steps.forEach(function(sp,i){
+    var t=typeof sp==='string'?sp:(sp.t||'');
+    var who=typeof sp==='object'?(sp.who||'human'):'human';
+    var owner=(typeof sp==='object'&&sp.ownerN)?sp.ownerN:(f.owner||'Caitlin');
+    var inst=typeof sp==='object'?(sp.inst||''):'';
+    var done=!!TVDONE[n.id+':'+i], isAct=(i===act), open=isAct;
+    var lab=who==='det'?'Fully Automated':who==='agent'?'AI Assistant':owner;
+    h+='<div class="tacc tv-tacc'+(done?' done':'')+(isAct?' cur':'')+(open?' open':'')+'">'
+      +'<div class="acchead" onclick="taskAcc(this)"><span class="tn2'+(done?' d':isAct?' a':'')+'">'+(i+1)+'</span><div class="tlc3">'
+      +'<div class="tlt"><span class="svgray">'+whoIc({who:who,ownerN:owner})+e(lab)+'</span>'
+      +'<span class="accright"><button class="tv-check'+(done?' on':'')+'" onclick="event.stopPropagation();tvToggle(\''+n.id+'\','+i+')" title="'+(done?'Completed':'Mark complete')+'"><i class="ti ti-circle-check"></i></button><i class="ti ti-chevron-down accch"></i></span></div>'
+      +'<div class="acctitle">'+e(t)+'</div></div></div>'
+      +'<div class="accbody">'+(inst?'<div class="accwhat">'+e(inst)+'</div>':'')
+      +'<div class="accact"><button class="cta'+(done?' ghost':'')+'" onclick="event.stopPropagation();tvToggle(\''+n.id+'\','+i+')"><i class="ti ti-circle-check" style="font-size:15px"></i> '+(done?'Completed':'Mark as complete')+'</button></div>'
+      +'</div></div>';
+  });
+  h+='</div>';
+  if(f.done)h+='<div class="outbox" style="margin-top:24px"><div class="outdone"><span class="outico" style="background:'+n.t.bg+';color:'+n.t.fg+'"><i class="ti ti-flag-check"></i></span><span>'+e(f.done)+'</span></div></div>';
+  return h;
+}
+function viewToggleHtml(){
+  return '<span class="vtoggle"><button class="'+(VIEW==='canvas'?'on':'')+'" onclick="setView(\'canvas\')"><i class="ti ti-layout-grid"></i> Canvas</button>'
+    +'<button class="'+(VIEW==='text'?'on':'')+'" onclick="setView(\'text\')"><i class="ti ti-align-left"></i> Text</button></span>';
+}
+function syncViewToggle(){ var fr=document.getElementById('floatR'); if(!fr)return; var b=fr.querySelectorAll('.vtoggle button'); if(b[0])b[0].className=(VIEW==='canvas'?'on':''); if(b[1])b[1].className=(VIEW==='text'?'on':''); }
+function setView(v){ VIEW=v; document.body.classList.toggle('textmode', v==='text'); if(v==='text')renderTextView(); syncViewToggle(); }
+function tvEsc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function tvType(n){ if(n.rows)return 'Decision'; if(n.info&&!n.form)return 'Terminal'; if(n.form&&n.form.exec)return n.form.exec; return 'Step'; }
+function tvNode(n){
+  var e=tvEsc, h='<div class="tv-node">';
+  h+='<div class="tv-node-h"><span class="tv-node-t">'+e(n.title)+'</span></div>';
+  var sub=(n.d&&n.d.sub)||(n.form&&n.form.what)||'';
+  if(sub)h+='<div class="tv-node-sub">'+e(sub)+'</div>';
+  if(n.info&&!n.form)return h+'<div class="tv-info">'+e(n.info)+'</div></div>';
+  if(n.rows){
+    var chosen=TVGATE[n.id];
+    h+='<div class="tv-gate">'+n.rows.map(function(r){var on=chosen===r[0];return '<button class="tv-gopt'+(on?' on':'')+'" onclick="tvGate(\''+n.id+'\',\''+e(r[0])+'\')"><span class="tv-gopt-k">'+e(r[0])+'</span> '+e(r[1])+'</button>';}).join('')+'</div>';
+  }
+  if(n.form&&Array.isArray(n.form.steps)&&n.form.steps.length){ h+='<div class="tv-tasks-drawer">'+tvTasks(n)+'</div>'; }
+  return h+'</div>';
+}
+function tvRunCls(run){ run=(run||'').toLowerCase(); if(run.indexOf('progress')>=0)return 'prog'; if(run==='live'||run==='done'||run.indexOf('complete')>=0)return 'live'; return 'none'; }
+function tvGo(si){ var sec=document.getElementById('tv-s'+si), sc=document.getElementById('textview'); if(sec&&sc)sc.scrollTo({top:Math.max(0,sec.offsetTop-12),behavior:'smooth'}); }
+function tvSyncActive(){ var sc=document.getElementById('textview'); if(!sc)return; var top=sc.scrollTop+90, secs=sc.querySelectorAll('.tv-stage'), idx=0; secs.forEach(function(s,i){ if(s.offsetTop<=top)idx=i; }); sc.querySelectorAll('.tv-toc a').forEach(function(a,i){ a.className=(i===idx?'on':''); }); }
+function renderTextView(){
+  var el=document.getElementById('textview'); if(!el)return;
+  var bands=BANDS.slice().sort(function(a,b){return a.x-b.x;});
+  var used={}, nav='<div class="tv-toc-lab">On this page</div>', body='';
+  bands.forEach(function(b,si){
+    var ns=NODES.filter(function(n){return n.x>=b.x && n.x < b.x+b.w;}).sort(function(a,c){return a.x-c.x;});
+    ns.forEach(function(n){used[n.id]=1;});
+    var _cls=tvRunCls(b.run);
+    var _ic=_cls==='live'?'<i class="ti ti-circle-check tv-nav-ic done"></i>':'<span class="tv-nav-dot '+_cls+'"></span>';
+    nav+='<a onclick="tvGo('+si+')">'+_ic+'<span>'+tvEsc(b.t)+'</span></a>';
+    if(_cls==='prog'&&bands[si+1])nav+='<div class="tv-nav-next">On completion → '+tvEsc(bands[si+1].t)+'</div>';
+    body+='<section class="tv-stage" id="tv-s'+si+'"><h2 class="tv-h2">'+tvEsc(b.t)+'</h2>';
+    ns.forEach(function(n){ body+=tvNode(n); });
+    body+='</section>';
+  });
+  var rest=NODES.filter(function(n){return !used[n.id];}).sort(function(a,c){return a.x-c.x;});
+  if(rest.length){ var si=bands.length; nav+='<a onclick="tvGo('+si+')">Other</a>'; body+='<section class="tv-stage" id="tv-s'+si+'"><h2 class="tv-h2">Other</h2>'; rest.forEach(function(n){body+=tvNode(n);}); body+='</section>'; }
+  var titleEl=document.getElementById('crumbTitle');
+  el.innerHTML='<div class="tv-doc"><nav class="tv-toc">'+nav+'</nav>'
+    +'<div class="tv-wrap">'+body+'</div></div>';
+  el.onscroll=tvSyncActive; tvSyncActive();
+}
 </script>
 </div>
 </body>

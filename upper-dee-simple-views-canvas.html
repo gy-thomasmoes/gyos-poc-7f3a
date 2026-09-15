@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upper Dee · simple views (experiment)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css">
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --blued:#185FA5; --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D;
+  --serif:'Manner','Spectral',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px}
+.top{display:flex;align-items:center;gap:14px;padding:14px 22px;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;color:var(--ink2);cursor:pointer;text-decoration:none}
+.back:hover{color:var(--ink)}
+.ttl{font-size:17px;font-weight:600}
+.ttl small{font-weight:400;color:var(--ink3);margin-left:8px;font-size:13px}
+.spacer{flex:1}
+.seg{display:inline-flex;background:var(--graybg);border-radius:999px;padding:3px}
+.seg button{border:none;background:transparent;font-size:14px;font-weight:500;color:var(--ink2);padding:7px 15px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.seg button .ti{font-size:15px}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(31,31,29,.12)}
+.od{display:inline-flex;align-items:center;gap:7px;font-size:14.5px;font-weight:600;color:#fff;background:#4C6EF5;border:none;border-radius:999px;padding:9px 16px;cursor:pointer}
+.od .ti{font-size:15px}
+.wrap{max-width:760px;margin:0 auto;padding:26px 22px 80px}
+.lede{font-size:15px;color:var(--ink2);line-height:1.5;margin-bottom:22px}
+.hero{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.01em;margin-bottom:4px}
+.herosub{font-size:15px;color:var(--ink2);margin-bottom:22px}
+
+/* shared step bits */
+.chk{width:20px;height:20px;flex:none;border:1.6px solid var(--line2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:transparent;cursor:pointer;transition:all .12s}
+.chk .ti{font-size:14px}
+.chk:hover{border-color:var(--ink3)}
+.chk.on{background:var(--greend);border-color:var(--greend);color:#fff}
+.who{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2)}
+.av{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+
+/* LIST view */
+.phase{margin-bottom:22px}
+.ph-h{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.ph-n{width:26px;height:26px;border-radius:50%;background:var(--dark);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.ph-t{font-size:17px;font-weight:600}
+.ph-t small{font-weight:400;color:var(--ink3);margin-left:8px;font-size:13.5px}
+.ph-c{margin-left:auto;font-size:12.5px;color:var(--ink3)}
+.box{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.row{display:flex;gap:11px;align-items:flex-start;padding:13px 16px}
+.row + .row{border-top:1px solid var(--line)}
+.row.done{background:var(--greenbg)}
+.rc{flex:1;min-width:0}
+.rt{font-size:15px;color:var(--ink);line-height:1.35}
+.row.done .rt{color:var(--ink2)}
+.rs{font-size:13px;color:var(--ink3);margin-top:2px;line-height:1.4}
+.rmeta{margin-top:7px}
+.verdict{margin-top:22px;border:1px solid #F0E3A8;background:#FBF3D6;border-radius:14px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.verdict .ti{color:#B7891F;font-size:20px;flex:none;margin-top:1px}
+.verdict b{font-family:var(--serif);font-weight:500;font-size:18px}
+.verdict p{font-size:14px;color:var(--ink2);margin-top:3px}
+.foot{margin-top:24px;display:flex;justify-content:center}
+
+/* FLOW view */
+.flow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:6px 2px 14px}
+.blk{flex:0 0 220px;border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px 15px}
+.blk.done{background:var(--greenbg);border-color:#D8E4C7}
+.blk.now{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+.blk-h{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+.blk-n{width:24px;height:24px;border-radius:50%;background:var(--dark);color:#fff;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.blk-t{font-size:15.5px;font-weight:600}
+.blk-sub{font-size:12.5px;color:var(--ink3);margin-bottom:10px}
+.blk-st{font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;margin-bottom:11px}
+.st-done{background:var(--greenbg);color:var(--greend)}
+.st-now{background:var(--amberbg);color:var(--amberd)}
+.st-todo{background:var(--graybg);color:var(--grayd)}
+.mini{display:flex;gap:8px;align-items:flex-start;padding:6px 0}
+.mini + .mini{border-top:1px dashed var(--line)}
+.mini .chk{width:17px;height:17px;border-radius:5px}
+.mini .chk .ti{font-size:12px}
+.mt{font-size:13px;color:var(--ink);line-height:1.3}
+.mini.done .mt{color:var(--ink3);text-decoration:line-through}
+.arrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:var(--ink3)}
+.arrow .ti{font-size:18px}
+
+/* GUIDED view */
+.gw{max-width:560px;margin:8px auto 0}
+.pbar{height:6px;background:var(--graybg);border-radius:999px;overflow:hidden;margin-bottom:20px}
+.pbar span{display:block;height:100%;background:var(--green);transition:width .2s}
+.gcount{font-size:13px;color:var(--ink3);font-weight:600;letter-spacing:.02em;text-transform:uppercase;margin-bottom:8px}
+.gcard{border:1px solid var(--line);border-radius:16px;background:#fff;padding:26px 24px}
+.gphase{font-size:13px;color:var(--green);font-weight:600;margin-bottom:8px}
+.gtitle{font-family:var(--serif);font-size:24px;font-weight:500;line-height:1.2}
+.gsub{font-size:15px;color:var(--ink2);margin-top:8px;line-height:1.5}
+.gwho{margin-top:14px}
+.gact{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.gbtn{flex:1;min-width:150px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;border-radius:12px;padding:12px 16px;cursor:pointer;border:none}
+.gbtn.pri{background:var(--greend);color:#fff}
+.gbtn.pri.undo{background:#fff;color:var(--greend);border:1.5px solid var(--greend)}
+.gbtn.sec{background:#4C6EF5;color:#fff}
+.gnav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.gnav button{background:none;border:none;color:var(--ink2);font-size:14.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px}
+.gnav button:disabled{color:var(--line2);cursor:default}
+.gdone{text-align:center;padding:30px 20px}
+.gdone .ti{font-size:40px;color:var(--green)}
+.gdone h3{font-family:var(--serif);font-weight:500;font-size:22px;margin-top:10px}
+.gdone p{color:var(--ink2);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="back" href="deliverables-landing.html"><i class="ti ti-arrow-left"></i> Workflows</a>
+  <span class="ttl">Upper Dee<small>simple views · experiment</small></span>
+  <span class="spacer"></span>
+  <span class="seg" id="seg">
+    <button data-v="list" class="on" onclick="setView('list')"><i class="ti ti-list-check"></i> List</button>
+    <button data-v="flow" onclick="setView('flow')"><i class="ti ti-arrow-right"></i> Flow</button>
+    <button data-v="guided" onclick="setView('guided')"><i class="ti ti-wand"></i> Guided</button>
+  </span>
+  
+</div>
+
+<div class="wrap">
+  <div class="hero grt-h">Customer Demand Mapping</div>
+  <div class="herosub">The same workflow, shown three ways. Pick whichever is easiest to follow.</div>
+  <div id="view"></div>
+</div>
+
+<script>
+var NOTION='https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7';
+function openDeliverable(){ window.location.href=NOTION.replace(/^https?:\/\//,'notion://'); }
+
+var ROSTER={
+  Caitlin:{i:'C',bg:'#D8ECE6',fg:'#0F6E56'},
+  George:{i:'G',bg:'#F6E7CF',fg:'#854F0B'},
+  Katia:{i:'K',bg:'#EADFF5',fg:'#5B3E86'}
+};
+function av(name){var p=ROSTER[name]||{i:(name||'?').charAt(0),bg:'#E6E4DE',fg:'#5B5A54'};return '<span class="who"><span class="av" style="background:'+p.bg+';color:'+p.fg+'">'+p.i+'</span>'+name+'</span>';}
+
+var PHASES=[
+  {name:'Project context', plain:'About the project', steps:[
+    {t:'Capture project context', who:'Caitlin', sub:'Objective, site, interventions, outcomes and constraints'},
+    {t:'Note open questions', who:'Caitlin', sub:'TEV needed? demand-led or supply-led? data gaps'}
+  ]},
+  {name:'Supply', plain:'What it can sell', steps:[
+    {t:'Map candidate services', who:'Caitlin', sub:'Which markets the interventions could sell into'},
+    {t:'Pull market context', who:'Caitlin', sub:'Readiness, sizing and dynamics from the ES rule books'}
+  ]},
+  {name:'Demand', plain:'Who would buy it', steps:[
+    {t:'Map beneficiaries', who:'Caitlin', sub:'Who has assets in or around the catchment'},
+    {t:'Run demand tools', who:'George', sub:'GPAP, abstraction licences and published-target scans'},
+    {t:'Compile buyers per market', who:'Caitlin', sub:'Ranked buyers with their relationship status'}
+  ]}
+];
+var VERDICT={name:'Verdict', plain:'Is it worth pursuing?', sub:'Weigh supply against demand and decide: pursue or park.'};
+
+var DONE={};                 // key "p-s" -> true
+function key(p,s){return p+'-'+s;}
+function isDone(p,s){return !!DONE[key(p,s)];}
+function toggle(p,s){DONE[key(p,s)]=!DONE[key(p,s)];render();}
+function phaseDone(p){return PHASES[p].steps.every(function(_,s){return isDone(p,s);});}
+function phaseAny(p){return PHASES[p].steps.some(function(_,s){return isDone(p,s);});}
+
+var VIEW='list';
+function setView(v){VIEW=v;GIDX=Math.min(GIDX,FLAT.length-1);document.querySelectorAll('#seg button').forEach(function(b){b.classList.toggle('on',b.dataset.v===v);});render();}
+
+/* flat list for guided mode */
+var FLAT=[]; PHASES.forEach(function(ph,pi){ph.steps.forEach(function(st,si){FLAT.push({pi:pi,si:si});});});
+var GIDX=0;
+
+function chk(p,s){return '<span class="chk'+(isDone(p,s)?' on':'')+'" onclick="event.stopPropagation();toggle('+p+','+s+')"><i class="ti ti-check"></i></span>';}
+
+function render(){
+  if(VIEW==='list')return renderList();
+  if(VIEW==='flow')return renderFlow();
+  return renderGuided();
+}
+
+function renderList(){
+  var h='';
+  PHASES.forEach(function(ph,pi){
+    var n=ph.steps.filter(function(_,s){return isDone(pi,s);}).length;
+    h+='<div class="phase"><div class="ph-h"><span class="ph-n">'+(pi+1)+'</span><span class="ph-t">'+ph.name+'<small>'+ph.plain+'</small></span><span class="ph-c">'+n+' of '+ph.steps.length+'</span></div><div class="box">';
+    ph.steps.forEach(function(st,si){
+      h+='<div class="row'+(isDone(pi,si)?' done':'')+'">'+chk(pi,si)+'<div class="rc"><div class="rt">'+st.t+'</div><div class="rs">'+st.sub+'</div><div class="rmeta">'+av(st.who)+'</div></div></div>';
+    });
+    h+='</div></div>';
+  });
+  h+='<div class="verdict"><i class="ti ti-trophy"></i><div><b>'+VERDICT.name+'</b><p>'+VERDICT.sub+'</p></div></div>';
+  h+='<div class="foot"></div>';
+  document.getElementById('view').innerHTML=h;
+}
+
+function renderFlow(){
+  var h='<div class="flow">';
+  PHASES.forEach(function(ph,pi){
+    var done=phaseDone(pi), now=!done&&(pi===0||phaseDone(pi-1)||phaseAny(pi));
+    var stt=done?'<span class="blk-st st-done"><i class="ti ti-check"></i> done</span>':now?'<span class="blk-st st-now">in progress</span>':'<span class="blk-st st-todo">to do</span>';
+    h+='<div class="blk'+(done?' done':now?' now':'')+'"><div class="blk-h"><span class="blk-n">'+(pi+1)+'</span><span class="blk-t">'+ph.name+'</span></div><div class="blk-sub">'+ph.plain+'</div>'+stt;
+    ph.steps.forEach(function(st,si){
+      h+='<div class="mini'+(isDone(pi,si)?' done':'')+'">'+chk(pi,si)+'<div class="mt">'+st.t+'</div></div>';
+    });
+    h+='</div><div class="arrow"><i class="ti ti-chevron-right"></i></div>';
+  });
+  var allDone=PHASES.every(function(_,p){return phaseDone(p);});
+  h+='<div class="blk'+(allDone?' now':'')+'" style="flex:0 0 200px"><div class="blk-h"><i class="ti ti-trophy" style="color:#B7891F;font-size:20px"></i><span class="blk-t">Verdict</span></div><div class="blk-sub">'+VERDICT.plain+'</div></div>';
+  h+='</div>';
+  document.getElementById('view').innerHTML=h;
+}
+
+function renderGuided(){
+  var total=FLAT.length;
+  var doneCount=FLAT.filter(function(x){return isDone(x.pi,x.si);}).length;
+  if(GIDX>=total){
+    document.getElementById('view').innerHTML='<div class="gw"><div class="pbar"><span style="width:100%"></span></div><div class="gcard gdone"><i class="ti ti-circle-check"></i><h3>All steps done</h3><p>The mapping is ready. Open the deliverable to review it.</p><div class="gact" style="justify-content:center"></div></div><div class="gnav"><button onclick="GIDX='+(total-1)+';render()"><i class="ti ti-arrow-left"></i> Back</button><span></span></div></div>';
+    return;
+  }
+  var cur=FLAT[GIDX], ph=PHASES[cur.pi], st=ph.steps[cur.si], done=isDone(cur.pi,cur.si);
+  var h='<div class="gw">';
+  h+='<div class="pbar"><span style="width:'+Math.round(doneCount/total*100)+'%"></span></div>';
+  h+='<div class="gcount">Step '+(GIDX+1)+' of '+total+'</div>';
+  h+='<div class="gcard"><div class="gphase">'+(cur.pi+1)+' · '+ph.name+' ('+ph.plain+')</div><div class="gtitle">'+st.t+'</div><div class="gsub">'+st.sub+'</div><div class="gwho">'+av(st.who)+'</div>';
+  h+='<div class="gact">';
+  h+='';
+  h+='<button class="gbtn pri'+(done?' undo':'')+'" onclick="guidedMark()">'+(done?'<i class="ti ti-rotate"></i> Mark not done':'<i class="ti ti-check"></i> Mark done')+'</button>';
+  h+='</div></div>';
+  h+='<div class="gnav"><button '+(GIDX===0?'disabled':'')+' onclick="GIDX=Math.max(0,GIDX-1);render()"><i class="ti ti-arrow-left"></i> Back</button>';
+  h+='<button onclick="GIDX=Math.min(FLAT.length,GIDX+1);render()">'+(GIDX===total-1?'Finish':'Next')+' <i class="ti ti-arrow-right"></i></button></div>';
+  h+='</div>';
+  document.getElementById('view').innerHTML=h;
+}
+function guidedMark(){var cur=FLAT[GIDX];var was=isDone(cur.pi,cur.si);DONE[key(cur.pi,cur.si)]=!was;if(!was){GIDX=Math.min(FLAT.length,GIDX+1);}render();}
+
+render();
+</script>
+</body>
+</html>

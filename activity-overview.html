@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activity · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --blue:#378ADD; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px}
+.topbar{height:61px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:14px 22px;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .ti{font-size:19px;color:var(--ink2)}
+.title{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--line2);color:var(--ink)}
+.chip .ti{font-size:16px}
+.btn-dark{font-size:15px;font-weight:500;padding:9px 18px;border-radius:999px;background:var(--dark);color:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-dark .ti{font-size:16px;color:#fff}
+.spacer{flex:1}
+.shell{display:flex;height:100vh;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 12px 16px}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sarr{margin-left:auto;font-size:14px;color:var(--ink3);transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:var(--ink2)}
+.ssub .sitem.on{color:var(--ink)}
+.ssub.closed{display:none}
+.sarr.closed{transform:rotate(-90deg)}
+.snav.hid{display:none}
+.snavpeek{position:fixed;top:0;left:0;width:14px;height:100vh;z-index:44;display:none}
+body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;width:264px;z-index:45;border:1px solid var(--line);border-radius:0 14px 14px 0;box-shadow:0 12px 40px rgba(31,31,29,.18);animation:snavslide .16s ease}
+@keyframes snavslide{from{transform:translateX(-100%)}to{transform:none}}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px}
+.sworks .ti{font-size:15px;color:var(--ink3)}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:var(--graybg);color:var(--ink)}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:var(--ink);cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:var(--ink2)}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:var(--graybg);font-weight:500}
+.mainc{flex:1;overflow:auto;min-width:0}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.clink{color:var(--blued);cursor:pointer;font-size:14.5px}
+.clink:hover{text-decoration:underline}
+.lbl{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:18px 0 8px}
+.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
+.thead span{display:flex;align-items:center;gap:6px}
+.thead .ti{font-size:14px}
+.group{font-size:14px;color:var(--ink2);padding:14px 4px 6px;display:flex;align-items:center;gap:8px;font-weight:500}
+.count{font-size:12.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600}
+.row{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;font-size:15px}
+.row.click{cursor:pointer;transition:border-color .12s, box-shadow .12s}
+.row.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
+.name{display:flex;align-items:center;gap:12px;min-width:0}
+.tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;font-size:17px;background:var(--bluebg);color:var(--blued)}
+.tile .ti{font-size:18px}
+.nm{font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{display:block;font-weight:400;font-size:13px;color:var(--ink3)}
+.nm .mach{display:block;font-weight:400;font-size:12.5px;color:var(--ink3);margin-top:3px}
+.nm .mach i.ti{font-size:13px;margin-right:3px;vertical-align:-1px}
+.nm .mach span{margin-right:11px;white-space:nowrap}
+.dprog{display:flex;align-items:center;gap:9px}
+.dbar{flex:none;width:86px;height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
+.dbar i{display:block;height:100%;border-radius:999px;background:var(--ink2)}
+.dst{font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.groupnote{font-weight:400;color:var(--ink3);font-size:13px}
+.pill{font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--tealbg);color:var(--teald)}
+.src{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink2)}
+.src .ti{font-size:16px;color:var(--ink3)}
+.mut{color:var(--ink3);font-size:14.5px}
+/* doc viewer overlay (reused from the canvas prototype) */
+.dvov{position:fixed;inset:0;background:rgba(31,31,29,.45);z-index:70;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto}
+.dvov.open{display:flex}
+.dvbox{background:#fff;border-radius:16px;width:min(760px,100%);box-shadow:0 24px 64px rgba(31,31,29,.3);margin:auto}
+.dvhead{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);font-size:15px;font-weight:600}
+.dvhead .ti{font-size:18px;color:var(--ink2)}
+.dvhead .dvx{margin-left:auto;cursor:pointer;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.dvhead .dvx:hover{background:var(--graybg)}
+.dvpage{margin:24px;border:1px solid var(--line);border-radius:6px;padding:40px 46px;min-height:420px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.dvpage h2{font-family:Georgia,'Times New Roman',serif;font-size:24px;margin:0 0 4px}
+.dvpage .dvsub{font-size:14px;color:var(--ink3);margin-bottom:22px}
+.dvpage h3{font-size:15px;margin:20px 0 6px}
+.dvpage p{font-size:14.5px;line-height:1.7;color:var(--ink2);margin:0 0 10px}
+.dvfoot{padding:0 24px 18px;font-size:13px;color:var(--ink3);text-align:center}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+
+/* warm/Manner titles */
+:root{--serif:'Manner','Spectral',Georgia,serif}
+.title{font-weight:600}
+.grt-h{font-family:var(--serif);font-weight:500}
+.afilters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 4px}
+.afilter{font:inherit;font-size:13.5px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink2);cursor:pointer}
+.afilter:hover{border-color:var(--line2);color:var(--ink)}
+.afilter.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.aday{font-size:13px;color:var(--ink3);padding:22px 4px 10px;font-weight:500}
+.arow{display:flex;align-items:flex-start;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px}
+.arow.click{cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.arow.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
+.aico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;font-size:16px}
+.amain{flex:1;min-width:0}
+.atitle{font-weight:500;font-size:15px;letter-spacing:-.01em;line-height:1.35}
+.ameta{font-size:12.5px;color:var(--ink3);margin-top:4px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.awrote{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;background:var(--graybg);color:var(--grayd)}
+.awrote .ti{font-size:13px}
+.atime{font-size:12.5px;color:var(--ink3);flex:none;font-variant-numeric:tabular-nums;padding-top:2px}
+.anote{font-size:13.5px;color:var(--ink3);line-height:1.5;max-width:70ch;margin:4px 4px 0}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active": "activity", "arts": "demand"};</script>
+<script src="gy-nav.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-activity"></i>
+  <span class="title">Activity</span>
+</div>
+
+<div class="wrap">
+  <div class="anote">Every workflow run writes here, including the ones that produce no document. Activity is the authoritative trail of what happened in this programme.</div>
+  <div class="afilters">
+    <button class="afilter on" data-f="all" onclick="afilter(this)">Everything</button>
+    <button class="afilter" data-f="run" onclick="afilter(this)">Workflow runs</button>
+    <button class="afilter" data-f="wf" onclick="afilter(this)">Deliverable steps</button>
+    <button class="afilter" data-f="doc" onclick="afilter(this)">Documents</button>
+    <button class="afilter" data-f="person" onclick="afilter(this)">People</button>
+  </div>
+  <div class="aday" data-day>Wed 11 September</div>
+  <div class="arow" data-kind="run">
+    <span class="aico" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-refresh"></i></span>
+    <div class="amain"><div class="atitle">Inventory sync completed</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Inventory</span><span>Operational workflow · no document produced</span><span>40 BNG units moved to verified</span></div></div>
+    <div class="atime">09:41</div>
+  </div>
+  <div class="arow" data-kind="wf">
+    <span class="aico" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-forms"></i></span>
+    <div class="amain"><div class="atitle">Client submitted 6 of 14 items</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Deliverable</span><span>Customer Demand Mapping · step 4</span></div></div>
+    <div class="atime">09:05</div>
+  </div>
+  <div class="arow" data-kind="doc">
+    <span class="aico" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-mail"></i></span>
+    <div class="amain"><div class="atitle">Tenure map filed from an email reply</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Documents</span><span>Assistant · matched to the open questionnaire</span><span>tenure_map.pdf</span></div></div>
+    <div class="atime">08:52</div>
+  </div>
+  <div class="aday" data-day>Tuesday 10 September</div>
+  <div class="arow" data-kind="run">
+    <span class="aico" style="background:var(--graybg);color:var(--grayd)"><i class="ti ti-database"></i></span>
+    <div class="amain"><div class="atitle">Registry check completed</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Inventory</span><span>Operational workflow · no document produced</span><span>Natural England register, no changes</span></div></div>
+    <div class="atime">06:00</div>
+  </div>
+  <div class="arow" data-kind="wf">
+    <span class="aico" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-checkup-list"></i></span>
+    <div class="amain"><div class="atitle">To-do passed: baseline evidence attached</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Deliverable</span><span>Customer Demand Mapping · Caitlin</span><span>4 of 9 to-dos now complete</span></div></div>
+    <div class="atime">16:22</div>
+  </div>
+  <div class="aday" data-day>Monday 9 September</div>
+  <div class="arow" data-kind="person">
+    <span class="aico" style="background:var(--greenbg);color:var(--greend)"><i class="ti ti-circle-check"></i></span>
+    <div class="amain"><div class="atitle">Caitlin approved the questionnaire</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Deliverable</span><span>Customer Demand Mapping · step 3</span></div></div>
+    <div class="atime">14:18</div>
+  </div>
+  <div class="arow" data-kind="wf">
+    <span class="aico" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-link"></i></span>
+    <div class="amain"><div class="atitle">Questionnaire link created, 6 answers pre-filled</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Deliverable</span><span>Customer Demand Mapping · step 3</span></div></div>
+    <div class="atime">14:09</div>
+  </div>
+  <div class="arow" data-kind="run">
+    <span class="aico" style="background:var(--graybg);color:var(--grayd)"><i class="ti ti-refresh"></i></span>
+    <div class="amain"><div class="atitle">Buyer database refreshed</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Data platform</span><span>Operational workflow · no document produced</span><span>12 buyer records updated</span></div></div>
+    <div class="atime">06:00</div>
+  </div>
+  <div class="arow" data-kind="doc">
+    <span class="aico" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-file-text"></i></span>
+    <div class="amain"><div class="atitle">estate_management_plan.pdf received</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Documents</span><span>Client upload via the questionnaire</span></div></div>
+    <div class="atime">11:40</div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+function afilter(btn){
+  var f = btn.getAttribute('data-f');
+  [].slice.call(document.querySelectorAll('.afilter')).forEach(function(b){ b.classList.toggle('on', b===btn); });
+  [].slice.call(document.querySelectorAll('.arow')).forEach(function(r){
+    r.style.display = (f==='all' || r.getAttribute('data-kind')===f) ? '' : 'none';
+  });
+  [].slice.call(document.querySelectorAll('[data-day]')).forEach(function(d){
+    var any=false, n=d.nextElementSibling;
+    while(n && n.classList.contains('arow')){ if(n.style.display!=='none') any=true; n=n.nextElementSibling; }
+    d.style.display = any ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

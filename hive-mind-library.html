@@ -59,7 +59,8 @@ body.navhid .snav{display:none}
 
 /* ── cockpit ── */
 .scroll{flex:1;overflow:auto}
-.wrap{max-width:1060px;margin:0 auto;padding:34px 32px 60px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
 .grt{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .grt-h{font-size:27px;font-weight:700;letter-spacing:-.015em}
 .grt-sub{font-size:14.5px;color:var(--ink3);margin-top:4px}
@@ -296,7 +297,7 @@ const DELS=[
 document.getElementById('dels').innerHTML=DELS.map((d,i)=>`
  <div class="drow" onclick="DELS[${i}].go()">
    <span class="dic" style="background:${d.bg}">${d.em}</span>
-   <div style="flex:1;min-width:0"><div class="dname">${d.name}</div><div class="dmeta">${d.meta}</div></div>
+   <div style="flex:1;min-width:0"><div class="dname">${d.name}</div></div>
    <span class="dchip" style="background:${d.chip[1]};color:${d.chip[2]}">${d.chip[0]}</span>
    <i class="ti ti-chevron-right chvw"></i>
  </div>`).join('');

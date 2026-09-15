@@ -193,8 +193,9 @@ function accRowHtml(n,sp,i,s){
   const meta=stamp?('Completed on '+stamp):(s===''?('When: '+whenText):'');
   const det=[];
   if(toolChips)det.push(`<div class="accrow"><span class="acclab">Tools used</span><span class="acctools">${toolChips}</span></div>`);
-  if(sp.prod)det.push(`<div class="accrow"><span class="acclab">Output</span><span class="outchip"><span class="dt" style="background:${n.t.fg}"></span>${sp.prod}</span></div>`);
-  const isOpen=s==='a';
+  /* Output row removed across the POC */
+  const firstOpenTask=n.form.steps.findIndex((_,k)=>accStepState(n,k)!=='d');
+  const isOpen=s==='a'||((n.r.cur??-1)<0&&firstOpenTask>-1&&i===firstOpenTask);
   return `<div class="tacc${s==='a'?' cur':''}${s==='d'?' done':''}${isOpen?' open':''}">
     <div class="acchead" onclick="taskAcc(this)">${bdg}<div class="tlc3">
       <div class="tlt"><span class="svgray">${whoIc(sp)}${who}</span><span class="accright">${pill}<i class="ti ti-chevron-down accch"></i></span></div>
@@ -255,9 +256,7 @@ function tl(n){
   const box=`<div class="tlbox${acc?' accbox':''}">${h}</div>`;
   const ed=MODE==='design'?' class="steptxt" contenteditable spellcheck="false" onblur="stepDoneEd(this)"':'';
   const done=f.done?`<div class="outdone"><span class="outico" style="background:${n.t.bg};color:${n.t.fg}"><i class="ti ti-flag-check"></i></span><span${ed}>${f.done}</span></div>`:'';
-  const prodChips=f.produces.map(x=>`<span class="outchip"><span class="dt" style="background:${n.t.fg}"></span>${x}</span>`).join('');
-  const outChips=`<div class="outlbl">Produces</div><div class="outgrid">${prodChips}</div>`;
-  const outSec=`<div class="flabel">Output</div><div class="outbox">${done}${done&&f.produces.length?`<div class="outdiv"></div>`:''}${outChips}</div>`;
+  const outSec=done?`<div class="outbox" style="margin-top:24px">${done}</div>`:'';
   return box+outSec;
 }
 
@@ -340,8 +339,8 @@ function svPanelRender(n,sp,i,state,work){
   }else if(work){
     const sent=(state==='d');
     title=`<span class="sphttl"><span class="gtile" style="background:#1D9E75;color:#fff"><i class="ti ti-mail"></i></span><span class="sphnm">Questionnaire for James</span><span class="sphsub">· ${sent?'sent':'draft'}</span></span>`;
-    const minBtn=`<button class="svnav dk" onclick="svPaneMin()" title="Make smaller" aria-label="Make smaller"><i class="ti ti-arrows-diagonal-minimize-2" style="font-size:15px"></i></button>`;
-    const maxBtn=`<button class="svnav dk" onclick="svPaneMax()" title="Make larger" aria-label="Make larger"><i class="ti ti-arrows-diagonal" style="font-size:15px"></i></button>`;
+    const minBtn=`<button class="svnav dk" onclick="svPaneMin()" title="Dock to the bottom" aria-label="Dock to the bottom"><i class="ti ti-layout-bottombar-expand" style="font-size:16px"></i></button>`;
+    const maxBtn=`<button class="svnav dk" onclick="svPaneMax()" title="Expand to full screen" aria-label="Expand to full screen"><i class="ti ti-maximize" style="font-size:15px"></i></button>`;
     actions=minBtn+maxBtn+closeBtn;
   }else{
     title=`<span class="svplab" style="margin:0;color:#8A867E">Preview</span>`;
@@ -351,6 +350,7 @@ function svPanelRender(n,sp,i,state,work){
   <div class="spbody"><div id="svprevwrap" style="flex:1;display:flex;flex-direction:column">${work||(arts.length?svBigPrev(arts[SVSTEP.art]):`<div class="svempty"><i class="ti ti-eye-off"></i>Nothing to preview for this task</div>`)}</div></div>`;
   el.classList.remove('min','max');
   el.classList.add('on');
+  el.classList.toggle('svedit', !!work); // drawer editor when composing (editable); previewer otherwise
   svPanelPos(el);
 }
 function svPanelPos(el){
@@ -481,7 +481,7 @@ function openStepView(i,art,pane){
     ['Actions',`<button class="cta" style="margin:0" onclick="${actClick}">${actLabel}</button>`],
     ['When',`<span style="color:var(--ink2)">${whenText}</span>`],
     artChips?['Tools used',artChips]:null,
-    sp.prod?['Output',`<span class="outchip"><span class="dt" style="background:${n.t.fg}"></span>${sp.prod}</span>`]:null,
+    null,
     sp.guard?['Guardrail',`<span style="color:var(--ink2)">${sp.guard}</span>`]:null
   ].filter(Boolean).map(r=>`<div class="svtr"><div class="svtl">${r[0]}</div><div class="svtv">${r[1]}</div></div>`).join('');
   const info=`

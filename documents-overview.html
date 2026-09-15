@@ -58,11 +58,12 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
 .sitem.on{background:var(--graybg);font-weight:500}
 .mainc{flex:1;overflow:auto;min-width:0}
-.wrap{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
 .clink{color:var(--blued);cursor:pointer;font-size:14.5px}
 .clink:hover{text-decoration:underline}
 .lbl{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:18px 0 8px}
-.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
+.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr;gap:12px;padding:6px 18px;margin-top:20px;font-size:13px;color:var(--ink3)}
 .thead span{display:flex;align-items:center;gap:6px}
 .thead .ti{font-size:14px}
 .group{font-size:14px;color:var(--ink2);padding:14px 4px 6px;display:flex;align-items:center;gap:8px;font-weight:500}
@@ -73,26 +74,69 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .name{display:flex;align-items:center;gap:12px;min-width:0}
 .tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;font-size:17px;background:var(--bluebg);color:var(--blued)}
 .tile .ti{font-size:18px}
-.nm{font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm{font-weight:600;letter-spacing:-.01em;min-width:0}
+.nm>span.ttx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:100%;vertical-align:bottom}
 .nm small{display:block;font-weight:400;font-size:13px;color:var(--ink3)}
+.nm .mach{display:block;font-weight:400;font-size:12.5px;color:var(--ink3);margin-top:3px}
+.nm .mach i.ti{font-size:13px;margin-right:3px;vertical-align:-1px}
+.nm .mach span{margin-right:11px;white-space:nowrap}
+.dprog{display:flex;align-items:center;gap:9px}
+.dbar{flex:none;width:86px;height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
+.dbar i{display:block;height:100%;border-radius:999px;background:var(--ink2)}
+.dst{font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.groupnote{font-weight:400;color:var(--ink3);font-size:13px}
+.fbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:6px}
+.fchip{font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.fchip:hover{border-color:var(--line2);color:var(--ink)}
+.fchip.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.fsep{width:1px;height:18px;background:var(--line);margin:0 5px}
+
+.fchip .sw{width:9px;height:9px;border-radius:3px;flex:none}
+.nm .dpt{font-weight:400;font-size:11.5px;color:var(--ink3);margin-left:8px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;white-space:nowrap}
+.nm .needs{display:block;font-weight:400;font-size:12.5px;color:var(--ink3);margin-top:3px}
+
+/* ---- Coverage view: the whole territory, visited and not ---- */
+.vtog{display:inline-flex;background:var(--graybg);border-radius:999px;padding:3px}
+.vtog button{font:inherit;font-size:13.5px;font-weight:500;padding:5px 13px;border-radius:999px;border:none;background:transparent;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.vtog button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(31,31,29,.08)}
+.vtog .ti{font-size:15px}
+.cov{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:6px;align-items:start}
+@media(max-width:900px){.cov{grid-template-columns:repeat(2,1fr)}}
+.cvcol{min-width:0}
+.cvh{padding:0 2px 10px}
+.cvh b{font-size:13.5px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:7px}
+.cvh .sw{width:9px;height:9px;border-radius:3px;flex:none}
+.cvh .n{margin-left:auto;font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums;font-weight:400}
+.cvh .bar{height:4px;border-radius:999px;background:#EDEBE4;overflow:hidden;margin-top:8px}
+.cvh .bar i{display:block;height:100%;border-radius:999px}
+.cvgrid{display:flex;flex-direction:column;gap:7px}
+.cvt{position:relative;border-radius:11px;padding:10px 11px;min-height:56px;cursor:pointer;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;transition:transform .1s,box-shadow .12s,border-color .12s}
+.cvt:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(31,31,29,.07)}
+.cvt .t{font-size:12.5px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
+.cvt .m{font-size:11px;margin-top:4px;opacity:.75;font-variant-numeric:tabular-nums}
+/* visited, complete */
+.cvt.done{background:var(--tint);border:1px solid var(--edge);color:var(--ink)}
+.cvt.done .ck{position:absolute;top:8px;right:9px;font-size:13px;color:var(--edge)}
+/* being explored */
+.cvt.live{background:var(--card);border:1px solid var(--edge);color:var(--ink)}
+.cvt.live .fill{position:absolute;left:0;bottom:0;height:3px;background:var(--edge)}
+/* known, never visited */
+.cvt.none{background:transparent;border:1px dashed #DCD8CD;color:var(--ink3)}
+.cvt.none .t{font-weight:500}
+.cvt.none:hover{border-color:var(--edge);color:var(--ink2)}
+/* known, but gated behind something else */
+.cvt.locked .m{color:var(--ink3)}
+.cvt .esd{position:absolute;top:9px;right:9px;width:8px;height:8px;border-radius:2px}
+.covlegend{display:flex;gap:16px;align-items:center;font-size:12px;color:var(--ink3);margin:22px 2px 0}
+.covlegend span{display:inline-flex;align-items:center;gap:7px}
+.covlegend i.k{width:11px;height:11px;border-radius:3px;display:inline-block}
+.covsum{font-size:13px;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
+.femp{border:1px dashed var(--line2);border-radius:14px;padding:34px 20px;text-align:center;color:var(--ink3);font-size:14px;margin-top:18px}
 .pill{font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--tealbg);color:var(--teald)}
 .src{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink2)}
 .src .ti{font-size:16px;color:var(--ink3)}
 .mut{color:var(--ink3);font-size:14.5px}
-/* doc viewer overlay (reused from the canvas prototype) */
-.dvov{position:fixed;inset:0;background:rgba(31,31,29,.45);z-index:70;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto}
-.dvov.open{display:flex}
-.dvbox{background:#fff;border-radius:16px;width:min(760px,100%);box-shadow:0 24px 64px rgba(31,31,29,.3);margin:auto}
-.dvhead{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);font-size:15px;font-weight:600}
-.dvhead .ti{font-size:18px;color:var(--ink2)}
-.dvhead .dvx{margin-left:auto;cursor:pointer;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.dvhead .dvx:hover{background:var(--graybg)}
-.dvpage{margin:24px;border:1px solid var(--line);border-radius:6px;padding:40px 46px;min-height:420px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
-.dvpage h2{font-family:Georgia,'Times New Roman',serif;font-size:24px;margin:0 0 4px}
-.dvpage .dvsub{font-size:14px;color:var(--ink3);margin-bottom:22px}
-.dvpage h3{font-size:15px;margin:20px 0 6px}
-.dvpage p{font-size:14.5px;line-height:1.7;color:var(--ink2);margin:0 0 10px}
-.dvfoot{padding:0 24px 18px;font-size:13px;color:var(--ink3);text-align:center}
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
 
 /* warm/Manner titles */
@@ -106,6 +150,8 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 <div class="shell">
 <script>window.GYNAV={"active": "documents", "arts": "demand"};</script>
 <script src="gy-nav.js"></script>
+<script src="gy-todos.js"></script>
+<script src="gy-docs.js"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -116,93 +162,165 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 
 <div class="wrap">
   <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+    <div class="vtog">
+      <button id="vList" class="on" onclick="dView('list')"><i class="ti ti-list"></i> List</button>
+      <button id="vCov" onclick="dView('cov')"><i class="ti ti-layout-grid"></i> Coverage</button>
+    </div>
     <span class="spacer"></span>
     <span class="chip" aria-label="Search"><i class="ti ti-search"></i></span>
-    <span class="chip"><i class="ti ti-layout-grid"></i> View settings</span>
     <button class="btn-dark" onclick="toast('Upload: drop a file here or forward a client email and the AI Assistant files it to the right run')"><i class="ti ti-plus"></i> Add document</button>
   </div>
 
-  <div class="thead" style="margin-top:18px">
-    <span>Document</span>
-    <span><i class="ti ti-stack-2"></i> Workflow</span>
-    <span><i class="ti ti-inbox"></i> Source</span>
-    <span><i class="ti ti-calendar-event"></i> Received</span>
-  </div>
+  <div class="fbar" id="fbar"></div>
 
-  <div class="group">Documents from the client <span class="count">3</span></div>
-
-  <div class="row click" onclick="openDocViewer('mgmt')">
-    <div class="name">
-      <div class="tile"><i class="ti ti-file-text"></i></div>
-      <div class="nm">estate_management_plan.pdf</div>
+  <div id="listView">
+    <div class="thead">
+      <span>Document</span>
+      <span>Workflow</span>
+      <span>State</span>
+      <span>Updated</span>
     </div>
-    <div><span class="pill"><i class="ti ti-topology-star-3" style="font-size:13px"></i> Demand Mapping</span></div>
-    <div class="src"><i class="ti ti-forms"></i> Questionnaire</div>
-    <div class="mut">2 Jul</div>
+    <div id="docList"></div>
   </div>
-
-  <div class="row click" onclick="openDocViewer('sfi')">
-    <div class="name">
-      <div class="tile"><i class="ti ti-file-text"></i></div>
-      <div class="nm">sfi_agreement_2024.pdf</div>
+  <div id="covView" style="display:none">
+    <div class="cov" id="cov"></div>
+    <div class="covlegend">
+      <span><i class="k" style="background:#CFE3D6;border:1px solid #1E8A63"></i>Complete</span>
+      <span><i class="k" style="background:#fff;border:1px solid #1E8A63"></i>In progress</span>
+      <span><i class="k" style="background:transparent;border:1px dashed #DCD8CD"></i>Not started</span>
+      <span class="covsum" id="covsum"></span>
     </div>
-    <div><span class="pill"><i class="ti ti-topology-star-3" style="font-size:13px"></i> Demand Mapping</span></div>
-    <div class="src"><i class="ti ti-forms"></i> Questionnaire</div>
-    <div class="mut">3 Jul</div>
-  </div>
-
-  <div class="row click" onclick="openDocViewer('tenure')">
-    <div class="name">
-      <div class="tile" style="background:var(--greenbg);color:var(--greend)"><i class="ti ti-map"></i></div>
-      <div class="nm">tenure_map.pdf</div>
-    </div>
-    <div><span class="pill"><i class="ti ti-topology-star-3" style="font-size:13px"></i> Demand Mapping</span></div>
-    <div class="src"><i class="ti ti-mail"></i> Email reply</div>
-    <div class="mut">Wed 08:52</div>
   </div>
 </div>
 </div>
 </div>
 
-<div class="dvov" id="dvov" onclick="closeDocViewer()"></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const DOCV={
- mgmt:{ic:'ti-file-text',name:'estate_management_plan.pdf',body:`
-  <h2>Estate Management Plan</h2><div class="dvsub">Evenlode Landscape Recovery · prepared by the estate · 38 pages</div>
-  <h3>1 · Vision</h3><p>Restore the estate to good ecological condition over the next decade: cleaner water, lower flood risk, richer habitat, and a durable income from nature markets alongside continued farming.</p>
-  <h3>2 · The land today</h3><p>Six parcels across 400 ha of mixed arable, pasture and riparian corridor. Grazing is central to the current business and should continue on enrolled parcels.</p>
-  <h3>3 · Planned interventions</h3><p>Riparian buffer planting along the main watercourse, two wetland creation areas, leaky woody dams, hedgerow restoration, and reduced inputs on enrolled parcels. Phased from spring 2027.</p>`},
- sfi:{ic:'ti-file-text',name:'sfi_agreement_2024.pdf',body:`
-  <h2>SFI Agreement 2024</h2><div class="dvsub">Sustainable Farming Incentive · agreement ref SFI-24-8841 · 12 pages</div>
-  <h3>Parties and term</h3><p>The estate and Defra. Three-year term from March 2024, covering herbal leys, hedgerow management and integrated pest management actions.</p>
-  <h3>Enrolled parcels</h3><p>Parcels 1 to 4. Actions on these parcels must be compatible with any new nature-market commitments; stacking rules apply.</p>
-  <h3>Payments</h3><p>Quarterly payments against completed actions, subject to annual declaration.</p>`},
- tenure:{ic:'ti-map',name:'tenure_map.pdf',body:`
-  <h2>Tenure Map</h2><div class="dvsub">Six parcels · five owned, one tenanted · received Wed 08:52</div>
-  <svg viewBox="0 0 560 260" style="width:100%;margin:10px 0 16px" xmlns="http://www.w3.org/2000/svg">
-    <rect x="10" y="10" width="160" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="90" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 1 · owned</text>
-    <rect x="180" y="10" width="180" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="270" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 2 · owned</text>
-    <rect x="370" y="10" width="180" height="120" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="460" y="74" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 3 · owned</text>
-    <rect x="10" y="140" width="250" height="110" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="135" y="199" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 4 · owned</text>
-    <rect x="270" y="140" width="140" height="110" rx="8" fill="#E4F0DC" stroke="#9DBA8A"/><text x="340" y="199" text-anchor="middle" font-size="13" fill="#3F5C2E">Parcel 5 · owned</text>
-    <rect x="420" y="140" width="130" height="110" rx="8" fill="#FBEFD8" stroke="#D9A23F"/><text x="485" y="192" text-anchor="middle" font-size="13" fill="#8A5A10">Parcel 6 · east</text><text x="485" y="210" text-anchor="middle" font-size="13" fill="#8A5A10">tenanted</text>
-  </svg>
-  <p>The east parcel is tenanted; selling outcomes there depends on the grazing agreement (still awaited). All other parcels are held freehold with no prior commitments beyond SFI 2024.</p>`}
-};
-function openDocViewer(id){
-  const d=DOCV[id];
-  const o=document.getElementById('dvov');
-  o.innerHTML=`<div class="dvbox" onclick="event.stopPropagation()">
-    <div class="dvhead"><i class="ti ${d.ic}"></i>${d.name}
-      <span class="dvx" onclick="closeDocViewer()"><i class="ti ti-x"></i></span></div>
-    <div class="dvpage">${d.body}</div>
-    <div class="dvfoot">Prototype preview · the original file lives in the run's document store</div>
-  </div>`;
-  o.classList.add('open');
+
+
+var DVIEW='list';
+function dView(v){
+  DVIEW=v;
+  document.getElementById('vList').classList.toggle('on',v==='list');
+  document.getElementById('vCov').classList.toggle('on',v==='cov');
+  document.getElementById('listView').style.display = v==='list'?'':'none';
+  document.getElementById('covView').style.display  = v==='cov'?'':'none';
+  dRender();
 }
-function closeDocViewer(){document.getElementById('dvov').classList.remove('open');}
+/* Every deliverable this programme could hold, laid out by department.
+   Filled means visited, outlined means known territory we have not been to. */
+function dCoverage(){
+  var rows=dScope().filter(function(x){return x.kind==='deliverable';});
+  var tot=0, started=0, complete=0, h='';
+  GYD.depts.forEach(function(d){
+    var g=rows.filter(function(x){return x.dept===d.k;});
+    if(!g.length) return;
+    var gdone=g.filter(function(x){return x.state==='Final';}).length;
+    var glive=g.filter(function(x){return x.state!=='Final'&&x.state!=='Not started';}).length;
+    tot+=g.length; complete+=gdone; started+=gdone+glive;
+    h+='<div class="cvcol"><div class="cvh">'
+      +'<b><span class="sw" style="background:'+d.fg+'"></span>'+d.name+'<span class="n">'+gdone+'/'+g.length+'</span></b>'
+      +'<div class="bar"><i style="width:'+Math.round(gdone/g.length*100)+'%;background:'+d.fg+'"></i></div>'
+      +'</div><div class="cvgrid">'
+      + g.map(function(x){ return cvTile(x,d); }).join('')
+      +'</div></div>';
+  });
+  document.getElementById('cov').innerHTML = h || '<div class="femp" style="grid-column:1/-1">No deliverables match this filter.</div>';
+  document.getElementById('covsum').textContent = complete+' complete · '+started+' of '+tot+' started';
+}
+function cvTile(x,d){
+  var es=x.es?(window.GY_ES||{})[x.es]:null;
+  var name=String(x.name).replace(/&amp;/g,'and').replace(/'/g,'');
+  var go = x.href ? "location.href='"+x.href+"'" : "toast('"+name+" is not built out in this prototype yet')";
+  var cls, inner='', meta='';
+  if(x.state==='Final'){
+    cls='done'; inner='<i class="ti ti-check ck"></i>'; meta=x.upd;
+  } else if(x.state==='Not started'){
+    cls='none'+(x.needs?' locked':''); meta = x.needs ? 'Needs '+String(x.needs).replace(/&amp;/g,'and') : x.steps+' steps';
+  } else {
+    cls='live'; inner='<span class="fill" style="width:'+Math.round(x.done/x.steps*100)+'%"></span>'; meta=x.state;
+  }
+  var tint = cls==='done' ? d.bg : 'transparent';
+  return '<div class="cvt '+cls+'" style="--edge:'+d.fg+';--tint:'+d.bg+'" onclick="'+go+'" title="'+name+'">'
+    +inner
+    +(es?'<span class="esd '+es.cls+'" style="background:var(--esc)"></span>':'')
+    +'<span class="t">'+x.name+'</span><span class="m">'+meta+'</span></div>';
+}
+
+var DDEPT='all', DES='all';
+function dSet(k){ DDEPT=k; dRender(); }
+function dEs(k){ DES = (DES===k?'all':k); dRender(); }
+function dScope(){
+  return GYD.items.filter(function(x){
+    return (DDEPT==='all'||x.dept===DDEPT) && (DES==='all'||x.es===DES);
+  });
+}
+function dChip(k,label,on,sw,fn){
+  return '<span class="fchip'+(on?' on':'')+'" onclick="'+fn+'(\''+k+'\')">'
+    +(sw?'<span class="sw" style="background:'+sw+'"></span>':'')+label+'</span>';
+}
+function dRender(){
+  var f=dChip('all','All',DDEPT==='all',null,'dSet');
+  GYD.depts.forEach(function(d){ f+=dChip(d.k,d.name,DDEPT===d.k,d.fg,'dSet'); });
+  f+='<span class="fsep"></span>';
+  ['bng','wcc'].forEach(function(k){
+    var m=(window.GY_ES||{})[k]; if(!m)return;
+    f+=dChip(k,m.name,DES===k,'var(--esc)','dEs').replace('class="fchip','class="fchip '+m.cls);
+  });
+  document.getElementById('fbar').innerHTML=f;
+
+  if(DVIEW==='cov'){ dCoverage(); return; }
+
+  var rows=dScope();
+  var dl=rows.filter(function(x){return x.kind==='deliverable';});
+  var dc=rows.filter(function(x){return x.kind==='document';});
+  var h='';
+  if(dl.length) h+='<div class="group">Deliverables <span class="count">'+dl.length+'</span></div>'+dl.map(dRow).join('');
+  if(dc.length) h+='<div class="group">Documents <span class="count">'+dc.length+'</span></div>'+dc.map(dRow).join('');
+  document.getElementById('docList').innerHTML = h || '<div class="femp">No documents match this filter.</div>';
+}
+function dRow(x){
+  var d=GYD.dept(x.dept);
+  var es=x.es?(window.GY_ES||{})[x.es]:null;
+  var tile = x.kind==='deliverable'
+    ? '<div class="tile" style="background:'+d.bg+';color:'+d.fg+'"><i class="ti ti-checkup-list"></i></div>'
+    : '<div class="tile"><i class="ti ti-file-text"></i></div>';
+  var mach = (x.todos&&window.GYT)
+    ? '<span class="mach"><span><i class="ti ti-list-check"></i>'+GYT.stats(x.todos).label+'</span></span>' : '';
+  var third;
+  if(x.kind==='deliverable'){
+    var pct = x.steps ? Math.round(x.done/x.steps*100) : 0;
+    third = x.state==='Not started' ? '<div class="dprog"><span class="dst">Not started</span></div>'
+      : x.state==='Final' ? '<div class="dprog"><span class="dst" style="color:var(--greend)">Final</span></div>'
+      : '<div class="dprog"><span class="dbar"><i style="width:'+pct+'%"></i></span><span class="dst">'+x.state+'</span></div>';
+  } else {
+    third = '<div class="src"><i class="ti ti-forms"></i> '+(x.src||'')+'</div>';
+  }
+  var go = x.href ? "location.href='"+x.href+"'" : "toast('"+String(x.name).replace(/&amp;/g,'and').replace(/'/g,'')+" is not built out in this prototype yet')";
+  return '<div class="row click" onclick="'+go+'">'
+    +'<div class="name">'+tile+'<div class="nm"><span class="ttx">'+x.name+'</span>'
+      +(es?' <span class="es-chip '+es.cls+'" style="font-weight:400;font-size:12px;margin-left:7px"><i class="ti '+es.icon+'"></i>'+es.short+'</span>':'')
+      +(x.attach?'<span class="dpt">'+x.attach+'</span>':'')
+      +(x.needs?'<span class="needs">Needs '+x.needs+'</span>':'')
+      +mach+'</div></div>'
+    +'<div><span class="pill"><i class="ti ti-topology-star-3" style="font-size:13px"></i> '+x.wf+'</span></div>'
+    +third
+    +'<div class="mut">'+x.upd+'</div></div>';
+}
+window.addEventListener('DOMContentLoaded',dRender);
+if(document.readyState!=='loading')dRender();
+
+(function(){
+  function paint(){
+    if(!window.GYT)return;
+    var c=document.getElementById('cntTodos'); if(c)c.textContent=GYT.myOpen().length;
+  }
+  window.addEventListener('DOMContentLoaded',paint);
+  if(document.readyState!=='loading')paint();
+})();
+
 function toast(msg){
   const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block';
   clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',3600);

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventory overview · Evenlode · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="gy-shell.css">
+<style>
+:root{--gut:32px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px var(--gut) 100px}
+@media(max-width:900px){:root{--gut:22px}.wrap{padding:32px var(--gut) 90px}}
+
+.bsect{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:-.01em;margin:38px 0 14px;display:flex;align-items:center;gap:12px}
+.bsect .act{font-family:-apple-system,system-ui,Inter,'Segoe UI',sans-serif;margin-left:auto;font-size:13.5px;font-weight:400;color:var(--ink2);cursor:pointer}
+.bsect .act:hover{color:var(--ink)}
+.espill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:7px;background:var(--esc);color:#fff;white-space:nowrap}
+
+/* ── Pipeline: one column per ecosystem service, scrolling sideways ── */
+.rail{display:flex;gap:16px;overflow-x:auto;padding:2px 0 12px;scroll-snap-type:x proximity;
+      /* left stays on the page gutter; the right opens to the container edge so a
+         rail that overflows can scroll all the way out, and does nothing if it fits */
+      margin-right:calc(-1 * var(--gut))}
+.rail::-webkit-scrollbar{height:8px}
+.rail::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+.svc{flex:none;width:268px;scroll-snap-align:start}
+.svc .hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.svc .hd .nm{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.card{background:color-mix(in srgb, var(--esc) 13%, #fff);border:1px solid color-mix(in srgb, var(--esc) 42%, #fff);
+  border-radius:16px;overflow:hidden}
+.st{border-bottom:1px solid color-mix(in srgb, var(--esc) 30%, #fff)}
+.vm{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;font-size:13px;font-weight:600;
+  color:#fff;cursor:pointer;background:var(--esc)}
+.vm:hover{background:color-mix(in srgb, var(--esc) 82%, #000)}
+.vm .ti{font-size:14px}
+.st{padding:14px 16px}
+.st:last-child{border-bottom:none}
+.st .lb{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.st .nums{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+.st .u{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.st .un{font-size:12.5px;color:var(--ink2)}
+.st .v{margin-left:auto;font-size:14px;font-weight:700}
+.st .v.none{font-weight:400;color:var(--ink3)}
+.st .bar{height:6px;border-radius:99px;background:rgba(26,12,18,.10);overflow:hidden;margin-top:9px}
+.st .bar i{display:block;height:100%;border-radius:99px;background:var(--esc)}
+.st.s0 .bar i{background:color-mix(in srgb, var(--esc) 30%, #fff)}
+.st.s1 .bar i{background:color-mix(in srgb, var(--esc) 60%, #fff)}
+.st.s3{background:color-mix(in srgb, var(--esc) 26%, #fff)}
+.svc.ghost .card{border-style:dashed;border-color:var(--line2);background:transparent;min-height:232px;display:flex;align-items:center;justify-content:center}
+.svc.ghost .gt{font-size:13.5px;color:var(--ink3);text-align:center;padding:0 20px;line-height:1.5}
+
+/* ── Deals ── */
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dcard{border:1px solid var(--line);border-radius:16px;padding:17px 19px 19px;background:var(--card)}
+.dcard .dh{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.dcard .dh .nm{font-size:14px;font-weight:600}
+.dcard .dh .lk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.dcard .big{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.dcard .cap{font-size:13.5px;color:var(--ink2);margin-top:5px;line-height:1.45}
+.bar2{height:7px;border-radius:99px;background:var(--graybg);overflow:hidden;margin:11px 0 0}
+.bar2 i{display:block;height:100%;border-radius:99px;background:var(--esc)}
+.bar2.lite i{background:color-mix(in srgb, var(--esc) 45%, #fff)}
+.drow{margin-top:13px;padding-top:11px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.drow b{color:var(--ink);font-weight:700}
+.drow .u{text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.dempty{font-size:13.5px;color:var(--ink3);line-height:1.55}
+@media(max-width:980px){.dgrid{grid-template-columns:1fr}}
+
+/* ── Risk ── */
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rcardx{border:1px solid var(--line);border-radius:16px;padding:15px 18px 17px;background:var(--card)}
+.rcardx .rh{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.rcardx .rh .nm{font-size:14px;font-weight:600}
+.rrow{display:grid;grid-template-columns:1fr 92px;align-items:center;gap:12px;padding:6px 0}
+.rrow .rl{font-size:13.5px;line-height:1.3}
+.rbarx{display:flex;height:18px;border-radius:6px;overflow:hidden;background:var(--graybg)}
+.rbarx span{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;min-width:0}
+.rbarx .s1{background:var(--esc)}
+.rbarx .s2{background:color-mix(in srgb, var(--esc) 55%, #fff);color:var(--ink)}
+.rmorex{font-size:13px;color:var(--ink2);text-decoration:underline;text-underline-offset:2px;cursor:pointer;margin-top:9px;display:inline-block}
+.rkey{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:12px;color:var(--ink2)}
+.rkey span{display:inline-flex;align-items:center;gap:6px}
+.rkey i{width:8px;height:8px;border-radius:50%;flex:none}
+@media(max-width:980px){.rgrid{grid-template-columns:1fr}}
+
+/* ── Search ── */
+[hidden]{display:none!important}
+.sbar{display:flex;align-items:center;gap:11px;width:100%;margin-top:18px;padding:14px 18px;
+      background:var(--card);border:1px solid var(--line2);border-radius:12px;cursor:text;
+      font-size:15px;color:var(--ink3);text-align:left;font-family:inherit}
+.sbar:hover{border-color:var(--ink3)}
+.sbar .ti{font-size:18px;color:var(--ink3)}
+.sbar .kbd{margin-left:auto;font-size:12px;color:var(--ink3);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+
+.sdrop{position:fixed;inset:0;background:rgba(31,31,29,.28);z-index:300;opacity:0;pointer-events:none;
+       transition:opacity .22s ease}
+.sdrop.on{opacity:1;pointer-events:auto}
+.sdrawer{position:fixed;top:0;right:0;bottom:0;width:460px;max-width:92vw;background:var(--card);
+         border-left:1px solid var(--line);box-shadow:-12px 0 40px rgba(31,31,29,.14);z-index:301;
+         display:flex;flex-direction:column;transform:translateX(100%);
+         transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+.sdrawer.on{transform:none}
+.sdhead{display:flex;align-items:center;gap:10px;padding:18px 24px 15px;border-bottom:1px solid var(--line);flex:none}
+.sdhead b{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:-.01em}
+.sdhead .x{margin-left:auto;cursor:pointer;color:var(--ink3);font-size:20px;width:32px;height:32px;
+           display:flex;align-items:center;justify-content:center;border-radius:8px}
+.sdhead .x:hover{background:var(--graybg);color:var(--ink)}
+.sdbody{flex:1;overflow-y:auto;padding:20px 24px 26px}
+.sdfoot{flex:none;display:flex;align-items:center;gap:14px;padding:15px 24px;
+        border-top:1px solid var(--line);background:var(--card)}
+.sclose{font-size:13.5px;color:var(--ink2);cursor:pointer}
+.sclose:hover{color:var(--ink)}
+.fgrp{margin-top:22px}
+.fgrp:first-child{margin-top:0}
+.flabel{font-size:14px;font-weight:600;margin-bottom:9px}
+.fnote{font-size:12.5px;color:var(--ink3);margin-top:6px}
+.pickrow{display:flex;gap:9px;flex-wrap:wrap}
+.pick{border:1px solid var(--line2);background:#fff;border-radius:10px;padding:9px 16px;font-family:inherit;
+      font-size:14px;font-weight:500;color:var(--ink);cursor:pointer}
+.pick:hover{border-color:var(--ink3)}
+.pick.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.fcols{display:grid;grid-template-columns:1fr;gap:12px}
+.fcols.two{grid-template-columns:1fr 1fr}
+.fsel{width:100%;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-family:inherit;
+      font-size:14px;color:var(--ink);background:#fff}
+.fnum{width:120px;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-family:inherit;
+      font-size:14px;color:var(--ink);background:#fff}
+.frange{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink2)}
+
+/* results */
+.rhead{display:flex;align-items:baseline;gap:12px;margin:26px 0 14px}
+.rhead .rt{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.rhead .rc{font-size:14px;color:var(--ink2)}
+.rhead .rx{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.rhead .rx:hover{color:var(--ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chipx{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);
+       background:var(--graybg);border-radius:999px;padding:5px 12px}
+.nores{border:1px dashed var(--line2);border-radius:16px;padding:34px;text-align:center;color:var(--ink3);font-size:14.5px;line-height:1.6}
+
+/* ── Inventory list preview ── */
+.ltbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.lhd,.lrow{display:grid;grid-template-columns:62px 104px minmax(160px,1.4fr) 70px minmax(140px,1fr) 78px;
+           align-items:center;gap:14px;padding:12px 18px}
+.lhd{background:var(--graybg);border-bottom:1px solid var(--line);
+     font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.lhd .r,.lrow .r{text-align:right}
+.lrow{border-bottom:1px solid var(--line);font-size:14.5px;cursor:pointer}
+.lrow:last-child{border-bottom:none}
+.lrow:hover{background:#FBF8EF}
+.lrow .ty{font-weight:600;letter-spacing:-.01em}
+.lrow .un{font-variant-numeric:tabular-nums}
+.lrow .si{color:var(--ink2);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lmore{padding:13px 18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2);cursor:pointer}
+.lmore:hover{color:var(--ink);background:#FBF8EF}
+@media(max-width:900px){
+  .lhd{display:none}
+  .lrow{grid-template-columns:1fr auto;row-gap:7px}
+  .lrow .si{grid-column:1 / 3}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"prog-inventory"};</script>
+<script src="gy-nav.js"></script>
+<script src="gy-projects.js"></script>
+<script src="gy-inventory.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">›</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">›</span><span class="cr cur">Inventory</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Inventory overview</div>
+    <div class="acts">
+      <button class="btn-dark" onclick="toast('Upload a BNG metric: required units are matched against available inventory')"><i class="ti ti-file-upload"></i> Upload</button>
+    </div>
+  </div>
+  <button class="sbar" id="sbar" onclick="openSearch()">
+    <i class="ti ti-search"></i><span>Search inventory</span><span class="kbd">/</span>
+  </button>
+  <div id="results" hidden></div>
+
+  <div id="overview">
+  <div class="bsect">Pipeline</div>
+  <div class="rail" id="rail"></div>
+
+  <div class="bsect">Deals</div>
+  <div class="dgrid" id="deals"></div>
+
+  <div class="bsect">Risk</div>
+  <div class="rgrid" id="risks"></div>
+
+  <div class="bsect">Inventory list
+    <span class="act" onclick="location.href='inventory-programme.html'">Filters</span>
+    <span class="act" onclick="toast('Actions: add units, import, export, reserve, list for sale')">Actions</span>
+    <span class="act" onclick="toast('Settings: columns, defaults and who can edit this inventory')">Settings</span>
+  </div>
+  <div class="ltbl" id="list"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="sdrop" id="sdrop" onclick="closeSearch()"></div>
+<aside class="sdrawer" id="sdrawer" aria-hidden="true">
+  <div class="sdhead"><b>Search inventory</b>
+    <i class="ti ti-x x" onclick="closeSearch()" title="Close"></i></div>
+  <div class="sdbody" id="sbuild"></div>
+  <div class="sdfoot">
+    <button class="btn-dark" onclick="runSearch()">Find options to buy</button>
+    <span class="sclose" onclick="resetQ()">Reset</span>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+</script>
+<script>
+var SHORT={bng:'BNG',wcc:'WCC',soc:'Soil'};
+var ESPAGE={bng:'inventory-bng-programme.html',wcc:'inventory-wcc-programme.html',soc:'inventory-soc-programme.html'};
+var PROG='Evenlode';
+function nameOf(k){ return GY_ES[k].name; }
+function pill(k){ return '<span class="espill">'+SHORT[k]+'</span>'; }
+function u(n){ return n.toLocaleString(); }
+
+/* Pipeline: one column per service, four states stacked inside it */
+function svcCard(es){
+  var p=GY_INV_API.pipeline(es,PROG);
+  var states=[['Projected',p.projected,'s0'],['Available',p.available,'s1'],
+              ['Reserved',p.reserved,'s2'],['Sold',p.sold,'s3']];
+  if(es!=='bng'){ states[0][0]='Available: projected'; states[1][0]='Available: registered'; }
+  var max=Math.max(p.projected.u,p.available.u,p.reserved.u,p.sold.u,1);
+  return '<div class="svc '+GY_ES[es].cls+'">'
+    +'<div class="hd">'+pill(es)+'<span class="nm">'+nameOf(es)+'</span></div>'
+    +'<div class="card">'+states.map(function(s){
+        var d=s[1], w=Math.round(d.u/max*100);
+        return '<div class="st '+s[2]+'"><div class="lb">'+s[0]+'</div>'
+          +'<div class="nums"><span class="u">'+u(d.u)+'</span><span class="un">units</span>'
+          +'<span class="v'+(d.v?'':' none')+'">'+(d.v||'&mdash;')+'</span></div>'
+          +'<div class="bar"><i style="width:'+(d.u?Math.max(w,2):0)+'%"></i></div></div>';
+      }).join('')
+    +'<div class="vm" onclick="location.href=\''+ESPAGE[es]+'\'">View '+nameOf(es)+' <i class="ti ti-arrow-right"></i></div>'
+    +'</div></div>';
+}
+function rail(){
+  document.getElementById('rail').innerHTML =
+    GY_INV_API.services().map(svcCard).join('')
+    + '<div class="svc ghost"><div class="hd"><span class="nm" style="color:var(--ink3)">Next service</span></div>'
+    + '<div class="card"><span class="gt">A new ecosystem service appears here once it has a Project.</span></div></div>';
+}
+
+/* Deals */
+function dealCard(es){
+  var d=GY_INV_API.deals(es,PROG), n=nameOf(es);
+  var body = !d.open
+    ? '<div class="dempty">No open deals. '+u(GY_INV_API.pipeline(es,PROG).projected.u)
+      +' projected units, nothing registered to sell yet.</div>'
+    : '<div class="big">'+d.pct+'%</div>'
+      +'<div class="cap">('+u(d.inDeals)+' units) of available inventory in deals</div>'
+      +'<div class="bar2"><i style="width:'+d.pct+'%"></i></div>'
+      +'<div class="drow"><b>'+d.unreserved.pct+'%</b> ('+u(d.unreserved.u)+' units) in '
+        +'<span class="u" onclick="toast(\''+d.unreserved.deals+' deals against unreserved '+n+'\')">'
+        +d.unreserved.deals+' deal'+(d.unreserved.deals===1?'':'s')+' against unreserved</span>'
+        +'<div class="bar2 lite"><i style="width:'+d.unreserved.pct+'%"></i></div></div>'
+      +'<div class="drow"><b>'+d.reserved.pct+'%</b> ('+u(d.reserved.u)+' units) in '
+        +'<span class="u" onclick="toast(\''+d.reserved.deals+' deals against reserved '+n+'\')">'
+        +d.reserved.deals+' deal'+(d.reserved.deals===1?'':'s')+' against reserved</span>'
+        +'<div class="bar2"><i style="width:'+d.reserved.pct+'%"></i></div></div>';
+  return '<div class="'+GY_ES[es].cls+'"><div class="dcard">'
+    +'<div class="dh">'+pill(es)+'<span class="nm">'+n+'</span>'
+    +(d.open?'<span class="lk" onclick="toast(\''+d.open+' open deals on '+n+'\')">'+d.open+' open</span>':'')
+    +'</div>'+body+'</div></div>';
+}
+function deals(){
+  document.getElementById('deals').innerHTML = GY_INV_API.services().map(dealCard).join('');
+}
+
+/* Risk */
+var RISK_OPEN={};
+function riskCard(es){
+  var rows=GY_INV_API.risk(es), open=RISK_OPEN[es];
+  var show=open?rows:rows.slice(0,5), hidden=rows.length-5;
+  var body=show.map(function(r){
+    function w(v){ return (v/r.total*100).toFixed(1)+'%'; }
+    return '<div class="rrow"><span class="rl">'+r.label+'</span>'
+      +'<span class="rbarx">'
+      +(r.reserved  ?'<span class="s1" style="width:'+w(r.reserved)+'">'+r.reserved+'</span>':'')
+      +(r.unreserved?'<span class="s2" style="width:'+w(r.unreserved)+'">'+r.unreserved+'</span>':'')
+      +'<span style="width:'+w(r.free)+'"></span></span></div>';
+  }).join('');
+  var more = hidden>0 ? '<span class="rmorex" onclick="toggleRisk(\''+es+'\')">'
+    +(open?'Show fewer':'View '+hidden+' more')+'</span>' : '';
+  return '<div class="'+GY_ES[es].cls+'"><div class="rcardx">'
+    +'<div class="rh">'+pill(es)+'<span class="nm">'+GY_INV_API.riskLabel(es)+'</span></div>'
+    +body+more
+    +'<div class="rkey">'
+      +'<span><i style="background:var(--esc)"></i>Reserved</span>'
+      +'<span><i style="background:color-mix(in srgb, var(--esc) 55%, #fff)"></i>Unreserved</span>'
+      +'<span><i style="background:var(--graybg)"></i>Not in deals</span>'
+    +'</div></div></div>';
+}
+function toggleRisk(es){ RISK_OPEN[es]=!RISK_OPEN[es]; risks(); }
+function risks(){
+  document.getElementById('risks').innerHTML = GY_INV_API.services().map(riskCard).join('');
+}
+
+/* Inventory list: the first rows, the full table lives on its own page */
+function list(){
+  var all=GY_INV_API.rows(PROG);
+  var top=all.slice().sort(function(a,b){return b.units-a.units;}).slice(0,6);
+  var total=all.reduce(function(t,r){return t+r.units;},0);
+  document.getElementById('list').innerHTML =
+    '<div class="lhd"><span>Type</span><span>Availability</span><span>Specific type / vintage</span>'
+    +'<span class="r">Units</span><span>Site</span><span class="r">Area</span></div>'
+    + top.map(function(r){
+        var cls = r.avail==='Available'?'avail':r.avail==='Sold'?'sold':'future';
+        return '<div class="lrow '+GY_ES[r.es].cls+'" onclick="location.href=\'inventory-programme.html?es='+r.es+'\'">'
+          +'<span>'+pill(r.es)+'</span>'
+          +'<span><span class="badge '+cls+'">'+r.avail+'</span></span>'
+          +'<span class="ty">'+r.type+'</span>'
+          +'<span class="un r">'+u(r.units)+'</span>'
+          +'<span class="si">'+r.site+'</span>'
+          +'<span class="r si">'+r.ha+' ha</span></div>';
+      }).join('')
+    + '<div class="lmore" onclick="location.href=\'inventory-programme.html\'">All '+all.length
+      +' inventory lines, '+u(total)+' units ›</div>';
+}
+
+/* ── Search: the criteria builder folds into this page, and running it
+   swaps the overview for the matching inventory lines. ── */
+var LPA=['West Oxfordshire DC','Cotswold DC','Cherwell DC'];
+var NCA=['Cotswolds','Upper Thames Clay Vales','Midvale Ridge'];
+var LNRS=['Oxfordshire','Gloucestershire','Warwickshire'];
+var COND=['Any condition','Poor','Moderate','Good','Excellent'];
+var Q={es:'bng', lpa:'', nca:'', lnrs:'', avail:'Now', type:'', cond:'Any condition', units:'', pmin:'', pmax:''};
+
+function typesFor(es){
+  var seen=[];
+  GY_INV_API.rowsFor(es,PROG).forEach(function(r){ if(seen.indexOf(r.type)<0) seen.push(r.type); });
+  return seen.sort();
+}
+function opts(list, cur, ph){
+  return '<option value="">'+ph+'</option>'
+    + list.map(function(o){ return '<option'+(o===cur?' selected':'')+'>'+o+'</option>'; }).join('');
+}
+function buildHtml(){
+  var isBng=Q.es==='bng';
+  return ''
+    +'<div class="fgrp"><div class="flabel">What do you want to buy?</div>'
+      +'<div class="pickrow">'+GY_INV_API.services().map(function(es){
+         return '<button class="pick'+(Q.es===es?' on':'')+'" onclick="setQ(\'es\',\''+es+'\')">'+SHORT[es].toUpperCase()+'</button>';
+       }).join('')+'</div></div>'
+
+    +'<div class="fgrp"><div class="flabel">Location</div>'
+      +'<div class="fcols">'
+      +'<select class="fsel" onchange="setQ(\'lpa\',this.value)">'+opts(LPA,Q.lpa,'Select LPA')+'</select>'
+      +'<select class="fsel" onchange="setQ(\'nca\',this.value)">'+opts(NCA,Q.nca,'Select NCA')+'</select>'
+      +'<select class="fsel" onchange="setQ(\'lnrs\',this.value)">'+opts(LNRS,Q.lnrs,'Select LNRS authority')+'</select>'
+      +'</div><div class="fnote">Evenlode inventory only.</div></div>'
+
+    +'<div class="fgrp"><div class="flabel">Availability</div>'
+      +'<div class="pickrow">'
+      +['Now','Projected'].map(function(a){
+         return '<button class="pick'+(Q.avail===a?' on':'')+'" onclick="setQ(\'avail\',\''+a+'\')">'+a+'</button>';
+       }).join('')+'</div></div>'
+
+    +'<div class="fgrp"><div class="flabel">'+(isBng?'What BNG types?':Q.es==='wcc'?'What vintages?':'What land types?')+'</div>'
+      +'<div class="fcols'+(isBng?' two':'')+'">'
+      +'<select class="fsel" onchange="setQ(\'type\',this.value)">'+opts(typesFor(Q.es),Q.type,'Any type')+'</select>'
+      +(isBng?'<select class="fsel" onchange="setQ(\'cond\',this.value)">'+opts(COND.slice(1),Q.cond==='Any condition'?'':Q.cond,'Any condition')+'</select>':'')
+      +'</div></div>'
+
+    +'<div class="fgrp"><div class="flabel">How many units?</div>'
+      +'<input class="fnum" type="number" placeholder="Any" value="'+Q.units+'" oninput="setQ(\'units\',this.value,1)"></div>'
+
+    +'<div class="fgrp"><div class="flabel">What price range?</div>'
+      +'<div class="frange">£<input class="fnum" type="number" placeholder="min" value="'+Q.pmin+'" oninput="setQ(\'pmin\',this.value,1)">k'
+      +'<span>to</span>£<input class="fnum" type="number" placeholder="max" value="'+Q.pmax+'" oninput="setQ(\'pmax\',this.value,1)">k</div></div>'
+
+    ;
+}
+function openSearch(){
+  document.getElementById('sbuild').innerHTML=buildHtml();
+  document.getElementById('sdrawer').classList.add('on');
+  document.getElementById('sdrawer').setAttribute('aria-hidden','false');
+  document.getElementById('sdrop').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeSearch(){
+  document.getElementById('sdrawer').classList.remove('on');
+  document.getElementById('sdrawer').setAttribute('aria-hidden','true');
+  document.getElementById('sdrop').classList.remove('on');
+  document.body.style.overflow='';
+}
+function searchOpen(){ return document.getElementById('sdrawer').classList.contains('on'); }
+function setQ(k,v,quiet){ Q[k]=v; if(!quiet) document.getElementById('sbuild').innerHTML=buildHtml(); }
+function resetQ(){ Q={es:'bng',lpa:'',nca:'',lnrs:'',avail:'Now',type:'',cond:'Any condition',units:'',pmin:'',pmax:''};
+  document.getElementById('sbuild').innerHTML=buildHtml(); }
+
+function matches(){
+  return GY_INV_API.rows(PROG).filter(function(r){
+    if(r.es!==Q.es) return false;
+    var live = r.avail==='Available';
+    if(Q.avail==='Now' && !live) return false;
+    if(Q.avail==='Projected' && r.avail!=='Projected') return false;
+    if(Q.type && r.type!==Q.type) return false;
+    if(Q.cond && Q.cond!=='Any condition' && r.cond && r.cond!==Q.cond) return false;
+    if(Q.units && r.units < +Q.units) return false;
+    return true;
+  });
+}
+function chips(){
+  var c=[['Service',SHORT[Q.es]],['Availability',Q.avail]];
+  if(Q.lpa) c.push(['LPA',Q.lpa]);
+  if(Q.nca) c.push(['NCA',Q.nca]);
+  if(Q.lnrs) c.push(['LNRS',Q.lnrs]);
+  if(Q.type) c.push([Q.es==='wcc'?'Vintage':'Type',Q.type]);
+  if(Q.cond && Q.cond!=='Any condition') c.push(['Condition',Q.cond]);
+  if(Q.units) c.push(['At least',Q.units+' units']);
+  if(Q.pmin||Q.pmax) c.push(['Price','£'+(Q.pmin||'0')+'k to £'+(Q.pmax||'any')+'k']);
+  return '<div class="chips">'+c.map(function(x){
+    return '<span class="chipx">'+x[0]+' <b style="color:var(--ink);font-weight:600">'+x[1]+'</b></span>';
+  }).join('')+'</div>';
+}
+function runSearch(){
+  var m=matches(), total=m.reduce(function(t,r){return t+r.units;},0);
+  var body = m.length
+    ? '<div class="ltbl">'
+      +'<div class="lhd"><span>Type</span><span>Availability</span><span>Specific type / vintage</span>'
+      +'<span class="r">Units</span><span>Site</span><span class="r">Area</span></div>'
+      + m.map(function(r){
+          var cls = r.avail==='Available'?'avail':r.avail==='Sold'?'sold':'future';
+          return '<div class="lrow '+GY_ES[r.es].cls+'" onclick="location.href=\'inventory-programme.html?es='+r.es+'\'">'
+            +'<span>'+pill(r.es)+'</span>'
+            +'<span><span class="badge '+cls+'">'+r.avail+'</span></span>'
+            +'<span class="ty">'+r.type+'</span>'
+            +'<span class="un r">'+u(r.units)+'</span>'
+            +'<span class="si">'+r.site+'</span>'
+            +'<span class="r si">'+r.ha+' ha</span></div>';
+        }).join('')
+      +'<div class="lmore" onclick="toast(\'Reserve these units, or send them to a deal\')">Reserve '+u(total)+' units \u203a</div></div>'
+    : '<div class="nores">Nothing in '+nameOf(Q.es)+' matches those criteria.<br>Widen the availability or drop the type filter.</div>';
+
+  document.getElementById('results').innerHTML =
+      '<div class="rhead"><span class="rt">Options to buy</span>'
+      +'<span class="rc">'+m.length+' line'+(m.length===1?'':'s')+' · '+u(total)+' units</span>'
+      +'<span class="rx" onclick="clearSearch()">Clear search</span></div>'
+      + chips() + body;
+  document.getElementById('results').hidden=false;
+  document.getElementById('overview').hidden=true;
+  document.getElementById('sbar').querySelector('span').textContent =
+    m.length+' line'+(m.length===1?'':'s')+' in '+nameOf(Q.es)+' \u00b7 edit search';
+  closeSearch();
+}
+function clearSearch(){
+  document.getElementById('results').hidden=true;
+  document.getElementById('overview').hidden=false;
+  document.getElementById('sbar').querySelector('span').textContent='Search inventory';
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='/' && !/input|select|textarea/i.test((e.target.tagName||''))){ e.preventDefault(); openSearch(); }
+  if(e.key==='Escape'){
+    if(searchOpen()) closeSearch();
+    else if(!document.getElementById('results').hidden) clearSearch();
+  }
+});
+
+window.addEventListener('DOMContentLoaded',function(){ rail(); deals(); risks(); list(); });
+</script>
+</body>
+</html>

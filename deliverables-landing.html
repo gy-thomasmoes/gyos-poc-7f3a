@@ -65,19 +65,20 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .sitem.mut{color:var(--ink3);margin-top:10px}
 .sitem.mut .ti{font-size:14px;color:var(--ink3)}
 .mainc{flex:1;overflow:auto;min-width:0}
-.wrap{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
 .clink{color:var(--blued);cursor:pointer;font-size:14.5px}
 .clink:hover{text-decoration:underline}
 .fav{border:1.5px dashed var(--line2);border-radius:18px;padding:44px 20px;text-align:center;margin:16px 0 26px}
 .fav h4{font-size:16px;font-weight:600;color:var(--ink3)}
 .fav p{font-size:14px;color:var(--ink3);margin-top:4px}
 .lbl{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:18px 0 8px}
-.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1.2fr 1.2fr 1fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
+.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1.2fr 1fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
 .thead span{display:flex;align-items:center;gap:6px}
 .thead .ti{font-size:14px}
 .group{font-size:14px;color:var(--ink2);padding:10px 18px 6px;display:flex;align-items:center;gap:8px}
 .count{font-size:12.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600}
-.row{display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1.2fr 1.2fr 1fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;font-size:15px}
+.row{display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1.2fr 1fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;font-size:15px}
 .dept{font-size:13px;font-weight:500;padding:3px 11px;border-radius:999px;white-space:nowrap}
 .row.click{cursor:pointer;transition:border-color .12s, box-shadow .12s}
 .row.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
@@ -99,6 +100,72 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 :root{--serif:'Manner','Spectral',Georgia,serif}
 .title{font-weight:600}
 .grt-h{font-family:var(--serif);font-weight:500}
+body.gybasic .advonly{display:none}
+body:not(.gybasic) .basiconly{display:none}
+.cmodal{position:fixed;inset:0;background:rgba(26,12,18,.4);display:none;align-items:center;justify-content:center;z-index:80}
+.cmodal.open{display:flex}
+.cbox2{width:460px;max-width:92vw;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(26,12,18,.22);overflow:hidden}
+.chd{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.ct2{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.cx{margin-left:auto;width:30px;height:30px;border:none;background:transparent;border-radius:8px;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cx:hover{background:var(--graybg);color:var(--ink)}
+.cbd{padding:16px 18px;display:flex;flex-direction:column}
+.chint{font-size:13px;color:var(--ink3);line-height:1.45;margin-bottom:6px}
+.cfl{font-size:12.5px;font-weight:600;color:var(--ink3);margin:12px 0 5px}
+.cin{width:100%;font:inherit;font-size:14.5px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+.cin:focus{outline:none;border-color:var(--blue)}
+select.cin{cursor:pointer}
+.cft{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid var(--line);background:#FBFAF5}
+.cbtn{font:inherit;font-size:14.5px;font-weight:500;padding:9px 15px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.cbtn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink2)}
+.cbtn.ghost:hover{border-color:var(--line2)}
+.cbtn.primary{background:var(--dark);color:#fff;border:none}
+.cms{display:flex;align-items:center;gap:6px;width:100%;font-size:14.5px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;color:var(--ink)}
+.cms .cms-ph{color:var(--ink3)}
+.cms-panel{display:none;border:1px solid var(--line);border-radius:9px;margin-top:5px;padding:4px;max-height:180px;overflow:auto;background:#fff}
+.cms-panel.open{display:block}
+.cms-opt{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;font-size:14.5px;cursor:pointer}
+.cms-opt:hover{background:var(--graybg)}
+.cms-opt input{accent-color:var(--dark);width:15px;height:15px}
+.rowmenu{margin-left:auto;width:28px;height:28px;border:none;background:transparent;border-radius:7px;color:var(--ink3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:18px}
+.rowmenu:hover{background:var(--graybg);color:var(--ink)}
+.rmenu{position:fixed;display:none;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 34px rgba(26,12,18,.16);z-index:90;padding:5px;min-width:150px}
+.rmenu.open{display:block}
+.rmenu-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-size:14.5px;cursor:pointer;color:var(--ink)}
+.rmenu-item .ti{font-size:16px}
+.rmenu-item.danger{color:#B7472A}
+.rmenu-item.danger:hover{background:#F7E7DE}
+/* Simple version: Workflow · Programme · Status · Champion · Department · Result */
+body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 0.85fr 1.1fr 0.9fr}
+.prog{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink2);min-width:0}
+.prog .ti{font-size:16px;color:var(--teal)}
+.prog span.pnm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row.arch{opacity:.55;transition:opacity .12s}
+.row.arch:hover{opacity:1}
+.group.arch{color:var(--ink3)}
+.group.acc{cursor:pointer;user-select:none}
+.group.acc:hover{color:var(--ink)}
+.accarr{font-size:15px;color:var(--ink3);transition:transform .15s}
+.group.acc.closed .accarr{transform:rotate(-90deg)}
+.accbody.closed{display:none}
+.favstrip{margin:18px 0 6px}
+.favhd{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink2);padding:0 2px 11px}
+.favhd .ti{font-size:16px;color:#EF9F27}
+.favcards{display:flex;gap:14px;flex-wrap:wrap}
+.favcard{width:286px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.favcard:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
+.wfthumb{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;border-bottom:1px solid var(--line);background-color:#FBFAF5;background-image:radial-gradient(circle,#E0DED6 1px,transparent 1px);background-size:13px 13px}
+.wfrow{display:flex;align-items:center}
+.wfnode{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+.wfnode .ti{font-size:13px}
+.wfln{width:13px;height:1px;background:var(--line2);flex:none}
+.favmeta{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.favnm{flex:1;min-width:0;font-weight:600;font-size:14.5px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.favst{flex:none;font-size:13px;color:var(--ink3)}
+.favempty{border:1.5px dashed var(--line2);border-radius:16px;padding:24px 20px;text-align:center;color:var(--ink3);font-size:14px;line-height:1.5}
+.favstar{margin-left:auto;flex:none;font-size:17px;color:#DEDCD4;cursor:pointer;padding:0 2px;transition:color .12s,transform .1s}
+.favstar:hover{color:#EF9F27;transform:scale(1.12)}
+.favstar.on{color:#EF9F27}
 </style>
 </head>
 <body>
@@ -106,55 +173,94 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
 <script src="gy-nav.js"></script>
+<script src="gy-docs.js"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <i class="ti ti-hierarchy-2"></i>
   <span class="title">Workflows</span>
+  <span class="spacer"></span>
+  <button class="btn-dark" onclick="openCreate()"><i class="ti ti-plus"></i> Create new Deliverable</button>
 </div>
 
 <div class="wrap">
-  <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
-    <span class="spacer"></span>
-    <span class="chip" aria-label="Search"><i class="ti ti-search"></i></span>
-    <span class="chip"><i class="ti ti-layout-grid"></i> View settings</span>
-    <button class="btn-dark" onclick="toast('New Workflow: a 30-minute interview with the designer agent drafts the blueprint, then a workshop validates it')"><i class="ti ti-plus"></i> New Workflow</button>
-  </div>
-
+  <div class="favstrip" id="favStrip"></div>
   <div class="thead" style="margin-top:18px">
     <span>Workflow</span>
+    <span class="prog basiconly"><i class="ti ti-topology-star-3"></i> Programme</span>
     <span><i class="ti ti-chart-arcs"></i> Status</span>
     <span><i class="ti ti-user"></i> Champion</span>
-    <span><i class="ti ti-building"></i> Department</span>
-    <span><i class="ti ti-checklist"></i> Result</span>
+    <span><i class="ti ti-checklist"></i> Deliverable</span>
   </div>
 
-  <div class="row click" onclick="location.href='demand-mapping-canvas-prototype.html'">
+  <div class="row click basiconly" onclick="location.href='upper-dee-deliverable-page.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-mountain"></i></div>
+      <div class="nm">Upper Dee: Customer Demand Mapping</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
+    <div><span class="st" style="background:var(--greenbg);color:var(--greend)"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  </div>
+
+  <div class="group" style="margin-top:16px">Live <span class="count">1</span></div>
+  <div class="row click" id="dmRow" onclick="location.href='demand-mapping-canvas-prototype.html'">
     <div class="name">
       <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div>
-      <div class="nm">Demand Mapping</div>
+      <div class="nm">Customer Demand Mapping</div>
     </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Evenlode</div>
     <div><span class="st" style="background:var(--greenbg);color:var(--greend)"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span></div>
-    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>
-    <div><span class="dept" style="background:var(--graybg);color:var(--grayd)">Programme-wide</span></div>
-    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='demand-mapping-canvas-prototype.html#contents'">Result</span><span class="clink" onclick="event.stopPropagation();location.href='demand-mapping-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='demand-mapping-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='demand-mapping-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
   </div>
 
-  <div class="group" style="margin-top:14px">Draft <span class="count">1</span></div>
+  <div class="advonly">
+  <div class="group" style="margin-top:14px">Draft <span class="count">4</span></div>
+
+  <div class="row click" onclick="location.href='customer-demand-mapping-v2-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div>
+      <div class="nm">Customer Demand Mapping v2</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Programme-wide</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='customer-demand-mapping-v2-canvas.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='customer-demand-mapping-v2-canvas.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
+  </div>
 
   <div class="row click" onclick="location.href='investor-qa-log-canvas-prototype.html'">
     <div class="name">
       <div class="tile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-messages"></i></div>
-      <div class="nm">Investor Q&A Log<small>Capital · runs alongside every raise</small></div>
+      <div class="nm">Investor Q&A Log</div>
     </div>
     <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">KI</span>Kishen</div>
-    <div><span class="dept" style="background:var(--bluebg);color:var(--blued)">Capital</span></div>
-    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html#contents'">Result</span><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">KI</span>Kishen</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
   </div>
 
-  <div class="group" style="margin-top:14px">In design <span class="count">3</span></div>
+  <div class="row click" onclick="location.href='tender-to-bid-canvas-prototype.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-file-search"></i></div>
+      <div class="nm">Tender to Bid</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Portfolio-wide</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">AR</span>Archie</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='tender-to-bid-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='tender-to-bid-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
+  </div>
+
+  <div class="row click" onclick="location.href='lead-demand-mapping-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-map-search"></i></div>
+      <div class="nm">Lead Demand mapping</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Programme-wide</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
+    <div class="who"><span class="av" style="background:#FBE4EC;color:#8A2A4E">IZ</span>Izzie</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='lead-demand-mapping-canvas.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='lead-demand-mapping-canvas.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
+  </div>
+
+  <div id="draftDocs"></div>
+
+  <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accDesign')"><i class="ti ti-chevron-down accarr"></i> In design <span class="count">3</span></div>
+  <div class="accbody closed" id="accDesign">
 
   <div class="row dim" onclick="toast('Market Readiness Assessment is not in this prototype yet. Demand Mapping is the pilot; each Workflow that follows gets cheaper.')">
     <div class="name">
@@ -162,9 +268,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
       <div class="nm">Market Readiness Assessment</div>
     </div>
     <div><span class="st" style="background:var(--amberbg);color:var(--amberd)">In design</span></div>
-    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">?</span>Trade lead</div>
-    <div><span class="dept" style="background:var(--amberbg);color:var(--amberd)">Trade</span></div>
-    <div class="mut">·</div>
+    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">?</span>Trade lead</div>    <div class="mut">·</div>
   </div>
 
   <div class="row dim" onclick="toast('Financial Model is not in this prototype yet. It will start from Demand Mapping data in the Platform, not from guesses.')">
@@ -173,9 +277,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
       <div class="nm">Financial Model</div>
     </div>
     <div><span class="st" style="background:var(--amberbg);color:var(--amberd)">In design</span></div>
-    <div class="who"><span class="av" style="background:var(--bluebg);color:var(--blued)">JO</span>Josh</div>
-    <div><span class="dept" style="background:var(--bluebg);color:var(--blued)">Capital</span></div>
-    <div class="mut">·</div>
+    <div class="who"><span class="av" style="background:var(--bluebg);color:var(--blued)">JO</span>Josh</div>    <div class="mut">·</div>
   </div>
 
   <div class="row dim" onclick="toast('Commercial Strategy is not in this prototype yet. Downstream of Demand Mapping: it consumes the map as its starting input.')">
@@ -184,15 +286,139 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
       <div class="nm">Commercial Strategy</div>
     </div>
     <div><span class="st" style="background:var(--graybg);color:var(--grayd)">Backlog</span></div>
-    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">?</span>TBD</div>
-    <div><span class="dept" style="background:var(--greenbg);color:var(--greend)">Nature Project</span></div>
-    <div class="mut">·</div>
+    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">?</span>TBD</div>    <div class="mut">·</div>
+  </div>
+  </div>
+  <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accArch')"><i class="ti ti-chevron-down accarr"></i> Archive <span class="count">7</span></div>
+  <div class="accbody closed" id="accArch">
+  <div class="row click basiconly arch" onclick="location.href='lead-supply-demand-mapping-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-user"></i></div>
+      <div class="nm">Lead Customer Demand Mapping</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Spains Hall Estate</div>
+    <div><span class="st" style="background:var(--greenbg);color:var(--greend)"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a48a14ed56a81b3bcbbc8d35e1f59a9','_blank','noopener')">Deliverable</span></div>
+  </div>
+
+
+  <div class="row click basiconly arch" onclick="location.href='upper-dee-simple-drawer-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-list-check"></i></div>
+      <div class="nm">Upper Dee: simple drawer (experiment)</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  </div>
+
+  <div class="row click basiconly arch" onclick="location.href='upper-dee-canvas-list-sidebar.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right-expand"></i></div>
+      <div class="nm">Upper Dee: canvas + list sidebar (experiment)</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  </div>
+
+  <div class="row click basiconly arch" onclick="location.href='upper-dee-flow-list-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right"></i></div>
+      <div class="nm">Upper Dee: flow + list sidebar (experiment)</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  </div>
+
+  <div class="row click basiconly arch" onclick="location.href='upper-dee-simple-views-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-2"></i></div>
+      <div class="nm">Upper Dee: simple views (experiment)</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  </div>
+
+  <div class="row click arch" onclick="location.href='upper-dee-executor-steps-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-adjustments"></i></div>
+      <div class="nm">Upper Dee: step executors (experiment)</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>
+    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  </div>
+
+  <div class="row click arch" onclick="location.href='demand-mapping-text-view-canvas.html'">
+    <div class="name">
+      <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-align-left"></i></div>
+      <div class="nm">Customer S&amp;D mapping: text view (experiment)</div>
+    </div>
+    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Evenlode</div>
+    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>
+    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3b18a14ed56a8131ab1ac43928d15fcf','_blank','noopener')">Deliverable</span></div>
+  </div>
   </div>
 </div>
 
 </div>
 </div>
 
+<div class="cmodal" id="cmodal" onclick="if(event.target===this)closeCreate()">
+  <div class="cbox2">
+    <div class="chd"><span class="ct2">Create new Deliverable</span><button class="cx" onclick="closeCreate()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+    <div class="cbd">
+      <div class="chint">Sets up a new deliverable from a blueprint and creates its page in the chosen Notion project folder.</div>
+      <label class="cfl">Deliverable name</label>
+      <input class="cin" id="cName" placeholder="e.g. Ock &amp; Thame: Customer Demand Mapping">
+      <label class="cfl">Workflow blueprint</label>
+      <select class="cin" id="cWorkflow">
+        <option>Lead Customer Demand Mapping</option>
+        <option>Customer Demand Mapping</option>
+        <option>Investor Q&amp;A Log</option>
+      </select>
+      <label class="cfl">Save in project folder (Notion)</label>
+      <select class="cin" id="cFolder">
+        <option>Spains Hall Estate</option>
+        <option>Evenlode</option>
+        <option>Upper Dee</option>
+        <option>Ock &amp; Thame</option>
+        <option>The Wash</option>
+        <option>+ New project folder…</option>
+      </select>
+      <label class="cfl">Champion</label>
+      <select class="cin" id="cChampion">
+        <option>Caitlin</option>
+        <option>Kishen</option>
+        <option>Josh</option>
+      </select>
+      <label class="cfl">Team members</label>
+      <div class="cms" id="cTeamField" onclick="toggleTeamPanel(event)">
+        <span id="cTeamLabel" class="cms-ph">Select team members</span>
+        <i class="ti ti-chevron-down" style="margin-left:auto;font-size:15px;color:var(--ink3)"></i>
+      </div>
+      <div class="cms-panel" id="cTeamPanel">
+        <label class="cms-opt"><input type="checkbox" value="Caitlin"> Caitlin</label>
+        <label class="cms-opt"><input type="checkbox" value="Harry"> Harry</label>
+        <label class="cms-opt"><input type="checkbox" value="Katia"> Katia</label>
+        <label class="cms-opt"><input type="checkbox" value="Emily"> Emily</label>
+        <label class="cms-opt"><input type="checkbox" value="Josh"> Josh</label>
+        <label class="cms-opt"><input type="checkbox" value="Izzie"> Izzie</label>
+        <label class="cms-opt"><input type="checkbox" value="Trade lead"> Trade lead</label>
+      </div>
+    </div>
+    <div class="cft">
+      <button class="cbtn ghost" onclick="closeCreate()">Cancel</button>
+      <button class="cbtn primary" onclick="createDeliverable()"><i class="ti ti-plus" style="font-size:15px"></i> Create Deliverable</button>
+    </div>
+  </div>
+</div>
+<div class="rmenu" id="rmenu"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -200,6 +426,91 @@ function toast(msg){
   const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block';
   clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',3600);
 }
+function openCreate(){var m=document.getElementById('cmodal');m.classList.add('open');setTimeout(function(){document.getElementById('cName').focus();},30);}
+function closeCreate(){document.getElementById('cmodal').classList.remove('open');var p=document.getElementById('cTeamPanel');if(p)p.classList.remove('open');}
+function toggleTeamPanel(e){e.stopPropagation();document.getElementById('cTeamPanel').classList.toggle('open');}
+function teamSelected(){return [].slice.call(document.querySelectorAll('#cTeamPanel input:checked')).map(function(i){return i.value;});}
+document.addEventListener('change',function(e){
+  if(e.target&&e.target.closest&&e.target.closest('#cTeamPanel')){
+    var sel=teamSelected(),lb=document.getElementById('cTeamLabel');
+    if(sel.length){lb.textContent=sel.join(', ');lb.classList.remove('cms-ph');}
+    else{lb.textContent='Select team members';lb.classList.add('cms-ph');}
+  }
+});
+document.addEventListener('click',function(e){
+  var p=document.getElementById('cTeamPanel');
+  if(p&&!(e.target.closest&&(e.target.closest('#cTeamPanel')||e.target.closest('#cTeamField'))))p.classList.remove('open');
+});
+var CANVAS_FOR={'Lead Customer Demand Mapping':'lead-supply-demand-mapping-canvas.html','Customer Demand Mapping':'demand-mapping-canvas-prototype.html','Investor Q&A Log':'investor-qa-log-canvas-prototype.html','Lead Demand mapping':'lead-demand-mapping-canvas.html','Customer Demand Mapping v2':'customer-demand-mapping-v2-canvas.html'};
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/'/g,'&#39;');}
+function deliverableRow(d){
+  var target=CANVAS_FOR[d.w]||'lead-supply-demand-mapping-canvas.html';
+  var prog=(d.f&&d.f.indexOf('New project')<0)?d.f:'New project';
+  var initials=(d.champ||'').trim().slice(0,2).toUpperCase();
+  return '<div class="row click created" data-id="'+(d.id||'')+'" onclick="location.href=\''+target+'?deliverable='+encodeURIComponent(d.id||'')+'\'">'
+    +'<div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-user"></i></div><div class="nm">'+esc(d.n)+'</div></div>'
+    +'<div class="prog basiconly"><i class="ti ti-topology-star-3"></i> '+esc(prog)+'</div>'
+    +'<div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>'
+    +'<div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">'+esc(initials)+'</span>'+esc(d.champ)+'</div>'
+    +'<div style="display:flex;gap:10px;align-items:center"><span class="clink" onclick="event.stopPropagation();window.open(\'https://app.notion.com/p/3b18a14ed56a8131ab1ac43928d15fcf\',\'_blank\',\'noopener\')">Deliverable</span><button class="rowmenu" onclick="event.stopPropagation();deliverableMenu(event,\''+(d.id||'')+'\')" aria-label="More"><i class="ti ti-dots"></i></button></div>'
+    +'</div>';
+}
+function getDeliverables(){var arr=[];try{arr=JSON.parse(localStorage.getItem('gyDeliverables')||'[]');}catch(e){}var ch=false;arr.forEach(function(d,i){if(!d.id){d.id='d'+Date.now()+'_'+i;ch=true;}});if(ch){try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}}return arr;}
+function renderDeliverables(){
+  var head=document.querySelector('.wrap .thead'); if(!head)return;
+  var arr=getDeliverables(); if(!arr.length)return;
+  head.insertAdjacentHTML('afterend', arr.map(deliverableRow).join(''));
+}
+function createDeliverable(){
+  var d={id:'d'+Date.now(),
+         n:(document.getElementById('cName').value||'').trim()||'Untitled deliverable',
+         w:document.getElementById('cWorkflow').value,
+         f:document.getElementById('cFolder').value,
+         champ:document.getElementById('cChampion').value,
+         team:teamSelected()};
+  var arr=getDeliverables(); arr.unshift(d);
+  try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}
+  var head=document.querySelector('.wrap .thead');
+  if(head)head.insertAdjacentHTML('afterend', deliverableRow(d));
+  closeCreate();
+  toast('Created "'+d.n+'" from the '+d.w+' blueprint · saved to the list');
+}
+function deliverableMenu(e,id){
+  e.stopPropagation();
+  var m=document.getElementById('rmenu');
+  m.innerHTML='<div class="rmenu-item danger" onclick="deleteDeliverable(\''+id+'\')"><i class="ti ti-trash"></i> Delete</div>';
+  var r=e.currentTarget.getBoundingClientRect();
+  m.style.left=Math.min(r.right-150,window.innerWidth-160)+'px';
+  m.style.top=(r.bottom+6)+'px';
+  m.classList.add('open');
+}
+function closeRowMenu(){var m=document.getElementById('rmenu');if(m)m.classList.remove('open');}
+function deleteDeliverable(id){
+  var arr=getDeliverables().filter(function(x){return x.id!==id;});
+  try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}
+  var el=document.querySelector('.row.created[data-id="'+id+'"]'); if(el)el.remove();
+  closeRowMenu();
+  toast('Deliverable deleted');
+}
+document.addEventListener('click',function(e){ if(!(e.target.closest&&(e.target.closest('.rmenu')||e.target.closest('.rowmenu')))) closeRowMenu(); });
+window.addEventListener('scroll',closeRowMenu,true);
+renderDeliverables();
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeCreate();closeRowMenu();}});
+/* Simple version: show the Lead (basiconly) and Customer workflows, opened in their manual first version. */
+(function(){
+  let basic=false; try{ basic=(localStorage.getItem('gyMode')||'advanced')==='basic'; }catch(e){}
+  if(!basic)return;
+  const manual="demand-mapping-canvas-prototype.html";
+  const dm=document.getElementById('dmRow');
+  document.querySelectorAll('.wrap .group, .wrap .row').forEach(el=>{ if(el!==dm && !el.classList.contains('basiconly') && !el.classList.contains('created')) el.style.display='none'; });
+  if(dm){
+    dm.setAttribute('onclick',"location.href='"+manual+"'");
+    dm.querySelectorAll('.clink').forEach(c=>{
+      if((c.textContent||'').toLowerCase().indexOf('edit')>=0) c.style.display='none';
+      else c.setAttribute('onclick',"event.stopPropagation();location.href='"+manual+"#contents'");
+    });
+  }
+})();
 function toggleNav(){
   document.body.classList.remove('navpeek');
   const n=document.getElementById('snav');
@@ -209,6 +520,9 @@ function toggleNav(){
   if(z)z.style.display=hid?'block':'none';
   localStorage.setItem('gyNavHid',hid?'1':'0');
 }
+(function(){
+  try{ if((localStorage.getItem('gyMode')||'advanced')==='basic') document.body.classList.add('gybasic'); }catch(e){}
+})();
 (function(){
   if(localStorage.getItem('gyNavHid')==='1'){
     document.getElementById('snav').classList.add('hid');
@@ -268,6 +582,146 @@ if(localStorage.getItem('gyDelOpen')==='0'){
     if(w)localStorage.setItem('gyNavW',String(w));
   });
 })();
+</script>
+
+<script>
+/* ── Accordions: Archive and In design stay folded away by default ───────── */
+function toggleAcc(el,id){
+  el.classList.toggle('closed');
+  var b=document.getElementById(id); if(b) b.classList.toggle('closed');
+}
+
+/* ── Favourites ───────────────────────────────────────────────────────────
+   Star a workflow and it surfaces as a card with a simplified picture of its
+   shape: the steps as nodes on the canvas grid, in the GY palette. Stored per
+   browser in localStorage('gyWfFavs'). */
+var WF_PAL = {
+  teal :['var(--tealbg)','var(--teald)'],
+  amber:['var(--amberbg)','var(--amberd)'],
+  blue :['var(--bluebg)','var(--blued)'],
+  green:['var(--greenbg)','var(--greend)'],
+  gray :['var(--graybg)','var(--grayd)']
+};
+var WF_SHAPE = {
+  'demand-mapping-canvas-prototype.html':
+    [['ti-forms','teal'],['ti-calendar-event','amber'],['ti-mail','blue'],['ti-search','teal'],['ti-file-check','green'],
+     ['ti-database','blue'],['ti-chart-dots','amber'],['ti-refresh','green']],
+  'customer-demand-mapping-v2-canvas.html':
+    [['ti-map-2','teal'],['ti-forms','blue'],['ti-users','amber'],['ti-chart-dots','teal'],['ti-file-check','green'],
+     ['ti-database','blue'],['ti-filter','gray'],['ti-refresh','green']],
+  'tender-to-bid-canvas-prototype.html':
+    [['ti-file-search','amber'],['ti-filter','gray'],['ti-checklist','blue'],['ti-users','teal'],['ti-file-text','green'],
+     ['ti-database','blue'],['ti-chart-dots','amber'],['ti-refresh','green']],
+  'investor-qa-log-canvas-prototype.html':
+    [['ti-messages','blue'],['ti-list-check','teal'],['ti-book','amber'],['ti-mail','blue'],['ti-file-check','green'],
+     ['ti-database','gray'],['ti-refresh','green']],
+  'lead-demand-mapping-canvas.html':
+    [['ti-map-search','teal'],['ti-layers-intersect','blue'],['ti-database','gray'],['ti-chart-dots','amber'],['ti-file-text','green'],
+     ['ti-mail','blue'],['ti-refresh','green']]
+};
+var WF_SHAPE_DEFAULT = [['ti-player-play','teal'],['ti-filter','gray'],['ti-search','blue'],['ti-chart-dots','amber'],['ti-file-check','green'],
+                        ['ti-database','gray'],['ti-refresh','green']];
+var WF_FAV_DEFAULT = ['demand-mapping-canvas-prototype.html','tender-to-bid-canvas-prototype.html'];
+
+function wfFavs(){
+  try{ var v=JSON.parse(localStorage.getItem('gyWfFavs')||'null'); if(v) return v; }catch(e){}
+  return WF_FAV_DEFAULT.slice();
+}
+function wfSaveFavs(a){ try{ localStorage.setItem('gyWfFavs',JSON.stringify(a)); }catch(e){} }
+function wfKey(row){
+  var oc = row.getAttribute('onclick')||'';
+  var m = oc.match(/location\.href='([^']+)'/);
+  return m ? m[1].split('?')[0].split('#')[0] : '';
+}
+function wfNodes(key){
+  var spec = WF_SHAPE[key] || WF_SHAPE_DEFAULT;
+  function line(list){
+    return '<div class="wfrow">' + list.map(function(n,i){
+      var p = WF_PAL[n[1]] || WF_PAL.gray;
+      return (i?'<span class="wfln"></span>':'')
+        + '<span class="wfnode" style="background:'+p[0]+';color:'+p[1]+'"><i class="ti '+n[0]+'"></i></span>';
+    }).join('') + '</div>';
+  }
+  return line(spec.slice(0,5)) + line(spec.slice(5));
+}
+function wfRenderFavs(){
+  var strip = document.getElementById('favStrip'); if(!strip) return;
+  var favs = wfFavs(), cards = [];
+  [].slice.call(document.querySelectorAll('.row.click')).forEach(function(row){
+    var key = wfKey(row);
+    if(!key || favs.indexOf(key) < 0) return;
+    var nm = (row.querySelector('.nm')||{}).textContent || 'Workflow';
+    var st = (row.querySelector('.st')||{}).textContent || '';
+    cards.push('<div class="favcard" onclick="location.href=\''+key+'\'">'
+      +'<div class="wfthumb">'+wfNodes(key)+'</div>'
+      +'<div class="favmeta"><span class="favnm">'+nm.trim()+'</span><span class="favst">'+st.trim()+'</span></div>'
+    +'</div>');
+  });
+  strip.innerHTML = '<div class="favhd"><i class="ti ti-star-filled"></i> Favourites</div>'
+    + (cards.length
+        ? '<div class="favcards">'+cards.join('')+'</div>'
+        : '<div class="favempty">No favourites yet. Star a workflow below and it shows up here, with a picture of its shape.</div>');
+}
+function wfToggleFav(ev, key){
+  ev.stopPropagation();
+  var favs = wfFavs(), i = favs.indexOf(key);
+  if(i >= 0) favs.splice(i,1); else favs.push(key);
+  wfSaveFavs(favs);
+  wfPaintStars();
+  wfRenderFavs();
+}
+function wfPaintStars(){
+  var favs = wfFavs();
+  [].slice.call(document.querySelectorAll('.favstar')).forEach(function(st){
+    st.classList.toggle('on', favs.indexOf(st.getAttribute('data-key')) >= 0);
+    st.innerHTML = '<i class="ti ti-star'+(st.classList.contains('on')?'-filled':'')+'"></i>';
+  });
+}
+function wfInitStars(){
+  [].slice.call(document.querySelectorAll('.row.click')).forEach(function(row){
+    var key = wfKey(row); if(!key) return;
+    if(row.querySelector('.favstar')) return;
+    var cell = row.lastElementChild; if(!cell) return;
+    var st = document.createElement('span');
+    st.className = 'favstar'; st.setAttribute('data-key', key);
+    st.setAttribute('title','Add to favourites');
+    st.onclick = function(e){ wfToggleFav(e, key); };
+    cell.appendChild(st);
+  });
+  wfPaintStars();
+}
+document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRenderFavs(); });
+
+/* Every deliverable whose workflow has not been run yet shows here as a Draft.
+   One source with Documents, so the two pages can never disagree. */
+(function(){
+  function paint(){
+    if(!window.GYD) return;
+    var el=document.getElementById('draftDocs'); if(!el) return;
+    var rows=GYD.drafts();
+    el.innerHTML = rows.map(function(x){
+      var d=GYD.dept(x.dept);
+      var es=x.es?(window.GY_ES||{})[x.es]:null;
+      var name=String(x.name).replace(/&amp;/g,'and').replace(/'/g,'');
+      return '<div class="row click" onclick="toast(\''+name+' is not built out in this prototype yet\')">'
+        +'<div class="name">'
+          +'<div class="tile" style="background:'+d.bg+';color:'+d.fg+'"><i class="ti ti-topology-star-3"></i></div>'
+          +'<div class="nm">'+x.wf
+            +(es?' <span class="es-chip '+es.cls+'" style="font-weight:400;font-size:12px;margin-left:7px"><i class="ti '+es.icon+'"></i>'+es.short+'</span>':'')
+          +'</div></div>'
+        +'<div class="prog basiconly"><i class="ti ti-topology-star-3"></i> '+d.name+'</div>'
+        +'<div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>'
+        +'<div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">'+x.steps+'</span>steps</div>'
+        +'<div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href=\'documents-overview.html\'">Deliverable</span></div>'
+      +'</div>';
+    }).join('');
+    var g=document.querySelector('.advonly .group');
+    if(g){ var c=g.querySelector('.count'); if(c) c.textContent = 4 + rows.length; }
+  }
+  window.addEventListener('DOMContentLoaded',paint);
+  if(document.readyState!=='loading')paint();
+})();
+
 </script>
 </body>
 </html>

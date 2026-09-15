@@ -1,3 +1,13 @@
+/* CARTO basemaps key. Paste the key from dashboard.basemaps.carto.com here
+   and every map in the prototype picks it up. Basemap keys are client-side
+   by design; restrict it by domain in the CARTO dashboard. */
+window.GY_CARTO_KEY = 'cb1_3l0b_1_d2561eca2c443f93c5f9c741';
+window.gyCartoTiles = function(style){
+  var k = window.GY_CARTO_KEY || '';
+  return 'https://{s}.basemaps.cartocdn.com/' + (style||'light_all') +
+         '/{z}/{x}/{y}{r}.png' + (k ? '?key=' + k : '');
+};
+
 /* ── GY shared sidebar navigation ────────────────────────────────────────
    One nav, every POC. Include where the aside.snav used to be:
 
@@ -8,15 +18,18 @@
      active : 'library' | 'deliverables' | 'demand-mapping' | 'investor-qa'
               | 'meeting-notes' | 'documents' | 'home' | '' (nothing highlighted)
      arts   : 'demand' | 'investor' | null   → which Tools list to show
-     artActive : label of the active artefact item (optional)
+     artActive : label of the active Tool item (optional)
 
-   Structure (v6 · one OS, altitude as scope):
-     Personal spine (Home, Inbox) → a single scope switcher (picker:
-     Portfolio + Programmes) whose links sit nested beneath it. The
-     switcher is the only way to move between altitudes.
-       Programme : Overview, Inventory, Workflows, Reports · Documents,
-                   Meeting Notes, Activity
-       Portfolio : Overview, Inventory, Trade, Capital · Customers, Reports
+   Structure (v7 · Sep 2026 rail, altitude as scope):
+     Personal spine (Home, Notifications, To-dos) then a single Workspace
+     picker listing BOTH altitudes: Portfolio above a divider, the three
+     Programmes below it. The picker is the way to move between altitudes;
+     a back row to Portfolio stays as a shortcut inside a programme.
+       Portfolio : Overview · Manage (Inventory [Search, BNG, Carbon],
+                   Deals, Workflows) · Intelligence (Market Map, Outcome
+                   Engine) · Records (Documents, Meeting notes, Activity)
+       Programme : Overview · Manage (Inventory [BNG, Carbon], Projects,
+                   Sites, Workflows) · Records (as above)
      Hive Mind Library and the profile are pinned as full-width footer rows.
      A subtle dark-mode toggle themes the sidebar. Scope persists via
      localStorage('gyScope'); dark via localStorage('gyDark').
@@ -25,12 +38,31 @@
   var cfg = window.GYNAV || {};
   var active = cfg.active || '';
   function on(k){ return active===k ? ' on' : ''; }
-  var invActive = active && active.indexOf('inv-')===0;
+  var invActive = (active && active.indexOf('inv-')===0) || active==='pf-inventory';
+  var progInv = active && active.indexOf('prog-inv')===0;
+  /* Embed mode (?embed=1): hide the app sidebar so the canvas embeds cleanly,
+     e.g. inside a Notion /embed block, showing just the scrollable board. */
+  try{ var qp=new URLSearchParams(location.search);
+    if(qp.get('embed')==='1') document.documentElement.classList.add('gyembed');
+    /* bare=1: also hide the canvas's own chrome (chapter nav, About, Activity)
+       for hosts that already show that state around the embed. */
+    if(qp.get('bare')==='1') document.documentElement.classList.add('gybare');
+  }catch(e){}
 
   window.gyToast = function(m){ if(window.toast) toast(m); };
   function gyStore(){ try{ return JSON.parse(localStorage.getItem('gyOpen')||'{}'); }catch(e){ return {}; } }
   function gyIsOpen(key,def){ var o=gyStore(); return key in o ? !!o[key] : def; }
   function gyCls(key,def){ return gyIsOpen(key,def) ? '' : ' closed'; }
+  /* Clicking the parent row opens its accordion and goes to the first page
+     inside it. The chevron stays a pure toggle. */
+  window.gyOpenGo = function(a,s,href){
+    var arr=document.getElementById(a), sub=document.getElementById(s);
+    if(arr) arr.classList.remove('closed');
+    if(sub) sub.classList.remove('closed');
+    try{ var o=gyStore(); o[s]=true; localStorage.setItem('gyOpen',JSON.stringify(o)); }catch(e){}
+    var here=(location.pathname.split('/').pop()||'');
+    if(href && here!==href.split('?')[0]) location.href=href;
+  };
   window.gyTgl = function(a,s){
     var arr=document.getElementById(a), sub=document.getElementById(s);
     if(arr) arr.classList.toggle('closed');
@@ -44,18 +76,43 @@
   };
 
   var DELIVERABLES = [
-    ['demand-mapping','Demand Mapping',"location.href='demand-mapping-canvas-prototype.html'"],
+    ['customer-demand-v2','Customer Demand Mapping v2',"location.href='customer-demand-mapping-v2-canvas.html'"],
+    ['demand-mapping','Customer Demand Mapping',"location.href='demand-mapping-canvas-prototype.html'"],
     ['investor-qa','Investor Q&A Log',"location.href='investor-qa-log-canvas-prototype.html'"],
+    ['tender-to-bid','Tender to Bid',"location.href='tender-to-bid-canvas-prototype.html'"],
+    ['lead-demand-mapping','Lead Demand mapping',"location.href='lead-demand-mapping-canvas.html'"],
     ['market-readiness','Market Readiness',"gyToast('Market Readiness Assessment is not in this prototype yet')"],
     ['financial-model','Financial Model',"gyToast('Financial Model is not in this prototype yet')"],
     ['commercial-strategy','Commercial Strategy',"gyToast('Commercial Strategy is not in this prototype yet')"]
   ];
-  var delActive = ['demand-mapping','investor-qa','market-readiness','financial-model','commercial-strategy'].indexOf(active)>=0;
+  var delActive = ['customer-demand-v2','demand-mapping','demand-textview','lead-mapping','upper-dee-mapping','upper-dee-executors','workflow-experiment-mapping','investor-qa','tender-to-bid','lead-demand-mapping','market-readiness','financial-model','commercial-strategy'].indexOf(active)>=0;
   /* Workflows accordion: open (respecting stored state) only when on a workflow page;
      always collapsed on first load of the programme layer / Overview. */
   var delCls = delActive ? gyCls('delSub', true) : ' closed';
 
   var ARTSETS = {
+    demandv2: [
+      ['Questionnaire · Project context',"location.href='questionnaire-editor.html'"],
+      ['Agenda · Kick-off call',"location.href='artefact-editor.html?a=agenda'"],
+      ['Email · Project context',"location.href='artefact-editor.html?a=qemail'"],
+      ['Assistant · Pre-call brief',"location.href='artefact-editor.html?a=precall'"],
+      ['Assistant · Gap summary',"location.href='artefact-editor.html?a=gapsum'"],
+      ['Layer · Catchment mapping',"gyToast('Person-mediated through Katia. No editor yet.')"],
+      ['Feed · GPAP planning scrape',"gyToast('Person-mediated through George. No editor yet.')"],
+      ['Data · Abstraction licences',"gyToast('Person-mediated through Katia. No editor yet.')"],
+      ['List · SBTi targets',"gyToast('Manual look-up on sciencebasedtargets.org')"],
+      ['List · TNFD adopters',"gyToast('Manual look-up on tnfd.global')"],
+      ['Shelf · Public funding sources',"gyToast('gov.uk, gov.scot and NatureScot')"],
+      ['Library · Buyer sector profiles',"gyToast('Six buyer sectors. Standing store, refreshed Oct 2025.')"],
+      ['Template · Buyer tables',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Database · GY buyers',"location.href='artefact-editor.html?a=buyerdb'"],
+      ['Library · ES rule books',"location.href='artefact-editor.html?a=rulebooks'"],
+      ['Shelf · Supply registries',"location.href='artefact-editor.html?a=registries'"],
+      ['Template · Evidence pack',"location.href='artefact-editor.html?a=evidence'"],
+      ['Scoring · Market readiness',"location.href='artefact-editor.html?a=scoring'"],
+      ['Template · Verdict pack',"location.href='artefact-editor.html?a=verdict'"],
+      ['Schema · Data platform file',"gyToast('Handoff schema. No editor yet.')"]
+    ],
     demand: [
       ['Questionnaire · Project context',"location.href='questionnaire-editor.html'"],
       ['Agenda · Kick-off call',"location.href='artefact-editor.html?a=agenda'"],
@@ -69,11 +126,28 @@
       ['Database · GY buyers',"location.href='artefact-editor.html?a=buyerdb'"],
       ['Template · Verdict pack',"location.href='artefact-editor.html?a=verdict'"]
     ],
+    tender: [
+      ['Tender pipeline',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Requirements extract',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Battenburg scorecard',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Evidence map',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Answer bank',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Rate card',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Lessons register',"gyToast('Tool editors are not wired for this Workflow yet')"]
+    ],
+    leaddemand: [
+      ['Shelf · Spatial layers',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Nat cap thresholds',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Database · GY buyers',"location.href='artefact-editor.html?a=buyerdb'"],
+      ['Top of funnel map',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Template · Lead demand report',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Email · Report to decision maker',"gyToast('Tool editors are not wired for this Workflow yet')"]
+    ],
     investor: [
-      ['Q&A Protocol',"gyToast('Artefact editors are not wired for this Workflow yet')"],
-      ['Q&A Log template',"gyToast('Artefact editors are not wired for this Workflow yet')"],
-      ['Answer Library',"gyToast('Artefact editors are not wired for this Workflow yet')"],
-      ['ELR Investor FAQs',"gyToast('Artefact editors are not wired for this Workflow yet')"],
+      ['Q&A Protocol',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Q&A Log template',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['Answer Library',"gyToast('Tool editors are not wired for this Workflow yet')"],
+      ['ELR Investor FAQs',"gyToast('Tool editors are not wired for this Workflow yet')"],
       ['Q&A pack · example Output',"location.href='investor-qa-pack-example.html'"]
     ]
   };
@@ -98,35 +172,27 @@
   }
 
   var INV_PROG =
-    '<div class="ssub'+gyCls('invSub',false)+'" id="invSub">'
-    +'<div class="sitem" onclick="gyToast(\'Units: the stock list per ecosystem service\')">Units</div>'
-    +'<div class="sitem" onclick="gyToast(\'Ecosystem services: the catalogue of unit types, rules and market context\')">Ecosystem services</div>'
+    '<div class="ssub'+gyCls('invSub',progInv)+'" id="invSub">'
+    +'<div class="sitem'+on('prog-inventory')+'"'+(active==='prog-inventory'?'':' onclick="location.href=\'inventory-overview.html\'"')+'>Overview</div>'
+    +'<div class="sitem'+on('prog-inv-bng')+'"'+(active==='prog-inv-bng'?'':' onclick="location.href=\'inventory-bng-programme.html\'"')+'><span class="es-dot es-bng" style="margin-right:9px"></span>BNG</div>'
+    +'<div class="sitem'+on('prog-inv-wcc')+'"'+(active==='prog-inv-wcc'?'':' onclick="location.href=\'inventory-wcc-programme.html\'"')+'><span class="es-dot es-wcc" style="margin-right:9px"></span>Carbon</div>'
+    +'<div class="sitem'+on('prog-inv-soc')+'"'+(active==='prog-inv-soc'?'':' onclick="location.href=\'inventory-soc-programme.html\'"')+'><span class="es-dot es-soc" style="margin-right:9px"></span>Soil carbon</div>'
     +'</div>';
-  var esOpen = (active==='inv-bng'||active==='inv-wcc');
   var INV_PF =
     '<div class="ssub'+gyCls('pfInvSub',invActive)+'" id="pfInvSub">'
-    +'<div class="sitem'+on('inv-portfolio')+'"'+(active==='inv-portfolio'?'':' onclick="location.href=\'inventory-portfolio-dashboard.html\'"')+'>Portfolio Dashboard</div>'
-    +'<div class="sitem muted" onclick="gyToast(\'Search Inventory is not in this prototype yet\')">Search Inventory</div>'
-    +'<div class="sitem'+on('inv-all')+'"'+(active==='inv-all'?'':' onclick="location.href=\'inventory-all.html\'"')+'>All Inventory</div>'
-    +'<div class="sitem" onclick="gyTgl(\'esArr\',\'esSub\')">Ecosystem Services <i class="ti ti-chevron-down sarr'+gyCls('esSub',esOpen)+'" id="esArr" onclick="event.stopPropagation();gyTgl(\'esArr\',\'esSub\')"></i></div>'
-    +'<div class="ssub ssub2'+gyCls('esSub',esOpen)+'" id="esSub">'
-      +'<div class="sitem'+on('inv-bng')+'"'+(active==='inv-bng'?'':' onclick="location.href=\'inventory-bng-portfolio.html\'"')+'>All BNG Portfolio</div>'
-      +'<div class="sitem'+on('inv-wcc')+'"'+(active==='inv-wcc'?'':' onclick="location.href=\'inventory-wcc-portfolio.html\'"')+'>All Woodland Carbon</div>'
-    +'</div>'
-    +'<div class="sitem" onclick="gyTgl(\'invProgArr\',\'invProgSub\')">Programmes <i class="ti ti-chevron-down sarr'+gyCls('invProgSub',active==='inv-denton')+'" id="invProgArr" onclick="event.stopPropagation();gyTgl(\'invProgArr\',\'invProgSub\')"></i></div>'
-    +'<div class="ssub ssub2'+gyCls('invProgSub',active==='inv-denton')+'" id="invProgSub">'
-      +'<div class="sitem'+on('inv-denton')+'"'+(active==='inv-denton'?'':' onclick="location.href=\'inventory-denton-reserve.html\'"')+'>Denton Reserve</div>'
-      +'<div class="sitem" onclick="gyToast(\'ELR inventory is not in this prototype yet\')">ELR</div>'
-      +'<div class="sitem" onclick="gyToast(\'Spains Hall Estate inventory is not in this prototype yet\')">Spains Hall Estate</div>'
-      +'<div class="sitem" onclick="gyToast(\'Wendling Beck inventory is not in this prototype yet\')">Wendling Beck</div>'
-    +'</div>'
+    +'<div class="sitem'+on('pf-inventory')+'"'+(active==='pf-inventory'?'':' onclick="location.href=\'inventory-portfolio-overview.html\'"')+'>Overview</div>'
+    +'<div class="sitem'+on('inv-bng')+'"'+(active==='inv-bng'?'':' onclick="location.href=\'inventory-bng-portfolio.html\'"')+'><span class="es-dot es-bng" style="margin-right:9px"></span>BNG</div>'
+    +'<div class="sitem'+on('inv-wcc')+'"'+(active==='inv-wcc'?'':' onclick="location.href=\'inventory-wcc-portfolio.html\'"')+'><span class="es-dot es-wcc" style="margin-right:9px"></span>Carbon</div>'
     +'</div>';
 
   /* Shared items - referenced by BOTH the advanced portfolio panel and the
      basic panel, so any edit here propagates to both. */
   var ITEM_INV_PF =
-    '<div class="sitem" onclick="gyTgl(\'pfInvArr\',\'pfInvSub\')"><i class="ti ti-packages"></i> Inventory <i class="ti ti-chevron-down sarr'+gyCls('pfInvSub',invActive)+'" id="pfInvArr" onclick="event.stopPropagation();gyTgl(\'pfInvArr\',\'pfInvSub\')"></i></div>'
+    '<div class="sitem" onclick="gyOpenGo(\'pfInvArr\',\'pfInvSub\',\'inventory-portfolio-overview.html\')"><i class="ti ti-packages"></i> Inventory <i class="ti ti-chevron-down sarr'+gyCls('pfInvSub',invActive)+'" id="pfInvArr" onclick="event.stopPropagation();gyTgl(\'pfInvArr\',\'pfInvSub\')"></i></div>'
     +INV_PF;
+  var ITEM_INV_PROG =
+    '<div class="sitem" onclick="gyOpenGo(\'invArr\',\'invSub\',\'inventory-overview.html\')"><i class="ti ti-packages"></i> Inventory <i class="ti ti-chevron-down sarr'+gyCls('invSub',progInv)+'" id="invArr" onclick="event.stopPropagation();gyTgl(\'invArr\',\'invSub\')"></i></div>'
+    +INV_PROG;
   var ITEM_MARKETMAP =
     '<div class="sitem'+on('market-map')+'"'+(active==='market-map'?'':' onclick="location.href=\'market-map-kwame.html\'"')+'><i class="ti ti-map-2"></i> Market Map (Kwame)</div>';
   var ITEM_GENIE =
@@ -134,6 +200,16 @@
   var ITEM_WORKFLOWS =
     '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Workflows <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
     +'<div class="ssub'+delCls+'" id="delSub">'+rows(DELIVERABLES)+artsHtml+'</div>';
+  /* Simple version: only the live pilot, Demand Mapping, opened in its manual first version. */
+  var DELIVERABLES_BASIC = [
+    ['lead-mapping','Lead Customer Demand Mapping',"location.href='lead-supply-demand-mapping-canvas.html'"],
+    ['upper-dee-mapping','Upper Dee: Customer Demand Mapping',"location.href='upper-dee-supply-demand-mapping-canvas.html'"],
+    ['workflow-experiment-mapping','Workflow experiment: S&D Mapping',"location.href='workflow-experiment-supply-demand-mapping-canvas.html'"],
+    ['demand-mapping','Customer Demand Mapping',"location.href='demand-mapping-canvas-prototype.html'"]
+  ];
+  var ITEM_WORKFLOWS_BASIC =
+    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Workflows <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
+    +'<div class="ssub'+delCls+'" id="delSub">'+rows(DELIVERABLES_BASIC)+'</div>';
 
   /* Basic POC: slimmed first-steps view, with bundle titles above the links.
      Market · Intelligence · Manage, showing Inventory, the two live Intelligence
@@ -142,82 +218,76 @@
     return ''
     +'<div class="gy-grp">Market</div>'
     +ITEM_INV_PF
+    +'<div class="sitem" onclick="gyToast(\'Deals: the deal pipeline across programmes\')"><i class="ti ti-businessplan"></i> Deals</div>'
     +'<div class="gy-grp">Intelligence</div>'
     +ITEM_MARKETMAP
     +ITEM_GENIE
     +'<div class="gy-grp">Manage</div>'
-    +ITEM_WORKFLOWS;
+    +ITEM_WORKFLOWS_BASIC;
   }
+
+  var RECORDS =
+    '<div class="gy-grp">Records</div>'
+    +'<div class="sitem'+on('documents')+'" onclick="location.href=\'documents-overview.html\'"><i class="ti ti-file-text"></i> Documents <span class="scount" id="cntDocs"></span></div>'
+    +'<div class="sitem'+on('meeting-notes')+'" onclick="location.href=\'meeting-notes.html\'"><i class="ti ti-note"></i> Meeting notes <span class="scount" id="cntNotes"></span></div>'
+    +'<div class="sitem'+on('activity')+'"'+(active==='activity'?'':' onclick="location.href=\'activity-overview.html\'"')+'><i class="ti ti-activity"></i> Activity</div>';
 
   function progPanel(){
     return ''
     +'<div class="sitem'+on('overview')+'"'+(active==='overview'?'':' onclick="location.href=\'programme-overview.html\'"')+'><i class="ti ti-layout-dashboard"></i> Overview</div>'
-    +'<div class="gy-grp">Market</div>'
-    +'<div class="sitem'+on('prog-inventory')+'"'+(active==='prog-inventory'?'':' onclick="location.href=\'inventory-programme.html\'"')+'><i class="ti ti-packages"></i> Inventory</div>'
-    +'<div class="gy-grp">Records</div>'
-    +'<div class="sitem'+on('documents')+'" onclick="location.href=\'documents-overview.html\'"><i class="ti ti-file-text"></i> Documents <span class="scount" id="cntDocs"></span></div>'
-    +'<div class="sitem'+on('meeting-notes')+'" onclick="location.href=\'meeting-notes-landing.html\'"><i class="ti ti-note"></i> Meeting Notes <span class="scount" id="cntNotes"></span></div>'
-    +'<div class="sitem" onclick="gyToast(\'People: the stakeholders on this programme · landowners, agents, buyers, partners\')"><i class="ti ti-users"></i> People</div>'
-    +'<div class="sitem" onclick="gyToast(\'Activity: a timeline of what has happened across this programme\')"><i class="ti ti-activity"></i> Activity</div>'
     +'<div class="gy-grp">Manage</div>'
+    +ITEM_INV_PROG
+    +'<div class="sitem'+on('prog-projects')+'"'+(active==='prog-projects'?'':' onclick="location.href=\'projects.html\'"')+'><i class="ti ti-map"></i> Projects</div>'
+    +'<div class="sitem'+on('prog-sites')+'"'+(active==='prog-sites'?'':' onclick="location.href=\'sites.html\'"')+'><i class="ti ti-map-pin"></i> Sites</div>'
     +ITEM_WORKFLOWS
-    +'<div class="sitem" onclick="gyToast(\'Reports: programme reporting and insights\')"><i class="ti ti-chart-bar"></i> Reports</div>';
+    +RECORDS;
   }
   function pfPanel(){
     return ''
     +'<div class="sitem'+on('pf-overview')+'"'+(active==='pf-overview'?'':' onclick="location.href=\'portfolio-overview.html\'"')+'><i class="ti ti-layout-dashboard"></i> Overview</div>'
-    +'<div class="gy-grp">Market</div>'
+    +'<div class="gy-grp">Manage</div>'
     +ITEM_INV_PF
     +'<div class="sitem" onclick="gyToast(\'Deals: the deal pipeline across programmes\')"><i class="ti ti-businessplan"></i> Deals</div>'
-    +'<div class="sitem" onclick="gyToast(\'Customers: buyers and landowner clients across programmes\')"><i class="ti ti-users"></i> Customers</div>'
+    +'<div class="sitem" onclick="gyToast(\'Workflows: cross-programme, portfolio-level workflows live here\')"><i class="ti ti-hierarchy-2"></i> Workflows</div>'
     +'<div class="gy-grp">Intelligence</div>'
     +ITEM_MARKETMAP
-    +'<div class="sitem'+on('outcome-engine')+'"'+(active==='outcome-engine'?'':' onclick="location.href=\'outcome-engine.html\'"')+'><i class="ti ti-flask"></i> Outcome Engine (I2O)</div>'
-    +ITEM_GENIE
-    +'<div class="gy-grp">Manage</div>'
-    +'<div class="sitem" onclick="gyToast(\'Workflows: cross-programme, portfolio-level workflows live here\')"><i class="ti ti-hierarchy-2"></i> Workflows</div>'
-    +'<div class="sitem" onclick="gyToast(\'Reports: portfolio reporting and insights\')"><i class="ti ti-chart-bar"></i> Reports</div>';
+    +RECORDS;
   }
   function scopeMeta(s){
     return s==='portfolio'
-      ? {eye:'Portfolio', name:'Portfolio', ic:'ti-building-bank'}
-      : {eye:'Programme', name:'Evenlode', ic:'ti-topology-star-3'};
+      ? {eye:'Portfolio', name:'Portfolio', ini:'GY', cls:'gy-ws-gy'}
+      : {eye:'Programme', name:'Evenlode', ini:'EV', cls:'gy-ws-ev'};
   }
+  function wsTile(ini,cls){
+    return '<span class="gy-wstile '+cls+'">'+ini+'</span>';
+  }
+  /* One picker, both altitudes. Portfolio sits above a divider, the
+     programmes below it, so the two levels read as different levels. */
   function pickerHtml(){
     var s = scope;
     function ck(x){ return s===x ? '<i class="ti ti-check gy-ck"></i>' : ''; }
-    var progs = '<div class="gy-pk" onclick="gyGoProg()"><i class="ti ti-topology-star-3"></i>Evenlode'+ck('programme')+'</div>'
-      +'<div class="gy-pk" onclick="gyToast(\'Spains Hall is not in this prototype yet\')"><i class="ti ti-topology-star-3"></i>Spains Hall</div>'
-      +'<div class="gy-pk" onclick="gyToast(\'Boothby is not in this prototype yet\')"><i class="ti ti-topology-star-3"></i>Boothby</div>';
-    /* portfolio: descend into a programme · programme: switch sibling (back row handles up) */
-    return s==='portfolio'
-      ? '<div class="gy-pkhead">Go to programme</div>'+progs
-      : '<div class="gy-pkhead">Programmes</div>'+progs;
-  }
-  function backHtml(){
-    return scope==='portfolio' ? ''
-      : '<div class="gy-back" onclick="gyGoPortfolio()"><i class="ti ti-chevron-left"></i> Portfolio</div>';
+    return '<div class="gy-pkhead">Portfolio</div>'
+      +'<div class="gy-pk" onclick="gyGoPortfolio()">'+wsTile('GY','gy-ws-gy')+'Portfolio'+ck('portfolio')+'</div>'
+      +'<div class="gy-pkdiv"></div>'
+      +'<div class="gy-pkhead">Programmes</div>'
+      +'<div class="gy-pk" onclick="gyGoProg()">'+wsTile('EV','gy-ws-ev')+'Evenlode'+ck('programme')+'</div>'
+      +'<div class="gy-pk" onclick="gyToast(\'Spains Hall is not in this prototype yet\')">'+wsTile('SH','gy-ws-sh')+'Spains Hall</div>'
+      +'<div class="gy-pk" onclick="gyToast(\'Boothby is not in this prototype yet\')">'+wsTile('BO','gy-ws-bo')+'Boothby</div>';
   }
 
   var scope = 'programme';
   try{ scope = localStorage.getItem('gyScope') || 'programme'; }catch(e){}
   var mode = 'advanced';
   try{ mode = localStorage.getItem('gyMode') || 'advanced'; }catch(e){}
-  var invActive = active && active.indexOf('inv-')===0;
-  if(active==='market-map' || active==='outcome-engine' || active==='pf-overview' || active==='pf-reports' || invActive) scope='portfolio';
+  var invActive = (active && active.indexOf('inv-')===0) || active==='pf-inventory';
+  if(cfg.scope==='portfolio' || active==='market-map' || active==='outcome-engine' || active==='pf-overview' || active==='pf-reports' || invActive) scope='portfolio';
+  else if(cfg.scope==='programme') scope='programme';
   else if(active && active!=='library' && active!=='home' && active!=='inbox' && scope==='portfolio') scope='programme';
   var meta = scopeMeta(scope);
 
   var CSS =
-    '.gy-eyebrow{font-size:12px;color:#9C9A92;padding:16px 10px 6px}'
-   +'.gy-grp{font-size:12px;color:#9C9A92;padding:14px 10px 5px}'
+    '.gy-grp{font-size:12px;color:#9C9A92;padding:14px 10px 5px}'
    +'body.gydark .gy-grp{color:#8A877F}'
-   +'.gy-back{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:#6B6A64;cursor:pointer;margin-top:2px}'
-   +'.gy-back i{font-size:17px;color:#9C9A92}'
-   +'.gy-back:hover{background:#F3F2EE;color:#1F1F1D}'
-   +'body.gydark .gy-back{color:#B5B2AB}'
-   +'body.gydark .gy-back i{color:#8A877F}'
-   +'body.gydark .gy-back:hover{background:#26252A;color:#ECEAE4}'
    +'.gy-switch{display:flex;align-items:center;gap:11px;margin:0;padding:9px;border-radius:10px;border:1px solid #CFCDC5;font-size:14.5px;font-weight:500;color:#2C2C2A;cursor:pointer}'
    +'.gy-switch:hover{border-color:#B4B2A9}'
    +'.gy-switch>i:first-child{font-size:16px;color:#6B6A64}'
@@ -247,6 +317,16 @@
    +'.gy-wsname{display:block;font-size:14px;font-weight:600;color:#2C2C2A}'
    +'.gy-wssub{display:block;font-size:11px;color:#9C9A92}'
    +'.gy-pkdiv{height:1px;background:#E3E1DB;margin:5px -6px}'
+   +'.gy-wstile{width:22px;height:22px;border-radius:6px;background:#EDEBE4;color:#4A4842;font-size:10px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;flex:none}'
+   +'.gy-ws-gy{background:#F9DD5A;color:#1A0C12}'
+   +'.gy-ws-ev{background:#EAF1DE;color:#3F5A2B}'
+   +'.gy-ws-sh{background:#E6F1FB;color:#185FA5}'
+   +'.gy-ws-bo{background:#F7E7DE;color:#8A3F28}'
+   +'body.gydark .gy-wstile{background:#33323A;color:#ECEAE4}'
+   +'body.gydark .gy-ws-gy{background:#F9DD5A;color:#1A0C12}'
+   +'body.gydark .gy-ws-ev{background:#2E3B26;color:#C4D8AC}'
+   +'body.gydark .gy-ws-sh{background:#1F3149;color:#A8C7E6}'
+   +'body.gydark .gy-ws-bo{background:#3B2B23;color:#E2B79F}'
    +'body.gydark .gy-wsmenu{background:#26252A;border-color:#3A393E}'
    +'body.gydark .gy-wsname{color:#ECEAE4}'
    +'body.gydark .gy-pkdiv{background:#3A393E}'
@@ -266,7 +346,6 @@
    +'body.gydark .sworks b,body.gydark .sworks .ti{color:#ECEAE4}'
    +'body.gydark .scollapse{background:transparent;color:#B5B2AB}'
    +'body.gydark .scollapse:hover{background:#26252A;color:#ECEAE4}'
-   +'body.gydark .gy-eyebrow{color:#8A877F}'
    +'body.gydark .gy-switch{border-color:#3A393E;color:#ECEAE4}'
    +'body.gydark .gy-switch>i:first-child{color:#B5B2AB}'
    +'body.gydark .gy-scopewrap{border-left-color:#33323A}'
@@ -277,7 +356,115 @@
    +'body.gydark .gy-picker{background:#26252A;border-color:#3A393E}'
    +'body.gydark .gy-pk{color:#ECEAE4}'
    +'body.gydark .gy-pk:hover{background:#33323A}'
-   +'body.gydark .sdiv{background:#2E2D31}';
+   +'body.gydark .sdiv{background:#2E2D31}'
+   +'.gy-srow{display:flex;align-items:center;gap:8px;margin:0 0 10px}'
+   +'.gy-search{flex:1;min-width:0;display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid #CFCDC5;border-radius:11px;background:#fff;font-size:14.5px;color:#9C9A92;cursor:pointer}'
+   +'.gy-notif{position:relative;width:38px;height:38px;flex:none;border:1px solid #CFCDC5;border-radius:11px;background:#fff;color:#6B6A64;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}'
+   +'.gy-notif:hover{border-color:#B4B2A9;color:#1F1F1D}'
+   +'.gy-notif i{font-size:17px}'
+   +'.gy-ndot{position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:#EF9F27;border:1.5px solid #fff}'
+   +'body.gydark .gy-notif{background:#1B1A1E;border-color:#3A393E;color:#B5B2AB}'
+   +'body.gydark .gy-notif:hover{border-color:#4A484F;color:#ECEAE4}'
+   +'body.gydark .gy-ndot{border-color:#1B1A1E}'
+   +'.gy-search:hover{border-color:#B4B2A9}'
+   +'.gy-search i{font-size:16px;color:#9C9A92}'
+   +'body.gydark .gy-search{background:#1B1A1E;border-color:#3A393E;color:#8A877F}'
+   +'body.gydark .gy-search i{color:#8A877F}'
+   +'body.gydark .gy-search:hover{border-color:#4A484F}'
+   +'.snav{font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;font-size:16px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:#fff;border-right:1px solid #ECE7DB;padding:12px 12px 16px}'
+   +'.snav .sitem{font-size:15px;font-weight:400;letter-spacing:normal;color:#1F1F1D;padding:8px 10px;border-radius:9px;gap:11px;margin-bottom:1px}'
+   +'.snav .sitem>.ti{font-size:17px;color:#6B6A64}'
+   +'.snav .sitem:hover{background:#F3F2EE}'
+   +'.snav .sitem.on{background:#F1EFE8;font-weight:500}'
+   +'.snav .ssub{margin:2px 0 4px 30px}'
+   +'.snav .ssub .sitem{font-size:14.5px;font-weight:400;padding:6px 10px;color:#6B6A64}'
+   +'.snav .ssub .sitem.on{color:#1F1F1D;font-weight:500}'
+   +'.snav .sworks{gap:9px;padding:4px 6px 12px}'
+   +'.snav .sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700}'
+   +'.snav .sworks b{font-size:15.5px;font-weight:600;color:#1F1F1D}'
+   +'.snav .scount{font-size:11.5px;color:#9C9A92;font-weight:400;margin-left:auto;font-variant-numeric:tabular-nums}'
+   +'.snav .sdiv{background:#E3E1DB}'
+   +'.snav .sarr{color:#9C9A92}'
+   +'.gy-smov{position:fixed;inset:0;background:rgba(31,31,29,.34);z-index:120;display:none;align-items:flex-start;justify-content:center;padding:11vh 16px 16px}'
+   +'.gy-smov.open{display:flex}'
+   +'.gy-smbox{width:660px;max-width:100%;max-height:74vh;background:#fff;border:1px solid #E3E1DB;border-radius:16px;box-shadow:0 24px 70px rgba(31,31,29,.26);overflow:hidden;display:flex;flex-direction:column;font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}'
+   +'.gy-smtop{display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid #E3E1DB;flex:none}'
+   +'.gy-smtop>i{font-size:18px;color:#9C9A92}'
+   +'.gy-sminput{flex:1;min-width:0;border:none;outline:none;font:inherit;font-size:16px;color:#1F1F1D;background:transparent}'
+   +'.gy-sminput::placeholder{color:#9C9A92}'
+   +'.gy-smask{display:flex;align-items:center;gap:7px;font-size:13.5px;color:#9C9A92;cursor:pointer;white-space:nowrap}'
+   +'.gy-smask:hover{color:#1F1F1D}'
+   +'.gy-kbd{font-size:11px;color:#6B6A64;border:1px solid #E3E1DB;border-radius:5px;padding:1px 6px;background:#FBFAF5;font-family:inherit}'
+   +'.gy-smlist{overflow:auto;padding:6px;flex:1}'
+   +'.gy-smsec{font-size:12px;color:#9C9A92;padding:11px 12px 4px}'
+   +'.gy-smitem{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;font-size:14.5px;color:#1F1F1D;cursor:pointer}'
+   +'.gy-smitem>i{font-size:17px;color:#6B6A64;flex:none}'
+   +'.gy-smitem .gy-smnm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
+   +'.gy-smitem .gy-smtype{font-size:12.5px;color:#9C9A92;flex:none}'
+   +'.gy-smitem.sel{background:#F1EFE8}'
+   +'.gy-smempty{padding:30px 16px;text-align:center;color:#9C9A92;font-size:14.5px}'
+   +'.gy-smfoot{display:flex;align-items:center;gap:16px;padding:11px 16px;border-top:1px solid #E3E1DB;background:#FBFAF5;font-size:13px;color:#9C9A92;flex:none}'
+   +'.gy-nppop{position:fixed;width:372px;max-width:92vw;background:#fff;border:1px solid #E3E1DB;border-radius:14px;box-shadow:0 18px 48px rgba(31,31,29,.2);z-index:110;overflow:hidden;font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}'
+   +'.gy-nphd{padding:15px 16px 0;font-size:17px;font-weight:600;color:#1F1F1D}'
+   +'.gy-nptabs{display:flex;gap:7px;padding:11px 16px 12px;border-bottom:1px solid #E3E1DB}'
+   +'.gy-nptab{font:inherit;font-size:13.5px;padding:6px 12px;border-radius:9px;border:1px solid #E3E1DB;background:#fff;color:#6B6A64;cursor:pointer}'
+   +'.gy-nptab.on{border-color:#185FA5;color:#185FA5;font-weight:500}'
+   +'.gy-nplist{max-height:330px;overflow:auto;padding:6px}'
+   +'.gy-npitem{display:flex;gap:11px;padding:11px 12px;border-radius:10px;cursor:pointer}'
+   +'.gy-npitem>span:last-child{min-width:0;flex:1}'
+   +'.gy-npitem:hover{background:#F3F2EE}'
+   +'.gy-npico{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;font-size:16px}'
+   +'.gy-nptitle{display:block;font-size:14.5px;font-weight:500;line-height:1.35;color:#1F1F1D}'
+   +'.gy-npmeta{display:block;font-size:12.5px;color:#9C9A92;margin-top:3px}'
+   +'.gy-npempty{padding:42px 20px;text-align:center}'
+   +'.gy-npempty>i{font-size:38px;color:#DEDCD4}'
+   +'.gy-npempty b{display:block;font-size:15px;margin-top:12px;color:#1F1F1D}'
+   +'.gy-npempty p{font-size:13.5px;color:#9C9A92;margin-top:5px;line-height:1.45}'
+   +'.gy-npfoot{padding:11px 16px;border-top:1px solid #E3E1DB;background:#FBFAF5;font-size:13.5px;color:#185FA5;cursor:pointer}'
+   +'.es-bng{--esc:#1E8A63;--esbg:#E3F2EB}'
+   +'.es-wcc{--esc:#C67F16;--esbg:#FAEEDA}'
+   +'.es-soc{--esc:#7A6248;--esbg:#EFE9E1}'
+   +'.es-nut{--esc:#1F6FB2;--esbg:#E4EFF8}'
+   +'.es-nfm{--esc:#B5628F;--esbg:#F8E8F0}'
+   +'.es-tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--esbg);color:var(--esc)}'
+   +'.es-tile .ti{font-size:17px}'
+   +'.es-tile.sm{width:26px;height:26px;border-radius:8px}'
+   +'.es-tile.sm .ti{font-size:14px}'
+   +'.es-dot{width:9px;height:9px;border-radius:3px;display:inline-block;flex:none;background:var(--esc)}'
+   +'.es-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;padding:3px 10px;border-radius:999px;background:var(--esbg);color:var(--esc)}'
+   +'.meter{display:flex;gap:2px;height:8px;border-radius:999px;overflow:hidden;background:#EFEDE6;margin-top:9px}'
+   +'.meter span{display:block;height:100%;border-radius:999px}'
+   +'.meter .m1{background:var(--esc)}'
+   +'.meter .m2{background:var(--esc);opacity:.34}'
+   +'.meter .m3{background:#DCD9D0}'
+   +'.meterlab{display:flex;gap:15px;font-size:12px;color:#9C9A92;margin-top:7px;flex-wrap:wrap}'
+   +'.meterlab span{display:inline-flex;align-items:center;gap:5px}'
+   +'.meterlab b{color:#1F1F1D;font-weight:500;font-variant-numeric:tabular-nums}'
+   +'.meterlab i.k{width:8px;height:8px;border-radius:2px;display:inline-block}'
+   +'.topbar{position:sticky;top:0;z-index:12}'
+   +'html.gyembed .snav,html.gyembed .snavpeek,html.gyembed #expandBtn,html.gyembed .scollapse{display:none!important}'
+   +'html.gybare #chapnav{display:none!important}'
+   +'html.gybare #floatR{display:none!important}'
+   +'html.gybare .floatL .fpill:not(#toolsPill){display:none!important}'
+   +'html.gybare .node .ns{display:none!important}'
+   +'html.gybare #floatBL{display:none!important}'
+   +'html.gybare .bandlab{font-size:12.5px;letter-spacing:.08em;color:#A7A49B}'
+   +'html.gybare .bandlab.cur{color:#7C7970}'
+   +'html.gybare .bandlab small{display:none}'
+   +'html.gybare .band{background:rgba(255,255,255,.32)}'
+   +'html.gybare .band.cur{border-width:1px;border-color:#DAD6CB;background:rgba(255,255,255,.62)}'
+   +'html.gyembed body{--nav:0px}';
+
+  /* keep the rail's to-do count in step with the shared store, on any page
+     that loads gy-todos.js */
+  function gyTodoCount(){
+    if(!window.GYT) return;
+    var el=document.getElementById('cntTodos');
+    if(el) el.textContent = GYT.myOpen().length;
+  }
+  window.addEventListener('DOMContentLoaded', gyTodoCount);
+  window.addEventListener('gy-todos-changed', gyTodoCount);
+  setTimeout(gyTodoCount, 0);
 
   document.write(
     '<style>'+CSS+'</style>'
@@ -299,21 +486,26 @@
       +'</div>'
     +'</div>'
 
+    /* search + notifications - shared chrome, both modes */
+    +'<div class="gy-srow">'
+      +'<div class="gy-search" onclick="gyOpenSearch()"><i class="ti ti-search"></i><span>Search</span></div>'
+      +'<button class="gy-notif" id="gyNotifBtn" onclick="gyNotifPop()" title="Notifications" aria-label="Notifications"><i class="ti ti-bell"></i><span class="gy-ndot"></span></button>'
+    +'</div>'
+
     /* personal spine - advanced only */
     +(mode==='advanced'
       ? '<div class="sitem'+on('home')+'"'+(active==='home'?'':' onclick="location.href=\'home.html\'"')+'><i class="ti ti-home"></i> Home</div>'
-        +'<div class="sitem" onclick="gyToast(\'Inbox: notifications, approvals and to-dos, triaged in one place\')"><i class="ti ti-inbox"></i> Inbox <span class="scount" id="cntTodos"></span></div>'
+        +'<div class="sitem'+on('todos')+'"'+(active==='todos'?'':' onclick="location.href=\'todos.html\'"')+'><i class="ti ti-list-check"></i> To-dos <span class="scount" id="cntTodos"></span></div>'
       : '')
 
-    /* scope switcher - advanced only (the one way to move between altitudes) */
+    /* workspace switcher - advanced only (the one way to move between altitudes) */
     +(mode==='advanced'
-      ? '<div id="gyBack">'+backHtml()+'</div>'
-        +'<div class="gy-eyebrow" id="gyEye">'+meta.eye+'</div>'
+      ? '<div class="gy-grp">Workspace</div>'
         +'<div style="position:relative">'
           +'<div class="gy-switch" id="gySwitch" onclick="gyPicker()">'
-            +'<i class="ti '+meta.ic+'" id="gyScIcon"></i>'
+            +'<span class="gy-wstile '+meta.cls+'" id="gyScIcon">'+meta.ini+'</span>'
             +'<span id="gyScName">'+meta.name+'</span>'
-            +'<i class="ti ti-selector" style="margin-left:auto;font-size:15px;color:#9C9A92"></i>'
+            +'<i class="ti ti-chevron-down" style="margin-left:auto;font-size:15px;color:#9C9A92"></i>'
           +'</div>'
           +'<div class="gy-picker" id="gyPicker" style="display:none">'+pickerHtml()+'</div>'
         +'</div>'
@@ -328,14 +520,12 @@
     +'<div class="gy-fdiv"></div>'
     +'<div id="gyUsWrap" style="position:relative;margin-bottom:-16px">'
       +'<div class="gy-frow" id="gyUsBtn" onclick="gyUsMenu()">'
-        +'<span style="width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;flex:none">TM</span>'
-        +'Thomas'
+        +'<span style="width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;flex:none">CC</span>'
+        +'Caitlin'
         +'<span class="gy-fend">'
           +'<span class="gy-modewrap">'
             +'<i class="ti ti-stack-2" id="gyModeIcon" onclick="event.stopPropagation();gyModeMenu()" title="Switch view" aria-label="Switch between North Star and Simple version"></i>'
           +'</span>'
-          +'<i class="ti ti-moon" id="gyDmIcon" onclick="event.stopPropagation();gyDark()" title="Toggle dark mode" aria-label="Toggle dark mode"></i>'
-          +'<i class="ti ti-settings"></i>'
         +'</span>'
       +'</div>'
       +'<div class="gy-modemenu" id="gyModeMenu" style="display:none">'
@@ -345,8 +535,8 @@
       +'</div>'
       +'<div class="gy-usmenu" id="gyUsMenu" style="display:none">'
         +'<div class="gy-wstop">'
-          +'<span style="width:30px;height:30px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex:none">TM</span>'
-          +'<span style="min-width:0"><span class="gy-wsname">Thomas Moes</span><span class="gy-ussub">thomas.moes@greatyellow.earth</span></span>'
+          +'<span style="width:30px;height:30px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex:none">CC</span>'
+          +'<span style="min-width:0"><span class="gy-wsname">Caitlin Ciceri</span><span class="gy-ussub">caitlin.ciceri@greatyellow.earth</span></span>'
         +'</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Profile: your name, avatar and role\')"><i class="ti ti-user"></i>Profile</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Preferences: language, defaults and display\')"><i class="ti ti-adjustments"></i>Preferences</div>'
@@ -365,14 +555,12 @@
     scope = s;
     try{ localStorage.setItem('gyScope', s); }catch(e){}
     var m = scopeMeta(s);
-    var eye = document.getElementById('gyEye'); if(eye) eye.textContent = m.eye;
     var nm = document.getElementById('gyScName'); if(nm) nm.textContent = m.name;
-    var ic = document.getElementById('gyScIcon'); if(ic) ic.className = 'ti '+m.ic;
+    var ic = document.getElementById('gyScIcon'); if(ic){ ic.className = 'gy-wstile '+m.cls; ic.textContent = m.ini; }
     var nav = document.getElementById('gyScopeNav'); if(nav) nav.innerHTML = s==='portfolio'?pfPanel():progPanel();
-    var bk = document.getElementById('gyBack'); if(bk) bk.innerHTML = backHtml();
     var pk = document.getElementById('gyPicker'); if(pk){ pk.innerHTML = pickerHtml(); pk.style.display='none'; }
     var dir = s==='portfolio' ? 'gy-anim-out' : 'gy-anim-in';
-    [nav,bk].forEach(function(e){ if(!e)return; e.classList.remove('gy-anim-in','gy-anim-out'); void e.offsetWidth; e.classList.add(dir); });
+    [nav].forEach(function(e){ if(!e)return; e.classList.remove('gy-anim-in','gy-anim-out'); void e.offsetWidth; e.classList.add(dir); });
   };
   window.gyGoProg = function(){
     try{ localStorage.setItem('gyScope', 'programme'); }catch(e){}
@@ -450,4 +638,220 @@
       }
     }
   }catch(e){}
+
+  /* ── Search modal ───────────────────────────────────────────────────────
+     One box over everything the OS knows about: quick actions, destinations,
+     workspaces and records. Cmd/Ctrl-K opens it, arrows move, Enter opens,
+     Esc closes. Rows with a real page navigate; the rest toast. */
+  var GY_SEARCH_ROWS = [
+    ['Quick actions','ti-plus','Start a Workflow','Action','go:deliverables-landing.html'],
+    ['Quick actions','ti-note','New meeting note','Action','toast:New meeting note: records the transcript and files it under the programme'],
+    ['Quick actions','ti-file-text','Create a document','Action','toast:Create a document: a versioned document in this programme'],
+    ['Quick actions','ti-businessplan','Log a deal','Action','toast:Log a deal: deals sit at Portfolio because they run across programmes'],
+    ['Quick actions','ti-map-pin','Add a site','Action','toast:Add a site: a land parcel joins the programme it delivers for'],
+    ['Quick actions','ti-user-plus','Invite someone','Action','toast:Invite people to the workspace'],
+
+    ['Go to','ti-home','Home','Page','go:home.html'],
+    ['Go to','ti-layout-dashboard','Programme overview','Page','go:programme-overview.html'],
+    ['Go to','ti-layout-dashboard','Portfolio overview','Page','go:portfolio-overview.html'],
+    ['Go to','ti-packages','Inventory','Page','go:inventory-overview.html'],
+    ['Go to','ti-hierarchy-2','Workflows','Page','go:deliverables-landing.html'],
+    ['Go to','ti-file-text','Documents','Page','go:documents-overview.html'],
+    ['Go to','ti-note','Meeting notes','Page','go:meeting-notes.html'],
+    ['Go to','ti-activity','Activity','Page','go:activity-overview.html'],
+    ['Go to','ti-map-2','Market Map (Kwame)','Page','go:market-map-kwame.html'],
+    ['Go to','ti-books','Hive Mind Library','Page','go:hive-mind-library.html'],
+
+    ['Switch workspace','ti-building-bank','Portfolio','Workspace','go:portfolio-overview.html'],
+    ['Switch workspace','ti-topology-star-3','Evenlode','Workspace','go:programme-overview.html'],
+    ['Switch workspace','ti-topology-star-3','Spains Hall','Workspace','toast:Spains Hall is not in this prototype yet'],
+    ['Switch workspace','ti-topology-star-3','Boothby','Workspace','toast:Boothby is not in this prototype yet'],
+
+    ['Records','ti-hierarchy-2','Evenlode · Customer Demand Mapping','Workflow','go:demand-mapping-canvas-prototype.html'],
+    ['Records','ti-file-search','Tender to Bid','Workflow','go:tender-to-bid-canvas-prototype.html'],
+    ['Records','ti-note','Evenlode · Kick-off call notes','Meeting note','go:meeting-note-kickoff.html'],
+    ['Records','ti-packages','Denton Reserve · BNG units','Inventory','go:inventory-denton-reserve.html'],
+    ['Records','ti-packages','All BNG Portfolio','Inventory','go:inventory-bng-portfolio.html'],
+    ['Records','ti-book','Ecosystem service rule books','Hive Mind','go:es-rule-book.html'],
+    ['Records','ti-user','James Ruggles · Buyer contact','Person','toast:People are reached from a project, a note or a deal. No index page in this prototype.']
+  ];
+
+  function gySmRun(action){
+    gySmClose();
+    if(action.indexOf('go:')===0){ location.href = action.slice(3); return; }
+    gyToast(action.slice(6));
+  }
+  function gySmRender(q){
+    var list = document.getElementById('gySmList'); if(!list) return;
+    q = (q||'').trim().toLowerCase();
+    var rows = GY_SEARCH_ROWS.filter(function(r){
+      return !q || (r[2]+' '+r[0]+' '+r[3]).toLowerCase().indexOf(q)>=0;
+    });
+    if(!rows.length){ list.innerHTML = '<div class="gy-smempty">Nothing matches that yet.</div>'; return; }
+    var html = '', sec = '', i = 0;
+    rows.forEach(function(r){
+      if(r[0]!==sec){ sec = r[0]; html += '<div class="gy-smsec">'+sec+'</div>'; }
+      html += '<div class="gy-smitem'+(i===0?' sel':'')+'" data-i="'+i+'" data-act="'+r[4].replace(/"/g,'&quot;')+'">'
+        +'<i class="ti '+r[1]+'"></i><span class="gy-smnm">'+r[2]+'</span><span class="gy-smtype">'+r[3]+'</span></div>';
+      i++;
+    });
+    list.innerHTML = html;
+  }
+  function gySmMove(d){
+    var items = [].slice.call(document.querySelectorAll('#gySmList .gy-smitem'));
+    if(!items.length) return;
+    var cur = items.findIndex(function(e){ return e.classList.contains('sel'); });
+    if(cur<0) cur = 0;
+    items[cur].classList.remove('sel');
+    var next = (cur + d + items.length) % items.length;
+    items[next].classList.add('sel');
+    items[next].scrollIntoView({block:'nearest'});
+  }
+  function gySmBuild(){
+    if(document.getElementById('gySmOv')) return;
+    var ov = document.createElement('div');
+    ov.className = 'gy-smov'; ov.id = 'gySmOv';
+    ov.innerHTML =
+      '<div class="gy-smbox" id="gySmBox">'
+      +'<div class="gy-smtop">'
+        +'<i class="ti ti-search"></i>'
+        +'<input class="gy-sminput" id="gySmIn" placeholder="Search workflows, documents, sites and inventory…" autocomplete="off">'
+        +'<span class="gy-smask" onclick="gyToast(\'Ask the Hive Mind: put the question to what GY already knows\')">Ask the Hive Mind <span class="gy-kbd">Tab</span></span>'
+      +'</div>'
+      +'<div class="gy-smlist" id="gySmList"></div>'
+      +'<div class="gy-smfoot">'
+        +'<span><span class="gy-kbd">↑</span> <span class="gy-kbd">↓</span> Navigate</span>'
+        +'<span><span class="gy-kbd">↵</span> Open</span>'
+        +'<span><span class="gy-kbd">esc</span> Close</span>'
+      +'</div>'
+      +'</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if(e.target===ov) gySmClose(); });
+    ov.addEventListener('mousemove', function(e){
+      var it = e.target.closest && e.target.closest('.gy-smitem'); if(!it) return;
+      var cur = document.querySelector('#gySmList .gy-smitem.sel');
+      if(cur && cur!==it){ cur.classList.remove('sel'); it.classList.add('sel'); }
+    });
+    ov.addEventListener('click', function(e){
+      var it = e.target.closest && e.target.closest('.gy-smitem');
+      if(it) gySmRun(it.getAttribute('data-act'));
+    });
+    document.getElementById('gySmIn').addEventListener('input', function(){ gySmRender(this.value); });
+  }
+  window.gyOpenSearch = function(){
+    gySmBuild();
+    gySmRender('');
+    var ov = document.getElementById('gySmOv'), inp = document.getElementById('gySmIn');
+    ov.classList.add('open'); inp.value = ''; setTimeout(function(){ inp.focus(); }, 20);
+  };
+  window.gySmClose = function(){
+    var ov = document.getElementById('gySmOv'); if(ov) ov.classList.remove('open');
+  };
+  document.addEventListener('keydown', function(e){
+    var open = document.getElementById('gySmOv') && document.getElementById('gySmOv').classList.contains('open');
+    if((e.metaKey||e.ctrlKey) && (e.key==='k'||e.key==='K')){ e.preventDefault(); open ? gySmClose() : gyOpenSearch(); return; }
+    if(!open) return;
+    if(e.key==='Escape'){ e.preventDefault(); gySmClose(); }
+    else if(e.key==='ArrowDown'){ e.preventDefault(); gySmMove(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); gySmMove(-1); }
+    else if(e.key==='Tab'){ e.preventDefault(); gySmClose(); gyToast('Ask the Hive Mind: put the question to what GY already knows'); }
+    else if(e.key==='Enter'){
+      var sel = document.querySelector('#gySmList .gy-smitem.sel');
+      if(sel){ e.preventDefault(); gySmRun(sel.getAttribute('data-act')); }
+    }
+  });
+
+  /* ── Notifications pop-out ──────────────────────────────────────────────
+     Anchored to the bell beside the search box. Two tabs: what happened to
+     you, and what is waiting on you. Fixed position so the rail's overflow
+     never clips it. */
+  var GY_NOTIFS = [
+    ['ti-checkup-list','#FAEEDA','#854F0B','Approval needed: send the questionnaire to James Ruggles','Evenlode · Customer Demand Mapping · 20m'],
+    ['ti-at','#E6F1FB','#185FA5','Emily mentioned you on the catchment mapping layer','Evenlode · Documents · 2h'],
+    ['ti-circle-check','#EAF3DE','#27500A','Lead Demand mapping finished its run','Spains Hall · Workflows · Yesterday'],
+    ['ti-alert-triangle','#FAEEDA','#854F0B','Three BNG units are missing a vintage','Portfolio · Inventory · Yesterday']
+  ];
+  function gyNpTab(which){
+    var body = document.getElementById('gyNpBody'); if(!body) return;
+    [].slice.call(document.querySelectorAll('.gy-nptab')).forEach(function(t){
+      t.classList.toggle('on', t.getAttribute('data-tab')===which);
+    });
+    if(which==='requests'){
+      body.innerHTML = '<div class="gy-npempty"><i class="ti ti-inbox"></i><b>No requests</b>'
+        +'<p>Access requests and sign-off asks from the team will show up here.</p></div>';
+      return;
+    }
+    body.innerHTML = GY_NOTIFS.map(function(n){
+      return '<div class="gy-npitem" onclick="gySmClose();gyNpHide();gyToast(\'This would open the item\')">'
+        +'<span class="gy-npico" style="background:'+n[1]+';color:'+n[2]+'"><i class="ti '+n[0]+'"></i></span>'
+        +'<span><span class="gy-nptitle">'+n[3]+'</span><span class="gy-npmeta">'+n[4]+'</span></span>'
+      +'</div>';
+    }).join('');
+  }
+  window.gyNpHide = function(){
+    var p = document.getElementById('gyNpPop'); if(p) p.style.display = 'none';
+  };
+  window.gyNotifPop = function(){
+    var p = document.getElementById('gyNpPop');
+    if(!p){
+      p = document.createElement('div');
+      p.className = 'gy-nppop'; p.id = 'gyNpPop'; p.style.display = 'none';
+      p.innerHTML =
+        '<div class="gy-nphd">Notifications</div>'
+        +'<div class="gy-nptabs">'
+          +'<button class="gy-nptab on" data-tab="all" onclick="gyNpTab(\'all\')">Notifications ('+GY_NOTIFS.length+')</button>'
+          +'<button class="gy-nptab" data-tab="requests" onclick="gyNpTab(\'requests\')">Requests (0)</button>'
+        +'</div>'
+        +'<div class="gy-nplist" id="gyNpBody"></div>'
+        +'<div class="gy-npfoot" onclick="gyToast(\'Notification settings: what reaches you, and how\')">Notification settings</div>';
+      document.body.appendChild(p);
+      window.gyNpTab = gyNpTab;
+      gyNpTab('all');
+    }
+    if(p.style.display==='block'){ p.style.display='none'; return; }
+    var b = document.getElementById('gyNotifBtn'); if(!b) return;
+    var r = b.getBoundingClientRect();
+    p.style.display = 'block';
+    p.style.top = Math.round(r.top) + 'px';
+    p.style.left = Math.round(Math.min(r.right + 10, window.innerWidth - p.offsetWidth - 12)) + 'px';
+  };
+  document.addEventListener('click', function(e){
+    var p = document.getElementById('gyNpPop'), b = document.getElementById('gyNotifBtn');
+    if(p && p.style.display==='block' && b && !b.contains(e.target) && !p.contains(e.target)) p.style.display='none';
+  });
+  window.addEventListener('resize', function(){ gyNpHide(); });
+
+
+  /* Ecosystem services as products. One icon and one colour per service, used
+     wherever the service appears: the rail, the overviews, the inventory pages.
+     Palette validated for colour-blind separation; the icon is the secondary
+     encoding, so colour never carries identity on its own. */
+  window.GY_ES = {
+    bng: {name:'BNG units',          short:'BNG',      icon:'ti-butterfly', cls:'es-bng'},
+    wcc: {name:'Woodland carbon',    short:'Carbon',   icon:'ti-trees',     cls:'es-wcc'},
+    soc: {name:'Soil carbon',        short:'Soil',     icon:'ti-plant-2',  cls:'es-soc'},
+    nut: {name:'Nutrient credits',   short:'Nutrient', icon:'ti-droplet',   cls:'es-nut'},
+    nfm: {name:'Natural flood mgmt', short:'Flood',    icon:'ti-ripple',    cls:'es-nfm'}
+  };
+  window.gyEsTile = function(k, small){
+    var e = GY_ES[k]; if(!e) return '';
+    return '<span class="es-tile'+(small?' sm':'')+' '+e.cls+'"><i class="ti '+e.icon+'"></i></span>';
+  };
+  window.gyEsMeter = function(k, verified, available, sold){
+    var e = GY_ES[k]; if(!e) return '';
+    var tot = Math.max(verified, available + sold) || 1;
+    var pend = Math.max(verified - available - sold, 0);
+    function pc(n){ return (n/tot*100).toFixed(1)+'%'; }
+    return '<div class="'+e.cls+'">'
+      +'<div class="meter"><span class="m1" style="width:'+pc(sold)+'"></span>'
+      +'<span class="m2" style="width:'+pc(available)+'"></span>'
+      +'<span class="m3" style="width:'+pc(pend)+'"></span></div>'
+      +'<div class="meterlab">'
+        +'<span><i class="k" style="background:var(--esc)"></i>Sold <b>'+sold.toLocaleString()+'</b></span>'
+        +'<span><i class="k" style="background:var(--esc);opacity:.34"></i>Available <b>'+available.toLocaleString()+'</b></span>'
+        +(pend?'<span><i class="k" style="background:#DCD9D0"></i>Unallocated <b>'+pend.toLocaleString()+'</b></span>':'')
+        +'<span style="margin-left:auto">of <b>'+verified.toLocaleString()+'</b> verified</span>'
+      +'</div></div>';
+  };
+
 })();

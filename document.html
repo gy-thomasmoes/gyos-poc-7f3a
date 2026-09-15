@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --blue:#378ADD; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px}
+.topbar{height:61px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:14px 22px;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .ti{font-size:19px;color:var(--ink2)}
+.title{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.chip{font-size:15px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:var(--card);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer}
+.chip:hover{border-color:var(--line2);color:var(--ink)}
+.chip .ti{font-size:16px}
+.btn-dark{font-size:15px;font-weight:500;padding:9px 18px;border-radius:999px;background:var(--dark);color:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-dark .ti{font-size:16px;color:#fff}
+.spacer{flex:1}
+.tbact{display:flex;align-items:center;gap:8px;position:relative}
+.tbtn{font-size:14.5px;font-weight:500;padding:7px 13px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;line-height:1}
+.tbtn:hover{background:var(--graybg);color:var(--ink)}
+.tbtn.on{background:var(--graybg);color:var(--ink)}
+.tbtn.ic{padding:7px;position:relative}
+.tbtn .ti{font-size:19px;color:inherit}
+.tbtn .cdot{position:absolute;top:2px;right:1px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:var(--blue);color:#fff;font-size:10.5px;font-weight:600;line-height:15px;text-align:center;border:1.5px solid var(--card)}
+.facepile{display:flex;align-items:center;cursor:pointer;padding:2px 6px 2px 2px;border-radius:999px}
+.facepile:hover{background:var(--graybg)}
+.fa{width:27px;height:27px;border-radius:999px;background:var(--fc,#9C9A92);color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--card);margin-left:-8px;letter-spacing:.02em}
+.fa:first-child{margin-left:0}
+.fa.more{background:var(--graybg);color:var(--ink2)}
+.pop{position:absolute;top:calc(100% + 10px);right:0;background:var(--card);border:1px solid var(--line2);border-radius:13px;box-shadow:0 14px 40px rgba(31,31,29,.17);padding:6px;z-index:60;display:none;color:var(--ink)}
+.pop.on{display:block;animation:popin .13s ease}
+@keyframes popin{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.pop.wide{width:330px}
+.pop.people{width:286px}
+.mrow{display:flex;align-items:center;gap:11px;padding:8px 11px;border-radius:9px;font-size:14.5px;color:var(--ink);cursor:pointer;white-space:nowrap}
+.mrow:hover{background:var(--graybg)}
+.mrow .ti{font-size:18px;color:var(--ink2);flex:none}
+.mrow .mk{margin-left:auto;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.mrow.danger{color:#A3342B}.mrow.danger .ti{color:#A3342B}
+.msep{height:1px;background:var(--line);margin:6px 8px}
+.mlab{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);padding:9px 11px 5px}
+.mfoot{font-size:12.5px;color:var(--ink3);padding:9px 11px 6px;border-top:1px solid var(--line);margin-top:6px;line-height:1.45}
+.prow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px}
+.prow:hover{background:var(--graybg)}
+.prow .fa{margin-left:0;width:30px;height:30px;font-size:11.5px;border:none}
+.prow .pn{font-size:14.5px;line-height:1.3}
+.prow .pm{font-size:12.5px;color:var(--ink3);line-height:1.3;margin-top:1px}
+.prow .pr{margin-left:auto;font-size:12.5px;color:var(--ink3);white-space:nowrap}
+.prow .live{width:7px;height:7px;border-radius:999px;background:var(--teal);display:inline-block;margin-right:5px;vertical-align:1px}
+.shead{font-size:14.5px;font-weight:600;padding:10px 11px 3px}
+.sinv{display:flex;gap:7px;padding:6px 10px 10px}
+.sinv input{flex:1;min-width:0;font:inherit;font-size:14px;padding:8px 11px;border:1px solid var(--line2);border-radius:9px;background:var(--card);color:var(--ink);outline:none}
+.sinv input:focus{border-color:var(--ink3)}
+.sinv button{font:inherit;font-size:14px;font-weight:500;padding:8px 14px;border-radius:9px;border:none;background:var(--dark);color:#fff;cursor:pointer}
+.slink{display:flex;align-items:center;gap:10px;padding:10px 11px;border-top:1px solid var(--line);margin-top:6px;font-size:13px;color:var(--ink2);line-height:1.4}
+.slink .cpy{margin-left:auto;font-size:13.5px;font-weight:500;color:var(--blued);cursor:pointer;white-space:nowrap}
+.cpanel{position:fixed;top:61px;right:0;bottom:0;width:352px;background:var(--card);border-left:1px solid var(--line);box-shadow:-8px 0 28px rgba(31,31,29,.07);z-index:58;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+.cpanel.on{transform:none}
+.chead{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid var(--line)}
+.chead b{font-size:15.5px;font-weight:600}
+.ctab{font-size:13px;color:var(--ink3);cursor:pointer;padding:3px 9px;border-radius:999px}
+.ctab.on{background:var(--graybg);color:var(--ink)}
+.chead .x{margin-left:auto;cursor:pointer;color:var(--ink3);font-size:19px}
+.cbody{flex:1;overflow:auto;padding:14px 16px 20px}
+.thr{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--card)}
+.thr.res{opacity:.62}
+.qt{font-size:12.5px;color:var(--ink2);border-left:2px solid var(--amber);padding-left:8px;margin-bottom:9px;line-height:1.45}
+.cmt{display:flex;gap:9px;margin-bottom:10px}
+.cmt:last-of-type{margin-bottom:0}
+.cmt .fa{margin-left:0;width:26px;height:26px;font-size:10.5px;border:none;flex:none}
+.cmt .cw{min-width:0;flex:1}
+.cmt .cn{font-size:13.5px;font-weight:600;line-height:1.3}
+.cmt .cn span{font-weight:400;color:var(--ink3);font-size:12px;margin-left:6px}
+.cmt .cx{font-size:13.5px;color:var(--ink);line-height:1.5;margin-top:2px}
+.cact{display:flex;align-items:center;gap:12px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+.cact .creply{flex:1;font:inherit;font-size:13px;color:var(--ink3);cursor:text}
+.cact .cres{font-size:13px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.cact .cres:hover{color:var(--ink)}
+.cempty{font-size:13.5px;color:var(--ink3);text-align:center;padding:26px 10px;line-height:1.5}
+.npanel{position:fixed;top:61px;right:0;bottom:0;width:452px;z-index:200;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1);pointer-events:none;display:flex}
+.npanel.on{transform:none;pointer-events:auto}
+.npanel iframe{flex:1;width:100%;border:none;background:transparent;pointer-events:auto}
+.tdpanel{position:fixed;top:61px;right:0;bottom:0;width:372px;background:var(--card);border-left:1px solid var(--line);box-shadow:-8px 0 28px rgba(31,31,29,.07);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+.tdpanel.on{transform:none}
+.tdhead{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid var(--line)}
+.tdhead b{font-size:15.5px;font-weight:600}
+.tdhead .x{margin-left:auto;cursor:pointer;color:var(--ink3);font-size:19px}
+.tdmeter{padding:13px 16px 4px}
+.tdbar{height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
+.tdbar i{display:block;height:100%;border-radius:999px;background:var(--green)}
+.tdmt{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink3);margin-top:7px}
+.tdbody{flex:1;overflow:auto;padding:8px 10px 20px}
+.tdlab{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:12px 6px 6px}
+.td{display:flex;gap:10px;align-items:flex-start;padding:9px 6px;border-radius:9px;cursor:pointer}
+.td:hover{background:var(--graybg)}
+.tdbox{width:17px;height:17px;border-radius:5px;border:1.5px solid #D6D3CA;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;background:var(--card)}
+.tdbox .ti{font-size:11px;color:#fff;display:none}
+.td.on .tdbox{background:var(--green);border-color:var(--green)}
+.td.on .tdbox .ti{display:block}
+.tdw{min-width:0;flex:1}
+.tdt{font-size:14px;line-height:1.4}
+.td.on .tdt{color:var(--ink3);text-decoration:line-through}
+.tdm{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:12px;color:var(--ink3);flex-wrap:wrap}
+.tdm .fa{width:18px;height:18px;font-size:8.5px;border:none;margin-left:0}
+.tdm .due{color:var(--amberd);background:var(--amberbg);border-radius:999px;padding:1px 8px}
+.td.on .tdm .due{color:var(--ink3);background:var(--graybg)}
+.tdm .lnk{border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.tdm .lnk:hover{border-color:var(--ink3);color:var(--ink)}
+.tdadd{display:flex;align-items:center;gap:10px;padding:11px 6px;margin-top:6px;border-top:1px solid var(--line);color:var(--ink3);font-size:13.5px;cursor:pointer}
+.tdadd:hover{color:var(--ink2)}
+.wrap,.wfhandle{transition:margin .24s cubic-bezier(.2,.7,.3,1),padding .24s cubic-bezier(.2,.7,.3,1)}
+@media(min-width:1240px){
+  body.cmt .wrap{margin-right:352px}
+  body.cmt .wfdraw{margin-right:352px}
+  body.cmt .wfhandle{padding-right:374px}
+}
+.shell{display:flex;height:100vh;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 12px 16px}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sarr{margin-left:auto;font-size:14px;color:var(--ink3);transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:var(--ink2)}
+.ssub .sitem.on{color:var(--ink)}
+.ssub.closed{display:none}
+.sarr.closed{transform:rotate(-90deg)}
+.snav.hid{display:none}
+.snavpeek{position:fixed;top:0;left:0;width:14px;height:100vh;z-index:44;display:none}
+body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;width:264px;z-index:45;border:1px solid var(--line);border-radius:0 14px 14px 0;box-shadow:0 12px 40px rgba(31,31,29,.18);animation:snavslide .16s ease}
+@keyframes snavslide{from{transform:translateX(-100%)}to{transform:none}}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px}
+.sworks .ti{font-size:15px;color:var(--ink3)}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:var(--graybg);color:var(--ink)}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:var(--ink);cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:var(--ink2)}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:var(--graybg);font-weight:500}
+.mainc{flex:1;overflow:auto;min-width:0}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.clink{color:var(--blued);cursor:pointer;font-size:14.5px}
+.clink:hover{text-decoration:underline}
+.lbl{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:18px 0 8px}
+.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
+.thead span{display:flex;align-items:center;gap:6px}
+.thead .ti{font-size:14px}
+.group{font-size:14px;color:var(--ink2);padding:14px 4px 6px;display:flex;align-items:center;gap:8px;font-weight:500}
+.count{font-size:12.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600}
+.row{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;font-size:15px}
+.row.click{cursor:pointer;transition:border-color .12s, box-shadow .12s}
+.row.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
+.name{display:flex;align-items:center;gap:12px;min-width:0}
+.tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;font-size:17px;background:var(--bluebg);color:var(--blued)}
+.tile .ti{font-size:18px}
+.nm{font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{display:block;font-weight:400;font-size:13px;color:var(--ink3)}
+.nm .mach{display:block;font-weight:400;font-size:12.5px;color:var(--ink3);margin-top:3px}
+.nm .mach i.ti{font-size:13px;margin-right:3px;vertical-align:-1px}
+.nm .mach span{margin-right:11px;white-space:nowrap}
+.dprog{display:flex;align-items:center;gap:9px}
+.dbar{flex:none;width:86px;height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
+.dbar i{display:block;height:100%;border-radius:999px;background:var(--ink2)}
+.dst{font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.groupnote{font-weight:400;color:var(--ink3);font-size:13px}
+.pill{font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--tealbg);color:var(--teald)}
+.src{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink2)}
+.src .ti{font-size:16px;color:var(--ink3)}
+.mut{color:var(--ink3);font-size:14.5px}
+/* doc viewer overlay (reused from the canvas prototype) */
+.dvov{position:fixed;inset:0;background:rgba(31,31,29,.45);z-index:70;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto}
+.dvov.open{display:flex}
+.dvbox{background:#fff;border-radius:16px;width:min(760px,100%);box-shadow:0 24px 64px rgba(31,31,29,.3);margin:auto}
+.dvhead{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);font-size:15px;font-weight:600}
+.dvhead .ti{font-size:18px;color:var(--ink2)}
+.dvhead .dvx{margin-left:auto;cursor:pointer;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.dvhead .dvx:hover{background:var(--graybg)}
+.dvpage{margin:24px;border:1px solid var(--line);border-radius:6px;padding:40px 46px;min-height:420px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.dvpage h2{font-family:Georgia,'Times New Roman',serif;font-size:24px;margin:0 0 4px}
+.dvpage .dvsub{font-size:14px;color:var(--ink3);margin-bottom:22px}
+.dvpage h3{font-size:15px;margin:20px 0 6px}
+.dvpage p{font-size:14.5px;line-height:1.7;color:var(--ink2);margin:0 0 10px}
+.dvfoot{padding:0 24px 18px;font-size:13px;color:var(--ink3);text-align:center}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+
+/* warm/Manner titles */
+:root{--serif:'Manner','Spectral',Georgia,serif}
+.title{font-weight:600}
+.grt-h{font-family:var(--serif);font-weight:500}
+
+.doclayout{max-width:840px;margin:0 auto}
+
+.docwrap{background:#fff;border:1px solid var(--line);border-radius:18px;padding:42px 56px 52px;box-shadow:0 12px 40px rgba(31,31,29,.08);margin:22px 0 60px}
+.dhead{margin:0 0 22px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.dkind{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink3)}
+.dtitle{font-family:var(--serif);font-size:36px;line-height:1.05;margin:8px 0 0;letter-spacing:-.02em;font-weight:500}
+.dsub{font-size:14.5px;color:var(--ink3);margin-top:10px}
+.dchips{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0 0}
+.dkind:empty,.dsub:empty,.dchips:empty{display:none}
+.dchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);border-radius:999px;padding:6px 13px;font-size:13.5px;color:var(--ink2);background:var(--card)}
+.dchip b{font-weight:600;color:var(--ink)}
+.dcdot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.dsec{margin-top:32px;padding-top:26px;border-top:1px solid var(--line)}
+.dh2{font-size:20px;font-weight:600;display:flex;align-items:center}
+.dnum{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--dark);color:#FAC775;font-size:13px;font-weight:600;align-items:center;justify-content:center;margin-right:10px;flex:none}
+.dgrp{margin-top:20px}
+.dfl{font-size:13px;letter-spacing:.06em;color:var(--ink);font-weight:700;text-transform:uppercase;margin:20px 0 6px}
+.dp{font-size:16px;line-height:1.65;color:var(--ink)}
+.dprov{font-size:13px;color:var(--ink3);margin-top:6px}
+.pv{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;margin-left:4px}
+.dghost{border:1.5px dashed var(--line2);border-radius:14px;padding:26px;text-align:center;color:var(--ink3);font-size:15px;margin-top:16px;line-height:1.6}
+.gline{height:9px;border-radius:99px;background:var(--graybg);display:block}
+.cbox{border:1px solid var(--line);border-radius:14px;padding:6px 22px 20px;margin-top:16px;background:var(--card)}
+.dnote{display:flex;gap:10px;background:var(--graybg);border-radius:12px;padding:13px 16px;margin-top:14px;font-size:14px;line-height:1.6;color:var(--ink2)}
+.dnote .ti{font-size:17px;color:var(--ink3);flex:none;margin-top:2px}
+.dnote b{color:var(--ink)}
+.dnote.q{background:var(--card);border:1px solid var(--line)}
+.dnote ul{margin:4px 0 0 16px;padding:0}
+.dnote li{margin:3px 0}
+.dtwrap{border:1px solid var(--line);border-radius:12px;overflow:auto;margin-top:14px;background:var(--card)}
+.dtbl{width:100%;border-collapse:collapse;font-size:14px}
+.dtbl th{text-align:left;font-weight:600;color:var(--ink2);font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.dtbl td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top;line-height:1.55}
+.dtbl tr:last-child td{border-bottom:none}
+.dtbl td.mut{color:var(--ink3)}
+.dtbl td.m{font-weight:500}
+.dtbl tr.blank td{height:40px}
+.sc{display:inline-block;margin-top:6px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--greenbg);color:var(--greend)}
+.rdy{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px}
+.rdy.a{background:var(--greenbg);color:var(--greend)}
+.rdy.e{background:var(--amberbg);color:var(--amberd)}
+.dtog{border:1px solid var(--line);border-radius:12px;margin-top:12px;background:var(--card);overflow:hidden}
+.dtog>summary{list-style:none;cursor:pointer;padding:12px 16px;font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+.dtog>summary::-webkit-details-marker{display:none}
+.dtog>summary .ti{font-size:16px;color:var(--ink3);transition:transform .15s}
+.dtog[open]>summary .ti{transform:rotate(90deg)}
+.dtog .dtwrap{border:none;border-top:1px solid var(--line);border-radius:0;margin:0}
+.dverd{background:#FEF9E6;border:1px solid #F0E1A8;border-radius:14px;padding:22px 24px;margin-top:16px}
+.dverd .dnum{background:#F9DD5A;color:var(--ink)}
+.dverd .dghost{background:rgba(255,255,255,.55);border-color:#E7D79E;margin-top:14px}
+.dverd .drec{margin-top:16px;padding-top:14px;border-top:1px solid #EADFB2;font-size:15px;font-weight:600}
+.rcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:0 1px 2px rgba(31,31,29,.03)}
+.rh{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.rh .ti{font-size:16px;color:var(--ink2)}
+.rh .rgo{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--blued);cursor:pointer}
+.rsub{font-size:12.5px;color:var(--ink3);margin-top:3px}
+.rbar{height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden;margin:12px 0 4px}
+.rbar i{display:block;height:100%;border-radius:999px;background:var(--ink2)}
+.rstep{display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.rstep:hover{color:var(--ink)}
+.rstep .rs{width:15px;height:15px;border-radius:50%;flex:none;margin-top:2px;border:1.5px solid var(--line2)}
+.rstep.done .rs{background:var(--green);border-color:var(--green)}
+.rstep.doing .rs{border-color:var(--amber);box-shadow:inset 0 0 0 3px var(--amberbg)}
+.rstep.doing{color:var(--ink);font-weight:500}
+.rmore{font-size:12.5px;color:var(--ink3);padding-top:6px}
+.rchk{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.rchk:first-of-type{border-top:none}
+.rchk .rs{width:15px;height:15px;border-radius:4px;flex:none;margin-top:2px;border:1.5px solid var(--line2)}
+.rchk.done .rs{background:var(--green);border-color:var(--green)}
+.rchk .rv{display:block;font-size:12px;color:var(--ink3);margin-top:2px}
+.rtpl{font-size:13px;color:var(--ink2);line-height:1.5}
+.crumb{font-size:15px}
+.wfdraw{height:0;overflow:hidden;display:flex;flex-direction:column;background:#FBFAF5;border-bottom:1px solid var(--line);
+  transition:height .3s cubic-bezier(.2,.7,.3,1),margin .24s cubic-bezier(.2,.7,.3,1)}
+.wfdraw.open{height:172px}
+body.plain .wfdraw{display:none}
+.wfhandle{display:flex;align-items:center;gap:20px;padding:0 22px;height:58px;cursor:pointer;
+  background:#FBFAF5;border-bottom:1px solid var(--line)}
+body.wfopen .wfhandle{border-bottom-color:transparent}
+.wfend .ti{border-radius:8px;padding:2px}
+.wfhandle:hover .wfend .ti{background:rgba(31,31,29,.05)}
+body.plain .wfhandle{display:none}
+.wfnow{flex:none;min-width:96px}
+.wfnow .wfn{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.wftl{flex:1;min-width:0;display:flex;gap:7px;align-items:flex-end}
+.wfstage{flex:1;min-width:0;cursor:pointer;padding:5px 8px 4px;margin:0 -8px;border-radius:9px}
+.wfstage:hover{background:rgba(31,31,29,.05)}
+.wfstage .wfsl{font-size:11.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
+.wfstage.cur .wfsl{color:var(--ink);font-weight:600}
+.wfstage .wfsb{height:6px;border-radius:999px;background:#E6E3DA;overflow:hidden;position:relative}
+.wfstage .wfsb i{display:block;height:100%;border-radius:999px;background:var(--green)}
+.wfstage.cur .wfsb{box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--line2)}
+.wfend{flex:none;display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--ink3)}
+.wfend .ti{font-size:17px;color:var(--ink2)}
+.wfend .wfopen{color:var(--blued);cursor:pointer;white-space:nowrap}
+.wfend .wfopen:hover{text-decoration:underline}
+.wfhandle{border-bottom:1px solid var(--line);position:sticky;top:61px;z-index:11}
+.wfdraw{border-bottom:1px solid var(--line)}
+.trk{flex:1;min-height:0;overflow-x:auto;overflow-y:hidden;display:flex;align-items:flex-start;padding:14px 22px 10px;scroll-behavior:smooth}
+.tgrp{flex:none;display:flex;flex-direction:column;padding-right:26px;margin-right:0}
+.tgrp:last-child{padding-right:8px}
+.tgh{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;white-space:nowrap}
+.tgh b{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#A7A49B}
+.tgh.cur b{color:var(--ink)}
+.tgh i.c{font-style:normal;font-size:11.5px;color:#BAB7AE;font-variant-numeric:tabular-nums}
+.trow{display:flex;align-items:flex-start}
+.tcell{display:flex;flex-direction:column;align-items:flex-start;flex:none}
+.tstep{display:flex;align-items:center;gap:9px;width:240px;height:76px;padding:0 11px;border:1px solid var(--line);border-radius:11px;background:var(--card);cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.tstep:hover{border-color:var(--line2)}
+.tstep.sel{border-color:var(--ink3);box-shadow:0 0 0 3px rgba(31,31,29,.06)}
+.tstep.done{background:var(--card);border-color:var(--green)}
+.tstep.done .tt{color:var(--ink2)}
+.tstep.cur{border:1.5px solid var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,.12);background:var(--card)}
+.tstep.pend{background:var(--card);border-style:dashed}
+.tstep.pend .tt{color:var(--ink3)}
+.tic{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+.tic .ti{font-size:14px}
+.tstep.pend .tic{opacity:.55}
+.tw{min-width:0;flex:1}
+.tn{font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--ink3);line-height:1;margin-bottom:3px;font-variant-numeric:tabular-nums}
+.tstep.cur .tn{color:var(--blued)}
+.tt{font-size:13px;font-weight:600;letter-spacing:-.01em;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tsd{width:15px;height:15px;border-radius:999px;flex:none;display:flex;align-items:center;justify-content:center}
+.tsd .ti{font-size:11px;color:#fff}
+.tstep.done .tsd{background:var(--green)}
+.tstep.cur .tsd{background:var(--blue)}
+.tstep.pend .tsd{background:transparent;border:1.5px solid #DCD9D0}
+.tarw{flex:none;width:20px;height:76px;display:flex;align-items:center;justify-content:center;color:#CFCDC5}
+.tarw .ti{font-size:15px}
+.tbr{margin-top:7px;font-size:11.5px;color:var(--ink3);display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border:1px dashed var(--line2);border-radius:999px;background:transparent;cursor:pointer;white-space:nowrap}
+.tbr:hover{color:var(--ink2);border-color:var(--ink3)}
+.tbr .ti{font-size:12px}
+@media(max-width:900px){.wfnow{min-width:0}.wftl{display:none}}
+
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active": "documents", "arts": "demand"};</script>
+<script src="gy-nav.js"></script>
+<script src="gy-todos.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-file-text"></i>
+  <span class="crumb" onclick="location.href='documents-overview.html'" style="cursor:pointer;color:var(--ink3)">Documents</span><span style="color:var(--ink3)">›</span>
+  <span class="title" id="topTitle">Customer Demand Mapping</span>
+  <div class="spacer"></div>
+  <div class="tbact" id="tbact">
+    <div class="facepile" onclick="tbPop('peoplePop')" title="People on this deliverable">
+      <span class="fa" style="--fc:#1D9E75">CC</span>
+      <span class="fa" style="--fc:#378ADD">EN</span>
+      <span class="fa" style="--fc:#EF9F27">HF</span>
+      <span class="fa" style="--fc:#7F77DD">IB</span>
+      <span class="fa more">+2</span>
+    </div>
+    <button class="tbtn" onclick="tbPop('sharePop')">Share</button>
+    <button class="tbtn ic" id="tdBtn" onclick="toggleTodos()" title="To-dos"><i class="ti ti-checkbox"></i><span class="cdot" id="tdDot">5</span></button>
+    <button class="tbtn ic" id="cmtBtn" onclick="toggleComments()" title="Comments"><i class="ti ti-message-circle"></i><span class="cdot">3</span></button>
+    <button class="tbtn ic" onclick="tbPop('morePop')" title="More"><i class="ti ti-dots"></i></button>
+
+    <div class="pop people" id="peoplePop">
+      <div class="mlab">On this deliverable</div>
+      <div class="prow"><span class="fa" style="--fc:#1D9E75">CC</span><div><div class="pn">Caitlin Ciceri</div><div class="pm"><span class="live"></span>Editing now</div></div><span class="pr">Owner</span></div>
+      <div class="prow"><span class="fa" style="--fc:#378ADD">EN</span><div><div class="pn">Emily Norton</div><div class="pm"><span class="live"></span>Viewing now</div></div><span class="pr">Can edit</span></div>
+      <div class="prow"><span class="fa" style="--fc:#EF9F27">HF</span><div><div class="pn">Harry Fox</div><div class="pm">Seen 2 days ago</div></div><span class="pr">Can edit</span></div>
+      <div class="prow"><span class="fa" style="--fc:#7F77DD">IB</span><div><div class="pn">Izzie Bell</div><div class="pm">Seen 4 days ago</div></div><span class="pr">Can edit</span></div>
+      <div class="prow"><span class="fa" style="--fc:#D4537E">MG</span><div><div class="pn">Millie Gray</div><div class="pm">Seen 6 days ago</div></div><span class="pr">Can view</span></div>
+      <div class="prow"><span class="fa" style="--fc:#639922">JR</span><div><div class="pn">Josh Read</div><div class="pm">Seen 12 days ago</div></div><span class="pr">Can view</span></div>
+      <div class="msep"></div>
+      <div class="mrow" onclick="tbPop('sharePop')"><i class="ti ti-user-plus"></i>Manage access</div>
+    </div>
+
+    <div class="pop wide" id="sharePop">
+      <div class="shead">Share this deliverable</div>
+      <div class="sinv"><input placeholder="Add people or a team" onclick="event.stopPropagation()"><button onclick="event.stopPropagation();toast('Invite sent')">Invite</button></div>
+      <div class="mlab">People with access</div>
+      <div class="prow"><span class="fa" style="--fc:#1D9E75">CC</span><div><div class="pn">Caitlin Ciceri</div><div class="pm">caitlin@greatyellow.earth</div></div><span class="pr">Owner</span></div>
+      <div class="prow"><span class="fa" style="--fc:#5F5E5A">EV</span><div><div class="pn">Evenlode programme team</div><div class="pm">5 people</div></div><span class="pr">Can edit</span></div>
+      <div class="prow"><span class="fa" style="--fc:#9C9A92">GY</span><div><div class="pn">Great Yellow portfolio</div><div class="pm">Everyone at Great Yellow</div></div><span class="pr">Can view</span></div>
+      <div class="slink"><i class="ti ti-world"></i>Anyone at Great Yellow with the link can view<span class="cpy" onclick="event.stopPropagation();toast('Link copied')">Copy link</span></div>
+    </div>
+
+    <div class="pop" id="morePop" style="width:262px">
+      <div class="mrow" onclick="toast('Rename the document')"><i class="ti ti-cursor-text"></i>Rename</div>
+      <div class="mrow" onclick="toast('Duplicate this deliverable with its workflow and to-dos')"><i class="ti ti-copy"></i>Duplicate</div>
+      <div class="mrow" onclick="toast('Move to another project or programme')"><i class="ti ti-folder-symlink"></i>Move to</div>
+      <div class="msep"></div>
+      <div class="mlab">Deliverable</div>
+      <div class="mrow" onclick="wfToggle()"><i class="ti ti-sitemap"></i>Workflow<span class="mk">8 of 16</span></div>
+      <div class="mrow" onclick="toggleTodos()"><i class="ti ti-checkbox"></i>To-dos<span class="mk" id="tdMenuCount">4 of 9</span></div>
+      <div class="mrow" onclick="toast('Pinned to Nature Cookbook template v1.4')"><i class="ti ti-layout-grid"></i>Template<span class="mk">v1.4</span></div>
+      <div class="msep"></div>
+      <div class="mrow" onclick="location.href='activity-overview.html'"><i class="ti ti-timeline-event"></i>Activity</div>
+      <div class="mrow" onclick="toast('Version history: 12 versions since 4 August')"><i class="ti ti-history"></i>Version history<span class="mk">v0.4</span></div>
+      <div class="msep"></div>
+      <div class="mrow" onclick="toast('Link copied')"><i class="ti ti-link"></i>Copy link</div>
+      <div class="mrow" onclick="toast('Export as PDF or Word')"><i class="ti ti-file-export"></i>Export</div>
+      <div class="msep"></div>
+      <div class="mrow danger" onclick="toast('Moved to bin')"><i class="ti ti-trash"></i>Move to bin</div>
+      <div class="mfoot">Edited 14 minutes ago by Caitlin Ciceri<br>Created 4 August 2026</div>
+    </div>
+  </div>
+</div>
+
+<div class="wfhandle" id="wfhandle" onclick="wfToggle()" title="Show or hide the workflow canvas">
+  <div class="wfnow"><div class="wfn">Workflow</div></div>
+  <div class="wftl">
+    <div class="wfstage" onclick="wfJump(1,event)" title="Jump to this chapter"><div class="wfsl">1. Project context</div><div class="wfsb"><i style="width:100%"></i></div></div>
+    <div class="wfstage cur" onclick="wfJump(2,event)" title="Jump to this chapter"><div class="wfsl">2. Demand</div><div class="wfsb"><i style="width:50%"></i></div></div>
+    <div class="wfstage" onclick="wfJump(3,event)" title="Jump to this chapter"><div class="wfsl">3. Supply</div><div class="wfsb"><i style="width:100%"></i></div></div>
+    <div class="wfstage" onclick="wfJump(4,event)" title="Jump to this chapter"><div class="wfsl">4. Summary</div><div class="wfsb"><i style="width:0"></i></div></div>
+  </div>
+  <div class="wfend"><span id="wfhtx">8 of 16 steps</span><i class="ti ti-chevron-down" id="wfhch"></i></div>
+</div>
+
+<div class="wfdraw" id="wfdraw">
+  <div class="trk" id="trk"></div>
+</div>
+
+<div class="wrap">
+<div class="doclayout">
+
+<div class="docwrap">
+  <div class="dhead">
+    <div class="dkind" id="dkind"></div>
+    <h1 class="dtitle" id="dtitle">Customer Demand Mapping</h1>
+    <div class="dsub" id="dsub"></div>
+    <div class="dchips" id="dchips"></div>
+  </div>
+
+  <div id="docbody">
+  <div class="dsec" style="margin-top:0;border-top:none;padding-top:0">
+    <div class="dh2"><span class="dnum">1</span>Project context</div>
+    <div class="dnote"><i class="ti ti-info-circle"></i><div>The project&rsquo;s essentials from onboarding: objective, site, planned interventions, target outcomes and constraints. It sets the scene; nothing is analysed here.</div></div>
+    <div class="dgrp"><div class="dfl">Objective</div>
+      <div class="dp">Durable income alongside continued farming, lower flood risk downstream, and a habitat legacy the family can point to.</div>
+      <div class="dprov">Written by Kick-off meeting <span class="pv" style="background:var(--bluebg);color:var(--blued)">Assistant&rsquo;s reading &middot; please check</span></div></div>
+    <div class="dgrp"><div class="dfl">Site description and current land use</div>
+      <div class="dp">187.8 ha across 18 parcels in the Evenlode valley, west Oxfordshire, held across seven farms and estates. Two tenancies expire in 2027.</div>
+      <div class="dprov">Written by Discovery information request <span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span></div></div>
+    <div class="dgrp"><div class="dfl" style="color:var(--ink3)">Planned interventions <span class="pv" style="background:var(--amberbg);color:var(--amberd)">not written yet</span></div>
+      <div style="padding:6px 0 2px"><span class="gline" style="max-width:84%;margin-bottom:9px"></span><span class="gline" style="max-width:57%"></span></div></div>
+    <div class="dgrp"><div class="dfl" style="color:var(--ink3)">Target habitats and outcomes <span class="pv" style="background:var(--amberbg);color:var(--amberd)">not written yet</span></div>
+      <div style="padding:6px 0 2px"><span class="gline" style="max-width:73%;margin-bottom:9px"></span><span class="gline" style="max-width:48%"></span></div></div>
+    <div class="dgrp"><div class="dfl">Constraints and dependencies</div>
+      <div class="dp">SFI 2024 agreement covering 180 ha, running to 2027. No conflicting options registered.</div>
+      <div class="dprov">Written by Discovery information request <span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span></div></div>
+    <div class="dnote q"><i class="ti ti-help-circle"></i><div><b>Potential questions</b><ul><li class="mut" style="color:var(--ink3)">&hellip;</li></ul></div></div>
+  </div>
+
+  <div class="dsec">
+    <div class="dh2"><span class="dnum">2</span>Demand</div>
+    <div class="dnote"><i class="ti ti-info-circle"></i><div>Worked per market, then split by buyer type. Manual beneficiary map run first, then tools. Protocol run once for this project; buyer results follow per market.</div></div>
+    <div class="dgrp"><div class="dfl" style="color:var(--ink3)">In short <span class="pv" style="background:var(--amberbg);color:var(--amberd)">not written yet</span></div>
+      <div style="padding:6px 0 2px"><span class="gline" style="max-width:88%;margin-bottom:9px"></span><span class="gline" style="max-width:62%"></span></div></div>
+    <details class="dtog" open><summary><i class="ti ti-chevron-right"></i>a. Category</summary>
+      <div class="dtwrap"><table class="dtbl"><thead><tr><th>Buyer</th><th>Why relevant</th><th>Hook</th><th>Relationship status</th></tr></thead><tbody><tr class="blank"><td class="mut">&hellip;</td><td></td><td></td><td></td></tr><tr class="blank"><td class="mut">&hellip;</td><td></td><td></td><td></td></tr><tr class="blank"><td class="mut">&hellip;</td><td></td><td></td><td></td></tr></tbody></table></div>
+    </details>
+    <details class="dtog"><summary><i class="ti ti-chevron-right"></i>b. Category</summary>
+      <div class="dtwrap"><table class="dtbl"><thead><tr><th>Buyer</th><th>Why relevant</th><th>Hook</th><th>Relationship status</th></tr></thead><tbody><tr class="blank"><td class="mut">&hellip;</td><td></td><td></td><td></td></tr><tr class="blank"><td class="mut">&hellip;</td><td></td><td></td><td></td></tr><tr class="blank"><td class="mut">&hellip;</td><td></td><td></td><td></td></tr></tbody></table></div>
+    </details>
+    <div class="dprov" style="margin-top:12px">The template is waiting here. Beneficiary map &amp; Buyer list and Check with Trade fill this section.</div>
+  </div>
+
+  <div class="dsec">
+    <div class="dh2"><span class="dnum">3</span>Supply</div>
+    <div class="dnote"><i class="ti ti-info-circle"></i><div>Interventions map to candidate markets. Market context is drawn from the <b>ES rule books</b> (refreshed Oct 2025, from the NatWest Markets Report).</div></div>
+    <div class="dtwrap"><table class="dtbl">
+      <thead><tr><th>Candidate market</th><th>From which interventions</th><th>Market readiness</th><th>Indicative sizing</th><th>Market dynamics</th></tr></thead>
+      <tbody>
+        <tr><td class="m">BNG units<span class="sc">4.6 / 5</span></td><td class="mut">&hellip;</td><td><span class="rdy a">Active</span></td><td>&pound;37,967 average unit</td><td>Live DEFRA register, strong local demand</td></tr>
+        <tr><td class="m">Nutrient credits<span class="sc">3.8 / 5</span></td><td class="mut">&hellip;</td><td><span class="rdy a">Active</span></td><td class="mut">Not sized yet</td><td>Active catchment scheme with credible buyers</td></tr>
+        <tr><td class="m">Woodland carbon<span class="sc">3.2 / 5</span></td><td class="mut">&hellip;</td><td><span class="rdy a">Active</span></td><td>WCU &pound;22.10 per tCO2e</td><td>Moderate deliverable volume</td></tr>
+        <tr><td class="m">Natural flood mgmt<span class="sc">2.4 / 5</span></td><td class="mut">&hellip;</td><td><span class="rdy e">Emerging</span></td><td class="mut">Not sized yet</td><td>Early market, largely grant-dependent today</td></tr>
+      </tbody></table></div>
+    <div class="dprov" style="margin-top:12px">Written by Research Ecosystem Services &middot; every figure cited</div>
+  </div>
+
+  <div class="dsec">
+    <div class="dverd">
+      <div class="dh2"><span class="dnum">4</span>Summary</div>
+      <div class="dghost">The summary and the decision.<br>Written by Create summary, decided by the Vertical Lead.</div>
+      <div class="drec">Recommendation: Pursue / Drop</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+
+</div>
+</div>
+</div>
+</div>
+
+<aside class="tdpanel" id="tdpanel">
+  <div class="tdhead"><b>To-dos</b><i class="ti ti-x x" onclick="closeTodos()"></i></div>
+  <div class="tdmeter"><div class="tdbar"><i id="tdFill" style="width:0"></i></div>
+    <div class="tdmt"><span id="tdCount">8 of 16 done</span><span>Evenlode Landscape Recovery</span></div></div>
+  <div class="tdbody" id="tdBody"></div>
+</aside>
+<aside class="npanel" id="npanel" aria-hidden="true">
+  <iframe id="npframe" title="Workflow step" allowtransparency="true"></iframe>
+</aside>
+<aside class="cpanel" id="cpanel">
+  <div class="chead">
+    <b>Comments</b>
+    <span class="ctab on" id="ctOpen" onclick="cTab('open')">Open 3</span>
+    <span class="ctab" id="ctRes" onclick="cTab('res')">Resolved 2</span>
+    <i class="ti ti-x x" onclick="toggleComments()"></i>
+  </div>
+  <div class="cbody" id="cbodyOpen">
+    <div class="thr">
+      <div class="qt">Credible demand for the shortlist?</div>
+      <div class="cmt"><span class="fa" style="--fc:#378ADD">EN</span><div class="cw">
+        <div class="cn">Emily Norton<span>2 hours ago</span></div>
+        <div class="cx">Trade have two live buyers for units here. Worth naming them before we call this viable.</div></div></div>
+      <div class="cmt"><span class="fa" style="--fc:#1D9E75">CC</span><div class="cw">
+        <div class="cn">Caitlin Ciceri<span>41 minutes ago</span></div>
+        <div class="cx">Agreed. Adding them once the questionnaire comes back.</div></div></div>
+      <div class="cact"><span class="creply" onclick="toast('Reply to this thread')">Reply...</span><span class="cres" onclick="toast('Thread resolved')">Resolve</span></div>
+    </div>
+    <div class="thr">
+      <div class="qt">Holding · 214 ha across 3 parcels</div>
+      <div class="cmt"><span class="fa" style="--fc:#EF9F27">HF</span><div class="cw">
+        <div class="cn">Harry Fox<span>Yesterday</span></div>
+        <div class="cx">Parcel 3 boundary changed after the survey. Inventory says 208 ha now.</div></div></div>
+      <div class="cact"><span class="creply" onclick="toast('Reply to this thread')">Reply...</span><span class="cres" onclick="toast('Thread resolved')">Resolve</span></div>
+    </div>
+    <div class="thr">
+      <div class="qt">3. Supply</div>
+      <div class="cmt"><span class="fa" style="--fc:#7F77DD">IB</span><div class="cw">
+        <div class="cn">Izzie Bell<span>2 days ago</span></div>
+        <div class="cx">Can we pull the nutrient figures straight from the inventory rather than retyping them?</div></div></div>
+      <div class="cact"><span class="creply" onclick="toast('Reply to this thread')">Reply...</span><span class="cres" onclick="toast('Thread resolved')">Resolve</span></div>
+    </div>
+  </div>
+  <div class="cbody" id="cbodyRes" style="display:none">
+    <div class="thr res">
+      <div class="qt">Instantiated from the Nature Cookbook</div>
+      <div class="cmt"><span class="fa" style="--fc:#639922">JR</span><div class="cw">
+        <div class="cn">Josh Read<span>5 days ago</span></div>
+        <div class="cx">Is this pinned to v1.3 or v1.4 of the template?</div></div></div>
+      <div class="cact"><span class="creply">Resolved by Caitlin Ciceri</span></div>
+    </div>
+    <div class="thr res">
+      <div class="qt">1. Project context</div>
+      <div class="cmt"><span class="fa" style="--fc:#D4537E">MG</span><div class="cw">
+        <div class="cn">Millie Gray<span>8 days ago</span></div>
+        <div class="cx">Kick-off notes are in Meeting notes, linking them here.</div></div></div>
+      <div class="cact"><span class="creply">Resolved by Millie Gray</span></div>
+    </div>
+  </div>
+</aside>
+<div class="toast" id="toast"></div>
+<script>
+
+function tbPop(id){
+  var was=document.getElementById(id).classList.contains('on');
+  document.querySelectorAll('#tbact .pop').forEach(function(p){p.classList.remove('on');});
+  if(!was) document.getElementById(id).classList.add('on');
+}
+function toggleComments(){
+  var p=document.getElementById('cpanel');
+  var on=p.classList.toggle('on');
+  if(on){ nodePanelClose(); closeTodos(); }
+  document.body.classList.toggle('cmt',on);
+  document.getElementById('cmtBtn').classList.toggle('on',on);
+}
+function cTab(k){
+  document.getElementById('ctOpen').classList.toggle('on',k==='open');
+  document.getElementById('ctRes').classList.toggle('on',k==='res');
+  document.getElementById('cbodyOpen').style.display=k==='open'?'':'none';
+  document.getElementById('cbodyRes').style.display=k==='res'?'':'none';
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#tbact')) document.querySelectorAll('#tbact .pop').forEach(function(p){p.classList.remove('on');});
+});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  var open=document.querySelector('#tbact .pop.on');
+  if(open){open.classList.remove('on');return;}
+  if(document.getElementById('tdpanel').classList.contains('on')){closeTodos();return;}
+  if(document.getElementById('npanel').classList.contains('on')){nodePanelClose();return;}
+  if(document.getElementById('cpanel').classList.contains('on')) toggleComments();
+});
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+var PLAIN = {
+  kind:'Document · from the client',
+  title:'estate_management_plan.pdf',
+  sub:'Received via the questionnaire · 2 July · 38 pages',
+  chips:'<span class="dchip"><b>Source</b> questionnaire</span><span class="dchip"><b>Filed to</b> Customer Demand Mapping</span>',
+  body:`<div class="dsec" style="border-top:none;padding-top:6px">
+    <div class="dh2">Estate Management Plan</div>
+    <div class="dgrp"><div class="dp">Restore the estate to good ecological condition over the next decade: cleaner water, lower flood risk, richer habitat, and a durable income from nature markets alongside continued farming.</div></div>
+    <div class="dgrp"><div class="dfl">1 · Vision</div><div class="dp">The family intends to hold the land in perpetuity. Any scheme entered into must be compatible with a working farm and must not foreclose future options for the tenanted parcels.</div></div>
+    <div class="dgrp"><div class="dfl">2 · Current land use</div><div class="dp">Arable across the eastern parcels, permanent pasture along the brook, and two blocks of mature woodland to the north-west. Soil surveys were last refreshed in 2022.</div></div>
+    <div class="dgrp"><div class="dfl">3 · Constraints</div><div class="dp">Two tenancies expire in 2027. A public footpath crosses the northern boundary. No SSSI designations.</div></div>
+  </div>`
+};
+var DELIV = null;
+function setMode(m){
+  if(!DELIV){ DELIV = {kind:document.getElementById('dkind').innerHTML, title:document.getElementById('dtitle').innerHTML,
+    sub:document.getElementById('dsub').innerHTML, chips:document.getElementById('dchips').innerHTML,
+    body:document.getElementById('docbody').innerHTML}; }
+  var d = (m==='plain') ? PLAIN : DELIV;
+  document.body.classList.toggle('plain', m==='plain');
+  document.getElementById('dkind').innerHTML=d.kind;
+  document.getElementById('dtitle').innerHTML=d.title;
+  document.getElementById('dsub').innerHTML=d.sub;
+  document.getElementById('dchips').innerHTML=d.chips;
+  document.getElementById('docbody').innerHTML=d.body;
+  document.getElementById('topTitle').innerHTML=d.title;
+  if(m==='plain' && document.getElementById('wfdraw').classList.contains('open')) wfToggle();
+  try{ history.replaceState(null,'','?mode='+m); }catch(e){}
+}
+
+var TRK_T={
+  human:{bg:'var(--amberbg)',fg:'var(--amberd)',ic:'ti-user'},
+  agent:{bg:'var(--bluebg)', fg:'var(--blued)', ic:'ti-sparkles'},
+  det:  {bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-settings-automation'},
+  data: {bg:'var(--tealbg)', fg:'var(--teald)', ic:'ti-file-import'},
+  gate: {bg:'var(--amberbg)',fg:'var(--amberd)',ic:'ti-arrows-split-2'},
+  park: {bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-moon'},
+  store:{bg:'var(--graybg)', fg:'var(--grayd)', ic:'ti-database'}
+};
+var TRK_CH=[
+ {n:'1. Project context', steps:[
+   {id:'kickoff',n:'1.1',    t:'human',title:'Kick-off meeting',            st:'done',sub:'Align scope with the client'},
+   {id:'sendq',n:'1.2',      t:'det',  title:'Discovery information request',st:'done',sub:'Send the intake pack to the client'},
+   {id:'gate1',n:'1.3',      t:'gate', title:'Check: Information complete?', st:'done',sub:'Checks the must-haves before analysis',
+    br:{id:'followup',title:'Follow-up',sub:'Close gaps with the client, then back to the check'}}
+ ]},
+ {n:'2. Demand', steps:[
+   {id:'registries',n:'2.1', t:'agent',title:'GPAP Analysis',               st:'done',sub:'Local demand signal from GPAP'},
+   {id:'desktop',n:'2.2',    t:'agent',title:'Abstraction licences in catchment',st:'done',sub:'Water demand from licence data'},
+   {id:'evidence',n:'2.3',   t:'data', title:'If Nature Finance: public funding scan',st:'done',sub:'Conditional scan of public funding routes'},
+   {id:'shortbuyers',n:'2.4',t:'agent',title:'Beneficiary map & Buyer list', st:'cur', sub:'Map beneficiaries by hand, then qualify buyers'},
+   {id:'tradecheck',n:'2.5', t:'human',title:'Check with Trade',            st:'pend',sub:'Sense-check demand with Trade'},
+   {id:'gate3',n:'2.6',      t:'gate', title:'Check: Information complete?', st:'pend',sub:'Credible demand for the shortlist?'}
+ ]},
+ {n:'3. Supply', steps:[
+   {id:'shortes',n:'3.1',    t:'agent',title:'Research Ecosystem Services',  st:'done',sub:'Score and rank candidate markets'},
+   {id:'gate2',n:'3.2',      t:'gate', title:'Check: Information complete?', st:'done',sub:'The early kill gate',
+    br:{id:'park',title:'Park project',sub:'Terminal. Logs learnings and a revisit date'}}
+ ]},
+ {n:'4. Summary', steps:[
+   {id:'finalprep',n:'4.1',  t:'agent',title:'Create summary',              st:'pend',sub:'Assemble the verdict pack'},
+   {id:'verdict',n:'4.2',    t:'det',  title:'Generate PDF with summary',   st:'pend',sub:'Render the summary as a PDF'},
+   {id:'share',n:'4.3',      t:'det',  title:'Share summary with customer', st:'pend',sub:'Deliver the map to the client'},
+   {id:'platform',n:'4.4',   t:'det',  title:'Send to Data platform',       st:'pend',sub:'Deposit structured data',
+    br:{id:'store',title:'Store',sub:'Structured data lands in the GY Data Platform'}},
+   {id:'done',n:'4.5',       t:'human',title:'Gather learnings',            st:'pend',sub:'What to carry into the next run'}
+ ]}
+];
+function trkBuild(){
+  var t=document.getElementById('trk'); if(!t||t.dataset.built)return;
+  var h='';
+  TRK_CH.forEach(function(c){
+    var all=[]; c.steps.forEach(function(s){all.push(s); if(s.br&&s.br.n)all.push({st:s.br.st||s.st});});
+    var done=all.filter(function(s){return s.st==='done';}).length;
+    var cur=c.steps.some(function(s){return s.st==='cur';});
+    h+='<div class="tgrp" id="tg-'+c.n.charAt(0)+'"><div class="tgh'+(cur?' cur':'')+'"><b>'+c.n+'</b><i class="c">'+done+' of '+all.length+'</i></div><div class="trow">';
+    c.steps.forEach(function(s,i){
+      var T=TRK_T[s.t];
+      var dot=s.st==='done'?'<i class="ti ti-check"></i>':(s.st==='cur'?'<i class="ti ti-clock"></i>':'');
+      h+='<div class="tcell">';
+      h+='<div class="tstep '+s.st+'" id="tk-'+s.id+'" onclick="trkOpen(\''+s.id+'\')">'
+        +'<span class="tic" style="background:'+T.bg+';color:'+T.fg+'"><i class="ti '+T.ic+'"></i></span>'
+        +'<span class="tw"><span class="tn">'+s.n+'</span><span class="tt">'+s.title+'</span></span>'
+        +'<span class="tsd">'+dot+'</span></div>';
+      if(s.br) h+='<div class="tbr" onclick="trkOpen(\''+s.br.id+'\')"><i class="ti ti-corner-down-right"></i>'+(s.br.n?s.br.n+' ':'')+s.br.title+'</div>';
+      h+='</div>';
+      if(i<c.steps.length-1) h+='<span class="tarw"><i class="ti ti-chevron-right"></i></span>';
+    });
+    h+='</div></div>';
+  });
+  t.innerHTML=h; t.dataset.built='1';
+  trkSel(trkCurrentId());
+}
+function trkCurrentId(){
+  var f=null;
+  TRK_CH.forEach(function(c){c.steps.forEach(function(s){if(s.st==='cur'&&!f)f=s.id;});});
+  return f;
+}
+function trkFind(id){
+  var hit=null;
+  TRK_CH.forEach(function(c){c.steps.forEach(function(s){
+    if(s.id===id)hit={s:s,c:c};
+    if(s.br&&s.br.id===id)hit={s:{n:s.br.n,title:s.br.title,sub:s.br.sub,st:s.br.st||(s.st==='done'?'done':'pend')},c:c,branch:!s.br.n};
+  });});
+  return hit;
+}
+function trkSel(id){
+  var hit=trkFind(id); if(!hit)return;
+  document.querySelectorAll('#trk .tstep').forEach(function(e){e.classList.remove('sel');});
+  var el=document.getElementById('tk-'+id); if(el)el.classList.add('sel');
+}
+function trkScrollToCurrent(){
+  var t=document.getElementById('trk');
+  var el=document.getElementById('tk-'+trkCurrentId());
+  if(!t||!el)return;
+  var g=el.closest('.tgrp')||el;
+  var gr=g.getBoundingClientRect(), tr=t.getBoundingClientRect();
+  t.scrollLeft=Math.max(0, t.scrollLeft + (gr.left - tr.left) - 22);
+}
+
+
+var DELIV_KEY='sdm-ev';
+function tdRender(){
+  var list=GYT.bySoonest(GYT.forDeliverable(DELIV_KEY));
+  var open=list.filter(function(x){return !x.done;}), done=list.filter(function(x){return x.done;});
+  function row(x){
+    return '<div class="td'+(x.done?' on':'')+'" onclick="tdToggle(\''+x.id+'\')">'
+      +'<span class="tdbox"><i class="ti ti-check"></i></span><span class="tdw">'
+      +'<div class="tdt">'+x.t+'</div><div class="tdm">'
+      +'<span class="fa" style="--fc:'+x.person.c+'">'+x.person.ini+'</span>'+(x.who===GYT.me?'You':x.who)
+      +(x.due?'<span class="due'+(x.dstate==='over'?' over':'')+'">'+(x.dstate==='over'?'Overdue ':'Due ')+x.due+'</span>':'')
+      +(x.step?'<span class="lnk"'+(x.node?' onclick="event.stopPropagation();tdGo(\''+x.node+'\')"':'')+'>'+x.step+'</span>':'')
+      +'</div></span></div>';
+  }
+  var h='<div class="tdlab">To do '+open.length+'</div>';
+  h+= open.length?open.map(row).join(''):'<div class="cempty">Nothing open. Every to-do on this deliverable is done.</div>';
+  h+='<div class="tdlab">Done '+done.length+'</div>'+done.map(row).join('');
+  h+='<div class="tdadd" onclick="toast(\'Add a to-do to this deliverable\')"><i class="ti ti-plus"></i>Add a to-do</div>';
+  document.getElementById('tdBody').innerHTML=h;
+  var st=GYT.stats(DELIV_KEY);
+  document.getElementById('tdFill').style.width=st.pct+'%';
+  document.getElementById('tdCount').textContent=st.label+' done';
+  var dot=document.getElementById('tdDot');
+  dot.textContent=st.open; dot.style.display=st.open?'':'none';
+  var mk=document.getElementById('tdMenuCount'); if(mk) mk.textContent=st.label;
+}
+function tdToggle(id){ GYT.toggle(id); tdRender(); }
+function tdGo(id){
+  var d=document.getElementById('wfdraw');
+  if(!d.classList.contains('open')) wfToggle();
+  trkBuild();
+  setTimeout(function(){ trkOpen(id); },80);
+}
+function toggleTodos(){
+  var p=document.getElementById('tdpanel');
+  var on=p.classList.toggle('on');
+  if(on){ nodePanelClose(); if(document.getElementById('cpanel').classList.contains('on')) toggleComments(); tdRender(); }
+  document.getElementById('tdBtn').classList.toggle('on',on);
+}
+function closeTodos(){
+  document.getElementById('tdpanel').classList.remove('on');
+  document.getElementById('tdBtn').classList.remove('on');
+}
+
+function trkOpen(id){ trkSel(id); nodePanelOpen(id); }
+window.addEventListener('DOMContentLoaded',function(){ if(window.GYT) tdRender(); });
+
+function nodePanelOpen(id){
+  closeTodos();
+  if(document.getElementById('cpanel').classList.contains('on')) toggleComments();
+  var f=document.getElementById('npframe');
+  if(!f.src) f.src='demand-mapping-canvas-prototype.html?drawer='+id;
+  else { try{ f.contentWindow.postMessage({gy:'open',id:id},'*'); }catch(e){} }
+  document.getElementById('npanel').classList.add('on');
+  document.getElementById('npanel').setAttribute('aria-hidden','false');
+}
+function nodePanelClose(){
+  document.getElementById('npanel').classList.remove('on');
+  document.getElementById('npanel').setAttribute('aria-hidden','true');
+}
+window.addEventListener('message',function(e){ if(e.data==='gy-close-drawer') nodePanelClose(); });
+
+function wfJump(i,e){
+  if(e)e.stopPropagation();
+  var d=document.getElementById('wfdraw');
+  if(!d.classList.contains('open')) wfToggle();
+  trkBuild();
+  setTimeout(function(){
+    var t=document.getElementById('trk'), g=document.getElementById('tg-'+i);
+    if(!t||!g)return;
+    var gr=g.getBoundingClientRect(), tr=t.getBoundingClientRect();
+    t.scrollLeft=Math.max(0, t.scrollLeft + (gr.left - tr.left) - 22);
+    var first=g.querySelector('.tstep');
+    if(first) trkSel(first.id.replace('tk-',''));
+  },60);
+}
+function wfToggle(){
+  var d=document.getElementById('wfdraw');
+  var open=d.classList.toggle('open');
+  document.body.classList.toggle('wfopen',open);
+  if(open){
+    trkBuild();
+    setTimeout(trkScrollToCurrent,60);
+    document.querySelector('.mainc').scrollTo({top:0,behavior:'smooth'});
+  }
+  if(!open) nodePanelClose();
+  document.getElementById('wfhch').className='ti '+(open?'ti-chevron-up':'ti-chevron-down');
+  var g=document.getElementById('wfrailgo'); if(g) g.textContent=open?'Hide canvas ›':'Open canvas ›';
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var m = new URLSearchParams(location.search).get('mode') || 'deliverable';
+  setMode(m);
+});
+</script>
+</body>
+</html>

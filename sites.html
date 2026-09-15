@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sites · Evenlode · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css">
+<link rel="stylesheet" href="gy-shell.css">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+
+.espill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:7px;background:var(--esc);color:#fff;white-space:nowrap}
+.uchip{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:#FBF1DC;color:var(--amberd);white-space:nowrap}
+
+.scards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 22px}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px 20px}
+.sc .lb{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.sc .vl{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;margin-top:8px}
+.sc .vl small{font-size:20px;font-weight:500}
+.sc .sb{font-size:13px;color:var(--ink2);margin-top:6px}
+.sc.warn{background:#F9DD5A;border-color:#E9CA36;cursor:pointer}
+.sc.warn .lb,.sc.warn .sb{color:#6B5606}
+.sc.warn.on{box-shadow:0 0 0 3px rgba(26,12,18,.14)}
+@media(max-width:980px){.scards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.scards{grid-template-columns:1fr}}
+
+.stbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.shd,.srow{display:grid;grid-template-columns:minmax(180px,1.45fr) 62px 80px 78px minmax(210px,1.5fr) minmax(120px,.95fr) 104px;
+           align-items:center;gap:14px;padding:13px 20px}
+.shd{background:var(--graybg);border-bottom:1px solid var(--line);
+     font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.shd .r,.srow .r{text-align:right}
+.srow{border-bottom:1px solid var(--line);cursor:pointer;padding:15px 20px}
+.srow:last-child{border-bottom:none}
+.srow:hover{background:#FBF8EF}
+.srow .nm{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+.srow .ad{font-size:13px;color:var(--ink3);margin-top:3px}
+.srow .pc{font-size:14.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.srow .ar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.srow .lu{font-size:14px;color:var(--ink2)}
+.srow .al{display:flex;flex-direction:column;gap:6px;min-width:0}
+.srow .alrow{display:flex;align-items:center;gap:9px;font-size:14.5px;min-width:0}
+.srow .alrow .pn{font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .alrow .pp{font-size:13px;color:var(--ink3);white-space:nowrap}
+.srow .ct{font-size:14px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .ac{justify-self:end}
+.allocbtn{border:1px solid var(--line2);background:#fff;border-radius:9px;padding:7px 12px;font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;white-space:nowrap}
+.allocbtn:hover{border-color:var(--ink3)}
+.sempty{padding:28px 20px;font-size:14px;color:var(--ink3);text-align:center}
+@media(max-width:1060px){
+  .shd{display:none}
+  .srow{grid-template-columns:1fr auto;row-gap:10px;align-items:start}
+  .srow .pc,.srow .ar,.srow .lu{grid-column:1;font-size:13.5px;color:var(--ink2);text-align:left}
+  .srow .al,.srow .ct{grid-column:1 / 3}
+  .srow .ac{grid-column:1;justify-self:start}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"prog-sites"};</script>
+<script src="gy-nav.js"></script>
+<script src="gy-projects.js"></script>
+<script src="gy-sites.js"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">›</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">›</span><span class="cr cur">Sites</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Sites</div>
+    <div class="acts">
+      <button class="btn-dark" onclick="toast('Add site: address, contact and the parcels it holds')"><i class="ti ti-plus"></i> Add site</button>
+    </div>
+  </div>
+
+  <div class="frow" style="margin-top:16px">
+    <div class="search" style="width:400px"><i class="ti ti-search"></i>
+      <input id="q" placeholder="Search sites and parcels" oninput="render()"
+             style="border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%">
+    </div>
+    <button class="fbtn" onclick="toast('Land use: Arable, Pasture, Mixed, Woodland, Water')">Land use · All <i class="ti ti-chevron-down"></i></button>
+    <button class="fbtn" id="allocBtn" onclick="toggleAlloc()">Allocation · All <i class="ti ti-chevron-down"></i></button>
+    <span class="spacer"></span>
+    <button class="btn-out" onclick="toast('Export land schedule: every site and parcel as a spreadsheet')">Export land schedule</button>
+  </div>
+
+  <div class="scards" id="scards"></div>
+  <div class="stbl" id="stbl"></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+</script>
+<script>
+var ONLY_UNALLOC=false;
+function esPill(k){ return '<span class="espill '+GY_ES[k].cls+'">'+(k==='bng'?'BNG':'WCC')+'</span>'; }
+function projOf(id){ return GY_PROJECTS.filter(function(p){return p.id===id;})[0]; }
+function openSite(s){ toast(s.name+': the site page is not in this prototype yet'); }
+
+function card(lb,vl,sb){
+  return '<div class="sc"><div class="lb">'+lb+'</div><div class="vl">'+vl+'</div>'
+       + (sb?'<div class="sb">'+sb+'</div>':'') + '</div>';
+}
+function cards(){
+  var A=GY_SITES_API;
+  document.getElementById('scards').innerHTML =
+     card('Sites', A.count(), '')
+   + card('Land parcels', A.parcels(), '')
+   + card('Total area', A.area()+' <small>ha</small>', '')
+   + '<div class="sc warn'+(ONLY_UNALLOC?' on':'')+'" onclick="toggleAlloc()">'
+     +'<div class="lb">Unallocated land</div>'
+     +'<div class="vl">'+A.unallocatedParcels()+' <small>parcels</small></div>'
+     +'<div class="sb">'+A.unallocatedArea()+' ha</div></div>';
+}
+function render(){
+  cards();
+  var q=(document.getElementById('q').value||'').toLowerCase();
+  var list=GY_SITES_API.all().filter(function(s){
+    if(ONLY_UNALLOC && s.alloc.length) return false;
+    return (s.name+' '+s.addr+' '+s.contact+' '+s.use).toLowerCase().indexOf(q)>=0;
+  });
+  var h='<div class="shd"><span>Site</span><span class="r">Parcels</span><span class="r">Area</span>'
+       +'<span>Land use</span><span>Allocated to</span><span>Contact</span><span></span></div>';
+  h+= list.length ? list.map(function(s){
+    var i=GY_SITES.indexOf(s);
+    var al = s.alloc.length
+      ? s.alloc.map(function(a){ var p=projOf(a.project);
+          return '<div class="alrow"><span class="pn">'+p.name+'</span>'+esPill(p.es)
+               + (s.alloc.length>1 ? '<span class="pp">'+a.parcels+' parcel'+(a.parcels>1?'s':'')+'</span>' : '')
+               + '</div>'; }).join('')
+      : '<div class="alrow"><span class="uchip">Unallocated</span>'
+        + (s.note?'<span class="pp">'+s.note+'</span>':'') + '</div>';
+    return '<div class="srow" onclick="openSite(GY_SITES['+i+'])">'
+      +'<span><div class="nm">'+s.name+'</div><div class="ad">'+s.addr+'</div></span>'
+      +'<span class="pc r">'+s.parcels+'</span>'
+      +'<span class="ar r">'+s.ha+' ha</span>'
+      +'<span class="lu">'+s.use+'</span>'
+      +'<span class="al">'+al+'</span>'
+      +'<span class="ct">'+s.contact+'</span>'
+      +'<span class="ac">'+(s.alloc.length?'':'<button class="allocbtn" onclick="event.stopPropagation();toast(\'Allocate '+s.name+' to a Project\')">Allocate <i class="ti ti-arrow-right"></i></button>')+'</span>'
+      +'</div>';
+  }).join('') : '<div class="sempty">No sites match that search.</div>';
+  document.getElementById('stbl').innerHTML=h;
+}
+function toggleAlloc(){
+  ONLY_UNALLOC=!ONLY_UNALLOC;
+  document.getElementById('allocBtn').innerHTML=(ONLY_UNALLOC?'Allocation · Unallocated':'Allocation · All')+' <i class="ti ti-chevron-down"></i>';
+  render();
+}
+window.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>

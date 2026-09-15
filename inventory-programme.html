@@ -3,46 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Denton Reserve · Inventory · Great Yellow</title>
+<title>Inventory list · Evenlode · Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css">
 <link rel="stylesheet" href="gy-shell.css">
+<style>.dtbl .r{text-align:right}.dtbl td.r{font-variant-numeric:tabular-nums}</style>
 </head>
 <body>
 <div class="shell">
-<script>window.GYNAV={"active":"inv-denton"};</script>
+<script>
+(function(){ var es=''; try{ es=new URLSearchParams(location.search).get('es')||''; }catch(e){}
+  window.GYNAV={"active": es ? 'prog-inv-'+es : 'prog-inv-list'};
+})();
+</script>
 <script src="gy-nav.js"></script>
+<script src="gy-projects.js"></script>
+<script src="gy-inventory.js"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <div class="crumbs">
-    <span class="cr" onclick="location.href='inventory-portfolio-dashboard.html'">Programmes</span>
-    <span class="sep">›</span><span class="cr">Denton Reserve</span>
-    <span class="sep">›</span><span class="cr cur">Inventory</span>
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">›</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">›</span><span class="cr" onclick="location.href='inventory-overview.html'">Inventory</span>
+    <span class="sep">›</span><span class="cr cur">Inventory list</span>
   </div>
 </div>
 
 <div class="wrap">
   <div class="phead">
-    <div class="h1">Denton Reserve</div>
+    <div class="h1">Inventory list</div>
     <div class="acts">
       <button class="btn-dark" onclick="toast('Actions: add units, import, export, reserve, list for sale')">Actions <i class="ti ti-chevron-down"></i></button>
       <button class="btn-out" onclick="toast('Programme settings')"><i class="ti ti-settings"></i> Settings</button>
     </div>
   </div>
-  <div class="seg" style="margin:8px 0 18px">
-    <button onclick="toast('Denton Reserve dashboard is not in this prototype yet')">Dashboard</button>
-    <button class="on">Inventory</button>
-    <button onclick="toast('Sites view is not in this prototype yet')">Sites</button>
-  </div>
-
   <div class="frow">
     <span class="flab">Filters</span>
-    <div class="segmini"><button class="on">All ES Types</button><button>BNG</button><button>WCC</button></div>
+    <div class="segmini" id="esSeg">
+      <button class="on" data-es="" onclick="setEs('')">All ES Types</button>
+      <button data-es="bng" onclick="setEs('bng')">BNG</button>
+      <button data-es="wcc" onclick="setEs('wcc')">WCC</button>
+      <button data-es="soc" onclick="setEs('soc')">Soil</button>
+    </div>
     <button class="fbtn">Availability <i class="ti ti-chevron-down"></i></button>
   </div>
   <div class="frow">
@@ -63,15 +70,18 @@
   </div>
 
   <div class="searchbar">
-    <div class="search"><i class="ti ti-search"></i> Search (by Status, Habitat etc)</div>
-    <span class="showing">Showing 4 of 4</span>
+    <div class="search"><i class="ti ti-search"></i>
+      <input id="q" placeholder="Search (by Status, Habitat etc)" oninput="render()"
+             style="border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%">
+    </div>
+    <span class="showing" id="showing"></span>
   </div>
 
   <div class="tblwrap">
     <table class="dtbl">
       <thead>
         <tr>
-          <th colspan="4"></th>
+          <th colspan="5"></th>
           <th colspan="8" class="vdiv"><div style="display:flex;align-items:center;justify-content:space-between;gap:20px"><span style="font-weight:600;color:var(--ink2)">BNG Data</span><span class="wccpill">WCC data <i class="ti ti-chevron-right"></i></span></div></th>
         </tr>
         <tr>
@@ -79,6 +89,7 @@
           <th>ES Type <span class="ca">⇅</span> <i class="ti ti-info-circle" style="font-size:13px;color:var(--ink3)"></i></th>
           <th>Availability <span class="ca">⇅</span></th>
           <th>Specific Type / Vintage <span class="ca">⇅</span></th>
+          <th class="r">Units <span class="ca">⇅</span></th>
           <th class="vdiv">Distinctiveness <span class="ca">⇅</span></th>
           <th>Condition <span class="ca">⇅</span></th>
           <th>Broad Habitat</th>
@@ -108,18 +119,51 @@
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
-const dash='<span class="dash">—</span>';
-const YEARS=['2024','2029','2034','2039'];
-document.getElementById('rows').innerHTML = YEARS.map(function(y){
-  return '<tr>'
-    +'<td><span class="chkbox"></span></td>'
-    +'<td><span class="estag">WCC</span></td>'
-    +'<td><span class="badge avail">Available</span></td>'
-    +'<td>'+y+'</td>'
-    +'<td class="vdiv">'+dash+'</td>'
-    +'<td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td>'
-    +'</tr>';
-}).join('');
+const dash='<span class="dash">&mdash;</span>';
+var ES_FILTER='';
+try{ ES_FILTER = new URLSearchParams(location.search).get('es') || ''; }catch(e){}
+
+function esTag(k){ return '<span class="estag">'+(k==='bng'?'BNG':k==='wcc'?'WCC':'Soil')+'</span>'; }
+function badge(a){
+  var cls = a==='Available' ? 'avail' : a==='Sold' ? 'sold' : 'future';
+  return '<span class="badge '+cls+'">'+a+'</span>';
+}
+function cell(v){ return v ? v : dash; }
+
+function render(){
+  var q=(document.getElementById('q').value||'').toLowerCase();
+  var all=GY_INV_API.rows('Evenlode');
+  var list=all.filter(function(r){
+    if(ES_FILTER && r.es!==ES_FILTER) return false;
+    return (r.es+' '+r.avail+' '+r.type+' '+r.site+' '+r.broad+' '+r.dist+' '+r.cond).toLowerCase().indexOf(q)>=0;
+  });
+  document.getElementById('rows').innerHTML = list.length ? list.map(function(r){
+    return '<tr>'
+      +'<td><span class="chkbox"></span></td>'
+      +'<td>'+esTag(r.es)+'</td>'
+      +'<td>'+badge(r.avail)+'</td>'
+      +'<td>'+r.type+'</td>'
+      +'<td class="r">'+r.units.toLocaleString()+'</td>'
+      +'<td class="vdiv">'+cell(r.dist)+'</td>'
+      +'<td>'+cell(r.cond)+'</td><td>'+cell(r.broad)+'</td><td>'+cell(r.hid)+'</td>'
+      +'<td>'+cell(r.lpa)+'</td><td>'+cell(r.nca)+'</td><td>'+cell(r.lnrs)+'</td>'
+      +'<td>'+r.ha+' ha</td>'
+      +'</tr>';
+  }).join('') : '<tr><td colspan="13" style="text-align:center;color:var(--ink3);padding:26px">No inventory matches that search.</td></tr>';
+
+  var units=list.reduce(function(t,r){return t+r.units;},0);
+  document.getElementById('showing').textContent =
+    'Showing '+list.length+' of '+all.length+' · '+units.toLocaleString()+' units';
+  document.querySelectorAll('#esSeg button').forEach(function(b){
+    b.classList.toggle('on', (b.dataset.es||'')===ES_FILTER);
+  });
+}
+function setEs(k){
+  ES_FILTER=k;
+  try{ history.replaceState(null,'', k ? '?es='+k : location.pathname); }catch(e){}
+  render();
+}
+window.addEventListener('DOMContentLoaded',render);
 </script>
 </body>
 </html>

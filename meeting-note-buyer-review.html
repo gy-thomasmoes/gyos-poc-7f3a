@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Demand Mapping Kick-off Call · Meeting Notes</title>
+<title>Buyer list review · Meeting Notes</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,12 +118,12 @@ body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10p
 <div class="row1">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <span class="crumb" onclick="location.href='meeting-notes.html'">Meeting Notes</span><span class="sep">›</span>
-  <span class="crumb" onclick="location.href='demand-mapping-canvas-prototype.html'">Demand Mapping</span><span class="sep">›</span>
-  <span class="title">Kick-off Call</span>
+  <span class="crumb" onclick="location.href='document.html?mode=deliverable'">Customer Demand Mapping</span><span class="sep">›</span>
+  <span class="title">Buyer list review</span>
   <span class="spacer"></span>
-  <span class="attend" title="Caitlin, Emily and 4 others">
-    <span class="avs"><span class="av" style="background:#5A9E6A">C</span><span class="av" style="background:#4C86D6">E</span></span>
-    <span class="more">+4</span>
+  <span class="attend" title="Caitlin, Emily and Izzie">
+    <span class="avs"><span class="av" style="background:#1D9E75">C</span><span class="av" style="background:#378ADD">E</span></span>
+    <span class="more">+1</span>
   </span>
   <span class="chip" onclick="toast('Share: send a read-only link, or export to PDF')"><i class="ti ti-share-2"></i> Share</span>
 </div>
@@ -131,45 +131,34 @@ body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10p
 <div class="stage">
   <div class="stagewrap">
   <div class="npage">
-    <div class="npicon">🤝</div>
-    <div class="nptitle" contenteditable="true">Demand Mapping Kick-off · Spains Hall</div>
+    <div class="npicon">🗺️</div>
+    <div class="nptitle" contenteditable="true">Buyer list review · Evenlode</div>
 
-    <div class="nprop"><span class="plab"><i class="ti ti-calendar-event"></i>Date</span><b>Tue 1 Jul 2026 · 40 min</b></div>
-    <div class="nprop"><span class="plab"><i class="ti ti-users"></i>With</span><b><span class="pav">JB</span> James (owner), land agent · <span class="pav">CT</span> Caitlin (GY)</b></div>
-    <div class="nprop"><span class="plab"><i class="ti ti-topology-star-3"></i>Workflow</span><span class="ptag run" onclick="location.href='demand-mapping-canvas-prototype.html'">Demand Mapping</span></div>
-    <div class="nprop"><span class="plab"><i class="ti ti-tag"></i>Tags</span><span class="ptag">kick-off</span> <span class="ptag">scope</span> <span class="ptag">input list</span></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-calendar-event"></i>Date</span><b>Fri 11 Sep 2026 · 45 min</b></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-users"></i>With</span><b><span class="pav">CT</span> Caitlin (GY) · <span class="pav">EN</span> Emily (Nature) · <span class="pav">IB</span> Izzie (Trade)</b></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-topology-star-3"></i>Workflow</span><span class="ptag run" onclick="location.href='document.html?mode=deliverable'">Customer Demand Mapping · 2.4</span></div>
+    <div class="nprop"><span class="plab"><i class="ti ti-tag"></i>Tags</span><span class="ptag">demand</span> <span class="ptag">buyers</span> <span class="ptag">BNG</span></div>
 
     <div class="ndiv"></div>
 
-    <div class="callout"><i class="ti ti-flag-3"></i><span><b>Outcome.</b> Scope confirmed and the 14-item input list agreed. Questionnaire to go out today. Two items flagged as likely gaps: the site boundary shapefile and the grazing agreement for the east parcels.</span></div>
+    <div class="callout"><i class="ti ti-flag-3"></i><span><b>Outcome.</b> The beneficiary map holds. Two live BNG buyers named by Trade go into the buyer table, and the nutrient line is parked until the catchment scheme reopens. Chapter 2 can be written once Trade confirms the second contact.</span></div>
 
-    <div class="nh2" contenteditable="true">1 · Welcome and context</div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">900 ha estate in Oxfordshire, second-generation owner, regen-curious. We first met at Groundswell.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">History on file: a BNG enquiry in March and a site visit request in May. James wants to understand what the land can credibly sell before committing.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">The land agent joined for the tenure and agreements questions.</span></div>
+    <div class="nh2" contenteditable="true">1 · Where the beneficiary map landed</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Manual map run first, as the protocol asks. Utilities, infrastructure and local developers came out as the three groups with a real reason to buy in this catchment.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">GPAP and the abstraction licence layer agreed with the manual read. No surprises, which is the useful result.</span></div>
 
-    <div class="nh2" contenteditable="true">2 · Vision and target outcomes for the sites</div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Priority is durable income that sits alongside farming, not a wholesale change of use. Open to biodiversity and water, cautious on long carbon lock-ins.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">East parcels are the interesting ground for nature outcomes; the river corridor came up for nutrient and water interest.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Success in 12 months: a clear shortlist of what to sell and to whom, with indicative numbers.</span></div>
+    <div class="nh2" contenteditable="true">2 · Buyers to add</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true"><b>Two live BNG buyers</b> flagged by Trade. Izzie to confirm the second contact before we write either into the table.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Wychwood Edge is the unit source they would draw on first, which matches its selling priority.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Nutrient credits parked: the catchment scheme is closed to new entrants this cycle.</span></div>
 
-    <div class="nh2" contenteditable="true">3 · Walk the input checklist</div>
-    <div class="pblk" contenteditable="true">Walked the 14 must-have items. 12 are ready or straightforward to pull together. Two are flagged:</div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true"><b>Site boundary shapefile</b> · the current map is a PDF; James will ask the agent for the GIS file. This fixes what we can map.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true"><b>Grazing agreement, east parcels</b> · tenancy complexity here decides who can sell what. The land agent will confirm.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Everything else (vision, interventions, baseline surveys, existing agreements) is either in hand or a quick upload.</span></div>
+    <div class="nh2" contenteditable="true">3 · Actions</div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Emily to name the two live buyers Trade flagged, before the Trade check-in.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Caitlin to finish the beneficiary map and buyer list, step 2.4.</span></div>
+    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Revisit nutrient credits at the next quarterly review.</span></div>
 
-    <div class="nh2" contenteditable="true">4 · Timeline, roles, next steps</div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Questionnaire link goes out today; it pre-fills what we already hold so nothing is asked twice.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Caitlin is the point of contact. Once input is complete, GY runs supply research and comes back with a first shortlist.</span></div>
-    <div class="bul"><span class="dot">•</span><span class="btxt" contenteditable="true">Target: input complete within two weeks, first read on viable supply shortly after.</span></div>
-
-    <div class="nh2" contenteditable="true">Actions</div>
-    <div class="todo done" onclick="this.classList.toggle('done')"><span class="tbox"><i class="ti ti-check"></i></span><span class="ttxt">Send the project context questionnaire to James<span class="towner">Caitlin</span></span></div>
-    <div class="todo" onclick="this.classList.toggle('done')"><span class="tbox"><i class="ti ti-check"></i></span><span class="ttxt">Send the GIS site boundary shapefile<span class="towner">James</span></span></div>
-    <div class="todo" onclick="this.classList.toggle('done')"><span class="tbox"><i class="ti ti-check"></i></span><span class="ttxt">Confirm the grazing agreement on the east parcels<span class="towner">Land agent</span></span></div>
-
-    <div class="nadd" onclick="toast('Add a block: heading, bullet, to-do, callout or divider')">+ Add a block</div>
+    <div class="ndiv"></div>
+    <div class="addblk" onclick="toast('Add a block: heading, bullet, callout or divider')">+ Add a block</div>
   </div>
   </div>
 </div>

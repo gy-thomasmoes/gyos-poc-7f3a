@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Investor Q&A Log · Canvas prototype</title>
+<title>Lead Demand Mapping · Canvas prototype</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +13,11 @@
 <link rel="stylesheet" href="gy-canvas.css">
 
 <!-- per-Deliverable canvas size (defaults live in gy-canvas.css) -->
-<style>.canvas{--cw:5200px;--ch:1600px}.world{--ww:4000px;--wh:470px}</style>
+<style>.canvas{--cw:4200px;--ch:1600px}.world{--ww:2740px;--wh:640px}</style>
 </head>
 <body>
 
-<script>window.GYNAV={"active": "investor-qa", "arts": "investor"};</script>
+<script>window.GYNAV={"active": "lead-demand-mapping", "arts": "leaddemand"};</script>
 <script src="gy-nav.js"></script>
 <script src="gy-canvas.js"></script>
 <script src="gy-canvas-engine.js"></script>
@@ -27,7 +27,7 @@
 <div class="row1" style="position:relative">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
-  <span class="title" id="crumbTitle">Investor Q&A Log</span>
+  <span class="title" id="crumbTitle">Lead Demand Mapping</span>
   <span style="font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--amberbg);color:var(--amberd);margin-left:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span>
   <span class="spacer"></span>
   <div class="avwrap">
@@ -47,19 +47,19 @@
 <div class="floatBL" id="floatBL"></div>
 <div class="dvov" id="dvov" onclick="closeDocViewer()"></div>
 <div class="composer" id="composer">
-  <div class="cphead" onclick="toggleComposerMin()"><i class="ti ti-mail" style="font-size:15px"></i> Answer for investor · draft
+  <div class="cphead" onclick="toggleComposerMin()"><i class="ti ti-mail" style="font-size:15px"></i> Lead demand report to decision maker · draft
     <span class="cpx">
       <span onclick="event.stopPropagation();toggleComposerMin()" title="Minimise"><i class="ti ti-minus" style="font-size:14px"></i></span>
       <span onclick="event.stopPropagation();closeComposer()" title="Close"><i class="ti ti-x" style="font-size:14px"></i></span>
     </span>
   </div>
-  <div class="cprow"><span class="cplab">From</span><span class="cpchip"><span class="sav" style="background:#1D9E75;color:#fff;width:16px;height:16px;font-size:9px">K</span>Kishen &lt;kishen@greatyellow.earth&gt;</span></div>
-  <div class="cprow"><span class="cplab">To</span><span class="cpchip"><span class="sav" style="background:#0F6E56;color:#fff;width:16px;height:16px;font-size:9px">I</span>Investor contact</span></div>
-  <div class="cprow"><span class="cplab">Subject</span><span class="cpval" contenteditable spellcheck="false" style="outline:none;flex:1">Re: your due diligence questions</span></div>
+  <div class="cprow"><span class="cplab">From</span><span class="cpchip"><span class="sav" style="background:#1D9E75;color:#fff;width:16px;height:16px;font-size:9px">N</span>Nature Projects &lt;projects@greatyellow.earth&gt;</span></div>
+  <div class="cprow"><span class="cplab">To</span><span class="cpchip"><span class="sav" style="background:#0F6E56;color:#fff;width:16px;height:16px;font-size:9px">D</span>Decision maker</span></div>
+  <div class="cprow"><span class="cplab">Subject</span><span class="cpval" contenteditable spellcheck="false" style="outline:none;flex:1">Lead demand map · {{project}}</span></div>
   <div class="cpbody" contenteditable spellcheck="false">
-    <p>Hi, thank you for your questions on the financial model.</p>
-    <p>Please find our approved answers below, each with a reference to the relevant dataroom section.</p>
-    <p>Anything unclear, just reply to this email.<br>Warm regards, Kishen</p>
+    <p>The lead demand map for this project is attached. Headline: there is demand, concentrated in carbon and BNG.</p>
+    <p>Trade have sense-checked the buyer list and adjusted two confidence flags. Their note is on the page.</p>
+    <p>Tabling it at the next pipeline meeting for a go or no-go.</p>
   </div>
   <div class="cpbar">
     <button class="cpsend" onclick="sendDraft()">Send</button>
@@ -114,12 +114,9 @@ function runMenu(e){
     <span style="width:18px;text-align:center;flex:none">${ic.startsWith('ti-')?`<i class="ti ${ic}" style="font-size:16px;color:var(--ink2)"></i>`:ic}</span>
     <span style="flex:1;white-space:nowrap">${t}</span>
     ${RUN===id?'<i class="ti ti-check" style="font-size:15px;color:var(--greend)"></i>':''}</div>`;
-  m.innerHTML=item('spains','🪺','Spains Hall')
-    +item('riverallen','🌸','River Allen')
-    +item('denton','🦡','Denton Reserve')
-    +item('wash','🐚','The Wash')
-    +item('wylye','🐞','Wylye Valley')
-    +item('norfolk','🌼','West Norfolk Nature Network')
+  m.innerHTML=item('anglian','\ud83d\udca7','Anglian Water \u00b7 NEP lot 3')
+    +item('essexbng','\ud83c\udf3f','Essex CC \u00b7 BNG DPS')
+    +item('lr3','\ud83c\udf3e','Defra LR \u00b7 round 3')
     +`<div onclick="setRun('new')" style="display:flex;gap:10px;align-items:center;padding:11px 14px;cursor:pointer;border-top:1px solid var(--line);color:var(--ink2)" onmouseover="this.style.background='#F8F5ED'" onmouseout="this.style.background='#fff'">
       <i class="ti ti-plus" style="font-size:15px"></i><span>Start a new run</span></div>`;
   m.style.display='block';
@@ -128,17 +125,17 @@ document.addEventListener('click',()=>{const m=document.getElementById('runmenu'
 function setRun(r){
   document.getElementById('runmenu').style.display='none';
   if(r==='new'){toast('This would open the pre-flight brief: pick the Programme, confirm the people, launch');return;}
-  if(r!=='preview'&&r!=='spains'){toast('Prototype: only the Spains Hall run has data. The others are set dressing.');return;}
+  if(r!=='preview'){toast('Prototype: no live run yet. This Workflow is still a draft blueprint.');return;}
   if(DEMOT!==null||DEMOSNAP)stopDemo();
   RUN=r;SELECTED=null;renderAll();
 }
 
 const BANDS=[
-  {x:16,  w:650,  t:'S · Set up the raise',           short:'S · Set up',    run:'not started', cur:true},
-  {x:686, w:1150, t:'A · Capture · Answer · Respond', short:'A · Answer',    run:'not started'},
-  {x:1856,w:440,  t:'C · Curate the library',         short:'C · Curate',    run:'not started'},
-  {x:2316,w:980,  t:'M · Milestones and close-out',   short:'M · Close-out', run:'not started'}
+  {x:16,   w:440,  t:'1 · Launch',  short:'1 · Launch',  run:'not started', cur:true},
+  {x:476,  w:800,  t:'2 · Map',     short:'2 · Map',     run:'not started'},
+  {x:1296, w:1300, t:'3 · Decide',  short:'3 · Decide',  run:'not started'}
 ];
+
 const CHAPNAV=true;
 
 const T={
@@ -153,220 +150,187 @@ const T={
 };
 
 const ARTEFACTS=[
- {id:'protocol',ic:'ti-file-text',name:'Q&A Protocol',node:'Initialise the Q&A Log',nid:'s1',ex:false,desc:'The one-pager agreed at setup: who coordinates, who approves, response SLAs, the tag taxonomy and the capture channels for this raise.',
-  prev:`<div class="paper"><h5>Q&A Protocol · {{raise}}</h5>
-  <div class="mrow"><span>Coordinator</span><span class="pmuted">Kishen · all questions in and out</span></div>
-  <div class="mrow"><span>Approver of record</span><span class="pmuted">Kishen</span></div>
-  <div class="mrow"><span>SLA · acknowledge</span><span class="pmuted">24h</span></div>
-  <div class="mrow"><span>SLA · routine / complex</span><span class="pmuted">48-72h / 5-7 days</span></div>
-  <div class="mrow"><span>Channels</span><span class="pmuted">email · dataroom · meetings</span></div></div>`},
- {id:'logtpl',ic:'ti-table',name:'Q&A Log template',node:'Initialise the Q&A Log',nid:'s1',ex:false,desc:'One row per question: verbatim text, investor, stage, instrument, category, layer, status, SLA clock, dataroom reference, audit trail.',
-  prev:`<div class="paper"><h5>Question record</h5>
-  <div class="mrow"><span class="pmuted">Question · verbatim</span><span>What underpins the revenue assumptions?</span></div>
-  <div class="mrow"><span class="pmuted">Investor / stage</span><span>Esmée Fairbairn · DD</span></div>
-  <div class="mrow"><span class="pmuted">Category / layer</span><span>Financial · Programme</span></div>
-  <div class="mrow"><span class="pmuted">Status</span><span>Captured → Triaged → Drafted → Approved → Answered</span></div>
-  <div class="mfld">SLA clock · dataroom ref · audit trail per record</div></div>`},
- {id:'library',ic:'ti-database',name:'Answer Library',node:'Seed the Answer Library',nid:'s2',ex:false,desc:'The curated Asset: canonical, deduplicated, approved answers, layered Portfolio / Programme / Investor. Lower layers inherit from higher ones. The Log feeds it; every raise reuses it.',
-  prev:`<div class="paper"><h5>Canonical entry</h5>
-  <div class="mrow"><span class="pmuted">Layer</span><span>Portfolio · reusable every deal</span></div>
-  <div class="mrow"><span class="pmuted">Answer</span><span>Approved wording, investor detail stripped</span></div>
-  <div class="mrow"><span class="pmuted">Cites</span><span>Dataroom index 3.2 · FM v4.1</span></div>
-  <div class="mrow"><span class="pmuted">Owner / review date</span><span>Kishen · monthly backstop</span></div>
-  <div class="mfld">Portfolio › Programme › Investor · lower inherits from higher</div></div>`},
- {id:'elrfaq',ic:'ti-book',name:'ELR Investor FAQs',node:'Seed the Answer Library',nid:'s2',ex:true,desc:'The consolidated FAQ document from the ELR raise: effectively a curated Answer Library already. The seed for v1, ingested as programme-layer entries.',
-  prev:`<div class="paper"><h5>ELR Investor FAQs · excerpt</h5>
-  <div class="mrow"><span>Thesis and track record</span><span class="pmuted">portfolio candidate</span></div>
-  <div class="mrow"><span>Financial model assumptions</span><span class="pmuted">programme</span></div>
-  <div class="mrow"><span>Structuring and instruments</span><span class="pmuted">programme</span></div>
-  <div class="mrow"><span>Governance</span><span class="pmuted">portfolio candidate</span></div></div>`},
- {id:'ddlogs',ic:'ti-files',name:'Per-investor DD logs',node:'Seed the Answer Library',nid:'s2',ex:true,desc:'The Esmée Fairbairn and Lloyds Banking Group Q&A logs: real questions answered and then distilled into the FAQ set. Back-filled as the first question records.',
-  prev:`<div class="paper"><h5>DD logs · two counterparties</h5>
-  <div class="mrow"><span>Esmée Fairbairn</span><span class="pmuted">answered · distilled</span></div>
-  <div class="mrow"><span>Lloyds Banking Group</span><span class="pmuted">answered · distilled</span></div>
-  <div class="mfld">Back-filled so the Log shows how answers became canonical</div></div>`},
- {id:'matcher',ic:'ti-search',name:'Library matcher',node:'Triage and route',nid:'a2',ex:false,desc:'AI assistant that matches an incoming question against the Answer Library, resolving investor questions to portfolio answers wherever one exists.',
-  prev:`<div class="paper"><h5>Match · incoming question</h5>
-  <div class="mrow"><span>Best match</span><span class="mbar"><i style="width:85%"></i></span><span class="pmuted">0.85</span></div>
-  <div class="mrow"><span>Layer resolved</span><span>Portfolio</span></div>
-  <div class="mrow"><span>Proposal</span><span>Reuse with light adapt</span></div>
-  <div class="mfld">Stale entries blocked from reuse until cleared</div></div>`},
- {id:'checker',ic:'ti-shield-check',name:'Consistency checker',node:'Review and approve',nid:'a4',ex:false,desc:'Diffs a draft answer against the current Financial Model and Information Memo versions before approval, so nothing drifts.',
-  prev:`<div class="paper"><h5>Draft vs sources</h5>
-  <div class="mrow"><span>Financial Model v4.1</span><span class="pmuted">consistent</span></div>
-  <div class="mrow"><span>Information Memo v2</span><span class="pmuted">consistent</span></div>
-  <div class="mrow"><span>Dataroom reference</span><span class="pmuted">present · 3.2</span></div>
-  <div class="mfld">Flags land with the approver, never auto-fixed</div></div>`},
- {id:'packgen',ic:'ti-clipboard-check',name:'Q&A pack generator',node:'Compile the Q&A pack',nid:'m1',ex:false,desc:'Generates the milestone cut of the Log for one audience: per-investor DD pack, IC preparation pack, or BFP investor-evidence extract.',
-  prev:`<div class="paper"><h5>Pack variants</h5>
-  <div class="mrow"><span>Per-investor DD pack</span><span class="pmuted">filtered by investor</span></div>
-  <div class="mrow"><span>IC preparation pack</span><span class="pmuted">filtered by stage</span></div>
-  <div class="mrow"><span>BFP investor-evidence extract</span><span class="pmuted">engagement evidence</span></div></div>`},
- {id:'stats',ic:'ti-chart-bar',name:'Close-out stats',node:'Close out the thread',nid:'closeout',ex:false,desc:'Per-raise numbers: questions asked, reuse rate, median turnaround. Reuse rate is the metric that proves the Library is working.',
-  prev:`<div class="paper"><h5>Raise stats</h5>
-  <div class="mrow"><span>Questions asked</span><span class="pmuted">—</span></div>
-  <div class="mrow"><span>Reuse rate</span><span class="mbar"><i style="width:60%"></i></span><span class="pmuted">—</span></div>
-  <div class="mrow"><span>Median turnaround</span><span class="pmuted">—</span></div>
-  <div class="mfld">Reuse rate should climb raise on raise</div></div>`}
+ {id:'boundary',ic:'ti-map-pin',name:'Project boundary and data',node:'Launch lead map',nid:'launch',ex:true,desc:'The one hard input. Boundary, catchment and whatever project data already exists. Without it there is no run.',
+  prev:`<div class="paper"><h5>Run inputs</h5>
+  <div class="mrow"><span>Project boundary</span><span class="pmuted">shapefile or drawn</span></div>
+  <div class="mrow"><span>Catchment boundary</span><span class="pmuted">derived, editable</span></div>
+  <div class="mrow"><span>Project name and location</span><span class="pmuted">free text</span></div>
+  <div class="mrow"><span>Known interventions</span><span class="pmuted">optional</span></div>
+  <div class="mfld">Everything else is pulled. Nothing here is typed twice.</div></div>`},
+
+ {id:'spatial',ic:'ti-map-2',name:'Shelf · Spatial layers',node:'Pull spatial assets',nid:'spatial',ex:true,desc:'The named layers the run queries for assets near the site. Each entry carries its source, the fields we take and how often it refreshes.',
+  prev:`<div class="paper"><h5>Spatial layers</h5>
+  <div class="mrow"><span>Substations and grid</span><span class="pmuted">NESO · DNO open data</span></div>
+  <div class="mrow"><span>Power lines</span><span class="pmuted">OSM · National Grid</span></div>
+  <div class="mrow"><span>Railway lines</span><span class="pmuted">OS Open Rail</span></div>
+  <div class="mrow"><span>Watercourses and abstraction</span><span class="pmuted">EA · SEPA</span></div>
+  <div class="mrow"><span>Consented development</span><span class="pmuted">LPA registers · NSIP</span></div>
+  <div class="mfld">✦ Gap to build. Layer list not yet agreed, and some may need manual GIS.</div></div>`},
+
+ {id:'thresholds',ic:'ti-ruler',name:'Nat cap thresholds',node:'Pull nat cap data',nid:'natcap',ex:false,desc:'The minimum scale that makes each market worth a look. One line per market, so the run can drop what is too small without asking a human.',
+  prev:`<div class="paper"><h5>Minimum viable scale</h5>
+  <div class="mrow"><span>Woodland carbon</span><span class="pmuted">threshold TBC</span></div>
+  <div class="mrow"><span>Peatland carbon</span><span class="pmuted">threshold TBC</span></div>
+  <div class="mrow"><span>BNG units</span><span class="pmuted">threshold TBC</span></div>
+  <div class="mrow"><span>Voluntary biodiversity</span><span class="pmuted">rarity-led, not area-led</span></div>
+  <div class="mfld">Numbers to be set with Harry. Until then the run flags rather than drops.</div></div>`},
+
+ {id:'buyerdb',ic:'ti-database',name:'Database · GY buyers',node:'Match markets to buyers',nid:'match',ex:true,desc:'The same buyer records Customer Demand Mapping reads. Shared, not duplicated. Its quality is the single biggest dependency this Workflow has.',
+  prev:`<div class="paper"><h5>Buyer record</h5>
+  <div class="mrow"><span>Commitment or target</span><span class="pmuted">net zero · SBTi · BNG duty</span></div>
+  <div class="mrow"><span>Why they care</span><span class="pmuted">driver</span></div>
+  <div class="mrow"><span>Where they operate</span><span class="pmuted">region · sites</span></div>
+  <div class="mrow"><span>Markets they buy</span><span class="pmuted">carbon · BNG · VolBio</span></div>
+  <div class="mrow"><span>Procurement route</span><span class="pmuted">how a deal actually happens</span></div>
+  <div class="mfld">Asset · shared with Customer S&amp;D mapping. Thin database, thin report.</div></div>`},
+
+ {id:'topfunnel',ic:'ti-filter',name:'Top of funnel map',node:'Match markets to buyers',nid:'match',ex:true,desc:'The company-level view of how GY finds and triages buyers, broadened from carbon to the full nature-based solutions portfolio. Read here, never written to.',
+  prev:`<div class="paper"><h5>Top of funnel</h5>
+  <div class="mrow"><span>Owner</span><span class="pmuted">Millie · Trade</span></div>
+  <div class="mrow"><span>Scope</span><span class="pmuted">GY-wide buyer strategy</span></div>
+  <div class="mrow"><span>Used here for</span><span class="pmuted">geographic overlap check</span></div>
+  <div class="mfld">Company strategy, not a project deliverable. This run reads it, nothing more.</div></div>`},
+
+ {id:'report',ic:'ti-report',name:'Template · Lead demand report',node:'Generate lead report',nid:'report',ex:false,desc:'The Output. A map with assets overlaid, a nat cap table, a buyer table and a short verdict. Deliberately one page.',
+  prev:`<div class="paper"><h5>Lead demand map · {{project}}</h5>
+  <div class="mrow"><span>1 · Header and verdict</span><span class="pmuted">pursue · park · pass</span></div>
+  <div class="mrow"><span>2 · Asset map</span><span class="pmuted">boundary + assets</span></div>
+  <div class="mrow"><span>3 · Nat cap present</span><span class="pmuted">type · scale · viable market</span></div>
+  <div class="mrow"><span>4 · Likely buyers</span><span class="pmuted">market · buyer · why · confidence</span></div>
+  <div class="mrow"><span>5 · Verdict and Trade note</span><span class="pmuted">3 to 4 sentences</span></div>
+  <div class="mfld">If it needs a second page it belongs in Customer S&amp;D mapping.</div></div>`},
+
+ {id:'email',ic:'ti-mail',name:'Email · Report to decision maker',node:'Send to decision maker',nid:'send',ex:false,desc:'The covering note that carries the report to whoever decides. Drafted by the Assistant, always sent by a human.',
+  prev:`<div class="paper"><h5>Covering email</h5>
+  <div class="mrow"><span>To</span><span class="pmuted">decision maker</span></div>
+  <div class="mrow"><span>Subject</span><span class="pmuted">Lead demand map · {{project}}</span></div>
+  <div class="mrow"><span>Body</span><span class="pmuted">verdict, one line of why, link</span></div>
+  <div class="mfld">Tabled at the next pipeline meeting for the call.</div></div>`}
 ];
-const OWNERS=['Kishen','Alex','Tim','Deal lead','Modelling lead','Capital Lead'];
+
+const OWNERS=['Nature Projects','Trade','Izzie','Decision maker','Vertical lead'];
 const EXECS=['Human-led','Agentic AI','Fully Automated'];
 
 const NODES=[
 {id:'start',x:40,y:136,w:132,t:T.term,title:'Start',inert:true,
- d:{sub:'Raise kicks off'},r:{sub:'',st:'done'},
- info:'Terminals carry no work. The Log starts when a capital raise is launched for a Programme.'},
+ d:{sub:'A lead worth a look'},r:{sub:'',st:'pending',dim:true},
+ info:'Terminals carry no work. A run begins the moment someone wants a fast read on whether there is any demand around a site, before it is a customer.'},
 
-{id:'s1',x:206,y:136,w:170,t:T.human,title:'Initialise the Q&A Log',
- d:{sub:'Protocol, roles, SLAs, tags'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'Instance the Log from template for this raise. Done when the protocol is agreed: roles named, SLAs set, tag taxonomy seeded, capture channels defined.',
-  needs:[['Start','Raise launched']],produces:['Q&A Protocol','Empty Log instance'],
-  done:'After this: the raise has a live Q&A Log with named roles, agreed SLAs and a seeded tag taxonomy.',
-  steps:['AI Assistant drafts the protocol from the template','Kishen names coordinator, SMEs and approver','Kishen sets the SLA defaults','AI Assistant seeds tags from Demand Mapping themes and the dataroom index','Kishen agrees capture channels with the deal lead'],
-  arts:['protocol','logtpl'],
-  guard:'? SLA defaults to confirm: industry standard is 48-72h routine, 5-7 days complex'}},
+{id:'launch',x:206,y:136,w:200,t:T.human,title:'Launch lead map',
+ d:{sub:'Boundary and project data in'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Nature Projects',exec:'Human-led',
+  what:'One person picks the project and presses go. Everything after this runs on its own until the Trade check.',
+  needs:[['Start','A project lead worth a look']],produces:['Run started','Boundary and project data loaded'],
+  done:'After this: the boundary is in the run and nobody touches it again until there is a report to read.',
+  steps:['Select the project','Confirm boundary and catchment','Press go'],
+  arts:['boundary'],
+  guard:'No boundary, no run. It is the one hard input.'}},
 
-{id:'s2',x:446,y:136,w:180,t:T.agent,title:'Seed the Answer Library',
- d:{sub:'Ingest the ELR material'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Ingest existing material so the raise does not start cold. Done when the ELR FAQs are in as programme-layer canonical entries and the two investor DD logs are back-filled.',
-  needs:[['Initialise the Q&A Log','Empty Log instance']],produces:['Answer Library v1, seeded'],
-  done:'After this: the Answer Library holds the ELR answers as canonical entries, tagged by layer, each citing its dataroom reference.',
-  steps:['AI Assistant parses the ELR FAQs and the two DD logs','AI Assistant dedupes into candidate canonical entries','AI Assistant tags layer and category, attaches dataroom references','AI Assistant flags portfolio-layer candidates','Kishen reviews and approves the batch'],
-  arts:['elrfaq','ddlogs','library'],
-  guard:'Nothing enters the Library unapproved'}},
+{id:'spatial',x:500,y:136,w:200,t:T.agent,title:'Pull spatial assets',
+ d:{sub:'What is near the site'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Nature Projects',exec:'Fully Automated',
+  what:'Find the infrastructure inside the project or catchment boundary that creates demand: substations, power lines, railway lines, watercourses, consented development.',
+  needs:[['Launch lead map','Project boundary and catchment']],produces:['Asset list','Map layer'],
+  done:'After this: we know what sits near the site that a buyer might have to offset, replace or protect.',
+  steps:['Assistant reads boundary and catchment','Assistant queries the spatial layers','Assistant lists assets inside the boundary','Assistant flags anything it could not resolve'],
+  arts:['spatial'],
+  guard:'✦ Gap to build. Layer list not agreed, and some sources may still need manual GIS.'}},
 
-{id:'a1',x:700,y:136,w:160,t:T.data,title:'Capture the question',
- d:{sub:'Verbatim, tagged, within 24h'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Deal lead',exec:'Fully Automated',
-  what:'Log every incoming question verbatim within 24h, tagged investor, stage, instrument, source and date. The always-on loop starts here.',
-  needs:[['Seed the Answer Library','Live Log']],produces:['Question record · Captured'],
-  done:'After this: the question sits in the Log exactly as asked, tagged, with the SLA clock running.',
-  steps:['AI Assistant logs the verbatim text from email or dataroom','AI Assistant extracts asked questions from meeting transcripts','Deal lead confirms transcript extractions','AI Assistant acknowledges receipt and starts the SLA clock'],
-  arts:['logtpl'],
-  guard:'Never paraphrase at capture; the verbatim text is the audit record'}},
+{id:'natcap',x:500,y:256,w:200,t:T.agent,title:'Pull nat cap data',
+ d:{sub:'What the land holds'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Nature Projects',exec:'Fully Automated',
+  what:'Establish what nature capital the site holds and how much of it, then test each type against the scale that makes a market worth a look.',
+  needs:[['Launch lead map','Project boundary and catchment']],produces:['Nat cap types with scale','Viability flags'],
+  done:'After this: each nat cap type is either above the threshold and carried forward, or flagged as too small to matter.',
+  steps:['Assistant reads habitat and land cover','Assistant measures area per nat cap type','Assistant checks each against the thresholds','Assistant flags anything below threshold'],
+  arts:['thresholds'],
+  guard:'Runs alongside the asset pull. Neither waits for the other.'}},
 
-{id:'a2',x:930,y:136,w:160,t:T.agent,title:'Triage and route',
- d:{sub:'Match the Library, assign an SME'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Match each question against the Library, classify and assign. Done when it has a category, a layer, a priority flag, and a reuse proposal or a named SME.',
-  needs:[['Capture the question','Question record']],produces:['Routed question · Triaged'],
-  done:'After this: every question either points at an existing canonical answer or sits with the right expert, with the routing confirmed by the coordinator.',
-  steps:['AI Assistant searches the Answer Library for a match','AI Assistant classifies category and layer','AI Assistant flags sensitivity and priority','AI Assistant proposes reuse, adapt or draft new','Kishen confirms the routing'],
-  arts:['matcher'],
-  guard:'All questions enter and leave through the coordinator. Stale Library entries are blocked from reuse.'}},
+{id:'match',x:760,y:136,w:216,t:T.agent,title:'Match markets to buyers',
+ d:{sub:'The step that carries the value'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Trade',exec:'Agentic AI',
+  what:'Take each viable nat cap type, map it to its market, then to named buyers from the GY buyer database, checking each one is actually relevant to this catchment.',
+  needs:[['Pull spatial assets','Asset list'],['Pull nat cap data','Nat cap types with scale']],produces:['Buyer shortlist with confidence flags'],
+  done:'After this: there is a named, geographically relevant buyer list, or an honest empty one.',
+  steps:['Assistant maps nat cap types to markets','Assistant pulls candidate buyers from the database','Assistant checks relevance to the catchment','Assistant sets a confidence flag per buyer'],
+  arts:['buyerdb','topfunnel'],
+  guard:'Buyers are never invented. If the database is thin, the report says so.'}},
 
-{id:'a3',x:1160,y:136,w:160,t:T.agent,title:'Draft the answer',
- d:{sub:'Cited, layered, confidence-flagged'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Routed SME',exec:'Agentic AI',
-  what:'Produce a cited draft. Done when it answers the question, cites its dataroom index reference, states its layer, and carries a confidence flag.',
-  needs:[['Triage and route','Routed question']],produces:['Draft answer · Drafted'],
-  done:'After this: a draft exists that the approver can check, with every figure traceable to the model or the dataroom.',
-  steps:['AI Assistant pre-drafts from the Library, IM, Financial Model and dataroom','Routed SME edits and owns the draft','SME checks with Nature or Trade where the question crosses teams','AI Assistant attaches the dataroom reference and confidence flag'],
-  arts:['library'],
-  guard:'No figure leaves inconsistent with the current Financial Model version; escalate rather than estimate'}},
+{id:'report',x:1036,y:136,w:200,t:T.det,title:'Generate lead report',
+ d:{sub:'One page, map first'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Nature Projects',exec:'Fully Automated',
+  what:'Assemble the Output: asset map, nat cap table, buyer table and a draft verdict, short enough to read in a minute.',
+  needs:[['Match markets to buyers','Buyer shortlist with confidence flags']],produces:['Lead demand report'],
+  done:'After this: an hour of gut feel exists as a page anyone can read, argue with and keep.',
+  steps:['Assistant renders the asset map','Assistant builds the nat cap and buyer tables','Assistant drafts the verdict'],
+  arts:['report'],
+  guard:'The verdict is a draft. The call is not made here.'}},
 
-{id:'a4',x:1390,y:136,w:180,t:T.gate,title:'Review and approve',rows:[['approve','→ respond'],['rework','→ redraft']],
- d:{sub:'The approval gate'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'The approval gate. Pass the draft for accuracy, consistency with IM and model, confidentiality and tone, or bounce it back with a reason.',
-  needs:[['Draft the answer','Draft answer']],produces:['Approve → Respond and log','Rework → back to draft'],
-  done:'After this: nothing reaches an investor unapproved, and the audit trail records who approved what, when.',
-  steps:['AI Assistant diffs the draft against the IM and Financial Model','Project team reviews where flagged','Kishen approves, or returns with a reason'],
-  arts:['checker'],
-  guard:'Nothing reaches an investor unapproved'}},
+{id:'qa',x:1320,y:136,w:200,t:T.human,title:'Trade sense-check',
+ d:{sub:'Against live conversations'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Trade',exec:'Human-led',
+  what:'A quick read by someone who has spoken to these buyers recently. Not a rebuild, a correction.',
+  needs:[['Generate lead report','Lead demand report']],produces:['Corrected confidence flags','Trade note'],
+  done:'After this: the report reflects what Trade actually knows, not only what the database last recorded.',
+  steps:['Trade reads the buyer list against recent conversations','Trade corrects the confidence flags','Trade notes where the database is stale'],
+  arts:['buyerdb'],
+  guard:'Minutes, not hours. If it takes longer, the database is the problem.'}},
 
-{id:'a5',x:1640,y:136,w:170,t:T.det,title:'Respond and log',
- d:{sub:'Send, close the record, stop the clock'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Deal lead',exec:'Fully Automated',
-  what:'Deliver the approved answer through the agreed channel and close the record. Done when the response date is logged and the SLA clock stops.',
-  needs:[['Review and approve','Approved answer']],produces:['Answered record','Running SLA stats'],
-  done:'After this: the investor has the answer, the record is closed, and the SLA stats keep score.',
-  steps:['AI Assistant sends via the agreed channel','AI Assistant attaches dataroom references rather than loose documents','AI Assistant logs date and channel, stops the clock'],
-  arts:['logtpl'],
-  guard:'Client-facing sends always need a human tap'}},
+{id:'send',x:1580,y:136,w:216,t:T.det,title:'Send to decision maker',
+ d:{sub:'Report goes out'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Nature Projects',exec:'Fully Automated',
+  what:'Put the corrected report in front of whoever decides whether to pursue the project.',
+  needs:[['Trade sense-check','Corrected report']],produces:['Email sent','Report tabled'],
+  done:'After this: the decision maker has the report in hand ahead of the pipeline meeting.',
+  steps:['Assistant drafts the covering email','Nature Projects sends it'],
+  arts:['email'],
+  guard:'Sends always need a human tap.'}},
 
-{id:'c1',x:1890,y:136,w:180,t:T.agent,title:'Promote to the Library',
- d:{sub:'Weekly sweep · dedupe and generalise'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Weekly sweep. Every Answered record is linked to an existing canonical entry or promoted into a new one, deduplicated, generalised to the highest layer it can honestly hold.',
-  needs:[['Respond and log','Answered records']],produces:['Updated Answer Library','Promotion audit trail'],
-  done:'After this: the bank of ready answers has grown, and research time on the next question shrinks.',
-  steps:['AI Assistant clusters the recent answers','AI Assistant proposes promotions and merges','AI Assistant drafts canonical wording stripped of investor detail','AI Assistant flags layer upgrades, ELR answer to portfolio answer','Kishen approves the batch'],
-  arts:['library'],
-  guard:'Investor-specific detail never leaks into higher layers'}},
+{id:'pipeline',x:1856,y:136,w:200,t:T.human,title:'Pipeline sign-off',
+ d:{sub:'Existing forum, no new meeting'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Decision maker',exec:'Human-led',
+  what:'The report is tabled at the pipeline meeting and discussed against current capacity and appetite.',
+  needs:[['Send to decision maker','Report tabled']],produces:['Discussion on the record'],
+  done:'After this: the room has seen the same page and the call can be made in the open.',
+  steps:['Report tabled at the pipeline meeting','Verdict discussed against capacity','Call recorded on the record'],
+  arts:['report'],
+  guard:'No new forum. This rides on the meeting that already happens.'}},
 
-{id:'library',x:1910,y:320,w:150,t:T.store,title:'Answer Library',inert:true,
- d:{sub:'Asset · portfolio-wide'},r:{sub:'',st:'none',dim:true},
- info:'The Answer Library is a referenced Asset, not owned by this Deliverable. The portfolio layer is shared across every raise; programme and investor layers are populated per deal. Lower layers inherit from higher ones: an investor question resolves to a portfolio answer wherever one exists.'},
+{id:'g1',x:2116,y:136,w:210,t:T.gate,title:'Pursue project?',rows:[['pursue','→ Customer S&D mapping'],['park','→ revisit later']],
+ d:{sub:'The only gate'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Decision maker',exec:'Human-led',
+  what:'The go or no-go. The system never makes this call, it only makes the call cheap to make.',
+  needs:[['Pipeline sign-off','Discussion on the record']],produces:['Decision and written reason'],
+  done:'After this: the lead is either handed to Customer Demand Mapping, or parked with a reason.',
+  steps:['Decision maker makes the call','Reason written on the record'],
+  arts:['report'],
+  guard:'A no is rarely permanent. Park it, do not close it.'}},
 
-{id:'c2',x:2110,y:320,w:170,t:T.agent,title:'Freshness review ↺',
- d:{sub:'On model or IM change'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'Triggered when the Financial Model or IM version changes, plus a monthly backstop. Every Library entry citing the changed source is re-verified or flagged stale.',
-  needs:[['Answer Library','Canonical entries']],produces:['Stale flags','Re-verified entries'],
-  done:'After this: no answer citing an outdated model version can be reused unnoticed.',
-  steps:['AI Assistant watches Financial Model and IM versions','AI Assistant flags every entry citing a changed source','Kishen clears or retires the flagged entries'],
-  arts:['library'],
-  guard:'Stale entries are blocked from reuse at Triage until cleared'}},
+{id:'go',x:2416,y:84,w:170,t:T.term,title:'Hand over',inert:true,
+ d:{sub:'→ Customer S&D mapping'},r:{sub:'',st:'pending',dim:true},
+ info:'A pursue verdict hands the lead to Customer Demand Mapping, which asks the harder questions: how likely is this to convert, and at what scale.'},
 
-{id:'m1',x:2340,y:136,w:180,t:T.agent,title:'Compile the Q&A pack',
- d:{sub:'The milestone cut of the Log'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Agentic AI',
-  what:'The milestone artefact: a filtered, formatted cut of the Log for one audience. Variants: per-investor DD pack, IC preparation pack, BFP investor-evidence extract.',
-  needs:[['Promote to the Library','Curated Log']],produces:['Q&A pack'],
-  done:'After this: the audience has its pack, generated from the Log rather than rebuilt by hand.',
-  steps:['AI Assistant filters the Log by investor or stage','AI Assistant generates the pack from the template','Kishen sense-checks and shares'],
-  arts:['packgen'],
-  guard:'? Pack variants and formats to confirm with the champion'}},
-
-{id:'m2',x:2590,y:136,w:190,t:T.gate,title:'Raise concluded?',rows:[['next round','→ capture'],['concluded','→ close out']],
- d:{sub:'Rounds repeat the same loop'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'Milestone gate. A clarification round runs the same capture-answer loop again; a concluded raise moves to close-out.',
-  needs:[['Compile the Q&A pack','Shared pack']],produces:['Next round → Capture','Concluded → Close out'],
-  done:'After this: either a new round of questions is expected, or the raise is done and the thread closes out.',
-  steps:['Kishen reviews where each investor stands','Kishen calls the next round or the close'],
-  arts:[],
-  guard:''}},
-
-{id:'closeout',x:2850,y:136,w:190,t:T.human,title:'Close out the thread',
- d:{sub:'Archive, harvest, keep score'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Kishen',exec:'Human-led',
-  what:'When an investor completes, declines or goes quiet: archive the thread, log the outcome, harvest remaining good answers, note the lessons.',
-  needs:[['Raise concluded?','Concluded']],produces:['Archived thread','Library harvest','Close-out stats'],
-  done:'After this: the thread is archived, the Library has harvested everything worth keeping, and the reuse rate tells us whether the Library is working.',
-  steps:['AI Assistant harvests remaining answers to the Library','AI Assistant compiles the per-raise stats','Kishen logs outcome and lessons'],
-  arts:['stats','library'],
-  guard:''}},
-
-{id:'done',x:3110,y:136,w:150,t:T.term,title:'Complete',inert:true,
- d:{sub:'Raise closed'},r:{sub:'',st:'pending',dim:true},
- info:'The raise closes, the Log archives, and the Answer Library carries everything learned into the next deal.'}
+{id:'park',x:2416,y:230,w:170,t:T.park,title:'Park lead',inert:true,
+ d:{sub:'Revisit when the market moves'},r:{sub:'',st:'pending',dim:true},
+ info:'Most no answers mean the buyer database was thin or the market was not there yet, not that the site is bad. Parked leads keep their reason and resurface when either changes.'}
 ];
 
 const EDGES=[
  {x1:172,y1:162,x2:206,y2:162,s:'lock'},
- {x1:376,y1:162,x2:446,y2:162,s:'lock'},
- {x1:626,y1:162,x2:700,y2:162,s:'lock'},
- {x1:860,y1:162,x2:930,y2:162,s:'lock'},
- {x1:1090,y1:162,x2:1160,y2:162,s:'lock'},
- {x1:1320,y1:162,x2:1390,y2:162,s:'lock'},
- {x1:1810,y1:162,x2:1890,y2:162,s:'lock'},
- {x1:1980,y1:200,x2:1980,y2:318,s:'lock'},
- {x1:2060,y1:352,x2:2104,y2:352,s:'lock',dash:true,from:'c2'},
- {d:'M2195,318 V246 H1010 V216',s:'lock',dash:true,from:'c2'},
- {x1:2070,y1:162,x2:2340,y2:162,s:'lock'},
- {x1:2520,y1:162,x2:2590,y2:162,s:'lock'},
- {x1:3040,y1:162,x2:3110,y2:162,s:'lock'}
+ {d:'M406,162 H453 V282 H500',s:'lock'},
+ {x1:406,y1:162,x2:500,y2:162,s:'lock'},
+ {d:'M700,282 H730 V162 H760',s:'lock'},
+ {x1:700,y1:162,x2:760,y2:162,s:'lock'},
+ {x1:976,y1:162,x2:1036,y2:162,s:'lock'},
+ {x1:1236,y1:162,x2:1320,y2:162,s:'lock'},
+ {x1:1520,y1:162,x2:1580,y2:162,s:'lock'},
+ {x1:1796,y1:162,x2:1856,y2:162,s:'lock'},
+ {x1:2056,y1:162,x2:2116,y2:162,s:'lock'}
 ];
 
 const BRANCHES=[
- {n:'a4',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H1600 V162 H1634`},
- {n:'a4',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V300 H1240 V216`},
- {n:'m2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V396 H780 V216`},
- {n:'m2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H2812 V162 H2844`}
+ {n:'g1',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H2380 V110 H2416`},
+ {n:'g1',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H2380 V256 H2416`}
 ];
 
 function portPos(id,i){
@@ -387,7 +351,7 @@ const DOT={
 };
 
 function renderTabs(){
-  document.getElementById('crumbTitle').textContent = 'Investor Q&A Log';
+  document.getElementById('crumbTitle').textContent = 'Lead Demand Mapping';
   document.querySelector('.row1').classList.toggle('editing', MODE==='design');
   document.getElementById('editChip').style.display = MODE==='design'?'inline-flex':'none';
   var tp=document.getElementById('toolsPill'); if(tp)tp.style.display = MODE==='design'?'':'none';
@@ -499,41 +463,46 @@ function openAboutL(){
     <div style="background:#F8F5ED;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;margin-top:10px;font-size:14.5px;color:var(--ink2);line-height:1.7">${det}</div>
   </div>`;
   d.innerHTML=dhead('ti-info-circle','var(--graybg)','var(--grayd)','About Deliverable','')
-  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">The Investor Q&A Log is the Capital team's single source of truth for the questions investors ask and the approved answers Great Yellow gives.</div>
+  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">Lead Demand Mapping answers one question before a project is a customer: is there demand here at all, and is it worth pursuing?</div>
+  <div class="pt" style="margin-top:10px">Light touch by design. Nine of its twelve nodes are automated or terminal, and the two human touches are a Trade sense-check and the call itself. Customer Demand Mapping is the fuller version that follows a pursue verdict.</div>
   <div style="height:1px;background:var(--line);margin:18px 0 2px"></div>
-  ${chap(1,'Q&A Log',
-    'The live feeder. One per capital raise. Captures every question verbatim as it comes in and tracks it through triage, drafting, approval and response.',
-    '<b>Question record</b> · verbatim text, investor, stage, instrument, source, date<br><b>Status</b> · Captured, Triaged, Drafted, Approved, Answered<br><b>SLA clock</b> · 24h acknowledge, 48-72h routine, 5-7d complex')}
-  ${chap(2,'Answer Library',
-    'The curated, deduplicated, approved answers the team draws from. A referenced Asset: the Log feeds it, every raise reuses it.',
-    '<b>Canonical entry</b> · approved wording, owner, review date, dataroom reference<br><b>Promotion</b> · good answers promoted weekly, so the bank grows and research time per deal shrinks')}
-  ${chap(3,'Layers',
-    'Answers are organised by layer so the right level of reuse is obvious. Lower layers inherit from higher ones.',
-    '<b>Portfolio</b> · thesis, team, governance, track record · shared across every deal<br><b>Programme</b> · one project, its financial model and structuring<br><b>Investor</b> · one counterparty, a particular concern')}
+  ${chap(1,'Launch',
+    'One person picks the project, confirms the boundary and presses go. Nothing else is typed.',
+    '<b>The one hard input</b> · the project boundary. No boundary, no run<br><b>Who</b> · Nature Projects and Advisory, not Trade<br><b>Time</b> · a minute, against 30 to 60 today')}
+  ${chap(2,'Map',
+    'Two pulls run side by side, then join. Assets near the site and nat cap on it, matched to markets and then to named buyers.',
+    '<b>Parallel by design</b> · the asset pull and the nat cap pull do not wait for each other<br><b>The join matters</b> · BNG demand comes from the asset layer, carbon from the habitat layer, so buyer matching needs both<br><b>Biggest dependency</b> · the GY buyer database. Thin database, thin report')}
+  ${chap(3,'Decide',
+    'Trade corrects what the data cannot know, the report goes to the decision maker, and the call is made where it is already made.',
+    '<b>One gate only</b> · at the pipeline meeting, not in the system<br><b>No new forum</b> · this rides on the meeting that already happens<br><b>Park, do not close</b> · most no answers mean the market was not there yet, not that the site is bad')}
   <div style="height:1px;background:var(--line);margin:22px 0 0"></div>
-  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Why it exists</div>
-  <div class="pt" style="margin-top:4px">Without it, answers get rebuilt from scratch each deal, sit in scattered inboxes and decks, drift from the Financial Model and Information Memo, and vary by whoever replies. Used at every touchpoint from early engagement through IC, site visits and due diligence. Unlike Demand Mapping this is not a run-once pipeline: it is an always-on loop that runs for the length of a raise.</div></div>`;
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Assets it reads and writes</div>
+  <div class="pt" style="margin-top:4px">It writes one thing: the lead demand report. Everything else is read only. The GY buyer database is the same Asset that Customer Demand Mapping reads, shared rather than duplicated, which is also where the risk sits.</div>
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Why build it</div>
+  <div class="pt" style="margin-top:4px">Not mainly for time saved. It pushes GY from supply-led to demand-led, it takes the reasoning out of people's heads, and it is the clearest demo of an hour of gut feel becoming an instant report. Roughly 20 to 30 runs a year.</div>
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Where it stands</div>
+  <div class="pt" style="margin-top:4px">Draft blueprint from the Izzie session of 25 August 2026. Open: whether the spatial layers can be pulled automatically or need manual GIS, and whether the buyer database is far enough along to power the match step.</div></div>`;
   d.style.display='block';
 }
+
 const ALIST=[
- {id:'protocol',ch:1,name:'Q&A Protocol',sub:'one-pager',ic:'ti-file-text',bg:'#378ADD',fg:'#fff'},
- {id:'logtpl',ch:1,name:'Q&A Log template',sub:'structured record',ic:'ti-table',bg:'#F5C64B',fg:'#2C2410'},
- {id:'elrfaq',ch:1,name:'ELR Investor FAQs',sub:'seed content',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
- {id:'ddlogs',ch:1,name:'Per-investor DD logs',sub:'seed content',ic:'ti-files',bg:'#1D9E75',fg:'#fff'},
- {id:'matcher',ch:2,name:'Library matcher',sub:'AI assistant',ic:'ti-search',bg:'#EF9F27',fg:'#412402'},
- {id:'checker',ch:2,name:'Consistency checker',sub:'AI assistant',ic:'ti-shield-check',bg:'#D4537E',fg:'#fff'},
- {id:'library',ch:3,name:'Answer Library',sub:'Asset · portfolio-wide',ic:'ti-database',bg:'#639922',fg:'#fff'},
- {id:'packgen',ch:4,name:'Q&A pack generator',sub:'document generator',ic:'ti-clipboard-check',bg:'#378ADD',fg:'#fff'},
- {id:'stats',ch:4,name:'Close-out stats',sub:'summary record',ic:'ti-chart-bar',bg:'#5DCAA5',fg:'#04342C'}
+ {id:'boundary',ch:1,name:'Project boundary and data',sub:'the one hard input',ic:'ti-map-pin',bg:'#1D9E75',fg:'#fff'},
+ {id:'spatial',ch:2,name:'Shelf · Spatial layers',sub:'assets near the site',ic:'ti-map-2',bg:'#378ADD',fg:'#fff'},
+ {id:'thresholds',ch:2,name:'Nat cap thresholds',sub:'minimum viable scale',ic:'ti-ruler',bg:'#F5C64B',fg:'#2C2410'},
+ {id:'buyerdb',ch:2,name:'Database · GY buyers',sub:'Asset · shared',ic:'ti-database',bg:'#639922',fg:'#fff'},
+ {id:'topfunnel',ch:2,name:'Top of funnel map',sub:'read only · Trade',ic:'ti-filter',bg:'#7F77DD',fg:'#fff'},
+ {id:'report',ch:3,name:'Template · Lead demand report',sub:'the Output',ic:'ti-report',bg:'#D4537E',fg:'#fff'},
+ {id:'email',ch:3,name:'Email · Report to decision maker',sub:'human sends',ic:'ti-mail',bg:'#EF9F27',fg:'#412402'}
 ];
-const ACH={1:'S · Set up',2:'A · Answer',3:'C · Curate',4:'M · Close-out'};
+const ACH={1:'1 · Launch',2:'2 · Map',3:'3 · Decide'};
+
 function openArtefactsL(){
   const d=document.getElementById('drawerL');
   const row=a=>`<div class="arow" style="background:${a.bg}12;border-color:${a.bg}4D" onclick="closeDrawer();openArtefact('${a.id}')">
     <span class="aic" style="background:${a.bg};color:${a.fg}"><i class="ti ${a.ic}"></i></span>
     <span style="flex:1">${a.name}</span>
     <i class="ti ti-chevron-right chvw"></i></div>`;
-  const groups=[1,2,3,4].map(c=>
+  const groups=[1,2,3].map(c=>
     `<div class="pl">${ACH[c]}</div>`+ALIST.filter(a=>a.ch===c).map(row).join('')).join('');
   d.innerHTML=dhead('ti-template','var(--graybg)','var(--grayd)','Artefacts','')
   +`<div class="sbody">`+groups+`</div>`;
@@ -541,15 +510,17 @@ function openArtefactsL(){
 }
 
 const NEXT={
- s1:[['','s2']], s2:[['','a1']], a1:[['','a2']], a2:[['','a3']], a3:[['','a4']],
- a4:[['approve','a5'],['rework','a3']],
- a5:[['','c1']],
- c1:[['','m1']],
- c2:[['informs','a2']],
- m1:[['','m2']],
- m2:[['next round','a1'],['concluded','closeout']],
- closeout:[['','done']]
+ launch:[['spatial','spatial'],['nat cap','natcap']],
+ spatial:[['','match']],
+ natcap:[['','match']],
+ match:[['','report']],
+ report:[['','qa']],
+ qa:[['','send']],
+ send:[['','pipeline']],
+ pipeline:[['','g1']],
+ g1:[['pursue','go'],['park','park']]
 };
+
 function nextRows(id){
   const nx=NEXT[id]||[];
   if(!nx.length)return `<div class="nsmall">End of the flow.</div>`;
@@ -568,7 +539,7 @@ function setSide(visible){
 function renderChapnav(){
   const c=document.getElementById('chapnav');
   if(!CHAPNAV){c.style.display='none';return;}
-  const ends=['s2','a5','c1','done'];
+  const ends=['launch','report','go'];
   const doneArr=ends.map(id=>{const n=NODES.find(x=>x.id===id);return n&&n.r.st==='done';});
   const firstOpen=doneArr.indexOf(false);
   const key=MODE+RUN+doneArr.join('')+firstOpen;
@@ -589,31 +560,12 @@ function gotoChapter(i){
 }
 const AVA={
  agent:{ic:'ti-sparkles',bg:'#1F1F1D',fg:'#F9DD5A',name:'AI Assistant'},
- caitlin:{txt:'C',bg:'#1D9E75',fg:'#fff',name:'Kishen'},
- client:{txt:'J',bg:'#0F6E56',fg:'#fff',name:'J. Ruggles'}
+ caitlin:{txt:'I',bg:'#D4537E',fg:'#fff',name:'Izzie'},
+ client:{txt:'T',bg:'#0F6E56',fg:'#fff',name:'Trade'}
 };
-const ACTIVITY=[
- ['1 JULY 2026',[
-  ['09:01','caitlin','<span class="mut">started with the</span> <b>Demand Mapping Deliverable</b> <span class="mut">for Spains Hall</span>'],
-  ['09:02','agent','<span class="mut">started</span> <b>Run #1</b> <span class="mut">from blueprint v1.0, cautious mode, Kishen owning</span>'],
-  ['09:02','agent','<span class="mut">minted the</span> <b>questionnaire</b> <span class="mut">for J. Ruggles, 6 of 14 fields pre-filled</span>'],
-  ['09:03','agent','<span class="mut">drafted the</span> <b>kick-off brief</b> <span class="mut">and emailed it to Kishen</span>'],
-  ['10:00','caitlin','<span class="mut">held the</span> <b>kick-off call</b> <span class="mut">· 40 min</span>',
-   'Scope confirmed: 400 ha floodplain meadow, nature market income. The 14-item input list agreed with James.'],
-  ['14:18','caitlin','<span class="mut">approved the</span> <b>questionnaire email</b>'],
-  ['14:20','agent','<span class="mut">sent it · acknowledged 15:02 ·</span> <b>wait clock started</b>']]],
- ['3 JULY 2026',[
-  ['11:34','client','<span class="mut">submitted</span> <b>6 of 14 items</b> <span class="mut">through the questionnaire</span>']]],
- ['6 JULY 2026',[
-  ['09:00','agent','<span class="mut">sent the</span> <b>first chase</b> <span class="mut">· friendly tone, as scheduled</span>']]],
- ['8 JULY 2026',[
-  ['08:52','client','<span class="mut">sent the</span> <b>tenure map</b> <span class="mut">by email reply instead of the questionnaire</span>'],
-  ['08:53','agent','<span class="mut">filed it, mapped to the checklist ·</span> <b>12 of 14</b>']]],
- ['9 JULY 2026',[
-  ['09:02','agent','<span class="mut">ran the</span> <b>completeness check</b> <span class="mut">· failed · gaps: site boundary, grazing agreement</span>'],
-  ['09:05','agent','<span class="mut">drafted the</span> <b>gap reminder</b> <span class="mut">· in Gmail, Kishen to review</span>',
-   'Hi James, thanks for everything so far, 12 of 14 items are in and looking great. Two things would unlock the next step: the site boundary shapefile and the grazing agreement for the east parcels.']]]
-];
+
+const ACTIVITY=[];
+
 const DOCV={
  mgmt:{ic:'ti-file-text',name:'estate_management_plan.pdf',body:`
   <h2>Estate Management Plan</h2><div class="dvsub">Evenlode Landscape Recovery · prepared by the estate · 38 pages</div>
@@ -652,81 +604,80 @@ function closeDocViewer(){document.getElementById('dvov').classList.remove('open
 function closeDoc(){document.getElementById('docm').style.display='none';}
 function openContentsDoc(){
   const d=document.getElementById('docm');
-  const val=(label,text,prov,opts)=>{opts=opts||{};
-    const chip=opts.inf?`<span class="pv" style="background:var(--bluebg);color:var(--blued)">AI Assistant's reading · please check</span>`
-      :`<span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span>`;
-    return `<div class="dfl">${label}${opts.nw?' <span class="pv" style="background:var(--greenbg);color:var(--greend)">new</span>':''}</div>
-    <div class="dp">${text}</div><div class="dprov">${prov} ${chip}</div>`;};
-  const ghostval=(label,note)=>`<div class="dfl" style="color:var(--ink3)">${label} <span class="pv" style="background:var(--amberbg);color:var(--amberd)">missing</span></div>
-    <div style="padding:4px 0 2px"><div class="gline" style="display:block;max-width:88%;margin-bottom:8px"></div><div class="gline" style="display:block;max-width:55%"></div></div>
-    <div class="dprov">${note}</div>`;
   const sec=(num,title,body)=>`<div class="dsec"><div class="dh2"><span class="dnum">${num}</span>${title}</div>${body}</div>`;
-  let body;
-  body=`<div class="dchips"><span class="dchip"><b>Status</b> draft blueprint</span><span class="dchip"><b>Runs</b> none yet</span><span class="dchip"><b>Champion</b> Kishen</span></div>`
-  +sec(1,'Protocol and setup',`<div class="dghost">Roles, SLAs, tag taxonomy and capture channels for the raise.<br>Written by Initialise the Q&A Log and Seed the Answer Library.</div>`)
-  +sec(2,'Q&A Log',`<div class="dghost">One row per question: verbatim text, tags, status, SLA clock, dataroom reference, audit trail.<br>Written by the Capture, Triage, Draft, Approve and Respond loop.</div>`)
-  +sec(3,'Answer Library',`<div class="dghost">Canonical approved answers, layered Portfolio / Programme / Investor.<br>Seeded from the ELR material, grown by Promote to the Library, kept honest by the Freshness review.</div>`)
-  +sec(4,'Packs and close-out',`<div class="dghost">Per-investor DD packs, IC preparation packs, BFP extracts, and the close-out stats.<br>Written by Compile the Q&A pack and Close out the thread.</div>`);
+  let body=`<div class="dchips"><span class="dchip"><b>Status</b> draft blueprint</span><span class="dchip"><b>Runs</b> none yet</span><span class="dchip"><b>Champion</b> Izzie</span></div>`
+  +sec(1,'Header and verdict',`<div class="dghost">Project, location, date and the call in one word: pursue, park or pass.<br>Written by Generate lead report, confirmed at Pursue project?</div>`)
+  +sec(2,'Asset map',`<div class="dghost">Project and catchment boundary with assets overlaid: substations, power lines, railway lines, watercourses.<br>Written by Pull spatial assets.</div>`)
+  +sec(3,'Nat cap present',`<div class="dghost">One row per nat cap type: what is there, how much, and whether it clears the threshold for a viable market.<br>Written by Pull nat cap data.</div>`)
+  +sec(4,'Likely buyers',`<div class="dghost">One row per buyer: market, name, why they are relevant, confidence.<br>Written by Match markets to buyers, corrected by Trade sense-check.</div>`)
+  +sec(5,'Verdict and Trade note',`<div class="dghost">Three or four sentences on whether there is demand and what happens next, plus whatever Trade corrected.<br>Written by Generate lead report and Trade sense-check.</div>`);
   d.innerHTML=`<div class="dclose" onclick="closeDoc()"><i class="ti ti-x" style="font-size:17px;color:var(--ink2)"></i></div>
   <div class="docwrap">
-    <div class="dlab">Investor Q&A Log · Contents · Draft</div>
-    <div class="dtitle">Untitled raise</div>
-    <div class="dsub">The Log and Library this blueprint will assemble, one instance per capital raise.</div>
+    <div class="dlab">Lead Demand Mapping · Contents · Draft</div>
+    <div class="dtitle">Untitled lead</div>
+    <div class="dsub">What this blueprint assembles, one instance per lead. One page, map first, read in a minute.</div>
     ${body}
   </div>`;
   d.style.display='block';
 }
 
 const STEPARTS={
- s1:{0:['protocol'],3:['logtpl']},
- s2:{0:['elrfaq','ddlogs'],4:['library']},
- a1:{0:['logtpl']},
- a2:{0:['matcher']},
- a3:{0:['library']},
- a4:{0:['checker']},
- a5:{2:['logtpl']},
- c1:{2:['library']},
- c2:{1:['library']},
- m1:{1:['packgen']},
- closeout:{1:['stats']}
+ launch:{1:['boundary']},
+ spatial:{1:['spatial']},
+ natcap:{2:['thresholds']},
+ match:{1:['buyerdb'],2:['topfunnel']},
+ report:{1:['report']},
+ qa:{0:['buyerdb']},
+ send:{0:['email']},
+ pipeline:{0:['report']},
+ g1:{1:['report']}
 };
+
 const STEPLOG={};
 const STEPWHO={
- s1:['agent','human','human','agent','human'],
- s2:['agent','agent','agent','agent','human'],
- a1:['agent','agent','human','agent'],
- a2:['agent','agent','agent','agent','human'],
- a3:['agent','human','human','agent'],
- a4:['agent','human','human'],
- a5:['det','det','det'],
- c1:['agent','agent','agent','agent','human'],
- c2:['agent','agent','human'],
- m1:['agent','agent','human'],
- m2:['human','human'],
- closeout:['agent','agent','human']
+ launch:['human','human','human'],
+ spatial:['agent','agent','agent','agent'],
+ natcap:['agent','agent','agent','agent'],
+ match:['agent','agent','agent','agent'],
+ report:['det','det','agent'],
+ qa:['human','human','human'],
+ send:['det','human'],
+ pipeline:['human','human','human'],
+ g1:['human','human']
 };
+
 function initSteps(){
   NODES.forEach(n=>{
     if(!n.form||typeof (n.form.steps||[])[0]!=="string")return;
     const w=STEPWHO[n.id]||[], a=STEPARTS[n.id]||{}, l=STEPLOG[n.id]||{};
     n.form.steps=n.form.steps.map((t,i)=>({
-      t, who:w[i]||'agent', ownerN:'Kishen',
+      t, who:w[i]||'agent', ownerN:'Nature Projects',
       arts:a[i]?[...a[i]]:[], log:l[i]||null,
       inst:'', guard:'', prod:''
     }));
   });
   const g=(id,i,k,v)=>{const n=NODES.find(x=>x.id===id);if(n&&n.form.steps[i])n.form.steps[i][k]=v;};
-  g('a1',2,'ownerN','Deal lead');
-  g('a3',1,'ownerN','Routed SME');
-  g('a3',2,'ownerN','Routed SME');
-  g('a5',0,'guard','Client-facing sends always need a human tap');
-  g('a1',0,'inst','Log the question exactly as asked, from email, the dataroom Q&A module, or a meeting transcript. Tag investor, stage, instrument, source and date.');
+  g('r1',3,'ownerN','Bid lead');
+  g('r2',3,'ownerN','Bid lead');
+  g('r2',4,'ownerN','Bid lead');
+  g('r3',4,'ownerN','Bid lead');
+  g('r4',0,'ownerN','Pricing lead');
+  g('r4',2,'ownerN','Pricing lead');
+  g('r4',3,'ownerN','Pricing lead');
+  g('r5',1,'ownerN','Vertical lead');
+  g('r5',2,'ownerN','Red team');
+  g('r5',3,'ownerN','Bid lead');
+  g('r5',4,'ownerN','Vertical lead');
+  g('r6',3,'ownerN','Bid lead');
+  g('g1',1,'guard','No call closes without a written reason');
+  g('r5',0,'guard','Nothing enters review unnamed or unversioned');
+  g('s1',0,'inst','Aggregator alerts, portal notices, framework mini-comps and relationship leads all land as one record shape, so nothing depends on which inbox it arrived in.');
+  g('r3',0,'inst','Prefer bank entries tagged Won for this bid type. Where nothing matches, say so rather than stretching a near miss.');
 }
-
 
 function sendDraft(){
   closeComposer();
-  toast('Prototype: approved answers would be sent and logged against the question record');
+  toast('Prototype: the clarification would be sent and logged against the pipeline record');
 }
 function openComposer(){
   const c=document.getElementById('composer');
@@ -757,9 +708,7 @@ function openArtefact(id){
     <div class="prev">${a.prev}</div>
     <div class="pl">Used by</div>
     <button class="abtn" onclick="closeModal();openNode('${a.nid}')"><i class="ti ti-topology-star-3" style="color:var(--ink2)"></i> ${a.node}<i class="ti ti-chevron-right" style="margin-left:auto;color:var(--ink3)"></i></button>
-    ${a.id==='packgen'
-      ?`<button class="cta" onclick="location.href='investor-qa-pack-example.html'">Open example Q&A pack · the Output</button>`
-      :`<button class="cta" onclick="toast('Prototype: the artefact editor is not wired for this Deliverable yet')">Open in artefact editor</button>`}
+    <button class="cta" onclick="toast('Prototype: the artefact editor is not wired for this Workflow yet')">Open in artefact editor</button>
   </div>`;
   m.style.display='flex';
 }
@@ -914,10 +863,12 @@ function setZoom(v){
   w.style.transform=`translateY(-50%) scale(${Z})`;
 }
 const TEAM=[
- {n:'Kishen',c:'#1D9E75',captain:true,live:true,seen:'now'},
- {n:'Alex',c:'#378ADD',live:false,seen:'yesterday'},
- {n:'Tim',c:'#EF9F27',live:false,seen:'3 days ago'}
+ {n:'Izzie',c:'#D4537E',captain:true,live:true,seen:'now'},
+ {n:'Thomas',c:'#378ADD',live:false,seen:'today'},
+ {n:'Caitlin',c:'#1D9E75',live:false,seen:'yesterday'},
+ {n:'Cat',c:'#7F77DD',live:false,seen:'2 days ago'}
 ];
+
 function avEl(m,extra){
   if(m.agent)return `<span class="av${extra||''}" style="background:#1F1F1D"><i class="ti ti-sparkles" style="font-size:13px;color:#F9DD5A"></i></span>`;
   return `<span class="av${extra||''}" style="background:${m.c}">${m.n[0]}</span>`;
@@ -1012,9 +963,10 @@ if(localStorage.getItem('gyDelOpen')==='0'){
 
 const DEMOAV={
  agent:{ic:'ti-sparkles',bg:'#3A2E14',fg:'#F9DD5A',n:'AI Assistant'},
- gy:{txt:'CT',bg:'#FAEEDA',fg:'#854F0B',n:'Kishen'},
- client:{txt:'JR',bg:'#E1F5EE',fg:'#0F6E56',n:'J. Ruggles'}
+ gy:{txt:'IZ',bg:'#FBE4EC',fg:'#8A2A4E',n:'Izzie'},
+ client:{txt:'TR',bg:'#E1F5EE',fg:'#0F6E56',n:'Trade'}
 };
+
 const DEMOSTEPS=[];
 let DEMOT=null, DEMOSNAP=null, DEMOI=0, DEMONEXT=null, DEMOPAUSED=false, BANDSNAP=null, STOREFADE=false, NODEFLASH=null;
 function dsched(fn,ms){
@@ -1106,7 +1058,7 @@ function focusNode(id){
 }
 function playDemo(){
   if(DEMOT!==null||DEMOSNAP){stopDemo();return;}
-  if(MODE!=='run'||RUN!=='spains'){MODE='run';RUN='spains';}
+  if(MODE!=='run'){MODE='run';}
   DEMOSNAP=JSON.stringify(NODES.map(n=>n.r));
   BANDSNAP=JSON.stringify(BANDS.map(b=>({cur:!!b.cur,run:b.run})));
   NODES.forEach(n=>{n.r=n.id==='start'?{st:'done',sub:''}:{st:'pending',sub:'',dim:true};});
@@ -1222,7 +1174,7 @@ renderAll();
 (function(){
   const sc=document.querySelector('.scroll');
   sc.scrollTop=(sc.scrollHeight-sc.clientHeight)/2;
-  sc.scrollLeft=520;
+  sc.scrollLeft=0;
 })();
 
 /* Apply created deliverable (?deliverable): crumb name + team from the create modal */
@@ -1236,7 +1188,7 @@ renderAll();
     var setCrumb=function(){var el=document.getElementById('crumbTitle');if(el&&d.n)el.textContent=d.n;};
     setCrumb();
     if(typeof renderTabs==='function'){var _rt=renderTabs;renderTabs=function(){_rt.apply(this,arguments);setCrumb();};}
-    var COL={'Caitlin':'#1D9E75','Harry':'#EF9F27','Katia':'#7F77DD','Emily':'#378ADD','Josh':'#639922','Izzie':'#D4537E','Trade lead':'#3B82F6','Kishen':'#215274','Thomas':'#378ADD'};
+    var COL={'Caitlin':'#1D9E75','Harry':'#EF9F27','Katia':'#7F77DD','Emily':'#378ADD','Josh':'#639922','Izzie':'#D4537E','Trade lead':'#3B82F6','Kishen':'#215274','Archie':'#EF9F27','Cat':'#7F77DD','Thomas':'#378ADD'};
     if(typeof TEAM!=='undefined'&&Array.isArray(TEAM)){
       TEAM.length=0;
       TEAM.push({n:(d.champ||'Caitlin'),c:COL[d.champ]||'#1D9E75',captain:true,live:true,seen:'now'});

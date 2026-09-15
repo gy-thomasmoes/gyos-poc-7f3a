@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Demand Mapping · Canvas prototype</title>
+<title>Customer Demand Mapping · Canvas prototype v2</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';document.head.appendChild(s);"></script>
 
 <!-- per-Deliverable canvas size (defaults live in gy-canvas.css) -->
-<style>.canvas{--cw:5460px;--ch:1600px}.world{--ww:4260px;--wh:470px}
+<style>.canvas{--cw:6100px;--ch:2500px}.world{--ww:4760px;--wh:1200px}
 /* PDF export: keep groups whole across page breaks */
 .dgrp,.docrow,.dsec .cbox>div,.gbox>.grow{break-inside:avoid;page-break-inside:avoid}
 .dh2{break-after:avoid;page-break-after:avoid}
@@ -23,7 +23,7 @@
 </head>
 <body>
 
-<script>window.GYNAV={"active": "demand-mapping", "arts": "demand"};</script>
+<script>window.GYNAV={"active": "customer-demand-v2", "arts": "demandv2"};</script>
 <script src="gy-nav.js"></script>
 <script src="gy-canvas.js"></script>
 <script src="gy-canvas-engine.js"></script>
@@ -126,11 +126,12 @@ function setRun(r){
 }
 
 const BANDS=[
-  {x:16,  w:1120, t:'1 · Gather project context', short:'1 · Context',  run:'in progress', cur:true},
-  {x:1196,w:980,  t:'2 · Assess supply',           short:'2 · Supply',   run:'not started'},
-  {x:2256,w:752,  t:'3 · Assess demand',           short:'3 · Demand',   run:'not started'},
-  {x:3068,w:1212, t:'4 · Finalise',                short:'4 · Finalise', run:'not started'}
+  {x:16,  w:1120, t:'1 · Project context', short:'1 · Context', run:'in progress', cur:true},
+  {x:1196,w:1180, t:'2 · Demand',          short:'2 · Demand',  run:'not started'},
+  {x:2416,w:800,  t:'3 · Supply',          short:'3 · Supply',  run:'not started'},
+  {x:3256,w:1440, t:'4 · Verdict',         short:'4 · Verdict', run:'not started'}
 ];
+
 const CHAPNAV=true;
 
 const T={
@@ -167,7 +168,7 @@ const ARTEFACTS=[
   <div class="mrow"><span class="pmuted">Subject</span><span>Mapping the demand for {{project}}</span></div>
   <div style="margin-top:8px">Hi {{first_name}}, lovely speaking today. To map what {{project}} can sell and who would buy it, we need a few things from you. This link does most of the work, and anything you upload we read for you.</div>
   <span class="mbtn">Open your questionnaire</span></div>`},
- {id:'rulebooks',ic:'ti-book',name:'Library · ES rule books',node:'Desktop research',nid:'desktop',ex:true,desc:'One page per ecosystem service: static About, a nine-category readiness score, a sizing method, and a fast-moving Market dynamics half. Scored and sized per the GY methodology, seeded from the NatWest Markets Report. Open the Hive Mind Library in the sidebar to browse them.',
+ {id:'rulebooks',ic:'ti-book',name:'Library · ES rule books',node:'Derive sellable services',nid:'derive',ex:true,desc:'One page per ecosystem service: static About, a nine-category readiness score, a sizing method, and a fast-moving Market dynamics half. Scored and sized per the GY methodology, seeded from the NatWest Markets Report. Open the Hive Mind Library in the sidebar to browse them.',
   prev:`<div class="paper"><h5>🌱 Carbon · rule book</h5>
   <div class="mrow"><span class="pmuted">About</span><span>static · definition + monetisation</span></div>
   <div class="mrow"><span class="pmuted">Readiness</span><span>9 categories · GY methodology</span></div>
@@ -175,7 +176,7 @@ const ARTEFACTS=[
   <div class="mrow"><span class="pmuted">Market dynamics</span><span>dynamic · prices, buyer signals</span></div>
   <div class="mrow"><span class="pmuted">Last refreshed</span><span>Oct 2025 · NatWest Report</span></div>
   <div class="mfld">8 services in the Library · refresh due every ~3 months</div></div>`},
- {id:'buyerdb',ic:'ti-database',name:'Database · GY buyers',node:'Shortlist qualified buyers',nid:'shortbuyers',ex:true,desc:'The buyer records qualified against Fit / Readiness / Timing / Relationship. Data quality here is the biggest external dependency.',
+ {id:'buyerdb',ic:'ti-database',name:'Database · GY buyers',node:'Qualified buyer list',nid:'buyerlist',ex:true,desc:'The buyer records qualified against Fit / Readiness / Timing / Relationship. Data quality here is the biggest external dependency.',
   prev:`<div class="paper"><h5>Buyers · filtered to catchment</h5>
   <div class="mrow"><span>Anglian Water</span><span class="mbar"><i style="width:85%"></i></span><span class="pmuted">fit 8.5</span></div>
   <div class="mrow"><span>Housing developer, Oxford</span><span class="mbar"><i style="width:70%"></i></span><span class="pmuted">fit 7.0</span></div>
@@ -189,7 +190,7 @@ const ARTEFACTS=[
   <div class="mchk"><span class="box on"></span>History: two HubSpot threads, met at Groundswell</div>
   <div class="mchk"><span class="box on"></span>Watch for: tenancy complexity on the east parcels</div>
   <div class="mfld">Drafted by the AI Assistant · 3 sources cited · read in 4 min</div></div>`},
- {id:'registries',ic:'ti-database',name:'Shelf · Supply registries',node:'Desktop research',nid:'desktop',ex:true,desc:'The named registries desktop research pulls hard data from. Each entry carries the connection, the fields we take and the refresh rule. Changing this shelf versions with the blueprint; the pulls themselves are run events.',
+ {id:'registries',ic:'ti-database',name:'Shelf · Supply registries',node:'Derive sellable services',nid:'derive',ex:true,desc:'The named registries desktop research pulls hard data from. Each entry carries the connection, the fields we take and the refresh rule. Changing this shelf versions with the blueprint; the pulls themselves are run events.',
   prev:`<div class="paper"><h5>Source shelf · registry connections</h5>
   <div class="mrow"><span>DEFRA BNG register</span><span class="pmuted">biodiversity · weekly</span></div>
   <div class="mrow"><span>Gaia</span><span class="pmuted">nature data · weekly</span></div>
@@ -198,79 +199,137 @@ const ARTEFACTS=[
   <div class="mrow"><span>World Bank carbon price</span><span class="pmuted">pricing · monthly</span></div>
   <div class="mrow"><span>ICE + EEX</span><span class="pmuted">pricing · daily feed</span></div>
   <div class="mfld">Every figure pulled carries its source, date and tier: hard/gold or soft/bronze</div></div>`},
- {id:'reg_bng',ic:'ti-database',name:'Registry · DEFRA BNG register',node:'Desktop research',nid:'desktop',ex:true,desc:'Live biodiversity unit prices and listings from the DEFRA BNG register.',
+ {id:'reg_bng',ic:'ti-database',name:'Registry · DEFRA BNG register',node:'Derive sellable services',nid:'derive',ex:true,desc:'Live biodiversity unit prices and listings from the DEFRA BNG register.',
   prev:`<div class="paper"><h5>DEFRA BNG register</h5>
   <div class="mrow"><span class="pmuted">Result</span><span>£37,967.48 avg · 1,204 units listed</span></div>
   <div class="mrow"><span class="pmuted">Fields</span><span>price, units, habitat</span></div>
   <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
   <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
   <div class="mfld">Pulled Mon 30 Jun · source gov.uk BNG register</div></div>`},
- {id:'reg_gaia',ic:'ti-database',name:'Registry · Gaia',node:'Desktop research',nid:'desktop',ex:true,desc:'Biodiversity credit prices and projects from the Gaia registry.',
+ {id:'reg_gaia',ic:'ti-database',name:'Registry · Gaia',node:'Derive sellable services',nid:'derive',ex:true,desc:'Biodiversity credit prices and projects from the Gaia registry.',
   prev:`<div class="paper"><h5>Gaia</h5>
   <div class="mrow"><span class="pmuted">Result</span><span>£28,500 avg · 12 projects</span></div>
   <div class="mrow"><span class="pmuted">Fields</span><span>price, credits, location</span></div>
   <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
   <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
   <div class="mfld">Pulled Mon 30 Jun · source Gaia registry</div></div>`},
- {id:'reg_wcc',ic:'ti-database',name:'Registry · Woodland Carbon Code',node:'Desktop research',nid:'desktop',ex:true,desc:'Woodland carbon unit prices and issuances from the Woodland Carbon Code.',
+ {id:'reg_wcc',ic:'ti-database',name:'Registry · Woodland Carbon Code',node:'Derive sellable services',nid:'derive',ex:true,desc:'Woodland carbon unit prices and issuances from the Woodland Carbon Code.',
   prev:`<div class="paper"><h5>Woodland Carbon Code</h5>
   <div class="mrow"><span class="pmuted">Result</span><span>£22.10 / tCO2e (WCU)</span></div>
   <div class="mrow"><span class="pmuted">Fields</span><span>price, tonnes</span></div>
   <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
   <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
   <div class="mfld">Pulled Mon 30 Jun · source WCC registry</div></div>`},
- {id:'reg_pcc',ic:'ti-database',name:'Registry · Peatland Carbon Code',node:'Desktop research',nid:'desktop',ex:true,desc:'Peatland carbon unit prices and issuances from the Peatland Carbon Code.',
+ {id:'reg_pcc',ic:'ti-database',name:'Registry · Peatland Carbon Code',node:'Derive sellable services',nid:'derive',ex:true,desc:'Peatland carbon unit prices and issuances from the Peatland Carbon Code.',
   prev:`<div class="paper"><h5>Peatland Carbon Code</h5>
   <div class="mrow"><span class="pmuted">Result</span><span>£24.60 / tCO2e (PCU)</span></div>
   <div class="mrow"><span class="pmuted">Fields</span><span>price, tonnes</span></div>
   <div class="mrow"><span class="pmuted">Refresh</span><span>weekly</span></div>
   <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
   <div class="mfld">Pulled Mon 30 Jun · source PCC registry</div></div>`},
- {id:'reg_wbcp',ic:'ti-database',name:'Registry · World Bank carbon price',node:'Desktop research',nid:'desktop',ex:true,desc:'Global carbon price ranges from the World Bank Carbon Pricing Dashboard.',
+ {id:'reg_wbcp',ic:'ti-database',name:'Registry · World Bank carbon price',node:'Derive sellable services',nid:'derive',ex:true,desc:'Global carbon price ranges from the World Bank Carbon Pricing Dashboard.',
   prev:`<div class="paper"><h5>World Bank carbon price</h5>
   <div class="mrow"><span class="pmuted">Result</span><span>$5 to $95 / tCO2e (global range)</span></div>
   <div class="mrow"><span class="pmuted">Fields</span><span>price bands, scheme</span></div>
   <div class="mrow"><span class="pmuted">Refresh</span><span>quarterly</span></div>
   <div class="mrow"><span class="pmuted">Tier</span><span>soft / bronze</span></div>
   <div class="mfld">Pulled Mon 30 Jun · source World Bank dashboard</div></div>`},
- {id:'reg_ice',ic:'ti-database',name:'Registry · ICE',node:'Desktop research',nid:'desktop',ex:true,desc:'Compliance carbon futures prices from ICE.',
+ {id:'reg_ice',ic:'ti-database',name:'Registry · ICE',node:'Derive sellable services',nid:'derive',ex:true,desc:'Compliance carbon futures prices from ICE.',
   prev:`<div class="paper"><h5>ICE</h5>
   <div class="mrow"><span class="pmuted">Result</span><span>€72.40 / tCO2e (EUA front-month)</span></div>
   <div class="mrow"><span class="pmuted">Fields</span><span>price</span></div>
   <div class="mrow"><span class="pmuted">Refresh</span><span>daily</span></div>
   <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
   <div class="mfld">Pulled Mon 30 Jun · source ICE feed</div></div>`},
- {id:'reg_eex',ic:'ti-database',name:'Registry · EEX',node:'Desktop research',nid:'desktop',ex:true,desc:'Compliance carbon spot and auction prices from EEX.',
+ {id:'reg_eex',ic:'ti-database',name:'Registry · EEX',node:'Derive sellable services',nid:'derive',ex:true,desc:'Compliance carbon spot and auction prices from EEX.',
   prev:`<div class="paper"><h5>EEX</h5>
   <div class="mrow"><span class="pmuted">Result</span><span>€71.85 / tCO2e (EUA spot)</span></div>
   <div class="mrow"><span class="pmuted">Fields</span><span>price</span></div>
   <div class="mrow"><span class="pmuted">Refresh</span><span>daily</span></div>
   <div class="mrow"><span class="pmuted">Tier</span><span>hard / gold</span></div>
   <div class="mfld">Pulled Mon 30 Jun · source EEX feed</div></div>`},
- {id:'evidence',ic:'ti-report',name:'Template · Evidence pack',node:'Desktop research',nid:'desktop',ex:false,desc:'One page per ecosystem service: rulebook, eligibility, volume, pricing, competitor supply, funding, confidence. Every claim cited.',
+ {id:'evidence',ic:'ti-report',name:'Template · Evidence pack',node:'Derive sellable services',nid:'derive',ex:false,desc:'One page per ecosystem service: rulebook, eligibility, volume, pricing, competitor supply, funding, confidence. Every claim cited.',
   prev:`<div class="paper"><h5>BNG units · product page</h5>
   <div class="mrow"><span class="pmuted">Rulebook</span><span>BNG statutory framework</span></div>
   <div class="mrow"><span class="pmuted">Eligibility</span><span>Likely · boundary pending</span></div>
   <div class="mrow"><span class="pmuted">Indicative price</span><span>£25k per unit</span></div>
   <div class="mrow"><span class="pmuted">Competitor supply</span><span>Low in catchment</span></div>
   <div class="mrow"><span class="pmuted">Confidence</span><span>Medium · 2 sources</span></div></div>`},
- {id:'scoring',ic:'ti-scale',name:'Scoring · Supply side',node:'Shortlist ES + buyers',nid:'shortes',ex:false,desc:'One mechanic, two criteria sets: scores ecosystem services on the supply side against the nine-category Market Readiness framework, and buyers on the demand side. The twins share it, built once.',
+ {id:'scoring',ic:'ti-scale',name:'Scoring · Market readiness',node:'Assess market maturity',nid:'assess',ex:false,desc:'One mechanic, two criteria sets: scores ecosystem services on the supply side against the nine-category Market Readiness framework, and buyers on the demand side. The twins share it, built once.',
   prev:`<div class="paper"><h5>Readiness criteria · BNG units</h5>
   <div class="mrow"><span>Operational readiness</span><span class="mbar"><i style="width:100%"></i></span><span class="pmuted">green</span></div>
   <div class="mrow"><span>Demand scale</span><span class="mbar"><i style="width:60%"></i></span><span class="pmuted">orange</span></div>
   <div class="mrow"><span>Regulatory stability</span><span class="mbar"><i style="width:60%"></i></span><span class="pmuted">orange</span></div>
   <div class="mfld">9 categories, per the GY methodology · same engine scores buyers with the demand set</div></div>`},
- {id:'gapsum',ic:'ti-message',name:'Assistant · Gap summary',node:'Follow-up',nid:'followup',ex:false,desc:'Turns a failed completeness check into a friendly gap summary and reminder email, drafted for approval.',
+ {id:'gapsum',ic:'ti-message',name:'Assistant · Gap summary',node:'Follow-up ↺',nid:'followup',ex:false,desc:'Turns a failed completeness check into a friendly gap summary and reminder email, drafted for approval.',
   prev:`<div class="paper"><div class="mrow"><span class="pmuted">Draft · for your approval</span><span class="pmuted">09:05</span></div>
   <div style="margin-top:6px">Hi James, thanks for everything so far, 12 of 14 items are in and looking great. Two things would unlock the next step:</div>
   <div class="mchk" style="margin-top:6px"><span class="box"></span>Site boundary shapefile</div>
   <div class="mchk"><span class="box"></span>Grazing agreement, east parcels</div></div>`},
- {id:'verdict',ic:'ti-clipboard-check',name:'Template · Verdict pack',node:'Final check prep',nid:'finalprep',ex:false,desc:'The go / no-go pack: shortlist, buyers, indicative revenue, confidence flags. One readable page plus appendix.',
+ {id:'verdict',ic:'ti-clipboard-check',name:'Template · Verdict pack',node:'Draft verdict',nid:'draft',ex:false,desc:'The go / no-go pack: shortlist, buyers, indicative revenue, confidence flags. One readable page plus appendix.',
   prev:`<div class="paper"><h5>Verdict pack · one page</h5>
   <div class="mrow"><span class="pmuted">Supply</span><span>3 viable ES, BNG leads</span></div>
   <div class="mrow"><span class="pmuted">Demand</span><span>2 hot buyers, 5 warm</span></div>
   <div class="mrow"><span class="pmuted">Indicative revenue</span><span>Range given, confidence flagged</span></div>
-  <div style="background:var(--greenbg);color:var(--greend);border-radius:8px;padding:8px 12px;margin-top:8px;font-weight:600;text-align:center">Recommendation: GO · decision rights: Vertical Lead</div></div>`}
+  <div style="background:var(--greenbg);color:var(--greend);border-radius:8px;padding:8px 12px;margin-top:8px;font-weight:600;text-align:center">Recommendation: GO · decision rights: Vertical Lead</div></div>`},
+ {id:'gis',ic:'ti-map-2',name:'Layer · Catchment mapping',node:'Beneficiary map',nid:'beneficiary',ex:true,desc:'The mapping layer the beneficiary map is drawn on: catchment boundary plus buffer zone, with assets overlaid. Scotland environment map, QGIS or Google Earth depending on the site. Person-mediated through Katia today.',
+  prev:`<div class="paper"><h5>Catchment plus buffer · asset overlay</h5>
+  <div class="mrow"><span>Utilities and water companies</span><span class="pmuted">4 in buffer</span></div>
+  <div class="mrow"><span>Renewables and substations</span><span class="pmuted">2 in buffer</span></div>
+  <div class="mrow"><span>Distilleries and bottlers</span><span class="pmuted">3 in buffer</span></div>
+  <div class="mrow"><span>Large landholders</span><span class="pmuted">6 in buffer</span></div>
+  <div class="mfld">Buffer 15 km · layer requested from Katia</div></div>`},
+ {id:'gpap',ic:'ti-building-community',name:'Feed · GPAP planning scrape',node:'Beneficiary map',nid:'beneficiary',ex:true,desc:'Rebalance GPAP scrapes planning applications to surface BNG demand near the site. England only, and it arrives through George by hand. A single point of failure in the demand scan.',
+  prev:`<div class="paper"><h5>Planning applications · BNG demand</h5>
+  <div class="mrow"><span>Applications in 20 km</span><span class="pmuted">31</span></div>
+  <div class="mrow"><span>With BNG obligation</span><span class="pmuted">18</span></div>
+  <div class="mrow"><span>Units implied</span><span class="pmuted">approx 240</span></div>
+  <div class="mfld">England only · requested from George · manual</div></div>`},
+ {id:'sepa',ic:'ti-droplet',name:'Data · Abstraction licences',node:'Abstraction licences',nid:'abstraction',ex:true,desc:'Who abstracts water in the catchment, with volumes. SEPA covers Scotland; England relies on Katia licence files, so coverage is uneven. Feeds the water quality and replenish tables.',
+  prev:`<div class="paper"><h5>Licence holders in catchment</h5>
+  <div class="mrow"><span>Water company</span><span class="pmuted">high volume · drought exposed</span></div>
+  <div class="mrow"><span>Distillery</span><span class="pmuted">medium volume · at source</span></div>
+  <div class="mrow"><span>Bottler</span><span class="pmuted">medium volume · quality exposed</span></div>
+  <div class="mfld">Source SEPA or Katia licence files</div></div>`},
+ {id:'sbti',ic:'ti-target',name:'List · SBTi targets',node:'Published-targets scan',nid:'targets',ex:true,desc:'Cross-check for published net-zero targets on sciencebasedtargets.org. Used to separate a warm buyer from a plausible one. Manual look-up today.',
+  prev:`<div class="paper"><h5>SBTi cross-check</h5>
+  <div class="mchk"><span class="box on"></span>Target validated · near term</div>
+  <div class="mchk"><span class="box on"></span>Target validated · net zero</div>
+  <div class="mchk"><span class="box"></span>Commitment only, not validated</div>
+  <div class="mfld">sciencebasedtargets.org · manual check</div></div>`},
+ {id:'tnfd',ic:'ti-leaf',name:'List · TNFD adopters',node:'Published-targets scan',nid:'targets',ex:true,desc:'Cross-check for published nature commitments on tnfd.global. The nature-side twin of the SBTi check. Manual look-up today.',
+  prev:`<div class="paper"><h5>TNFD adopter cross-check</h5>
+  <div class="mchk"><span class="box on"></span>Listed adopter</div>
+  <div class="mchk"><span class="box"></span>Reporting in preparation</div>
+  <div class="mchk"><span class="box"></span>Not listed</div>
+  <div class="mfld">tnfd.global · manual check</div></div>`},
+ {id:'fundpages',ic:'ti-cash',name:'Shelf · Public funding sources',node:'Public funding scan',nid:'funding',ex:true,desc:'The pages the funding scan reads: gov.uk, gov.scot and NatureScot Peatland ACTION. Each fund is logged with eligibility, amount and deadline.',
+  prev:`<div class="paper"><h5>Funding sources</h5>
+  <div class="mrow"><span>gov.uk</span><span class="pmuted">England schemes</span></div>
+  <div class="mrow"><span>gov.scot</span><span class="pmuted">Scotland schemes</span></div>
+  <div class="mrow"><span>NatureScot · Peatland ACTION</span><span class="pmuted">peatland capital</span></div>
+  <div class="mfld">Deadlines are written to the project timeline</div></div>`},
+ {id:'sectors',ic:'ti-users-group',name:'Library · Buyer sector profiles',node:'Qualified buyer list',nid:'buyerlist',ex:true,desc:'The demand-side mirror of the ES rule books: six buyer sectors, each with weak versus strong buying signals. Maintained centrally on the refresh clock, so each map reads it instead of rebuilding it.',
+  prev:`<div class="paper"><h5>Six buyer sectors</h5>
+  <div class="mrow"><span>Water and utilities</span><span class="pmuted">strong signals</span></div>
+  <div class="mrow"><span>Food and drink</span><span class="pmuted">strong signals</span></div>
+  <div class="mrow"><span>Infrastructure and transport</span><span class="pmuted">mixed</span></div>
+  <div class="mrow"><span>Developers and housebuilders</span><span class="pmuted">compliance led</span></div>
+  <div class="mrow pmuted"><span>+ 2 more sectors</span><span></span></div>
+  <div class="mfld">Last refreshed Oct 2025 · roughly a year old</div></div>`},
+ {id:'demandtbl',ic:'ti-table',name:'Template · Buyer tables',node:'Qualified buyer list',nid:'buyerlist',ex:true,desc:'The tables the demand chapter fills: one per market, one row per buyer. Columns are fixed so the page can be scraped into a structured file at the end.',
+  prev:`<div class="paper"><h5>Water quality · buyers</h5>
+  <div class="mrow"><span>Buyer</span><span class="pmuted">market · why · relevance · contact · status</span></div>
+  <div class="mrow"><span>Water company</span><span class="pmuted">abstractor at source</span></div>
+  <div class="mrow"><span>Distillery</span><span class="pmuted">abstractor · warm</span></div>
+  <div class="mfld">Same columns in every table, so the scrape works</div></div>`},
+ {id:'schema',ic:'ti-file-code',name:'Schema · Data platform file',node:'Scrape structured file',nid:'scrape',ex:true,desc:'The shape of the structured file handed to the data team: one row per buyer and market, with provenance per field. Write-only today, so nothing comes back to improve the next map.',
+  prev:`<div class="paper"><h5>Handoff file · fields</h5>
+  <div class="mrow"><span>project · catchment · boundary ref</span><span class="pmuted">chapter 1</span></div>
+  <div class="mrow"><span>buyer · market · why · relevance · status</span><span class="pmuted">chapter 2</span></div>
+  <div class="mrow"><span>service · readiness · pricing · confidence</span><span class="pmuted">chapter 3</span></div>
+  <div class="mrow"><span>verdict · rationale · author · date</span><span class="pmuted">chapter 4</span></div>
+  <div class="mfld">Provenance chip on every field</div></div>`},
 ];
 
 const OWNERS=['Caitlin','Emily','Izzie','Millie','Harry','Trade rep','Vertical Lead','Josh'];
@@ -308,16 +367,16 @@ const NODES=[
   guard:'Unclear items are flagged for a human, never guessed'},
 },
 
-{id:'gate1',x:902,y:136,w:190,t:T.gate,title:'Input complete?',rows:[['yes','→ assess supply'],['no','→ follow-up']],
+{id:'gate1',x:902,y:136,w:190,t:T.gate,title:'Input complete?',rows:[['yes','→ map demand'],['no','→ follow-up']],
  d:{sub:'Checks the 14 must-haves'},r:{sub:'not started',st:'pending',dim:true},
  form:{owner:'Caitlin',exec:'Fully Automated',what:'Check the pack has all 14 must-have items.',
-  needs:[['Receive input','Structured input pack']],produces:['Pass → Assess supply','Fail → gap list'],
-  done:'After this: we know whether the pack is complete. It either moves on to supply work, or goes back to the client as a gap list.',
+  needs:[['Receive input','Structured input pack']],produces:['Pass → the four demand scans','Fail → gap list'],
+  done:'After this: we know whether the pack is complete. It either fans out into the demand scans, or goes back to the client as a gap list.',
   steps:['AI Assistant checks 14 must-haves','AI Assistant sends run onward, or to Follow-up','Caitlin reviews borderline items'],arts:['checklist'],
   guard:'Missing data is never inferred'},
 },
 
-{id:'followup',x:480,y:318,w:168,t:T.human,title:'Follow-up ↺',
+{id:'followup',x:480,y:330,w:168,t:T.human,title:'Follow-up ↺',
  d:{sub:'Close gaps with the client'},r:{sub:'not started',st:'pending',dim:true},
  form:{owner:'? Caitlin or Emily',exec:'Human-led',what:'Chase the client for the missing items.',
   needs:[['Input complete?','Gap list']],produces:['Updated input','Revised ETA'],
@@ -326,102 +385,183 @@ const NODES=[
   guard:'Two chases silent → escalate to client sponsor'},
 },
 
-{id:'desktop',x:1236,y:136,w:170,t:T.agent,title:'Desktop research',
- d:{sub:'Registries, APIs and trend reports'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Agentic AI',what:'Build a cited market snapshot for each ecosystem service.',
-  needs:[['Input complete?','Complete input pack'],['Hive Mind Library','Latest ES rule books + sizing methods']],produces:['Candidate service list','Market evidence pack, cited','Indicative sizing per market','Stale rule book flags'],
-  done:'After this: the project has a candidate service list, and every candidate carries a cited market snapshot with an indicative market size.',
-  steps:['AI Assistant derives candidate services from project interventions','AI Assistant pulls hard data from registries','AI Assistant researches market signals in trend reports','AI Assistant sizes each market and compiles cited snapshots'],arts:['rulebooks','registries','evidence'],
-  guard:'Bronze soft-data findings always carry source links and are never blended with verified hard data. Estimates the methodology flags as finger-in-the-air are labelled as such.'}},
+{id:'beneficiary',x:1236,y:136,w:186,t:T.agent,title:'Beneficiary map',
+ d:{sub:'Assets in and around the catchment'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'manual · GIS',ic:'ti-user-exclamation',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Map every asset near the catchment that could benefit from a project outcome.',
+  needs:[['Input complete?','Complete input pack'],['Layer · Catchment mapping','Boundary plus buffer zone']],produces:['Beneficiary asset list','Catchment map with assets overlaid'],
+  done:'After this: every utility, renewable, distillery, bottler and large landholder in or near the catchment sits on one list, each with its distance to the boundary.',
+  steps:['AI Assistant draws catchment plus buffer zone','AI Assistant overlays assets from the mapping layer','Katia pulls planning applications from GPAP','Caitlin reviews the asset list'],arts:['gis','gpap'],
+  guard:'GPAP is England only and arrives through George by hand. Scotland needs a different route.'},
+},
 
-{id:'qualres',x:1476,y:136,w:170,t:T.human,title:'Qualitative research',
- d:{sub:'Buyer and trade team signals'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Human-led',what:'Sense-check the desktop findings against real market signals.',
-  needs:[['Desktop research','Market evidence pack']],produces:['Buyer and trade signals per service','Corrections to the desktop picture'],
-  done:'After this: the desktop evidence is confirmed or corrected by live buyer conversations and trade team signals.',
-  steps:['Caitlin reviews desktop snapshots','Caitlin checks signals from active buyer conversations','Trade team flags shifts desktop analysis missed','AI Assistant logs each signal against its service'],arts:['rulebooks'],
-  guard:'Tribal knowledge gets logged, never lost: every verbal signal is noted with who said it and when.'}},
+{id:'abstraction',x:1236,y:330,w:218,t:T.data,title:'Abstraction licences',
+ d:{sub:'Who abstracts water at source'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'manual · via Katia',ic:'ti-user-exclamation',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ form:{owner:'? Katia',exec:'Human-led',what:'Identify who abstracts water in the catchment.',
+  needs:[['Beneficiary map','Catchment boundary']],produces:['Licence holders with volumes','Drought and water-quality exposure per holder'],
+  done:'After this: every licence holder in the catchment is listed with volume, and the water quality and replenish tables carry the buyers with a stake at source.',
+  steps:['Katia pulls licence data for the catchment','Katia lists volumes per holder','AI Assistant flags drought and water-quality exposure','AI Assistant adds holders to the water tables'],arts:['sepa','demandtbl'],
+  guard:'SEPA covers Scotland only. England leans on Katia licence files, so coverage is uneven.'},
+},
 
-{id:'shortes',x:1716,y:136,w:178,t:T.agent,title:'Shortlist Ecosystem Services',
- d:{sub:'Score and rank ecosystem services'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Agentic AI',what:'Score and rank the ecosystem services into a shortlist.',
-  needs:[['Qualitative research','Confirmed evidence pack']],produces:['Ranked ES shortlist','Per-category readiness scores'],
-  done:'After this: the ecosystem services are scored and ranked against the nine categories, with the reasoning behind each score.',
-  steps:['AI Assistant loads nine-category Market Readiness framework','AI Assistant scores each ES against confirmed evidence pack','AI Assistant ranks, writes rationale'],arts:['scoring'],
-  guard:'Twin of Shortlist qualified buyers: same mechanic, different criteria. Build once.'}},
+{id:'targets',x:1236,y:500,w:200,t:T.agent,title:'Published-targets scan',
+ d:{sub:'Corporates with public commitments'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'manual check',ic:'ti-user-exclamation',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Surface nearby corporates with public nature or net-zero commitments.',
+  needs:[['Beneficiary map','Beneficiary asset list'],['Library · Buyer sector profiles','Weak and strong signals per sector']],produces:['Warm buyer candidates with cited commitments'],
+  done:'After this: infrastructure operators and water-sourcing businesses near the project are listed with their published commitments, each cross-checked against SBTi and TNFD.',
+  steps:['AI Assistant runs the infrastructure operators prompt','AI Assistant runs the water-sourcing businesses prompt','Caitlin cross-checks SBTi and the TNFD adopters list','Caitlin drops the false positives'],arts:['sectors','sbti','tnfd'],
+  guard:'Two saved prompts, one per buyer type. SBTi and TNFD are manual look-ups today.'},
+},
 
-{id:'gate2',x:1964,y:136,w:172,t:T.gate,title:'Viable supply?',rows:[['yes','→ assess demand'],['no','→ park project']],
+{id:'funding',x:1236,y:670,w:188,t:T.agent,title:'Public funding scan',
+ d:{sub:'Grants that blend with credit sales'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'manual scan',ic:'ti-user-exclamation',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Find public funds matching the planned interventions.',
+  needs:[['Input complete?','Key interventions']],produces:['Eligible funds with amounts','Deadlines on the project timeline'],
+  done:'After this: the grants that could blend with credit sales are logged with eligibility, amount and deadline, and the deadlines sit on the project timeline.',
+  steps:['AI Assistant scans gov.uk, gov.scot and NatureScot','AI Assistant logs eligibility, amounts and deadlines','AI Assistant writes deadlines to the project timeline'],arts:['fundpages'],
+  guard:'A missed deadline cannot be recovered, so deadlines go on the timeline the day they are found.'},
+},
+
+{id:'buyerlist',x:1520,y:136,w:200,t:T.agent,title:'Qualified buyer list',
+ d:{sub:'Merge and qualify the four scans'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Izzie',exec:'Agentic AI',what:'Merge the four scans into one qualified buyer list.',
+  needs:[['Beneficiary map','Asset list'],['Abstraction licences','Licence holders'],['Published-targets scan','Warm candidates'],['Public funding scan','Eligible funds']],produces:['Qualified buyer list per market'],
+  done:'After this: the four scans are one de-duplicated list, each buyer carrying its market, why it cares and its geographic relevance to the catchment.',
+  steps:['AI Assistant merges and de-duplicates the four scans','AI Assistant qualifies each buyer against the schema','AI Assistant groups buyers by market'],arts:['sectors','buyerdb','demandtbl'],
+  guard:'A buyer with no geographic link to the catchment is dropped, not softened.'},
+},
+
+{id:'relations',x:1790,y:136,w:196,t:T.human,title:'GY relationships check',
+ d:{sub:'Who we already know'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'HubSpot unproven',ic:'ti-help-circle',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ form:{owner:'? Trade rep',exec:'Human-led',what:'Capture who GY already knows, so nobody is cold-approached.',
+  needs:[['Qualified buyer list','Buyer list per market']],produces:['Relationship status and named contact per buyer','Warm intro flags'],
+  done:'After this: every buyer carries a relationship status and, where one exists, a named contact. Warm intros are flagged for outreach.',
+  steps:['AI Assistant preps the buyer list for Trade','Trade rep marks who we already know','Trade rep names contacts and flags warm intros','AI Assistant writes status back to the buyer list'],arts:['buyerdb'],
+  guard:'? Open: whether HubSpot can answer this, or it stays a Trade conversation.'},
+},
+
+{id:'gate2',x:2056,y:136,w:190,t:T.gate,title:'Viable demand?',rows:[['yes','→ assess supply'],['no','→ park project']],
  d:{sub:'The early kill gate'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'? Vertical Lead',exec:'Human-led',what:'The first kill gate: is the supply viable?',
-  needs:[['Shortlist ES','Ranked shortlist']],produces:['Yes → Assess demand','No → Park with learnings'],
-  done:'After this: a human has decided whether the supply side is strong enough to justify the demand work.',
-  steps:['Vertical Lead reviews shortlist scores','Vertical Lead decides, logs rationale'],arts:['scoring'],
-  guard:'Criteria come from the scores; the call is human.'}},
+ form:{owner:'? Vertical Lead',exec:'Human-led',what:'The first kill gate: is there credible demand in this catchment?',
+  needs:[['GY relationships check','Qualified buyer list']],produces:['Yes → Assess supply','No → Park with learnings'],
+  done:'After this: a human has decided whether the buyer picture justifies doing the supply work at all.',
+  steps:['Vertical Lead reviews the buyer list','Vertical Lead decides, logs rationale'],arts:[],
+  guard:'? Open: the threshold for a park verdict is not yet defined.'},
+},
 
-{id:'park',x:1500,y:318,w:190,t:T.park,title:'Park project',
+{id:'park',x:1620,y:670,w:196,t:T.park,title:'Park project',
  d:{sub:'Terminal · learnings + revisit date'},r:{sub:'empty',st:'none',dim:true},
- info:'A stopped project never vanishes. Learnings are logged, a revisit date is set, and the record stays queryable. Receives from all three gates.'},
+ info:'A stopped project never vanishes. Learnings are logged, a revisit date is set, and the record stays queryable. Receives from all three gates. Open question: what actually happens to a parked project.'},
 
-{id:'tradecheck',x:2296,y:136,w:162,t:T.human,title:'Trade check-in',
- d:{sub:'Sense-check demand with Trade'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'? Trade rep',exec:'Human-led',what:'Check the shortlist against live buyer conversations.',
-  needs:[['Viable supply?','Approved shortlist']],produces:['Demand flags per ES'],
-  done:'After this: Trade has flagged how hot, warm or cold real buyer demand is for each service.',
-  steps:['AI Assistant preps shortlist summary','Trade rep holds check-in call','Trade rep logs flags'],arts:[],
-  guard:'Demand-side twin of Qualitative research: human signals instead of documents.'}},
+{id:'derive',x:2456,y:136,w:204,t:T.agent,title:'Derive sellable services',
+ d:{sub:'Interventions to ecosystem services'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Derive the ecosystem services the interventions can credibly produce.',
+  needs:[['Viable demand?','Approved buyer list'],['Library · ES rule books','Per-market context']],produces:['Candidate service list per intervention'],
+  done:'After this: each planned intervention is mapped to the services it can produce, with the attached benefits named alongside the headline market.',
+  steps:['AI Assistant maps interventions to rule book markets','AI Assistant names attached benefits per service','AI Assistant pulls registry figures per market','Caitlin reviews the candidate list'],arts:['rulebooks','registries','evidence'],
+  guard:'Peatland restoration means Peatland Carbon Code plus water benefits. Attached benefits are never dropped.'},
+},
 
-{id:'shortbuyers',x:2528,y:136,w:186,t:T.agent,title:'Shortlist qualified buyers',
- d:{sub:'Qualify buyers from the database'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Izzie',exec:'Agentic AI',what:'Find and rank likely buyers for each service.',
-  needs:[['Trade check-in','Demand flags'],['Shortlist ES','Ranked shortlist']],produces:['Qualified buyer list per ES'],
-  done:'After this: there is a ranked list of qualified buyers for each ecosystem service.',
-  steps:['AI Assistant queries buyer database','AI Assistant scores against schema','AI Assistant ranks per ES'],arts:['buyerdb','scoring'],
-  guard:'Buyer database quality is the biggest external dependency.'}},
+{id:'assess',x:2726,y:136,w:204,t:T.human,title:'Assess market maturity',
+ d:{sub:'Maturity, appetite and pricing'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'tribal knowledge',ic:'ti-user-exclamation',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Assess each market for maturity, buyer appetite and pricing.',
+  needs:[['Derive sellable services','Candidate service list'],['Qualified buyer list','Buyers per market']],produces:['Readiness score per market','Indicative pricing per market'],
+  done:'After this: every candidate market carries a readiness score, a pricing view and the reasoning behind both.',
+  steps:['Caitlin scores each market against the nine categories','Caitlin sets indicative pricing from the rule books','Trade rep sense-checks appetite against live conversations','AI Assistant logs each judgement with who and when'],arts:['rulebooks','scoring'],
+  guard:'Undocumented judgement is the risk here. Every call is logged with its author and date.'},
+},
 
-{id:'gate3',x:2784,y:136,w:164,t:T.gate,title:'Viable demand?',rows:[['yes','→ finalise'],['no','→ park project']],
- d:{sub:'Credible demand for the shortlist?'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'? Vertical Lead',exec:'Human-led',what:'The second kill gate: is the demand credible?',
-  needs:[['Shortlist buyers','Buyer list']],produces:['Yes → Finalise','No → Park with learnings'],
-  done:'After this: a human has decided whether there is credible demand for what the land can sell.',
-  steps:['Vertical Lead reviews buyer list','Vertical Lead decides, logs rationale'],arts:[],guard:''}},
+{id:'gate3',x:2996,y:136,w:190,t:T.gate,title:'Viable supply?',rows:[['yes','→ draft verdict'],['no','→ park project']],
+ d:{sub:'Can the land supply the demand?'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'? Vertical Lead',exec:'Human-led',what:'The second kill gate: can the land credibly supply what the buyers want?',
+  needs:[['Assess market maturity','Scored markets']],produces:['Yes → Draft verdict','No → Park with learnings'],
+  done:'After this: a human has decided whether the supply side stands up against the demand already found.',
+  steps:['Vertical Lead reviews the scores','Vertical Lead decides, logs rationale'],arts:['scoring'],
+  guard:'Criteria come from the scores; the call is human.'},
+},
 
-{id:'finalprep',x:3108,y:136,w:170,t:T.agent,title:'Final check prep',
- d:{sub:'Assemble the verdict pack'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Agentic AI',what:'Assemble the one-page go/no-go pack.',
-  needs:[['Viable demand?','Approved buyer list']],produces:['Verdict pack'],
-  done:'After this: the go / no-go pack is assembled, with the shortlist, buyers, indicative revenue and confidence flags on one page.',
-  steps:['AI Assistant compiles all outputs','AI Assistant drafts one-pager','AI Assistant flags confidence per claim'],arts:['verdict'],guard:''}},
+{id:'draft',x:3296,y:136,w:186,t:T.agent,title:'Draft verdict',
+ d:{sub:'Assemble the recommendation'},r:{sub:'not started',st:'pending',dim:true},
+ form:{owner:'Caitlin',exec:'Agentic AI',what:'Assemble the pursue or park recommendation on one page.',
+  needs:[['Viable supply?','Scored markets']],produces:['Verdict pack'],
+  done:'After this: buyers, markets, indicative revenue and confidence flags sit on one page with a recommendation.',
+  steps:['AI Assistant compiles the four chapters','AI Assistant drafts the recommendation','AI Assistant flags confidence per claim'],arts:['verdict'],guard:''},
+},
 
-{id:'gonogo',x:3348,y:136,w:176,t:T.gate,title:'Go / no-go',rows:[['go','→ share + deposit'],['no-go','→ park project']],
+{id:'gonogo',x:3536,y:136,w:200,t:T.gate,title:'Pursue or park?',rows:[['pursue','→ share + hand off'],['park','→ park project']],
  d:{sub:'The verdict · never automated'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Vertical Lead',exec:'Human-led',what:'The final go/no-go verdict. Never automated.',
-  needs:[['Final check prep','Verdict pack']],produces:['Go → Share + deposit','No-go → Park'],
+ form:{owner:'Vertical Lead',exec:'Human-led',what:'The final verdict: pursue this project or park it.',
+  needs:[['Draft verdict','Verdict pack']],produces:['Pursue → Share and hand off','Park → Park with learnings'],
   done:'After this: the Vertical Lead has made the call, to share the map with the client or to park the project.',
-  steps:['Champion presents pack','Vertical Lead decides','Vertical Lead logs verdict and rationale'],arts:['verdict'],
-  guard:'? Verdict format to agree with Vertical Lead'}},
+  steps:['Champion presents the pack','Vertical Lead decides','Vertical Lead logs the verdict and rationale'],arts:['verdict'],
+  guard:'? Open: what happens to a parked project, and when it is revisited.'},
+},
 
-{id:'share',x:3594,y:136,w:164,t:T.det,title:'Share with customer',
+{id:'share',x:3796,y:136,w:168,t:T.det,title:'Share with customer',
  d:{sub:'Deliver the map to the client'},r:{sub:'not started',st:'pending',dim:true},
  form:{owner:'Caitlin',exec:'Fully Automated',what:'Send the finished demand map to the client.',
-  needs:[['Go / no-go','Go verdict']],produces:['Delivered map','Acknowledgement'],
-  done:'After this: the client has the finished demand map, and has confirmed they received it.',
+  needs:[['Pursue or park?','Pursue verdict']],produces:['Delivered map','Acknowledgement'],
+  done:'After this: the client has the finished map, and has confirmed they received it.',
   steps:['AI Assistant renders client pack','Caitlin approves','AI Assistant sends and logs'],arts:[],
-  guard:'Human approval before send, as always'}},
+  guard:'Human approval before send, as always'},
+},
 
-{id:'platform',x:3828,y:136,w:182,t:T.det,title:'Add to GY Data Platform',
- d:{sub:'Deposit structured data'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Harry',exec:'Fully Automated',what:'Save the finished map as structured data.',
-  needs:[['Go / no-go','Go verdict']],produces:['Platform record, provenance per field'],
-  done:'After this: the map is stored as structured data that future Workflows can build on.',
-  steps:['AI Assistant validates against schema','AI Assistant writes via API','AI Assistant logs who, when, version'],arts:[],guard:''}},
+{id:'scrape',x:4024,y:136,w:196,t:T.det,title:'Scrape structured file',
+ d:{sub:'Page to structured data'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'write-only',ic:'ti-arrow-right',bg:'var(--graybg)',fg:'var(--grayd)'},
+ form:{owner:'Harry',exec:'Fully Automated',what:'Scrape the finished page into a structured file.',
+  needs:[['Pursue or park?','Pursue verdict']],produces:['Structured file, one row per buyer and market'],
+  done:'After this: the finished page exists as a structured file the data team can ingest, with provenance on every field.',
+  steps:['AI Assistant scrapes the four chapters','AI Assistant validates against the schema','AI Assistant writes provenance per field'],arts:['schema'],
+  guard:'A field that fails validation is flagged, never dropped.'},
+},
 
-{id:'store',x:3856,y:320,w:126,t:T.store,title:'Store',inert:true,
+{id:'platform',x:4280,y:136,w:186,t:T.det,title:'Hand to data team',
+ d:{sub:'Deposit into the platform'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'no return path',ic:'ti-help-circle',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ form:{owner:'Harry',exec:'Fully Automated',what:'Hand the structured file to the data team.',
+  needs:[['Scrape structured file','Structured file']],produces:['Platform record, provenance per field'],
+  done:'After this: the map is in the data platform, and future workflows can build on it instead of asking again.',
+  steps:['AI Assistant delivers the file','AI Assistant logs who, when and version'],arts:['schema'],
+  guard:'? Open: nothing comes back today, so there is no learning loop.'},
+},
+
+{id:'store',x:4300,y:330,w:146,t:T.store,title:'Data platform',inert:true,
  d:{sub:'Data store'},r:{sub:'',st:'none',dim:true},
- info:'The GY Data Platform. Fields carry provenance chips. Pre-fills every future questionnaire, so nothing is asked twice.'},
+ info:'The GY Data Platform. Fields carry provenance chips. Write-only today: nothing records whether the buyers we identified converted, which is why the next map is no better than the last.'},
 
-{id:'done',x:4080,y:136,w:160,t:T.term,title:'Complete',inert:true,
+{id:'done',x:4526,y:136,w:160,t:T.term,title:'Complete',inert:true,
  d:{sub:'Demand Map done'},r:{sub:'',st:'pending',dim:true},
- info:'Demand Map complete. The run archives, the record lives on in the Data Platform, and the feedback hook fires for the next programme.'}
+ info:'Customer Demand Mapping complete. The run archives and the record lives on in the data platform.'},
+
+{id:'always',x:206,y:850,w:170,t:T.term,title:'Always on',inert:true,
+ d:{sub:'Second clock'},r:{sub:'',st:'none',dim:true},
+ info:'The market intelligence refresh runs on its own clock, every few months, not once per project. It maintains the standing stores that every project run reads.'},
+
+{id:'refresh',x:416,y:850,w:226,t:T.agent,title:'Market intelligence refresh',
+ d:{sub:'Runs every few months'},r:{sub:'not started',st:'pending',dim:true},
+ flag:{t:'every few months',ic:'ti-repeat',bg:'var(--graybg)',fg:'var(--grayd)'},
+ form:{owner:'? Caitlin',exec:'Agentic AI',what:'Refresh the two standing stores so project runs read current context.',
+  needs:[['Always on','Refresh due']],produces:['Updated ES rule books','Updated buyer sector profiles'],
+  done:'After this: both standing stores carry a fresh date, so no project run has to rebuild market context from scratch.',
+  steps:['AI Assistant sweeps Allied Offsets and Ecosystem Marketplace','AI Assistant sweeps the Woodland and Peatland Carbon Codes','Caitlin adds GY knowledge from buyer conversations','AI Assistant republishes both stores with a new date'],arts:['rulebooks','sectors'],
+  guard:'? Open: who owns this refresh, and on what cycle.'},
+},
+
+{id:'dbRules',x:686,y:850,w:200,t:T.store,title:'ES rule books',inert:true,
+ d:{sub:'Supply-side standing store'},r:{sub:'',st:'none',dim:true},
+ flag:{t:'refreshed Oct 2025',ic:'ti-clock-exclamation',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ info:'One page per ecosystem service: readiness, sizing method and market dynamics. Structure is current; the data is roughly a year old, which is why the refresh has its own clock.'},
+
+{id:'dbSectors',x:686,y:1010,w:222,t:T.store,title:'Buyer sector profiles',inert:true,
+ d:{sub:'Demand-side standing store'},r:{sub:'',st:'none',dim:true},
+ flag:{t:'refreshed Oct 2025',ic:'ti-clock-exclamation',bg:'var(--amberbg)',fg:'var(--amberd)'},
+ info:'The demand-side mirror of the rule books: six buyer sectors, each with weak versus strong buying signals. Read by the published-targets scan and by buyer qualification.'}
 ];
 
 const EDGES=[
@@ -429,27 +569,39 @@ const EDGES=[
  {x1:366,y1:162,x2:436,y2:162,s:'done'},
  {x1:608,y1:162,x2:678,y2:162,s:'done'},
  {x1:832,y1:162,x2:902,y2:162,s:'done'},
- {d:'M564,318 V262 H755 V210',dRun:'M564,318 V262 H755 V254',s:'hot',dash:true,from:'followup'},
- {x1:1406,y1:162,x2:1476,y2:162,s:'lock'},
- {x1:1646,y1:162,x2:1716,y2:162,s:'lock'},
- {x1:1894,y1:162,x2:1964,y2:162,s:'lock'},
- {x1:2458,y1:162,x2:2528,y2:162,s:'lock'},
- {x1:2714,y1:162,x2:2784,y2:162,s:'lock'},
- {x1:3278,y1:162,x2:3348,y2:162,s:'lock'},
- {x1:3758,y1:162,x2:3828,y2:162,s:'lock'},
- {x1:4010,y1:162,x2:4080,y2:162,s:'lock'},
- {x1:3919,y1:200,x2:3919,y2:318,s:'lock'}
+ {d:'M564,330 V262 H755 V210',dRun:'M564,330 V262 H755 V254',s:'hot',dash:true,from:'followup'},
+ {x1:1422,y1:162,x2:1520,y2:162,s:'lock'},
+ {d:'M1164,162 V356 H1230',s:'lock'},
+ {d:'M1164,162 V526 H1230',s:'lock'},
+ {d:'M1164,162 V696 H1230',s:'lock'},
+ {d:'M1454,356 H1620 V251',s:'lock'},
+ {d:'M1436,526 H1596 V251',s:'lock'},
+ {d:'M1424,696 H1572 V251',s:'lock'},
+ {x1:1720,y1:162,x2:1790,y2:162,s:'lock'},
+ {x1:1986,y1:162,x2:2056,y2:162,s:'lock'},
+ {x1:2660,y1:162,x2:2726,y2:162,s:'lock'},
+ {x1:2930,y1:162,x2:2996,y2:162,s:'lock'},
+ {x1:3482,y1:162,x2:3536,y2:162,s:'lock'},
+ {x1:3964,y1:162,x2:4024,y2:162,s:'lock'},
+ {x1:4220,y1:162,x2:4280,y2:162,s:'lock'},
+ {x1:4466,y1:162,x2:4526,y2:162,s:'lock'},
+ {x1:4373,y1:200,x2:4373,y2:330,s:'lock'},
+ {x1:376,y1:876,x2:416,y2:876,s:'lock'},
+ {x1:642,y1:876,x2:686,y2:876,s:'lock'},
+ {d:'M642,876 H664 V1036 H686',s:'lock'},
+ {d:'M886,876 H2554 V251',s:'lock',dash:true},
+ {d:'M908,1036 H1150 V526 H1230',s:'lock',dash:true}
 ];
 
 const BRANCHES=[
  {n:'gate1',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H1164 V162 H1230`},
- {n:'gate1',i:1,s:'hot', mk:(x,y)=>`M${x},${y} H${x+26} V346 H654`},
- {n:'gate2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H2216 V162 H2290`},
- {n:'gate2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V340 H1696`},
- {n:'gate3',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3028 V162 H3102`},
- {n:'gate3',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V355 H1696`},
- {n:'gonogo',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3560 V162 H3588`},
- {n:'gonogo',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V370 H1696`}
+ {n:'gate1',i:1,s:'hot', mk:(x,y)=>`M${x},${y} H${x+26} V358 H654`},
+ {n:'gate2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H2386 V162 H2450`},
+ {n:'gate2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V692 H1822`},
+ {n:'gate3',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3226 V162 H3290`},
+ {n:'gate3',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V708 H1822`},
+ {n:'gonogo',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3760 V162 H3790`},
+ {n:'gonogo',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V724 H1822`}
 ];
 
 function portPos(id,i){
@@ -549,7 +701,8 @@ function renderNodes(){
     const dim=MODE==='run'&&m.dim?' dim':'';
     const sel=SELECTED===n.id?' sel':'';
     const outline=MODE==='run'&&m.outline?`outline:2px solid ${m.outline};`:'';
-    const badge=(MODE==='run'&&m.badge)?`<span class="bd" style="background:${m.badge.bg};color:${m.badge.fg}">${m.badge.ic?`<i class="ti ${m.badge.ic}"></i>`:''}${m.badge.t}</span>`:'';
+    const badge=(MODE==='run'&&m.badge)?`<span class="bd" style="background:${m.badge.bg};color:${m.badge.fg}">${m.badge.ic?`<i class="ti ${m.badge.ic}"></i>`:''}${m.badge.t}</span>`
+      :(n.flag?`<span class="bd" style="background:${n.flag.bg};color:${n.flag.fg}"><i class="ti ${n.flag.ic}"></i>${n.flag.t}</span>`:'');
     const rows=n.rows?n.rows.map((r,i)=>{
       let c='var(--blue)', tc='var(--ink2)';
       if(MODE==='run'){
@@ -591,57 +744,83 @@ function openAboutL(){
     <div style="background:#F8F5ED;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;margin-top:10px;font-size:14.5px;color:var(--ink2);line-height:1.7">${det}</div>
   </div>`;
   d.innerHTML=dhead('ti-info-circle','var(--graybg)','var(--grayd)','About Workflow','')
-  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">Customer Demand Mapping is the early-stage analysis that works out what a restoration project can sell, who would buy it, and how firm that picture is.</div>
+  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">Customer Demand Mapping is the analysis that works out who could buy the outcomes of a nature restoration project, what it could sell, and whether it is worth pursuing for GY.</div>
   <div style="height:1px;background:var(--line);margin:18px 0 2px"></div>
   ${chap(1,'Project context',
-    'The facts from onboarding, plus the standard data-needs ask we send the client early. Sets the scene; nothing is analysed here.',
-    '<b>Questions</b> · vision, interventions, outcomes, boundary<br><b>Documents</b> · GIS shapefiles, data-room link, baseline surveys<br><b>Client ask</b> · baseline data available now, markets they pursue, who leads the ES valuation')}
-  ${chap(2,'Markets and supply',
-    'The products this land can sell. Desktop research compiles cited market snapshots from the Hive Mind Library rule books, registries and APIs; qualitative research ground-truths them with buyer and trade team signals; the shortlist then scores what remains.',
-    '<b>Desktop research</b> · rule books, Allied Offsets API, registry pulls, trend scrapes<br><b>Qualitative research</b> · buyer conversations, trade team signals<br><b>Shortlist</b> · 8 nature products, scored and ranked<br><b>Product card</b> · rulebook, eligibility, volume and method, pricing and trend, indicative revenue, competitor supply, funding, confidence and next step')}
-  ${chap(3,'Demand',
-    'Who would buy: tap the GY buyer database, filter to this catchment, and qualify each candidate. Found through six channels; a light competitor scan sits here too.',
-    '<b>Buyer database</b> · filtered to catchment<br><b>Qualification</b> · relevance, hook, contact, engagement status<br><b>Channels</b> · six discovery routes')}
+    'What the project is, where it sits, and what it plans to do. Gathered at the kick-off call and the follow-up ask; nothing is analysed here.',
+    '<b>Questions</b> · vision, interventions, outcomes, boundary<br><b>Documents</b> · GIS shapefiles, data-room link, baseline surveys<br><b>Gate</b> · all 14 must-haves present, or back to the client')}
+  ${chap(2,'Demand',
+    'Who would actually buy, per market, and how warm they already are. Five defined steps, four of them parallel desk scans, rather than an open conversation with Trade.',
+    '<b>Beneficiary map</b> · assets in the catchment plus buffer<br><b>Abstraction licences</b> · who takes water at source<br><b>Published-targets scan</b> · SBTi and TNFD cross-check<br><b>Public funding scan</b> · grants that blend with credit sales<br><b>GY relationships</b> · who we already know, warm intros flagged')}
+  ${chap(3,'Supply',
+    'Which markets the interventions can credibly produce, and how real each market is. Reads the standing stores instead of researching from scratch inside the run.',
+    '<b>Derive</b> · interventions to services, attached benefits named<br><b>Assess</b> · maturity, buyer appetite, pricing<br><b>Standing store</b> · ES rule books, refreshed on their own clock')}
+  ${chap(4,'Verdict',
+    'Pursue this project or park it. On a pursue, the finished page is scraped into a structured file and handed to the data team.',
+    '<b>Verdict pack</b> · buyers, markets, revenue, confidence on one page<br><b>Call</b> · Vertical Lead, never automated<br><b>Handoff</b> · structured file to the data platform, write-only today')}
   <div style="height:1px;background:var(--line);margin:22px 0 0"></div>
   <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Why it exists</div>
-  <div class="pt" style="margin-top:4px">The commercial case for a project cannot be built until you know which revenue streams are real and which buyers are reachable. Without it, the Financial Model and Blended Finance Plan are guesses, and outreach is unfocused. It is also the first proof case for templatising GY's work, so getting its shape right matters beyond this one Workflow.</div></div>`;
+  <div class="pt" style="margin-top:4px">It protects GY from spending advisory effort on routes with no transaction at the end, and it is the foundation the financial model, commercial strategy and Blended Finance Plan are built on. Today it takes days spread over weeks of round-trips across Trade, Capital and specialists.</div>
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">What is still open</div>
+  <div class="pt" style="margin-top:4px">The amber chips on the canvas mark the person-mediated steps: GPAP through George, GIS and abstraction data through Katia, market judgement in Caitlin's head. They are the reason this takes days rather than hours, and the reason the honest v1 is still mostly manual.</div></div>`;
   if(typeof MANUAL!=='undefined'&&MANUAL)d.innerHTML=mScrub(d.innerHTML);
   d.style.display='block';
 }
+
 const ALIST=[
  {id:'questionnaire',ch:1,name:'Questionnaire · Project context',sub:'from Questionnaire · white label v1',ic:'ti-forms',bg:'#F5C64B',fg:'#2C2410'},
  {id:'agenda',ch:1,name:'Agenda · Kick-off call',sub:'document',ic:'ti-file-text',bg:'#378ADD',fg:'#fff'},
  {id:'qemail',ch:1,name:'Email · Project context',sub:'from Client email module',ic:'ti-mail',bg:'#1D9E75',fg:'#fff'},
  {id:'precall',ch:1,name:'Assistant · Pre-call brief',sub:'AI assistant · golden example',ic:'ti-sparkles',bg:'#EF9F27',fg:'#412402'},
  {id:'gapsum',ch:1,name:'Assistant · Gap summary',sub:'AI assistant · golden example',ic:'ti-message',bg:'#EF9F27',fg:'#412402'},
- {id:'rulebooks',ch:2,name:'Library · ES rule books',sub:'Hive Mind Library',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
- {id:'registries',ch:2,name:'Shelf · Supply registries',sub:'connections from Settings',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'reg_bng',ch:2,name:'Registry · DEFRA BNG register',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'reg_gaia',ch:2,name:'Registry · Gaia',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'reg_wcc',ch:2,name:'Registry · Woodland Carbon Code',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'reg_pcc',ch:2,name:'Registry · Peatland Carbon Code',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'reg_wbcp',ch:2,name:'Registry · World Bank carbon price',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'reg_ice',ch:2,name:'Registry · ICE',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'reg_eex',ch:2,name:'Registry · EEX',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
- {id:'evidence',ch:2,name:'Template · Evidence pack',sub:'document',ic:'ti-report',bg:'#D4537E',fg:'#fff'},
- {id:'scoring',ch:2,name:'Scoring · Supply side',sub:'shared engine · both twins',ic:'ti-scale',bg:'#5DCAA5',fg:'#04342C'},
- {id:'buyerdb',ch:3,name:'Database · GY buyers',sub:'HubSpot',ic:'ti-database',bg:'#639922',fg:'#fff'},
- {id:'verdict',ch:4,name:'Template · Verdict pack',sub:'document',ic:'ti-clipboard-check',bg:'#378ADD',fg:'#fff'}
+ {id:'gis',ch:2,name:'Layer · Catchment mapping',sub:'person-mediated · Katia',ic:'ti-map-2',bg:'#215274',fg:'#fff'},
+ {id:'gpap',ch:2,name:'Feed · GPAP planning scrape',sub:'person-mediated · George',ic:'ti-building-community',bg:'#215274',fg:'#fff'},
+ {id:'sepa',ch:2,name:'Data · Abstraction licences',sub:'person-mediated · Katia',ic:'ti-droplet',bg:'#215274',fg:'#fff'},
+ {id:'sbti',ch:2,name:'List · SBTi targets',sub:'manual look-up',ic:'ti-target',bg:'#215274',fg:'#fff'},
+ {id:'tnfd',ch:2,name:'List · TNFD adopters',sub:'manual look-up',ic:'ti-leaf',bg:'#215274',fg:'#fff'},
+ {id:'fundpages',ch:2,name:'Shelf · Public funding sources',sub:'gov.uk · gov.scot · NatureScot',ic:'ti-cash',bg:'#215274',fg:'#fff'},
+ {id:'sectors',ch:2,name:'Library · Buyer sector profiles',sub:'Hive Mind Library',ic:'ti-users-group',bg:'#7F77DD',fg:'#fff'},
+ {id:'demandtbl',ch:2,name:'Template · Buyer tables',sub:'document',ic:'ti-table',bg:'#D4537E',fg:'#fff'},
+ {id:'buyerdb',ch:2,name:'Database · GY buyers',sub:'HubSpot',ic:'ti-database',bg:'#639922',fg:'#fff'},
+ {id:'rulebooks',ch:3,name:'Library · ES rule books',sub:'Hive Mind Library',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
+ {id:'registries',ch:3,name:'Shelf · Supply registries',sub:'connections from Settings',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_bng',ch:3,name:'Registry · DEFRA BNG register',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_gaia',ch:3,name:'Registry · Gaia',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_wcc',ch:3,name:'Registry · Woodland Carbon Code',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_pcc',ch:3,name:'Registry · Peatland Carbon Code',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_wbcp',ch:3,name:'Registry · World Bank carbon price',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_ice',ch:3,name:'Registry · ICE',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'reg_eex',ch:3,name:'Registry · EEX',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
+ {id:'evidence',ch:3,name:'Template · Evidence pack',sub:'document',ic:'ti-report',bg:'#D4537E',fg:'#fff'},
+ {id:'scoring',ch:3,name:'Scoring · Market readiness',sub:'shared engine · nine categories',ic:'ti-scale',bg:'#5DCAA5',fg:'#04342C'},
+ {id:'verdict',ch:4,name:'Template · Verdict pack',sub:'document',ic:'ti-clipboard-check',bg:'#378ADD',fg:'#fff'},
+ {id:'schema',ch:4,name:'Schema · Data platform file',sub:'handoff to the data team',ic:'ti-file-code',bg:'#215274',fg:'#fff'}
 ];
-const ACH={1:'1 · Context',2:'2 · Supply',3:'3 · Demand',4:'4 · Finalise'};
+const ACH={1:'1 · Context',2:'2 · Demand',3:'3 · Supply',4:'4 · Verdict'};
+
 const TOOLMETA={
  questionnaire:{mod:'Questionnaire · white label',mv:'v1',state:'ok'},
  agenda:{mod:null},
  qemail:{mod:'Client email module',mv:'v2',state:'newer'},
  precall:{mod:'Brief assistant module',mv:'v1',state:'drift'},
  gapsum:{mod:'Chaser assistant module',mv:'v1',state:'ok'},
- rulebooks:{mod:'Hive Mind Library shelf',mv:'v1',state:'ok'},
+ rulebooks:{mod:'Hive Mind Library shelf',mv:'v1',state:'stale',fresh:'refreshed Oct 2025'},
  registries:{mod:'Registry connections',mv:'v1',state:'ok'},
  evidence:{mod:null},
  scoring:{mod:'Scoring engine',mv:'v3',state:'ok'},
  buyerdb:{mod:'HubSpot connector',mv:'v2',state:'ok'},
- verdict:{mod:null}
+ verdict:{mod:null},
+ gis:{mod:null,state:'manual',via:'Katia'},
+ gpap:{mod:null,state:'manual',via:'George'},
+ sepa:{mod:null,state:'manual',via:'Katia'},
+ sbti:{mod:null,state:'manual',via:'manual look-up'},
+ tnfd:{mod:null,state:'manual',via:'manual look-up'},
+ fundpages:{mod:null,state:'manual',via:'manual scan'},
+ sectors:{mod:'Hive Mind Library shelf',mv:'v1',state:'stale',fresh:'refreshed Oct 2025'},
+ demandtbl:{mod:null},
+ schema:{mod:null}
 };
+
 function toolUsedBy(id){
   const norm=x=>((x==='checklist'||x==='intake')?'questionnaire':x);
   const target=norm(id);
@@ -658,6 +837,8 @@ function toolUsedBy(id){
 }
 function toolStateBadge(id){
   const m=TOOLMETA[id]||{};
+  if(m.state==='manual')return `<span class="tstate drift"><i class="ti ti-user-exclamation"></i> person-mediated · ${m.via}</span>`;
+  if(m.state==='stale')return `<span class="tstate drift"><i class="ti ti-clock-exclamation"></i> ${m.fresh}</span>`;
   if(!m.mod)return `<span class="tstate custom"><i class="ti ti-pencil"></i> custom · no module</span>`;
   if(m.state==='newer')return `<span class="tstate newer"><i class="ti ti-arrow-up-circle"></i> module update available</span>`;
   if(m.state==='drift')return `<span class="tstate drift"><i class="ti ti-git-branch"></i> drifted from module</span>`;
@@ -687,16 +868,19 @@ function openArtefactsL(){
 
 const NEXT={
  kickoff:[['','sendq']], sendq:[['','receive']], receive:[['','gate1']],
- gate1:[['yes','desktop'],['no','followup']],
+ gate1:[['yes','beneficiary'],['yes','abstraction'],['yes','targets'],['yes','funding'],['no','followup']],
  followup:[['loops to','receive']],
- desktop:[['','qualres']], qualres:[['','shortes']], shortes:[['','gate2']],
- gate2:[['yes','tradecheck'],['no','park']],
- tradecheck:[['','shortbuyers']], shortbuyers:[['','gate3']],
- gate3:[['yes','finalprep'],['no','park']],
- finalprep:[['','gonogo']],
- gonogo:[['go','share'],['no-go','park']],
- share:[['','platform']], platform:[['','done']]
+ beneficiary:[['','buyerlist']], abstraction:[['','buyerlist']], targets:[['','buyerlist']], funding:[['','buyerlist']],
+ buyerlist:[['','relations']], relations:[['','gate2']],
+ gate2:[['yes','derive'],['no','park']],
+ derive:[['','assess']], assess:[['','gate3']],
+ gate3:[['yes','draft'],['no','park']],
+ draft:[['','gonogo']],
+ gonogo:[['pursue','share'],['park','park']],
+ share:[['','scrape']], scrape:[['','platform']], platform:[['','done']],
+ always:[['','refresh']], refresh:[['','dbRules'],['','dbSectors']]
 };
+
 function nextRows(id){
   const nx=NEXT[id]||[];
   if(!nx.length)return `<div class="nsmall">End of the flow.</div>`;
@@ -1004,13 +1188,20 @@ const STEPARTS={
  receive:{0:['intake']},
  gate1:{0:['checklist']},
  followup:{0:['gapsum']},
- desktop:{0:['rulebooks'],1:['reg_bng','reg_gaia','reg_wcc','reg_pcc','reg_wbcp','reg_ice','reg_eex'],2:['rulebooks'],3:['evidence']},
- qualres:{0:['rulebooks']},
- shortes:{1:['scoring']},
- gate2:{0:['scoring']},
- shortbuyers:{0:['buyerdb'],1:['scoring']},
- finalprep:{1:['verdict']},
- gonogo:{0:['verdict']}
+ beneficiary:{0:['gis'],1:['gis'],2:['gpap']},
+ abstraction:{0:['sepa'],3:['demandtbl']},
+ targets:{0:['sectors'],1:['sectors'],2:['sbti','tnfd']},
+ funding:{0:['fundpages'],1:['fundpages']},
+ buyerlist:{0:['demandtbl'],1:['sectors','buyerdb'],2:['demandtbl']},
+ relations:{0:['demandtbl'],1:['buyerdb'],3:['buyerdb']},
+ derive:{0:['rulebooks'],2:['registries','reg_bng','reg_gaia','reg_wcc','reg_pcc','reg_wbcp','reg_ice','reg_eex'],3:['evidence']},
+ assess:{0:['scoring'],1:['rulebooks']},
+ gate3:{0:['scoring']},
+ draft:{0:['verdict'],1:['verdict']},
+ gonogo:{0:['verdict']},
+ scrape:{1:['schema'],2:['schema']},
+ platform:{0:['schema']},
+ refresh:{0:['rulebooks'],1:['rulebooks'],2:['sectors'],3:['rulebooks','sectors']}
 };
 const STEPLOG={
  kickoff:{0:'Brief and agenda emailed to Caitlin · Mon 08:40',1:'Held Tue 1 Jul · 40 min · notes filed',2:'Scope confirmed · 14-item input list logged · Tue 1 Jul'},
@@ -1025,17 +1216,22 @@ const STEPWHO={
  receive:['agent','agent'],
  gate1:['agent','agent','human'],
  followup:['agent','human','human'],
- desktop:['agent','agent','agent','agent'],
- qualres:['human','human','human','agent'],
- shortes:['agent','agent','agent'],
+ beneficiary:['agent','agent','human','human'],
+ abstraction:['human','human','agent','agent'],
+ targets:['agent','agent','human','human'],
+ funding:['agent','agent','agent'],
+ buyerlist:['agent','agent','agent'],
+ relations:['agent','human','human','agent'],
  gate2:['human','human'],
- tradecheck:['agent','human','human'],
- shortbuyers:['agent','agent','agent'],
+ derive:['agent','agent','agent','human'],
+ assess:['human','human','human','agent'],
  gate3:['human','human'],
- finalprep:['agent','agent','agent'],
+ draft:['agent','agent','agent'],
  gonogo:['human','human','human'],
  share:['agent','human','agent'],
- platform:['agent','agent','agent']
+ scrape:['agent','agent','agent'],
+ platform:['agent','agent'],
+ refresh:['agent','agent','human','agent']
 };
 function initSteps(){
   NODES.forEach(n=>{
@@ -1058,7 +1254,7 @@ function initSteps(){
   g('receive',0,'plain','As client files arrive, through the questionnaire or by email, the AI Assistant gathers them into one structured pack and matches each item against the 14 must-haves, so we always know what is in and what is missing. Anything ambiguous gets flagged for a person, and the system never guesses.');
   g('receive',1,'plain','The client gets a short confirmation of what we received, so they are never left wondering whether their files arrived.');
   g('gate1',0,'plain','Checks the pack against the 14 must-have items. Present and readable means complete.');
-  g('gate1',1,'plain','Depending on the result, the run either moves on to supply research or routes back to the client with a list of what is still missing.');
+  g('gate1',1,'plain','Depending on the result, the run either fans out into the four demand scans or routes back to the client with a list of what is still missing.');
   g('gate1',2,'plain','Anything borderline, readable but odd, present but contradictory, goes to Caitlin for a human decision.');
   g('followup',0,'plain','The AI Assistant turns the failed check into a friendly note that explains what is missing and why it matters, drafted for review, never sent by itself.');
   g('kickoff',0,'story',[['Reads the Workflow Brief and past correspondence'],['Drafts the','a:precall'],['and the','a:agenda'],['Emails both to','c:Caitlin']]);
@@ -1066,22 +1262,52 @@ function initSteps(){
   g('kickoff',2,'story',[['Confirms the agreed scope'],['Logs the 14-item input list, so the rest of the run knows exactly what to collect']]);
   g('sendq',0,'story',[['Creates a new','a:checklist'],['Prepares a draft','a:qemail'],['for Caitlin to send to','c:the client']]);
   g('sendq',1,'story',[['Mints the client link for the','a:intake'],['Pre-fills every answer we already hold, so the client is never asked twice']]);
-  g('sendq',2,'story',[['Reviews the prepared email and questionnaire link'],['Approves them. Nothing client-facing goes out on autopilot']]);
-  g('sendq',3,'story',[['Presses send, putting the questionnaire in the inbox of','c:the client'],['This human tap starts the response clock']]);
   g('receive',0,'story',[['Collects and structures incoming files from the','a:intake'],['Matches each item against the 14 must-haves, and flags anything unclear for a person']]);
   g('receive',1,'story',[['Confirms receipt to','c:the client'],['So they are never left wondering whether their files arrived']]);
   g('gate1',0,'story',[['Checks the pack against the','a:checklist'],['All 14 present and readable means complete, with no judgement calls']]);
-  g('gate1',1,'story',[['Routes the run onward to supply research'],['Or back to','c:Follow-up'],['with a list of what is still missing']]);
+  g('gate1',1,'story',[['Fans the run out into the four demand scans'],['Or back to','c:Follow-up'],['with a list of what is still missing']]);
   g('gate1',2,'story',[['Reviews anything borderline'],['Makes the human call']]);
   g('followup',0,'story',[['Turns the failed check into a friendly','a:gapsum'],['Drafted for','c:Caitlin'],['to review before anything is sent']]);
-  g('desktop',1,'plain','Pulls figures from every connected registry, each tagged with its source, date and tier. The registry list lives on the shelf, not here.');
-  g('desktop',1,'story',[['Pulls hard data from every connection on the','a:registries'],['Files each figure with its source, date and tier']]);
-  g('desktop',0,'plain','Reads the land plan and interventions, then maps them to the rule books to see what the project could sell. Only these candidates go forward.');
-  g('desktop',2,'plain','Checks the trend reports for softer signals like buyer appetite and pricing. Bronze-tier data, kept separate from the verified figures.');
-  g('desktop',3,'plain','Applies the GY sizing method to size each market, then writes one cited snapshot per service.');
+  g('beneficiary',0,'plain','Draws the catchment plus a buffer zone, because a buyer with a stake does not stop at the boundary line.');
+  g('beneficiary',1,'plain','Overlays every asset that could benefit from a project outcome: utilities, renewables, distilleries, bottlers and large landholders.');
+  g('beneficiary',2,'plain','Planning applications come from GPAP through George by hand. England only, and the slowest part of this step.');
+  g('beneficiary',2,'guard','Person-mediated. GPAP has no direct route today, and it does not cover Scotland.');
+  g('beneficiary',0,'story',[['Draws catchment plus buffer on the','a:gis'],['A stake in the outcome does not stop at the boundary']]);
+  g('beneficiary',2,'story',[['Requests the','a:gpap'],['from','c:George'],['England only, and by hand']]);
+  g('abstraction',0,'plain','Pulls the licence holders in the catchment. SEPA for Scotland, Katia licence files for England, so coverage is uneven.');
+  g('abstraction',0,'guard','Person-mediated through Katia either way.');
+  g('abstraction',2,'plain','Flags drought and water-quality exposure per holder, because exposure is what turns a licence holder into a buyer.');
+  g('abstraction',0,'story',[['Pulls the','a:sepa'],['for the catchment, via','c:Katia']]);
+  g('targets',0,'plain','Runs the saved prompt for infrastructure operators with biodiversity or net-zero targets near the project.');
+  g('targets',1,'plain','Runs the second saved prompt, for water-sourcing businesses in the catchment.');
+  g('targets',2,'plain','Cross-checks each candidate against SBTi and the TNFD adopters list, which separates a validated target from a press release.');
+  g('targets',2,'guard','Both look-ups are manual today.');
+  g('targets',2,'story',[['Cross-checks against','a:sbti'],['and','a:tnfd'],['A commitment is not a validated target']]);
+  g('funding',0,'plain','Scans gov.uk, gov.scot and NatureScot for funds that match the planned interventions.');
+  g('funding',2,'plain','Writes every deadline to the project timeline the day it is found, because a missed deadline cannot be recovered.');
+  g('buyerlist',0,'plain','Merges the four scans and de-duplicates, since a water company can arrive through three of them.');
+  g('buyerlist',1,'plain','Qualifies each buyer against the schema: commitment, why they care, geographic relevance, markets they would buy, opportunity angle.');
+  g('buyerlist',1,'story',[['Qualifies against the','a:sectors'],['Checks the','a:buyerdb'],['Drops anything with no link to the catchment']]);
+  g('relations',1,'plain','Trade marks who GY already knows, so warm relationships are used and nobody is cold-approached.');
+  g('relations',1,'guard','? Open: whether HubSpot can answer this, or it stays a Trade conversation.');
+  g('derive',0,'plain','Maps each intervention to the rule book markets it can credibly produce, with the attached benefits named.');
+  g('derive',2,'plain','Pulls the hard figures from every connected registry, each tagged with source, date and tier.');
+  g('derive',2,'story',[['Pulls hard data from every connection on the','a:registries'],['Files each figure with its source, date and tier']]);
+  g('assess',0,'plain','Scores each market against the nine readiness categories: operational readiness, governance, MRV, supply and demand scale, regulatory stability.');
+  g('assess',1,'plain','Sets indicative pricing from the rule books and the sizing methods behind them.');
+  g('assess',2,'plain','Trade sense-checks appetite against live buyer conversations, which is where the desktop picture usually gets corrected.');
+  g('assess',3,'guard','Every judgement is logged with its author and date, so this stops being tribal knowledge.');
+  g('scrape',0,'plain','Scrapes the four chapters off the finished page into one structured file, one row per buyer and market.');
+  g('scrape',1,'story',[['Validates against the','a:schema'],['A field that fails is flagged, never dropped']]);
+  g('platform',1,'guard','? Open: nothing comes back from the platform today, so there is no learning loop.');
+  g('refresh',0,'plain','Sweeps Allied Offsets and Ecosystem Marketplace for market movement since the last refresh.');
+  g('refresh',2,'plain','Adds the GY knowledge that never appears in a report: what buyers and Trade have actually said.');
+  g('refresh',3,'plain','Republishes both standing stores with a new date, so every project run can see how fresh its context is.');
+  g('refresh',3,'guard','? Open: who owns this refresh, and on what cycle.');
 }
+
 function buildStamps(){
-  const ORDER=['kickoff','sendq','receive','gate1','followup','desktop','qualres','shortes','gate2','park','tradecheck','shortbuyers','gate3','finalprep','gonogo','share','platform','done'];
+  const ORDER=['kickoff','sendq','receive','gate1','followup','beneficiary','abstraction','targets','funding','buyerlist','relations','gate2','park','derive','assess','gate3','draft','gonogo','share','scrape','platform','done','refresh'];
   FLOW=ORDER.filter(id=>{const n=NODES.find(x=>x.id===id);return n&&n.form&&n.form.steps&&n.form.steps.length;});
   const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   let cur=new Date(2025,5,30,9,0); // Mon 30 Jun 2025, 09:00
@@ -1662,7 +1888,7 @@ var MSCRUB=[
  [/via API/g,'by hand']
 ];
 function mScrub(s){ if(!MANUAL||typeof s!=='string')return s; var o=s; for(var i=0;i<MSCRUB.length;i++)o=o.replace(MSCRUB[i][0],MSCRUB[i][1]); return o; }
-var DATA_ARTS={registries:1,reg_bng:1,reg_gaia:1,reg_wcc:1,reg_pcc:1,reg_wbcp:1,reg_ice:1,reg_eex:1,buyerdb:1};
+var DATA_ARTS={registries:1,reg_bng:1,reg_gaia:1,reg_wcc:1,reg_pcc:1,reg_wbcp:1,reg_ice:1,reg_eex:1,buyerdb:1,schema:1};
 function ownerOf(n){ return (((n.form&&n.form.owner)||'').replace(/^\?\s*/,'').trim())||'Caitlin'; }
 function applyManualLens(){
   if(!MANUAL)return;
@@ -1768,10 +1994,6 @@ document.addEventListener('keydown',e=>{
 renderAll();
 if(EMBED_DRAWER){
   openNode(EMBED_DRAWER);
-  // Host pages can switch the drawer to another node without reloading this page.
-  window.addEventListener('message',function(e){
-    if(e.data&&e.data.gy==='open'&&e.data.id) openNode(e.data.id);
-  });
   // The drawer's own X should close the drawer in the parent (Home) page.
   document.addEventListener('click',e=>{
     if(e.target.closest('.sh .x')){
@@ -1787,11 +2009,6 @@ if(EMBED_DRAWER){
     }
   },true);
 }
-/* ?zoom=NN : start the canvas at a reduced scale. Used by the document page's
-   workflow drawer, where the flow is a calm backdrop, not the workspace. */
-try{ var _qz=new URLSearchParams(location.search).get('zoom');
-     if(_qz) setZoom(parseFloat(_qz)); }catch(_){}
-
 (function(){
   if(EMBED_DRAWER)return;
   const sc=document.querySelector('.scroll');

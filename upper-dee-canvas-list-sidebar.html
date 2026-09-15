@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Demand Mapping · Canvas prototype</title>
+<title>Upper Dee · canvas + list sidebar (experiment) · Canvas</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,15 +15,97 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';document.head.appendChild(s);"></script>
 
 <!-- per-Deliverable canvas size (defaults live in gy-canvas.css) -->
-<style>.canvas{--cw:5460px;--ch:1600px}.world{--ww:4260px;--wh:470px}
-/* PDF export: keep groups whole across page breaks */
-.dgrp,.docrow,.dsec .cbox>div,.gbox>.grow{break-inside:avoid;page-break-inside:avoid}
-.dh2{break-after:avoid;page-break-after:avoid}
-.dsec{break-inside:auto;page-break-inside:auto}</style>
+<style>.canvas{--cw:3300px;--ch:1200px}.world{--ww:2500px;--wh:480px}#pdfBtn,.floatBL,.chapnav{display:none!important}
+.leaddone{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--greend)}
+.leaddone .ti{font-size:15px}
+.ledit:focus{box-shadow:none!important;outline:none!important}
+.cbox{border:none!important;background:transparent!important;box-shadow:none!important;padding-left:0!important;padding-right:0!important;margin-top:8px!important}
+.cbox .ledit{padding-top:4px}
+.pq{margin:4px 0 8px}
+.pq>summary{list-style:none;cursor:pointer;color:var(--ink3);font-size:14px;display:inline-flex;align-items:center;gap:6px;user-select:none;padding:2px 0}
+.pq>summary::-webkit-details-marker{display:none}
+.pq>summary::before{content:'\203A';font-size:16px;line-height:1;transition:transform .15s;display:inline-block}
+.pq[open]>summary::before{transform:rotate(90deg)}
+.pq ul{margin:6px 0 6px;padding-left:20px;color:var(--ink2);font-size:14px;line-height:1.65}
+.pq li{margin:3px 0}
+.pq .pqg{font-weight:600;color:var(--ink2);font-size:13px;margin:8px 0 2px}
+/* Result pop-out: dark header bar, readable cream body */
+#notionPanel .leadres{color:var(--ink)}
+#notionPanel .spbody{background-image:none}
+#notionPanel .leadres .dhead{margin:0 0 22px;padding-bottom:20px}
+/* WYSIWYG bullets align with the other content, not indented far */
+.leadres .ledit ul,.leadres ul.ledit{padding-left:18px!important;margin:2px 0!important}
+.leadres .ledit li,.leadres ul.ledit li{margin:3px 0}
+.taskchk{display:inline-flex;align-items:center;color:var(--ink3);cursor:pointer;font-size:18px;transition:color .12s}
+.taskchk:hover{color:var(--green)}
+.taskchk.done{color:var(--green);cursor:default}
+.accright{display:inline-flex;align-items:center;gap:8px}
+.tacc.open .taskchk{display:none}
+.resultdoc{outline:none}
+/* Upper Dee result: callouts, tables, verdict */
+.rshort{display:flex;gap:10px;background:var(--greenbg);border:1px solid #D8E4C7;border-radius:12px;padding:12px 14px;margin:4px 0 16px;font-size:15px;line-height:1.5;color:var(--ink)}
+.rshort .ti{color:var(--greend);font-size:17px;margin-top:1px;flex:none}
+.rnote{font-size:13.5px;color:var(--ink3);line-height:1.5;margin:2px 0 12px}
+.rfld{margin:14px 0}
+.rlab{font-size:12.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+.rfld .dp{padding-top:0}
+.rtbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0 4px}
+.rtbl th{text-align:left;font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink3);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:bottom}
+.rtbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2);line-height:1.45}
+.rtbl td.rm{font-weight:600;color:var(--ink)}
+.rmk{font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.rmk.g{background:var(--greenbg);color:var(--greend)}
+.rmk.o{background:var(--amberbg);color:var(--amberd)}
+.rmk.r{background:#F7E7DE;color:#8a3e28}
+.rdsub{font-size:15px;font-weight:600;margin:18px 0 4px}
+.rverdict{background:#FBF3D6;border:1px solid #F0E3A8;border-radius:14px;padding:16px 18px;margin-top:22px}
+.rvttl{font-family:var(--serif);font-size:19px;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rvttl .ti{color:#B7891F}
+.rvbody{font-size:15px;line-height:1.55;color:var(--ink)}
+.rvbody ul{margin:8px 0;padding-left:20px}
+.rvbody li{margin:4px 0}
+.rvgo{margin-top:12px;font-weight:600}
+.udedit,.udedit:focus{outline:none}
+.udedit :focus{outline:none}
+
+/* ===== overlay combined-list sidebar (experiment) ===== */
+#svpanel{display:none!important}
+.allpanel{position:fixed;top:61px;right:0;bottom:0;width:420px;background:#fff;border-left:1px solid var(--line);overflow:auto;z-index:60;padding:16px 18px 70px;box-shadow:-10px 0 30px rgba(31,31,29,.10);transform:translateX(102%);transition:transform .22s ease}
+.allpanel.open{transform:none}
+.ap-x{margin-left:auto;width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.ap-x:hover{background:var(--graybg);color:var(--ink)}
+.ap-x .ti{font-size:17px}
+.ap-h{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.ap-t{font-size:19px;font-weight:500;display:block}
+.ap-s{font-size:12.5px;color:var(--ink3)}
+.allpanel .ssec{scroll-margin-top:12px;border-radius:12px;padding:8px 8px 10px;margin-bottom:14px}
+.allpanel .ssec.flash{animation:apflash 1.3s ease}
+@keyframes apflash{0%{background:#FBF1CE}100%{background:transparent}}
+.allpanel .ssh{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.allpanel .ssn{width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.allpanel .sst{font-size:15px;font-weight:600}
+.allpanel .stlist{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.allpanel .srow{display:flex;align-items:flex-start;gap:10px;padding:11px 13px}
+.allpanel .srow + .srow{border-top:1px solid var(--line)}
+.allpanel .srow.done{background:var(--greenbg)}
+.allpanel .src{flex:1;min-width:0}
+.allpanel .stt{font-size:14px;color:var(--ink);line-height:1.3}
+.allpanel .srow.done .stt{color:var(--ink2)}
+.allpanel .sow{font-size:12px;color:var(--ink3);margin-top:2px}
+.allpanel .nowtag{color:var(--amberd);font-weight:600}
+.allpanel .schk{width:19px;height:19px;flex:none;border:1.6px solid var(--line2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:transparent;margin-top:1px;cursor:pointer;transition:border-color .12s,background .12s,color .12s}
+.allpanel .schk .ti{font-size:13px}
+.allpanel .schk:hover{border-color:var(--ink3)}
+.allpanel .schk.on{background:var(--greend);border-color:var(--greend);color:#fff}
+.allpanel .tn2{margin-top:1px}
+.allpanel .sdesc{font-size:12px;color:var(--ink2);line-height:1.4;margin-top:2px}
+.allpanel .tn2{flex:none}
+.allpanel .taskchk{cursor:pointer;margin-left:auto;flex:none}
+</style>
 </head>
 <body>
 
-<script>window.GYNAV={"active": "demand-mapping", "arts": "demand"};</script>
+<script>window.GYNAV={"active":"upper-dee-mapping","arts":null};</script>
 <script src="gy-nav.js"></script>
 <script src="gy-canvas.js"></script>
 <script src="gy-canvas-engine.js"></script>
@@ -33,7 +115,7 @@
 <div class="row1" style="position:relative">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <span class="crumb" onclick="location.href='deliverables-landing.html'">Workflows</span><span class="sep">›</span>
-  <span class="title" id="crumbTitle">Customer Demand Mapping</span>
+  <span class="title" id="crumbTitle">Upper Dee: canvas + list sidebar</span>
   <span id="liveBadge" style="font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;background:var(--greenbg);color:var(--greend);margin-left:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span>
   <span class="spacer"></span>
   <div class="avwrap">
@@ -126,12 +208,11 @@ function setRun(r){
 }
 
 const BANDS=[
-  {x:16,  w:1120, t:'1 · Gather project context', short:'1 · Context',  run:'in progress', cur:true},
-  {x:1196,w:980,  t:'2 · Assess supply',           short:'2 · Supply',   run:'not started'},
-  {x:2256,w:752,  t:'3 · Assess demand',           short:'3 · Demand',   run:'not started'},
-  {x:3068,w:1212, t:'4 · Finalise',                short:'4 · Finalise', run:'not started'}
+  {x:16,  w:648, t:'1 · Project context', short:'1 · Context', run:'blueprint', cur:true},
+  {x:696, w:474, t:'2 · Supply',          short:'2 · Supply',  run:'not started'},
+  {x:1200,w:760, t:'3 · Demand',          short:'3 · Demand',  run:'not started'}
 ];
-const CHAPNAV=true;
+const CHAPNAV=false;
 
 const T={
   human:{bg:'var(--amberbg)',fg:'var(--amberd)',ic:'ti-user'},
@@ -279,177 +360,87 @@ const EXECS=['Human-led','Agentic AI','Fully Automated'];
 const NODES=[
 {id:'start',x:40,y:136,w:132,t:T.term,title:'Start',inert:true,
  d:{sub:''},r:{sub:'',st:'done'},
- info:'Terminals carry no work. A run begins here when launched from the Programme OS, from Slack, or from Claude.'},
+ info:'Terminals carry no work. A run begins here when someone on the team starts it, before we bid.'},
 
-{id:'kickoff',x:206,y:136,w:160,t:T.human,title:'Kick-off call',
- d:{sub:'Align scope with the client'},r:{who:'Caitlin',st:'done',dim:true},
- form:{owner:'Caitlin',exec:'Human-led',what:'Agree scope and the input list with the client.',
-  needs:[['Start','Run started']],produces:['Kick-off notes','Agreed input list'],
-  done:'After this: the project scope is agreed with the client, and the exact list of inputs we need from them is locked in.',
-  steps:['AI Assistant drafts brief and agenda','Caitlin holds call','Caitlin confirms scope, logs input list'],arts:['agenda','precall'],
-  guard:'Scope mismatch → pause, back to commercial owner'},
- run:{status:'done · Tue 1 Jul · 40 min',happened:'Call held. Scope confirmed, 14-item input list agreed. Notes filed and linked.',log:'✓ brief sent · ✓ call held · ✓ input list logged',cta:'Open notes'}},
+{id:'ctx',x:214,y:136,w:172,t:T.human,title:'Capture project context',
+ d:{sub:'Objective, site, interventions, outcomes'},r:{who:'Caitlin',st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Capture the project context the rest of the map builds on.',
+  needs:[['Start','Lead enquiry']],produces:['Project context (chapter 1)'],
+  done:'After this: objective, site, interventions, outcomes and constraints are captured.',
+  steps:['Caitlin captures the objective','Caitlin describes the site and current land use','Caitlin lists the planned interventions','Caitlin notes the target habitats and outcomes','Caitlin notes constraints and dependencies'],arts:[],guard:''}},
 
-{id:'sendq',x:436,y:136,w:172,t:T.det,title:'Send Questionnaire',
- d:{sub:'Send the intake pack to the client'},r:{st:'active',prog:1,cur:1,note:'Sending to the client',outline:'var(--blue)'},
- form:{owner:'Caitlin',exec:'Fully Automated',what:'Send the client the intake pack and questionnaire.',
-  needs:[['Kick-off call','Agreed input list']],produces:['Intake link','Request log entry'],
-  done:'After this: the client has the questionnaire link, and the clock on their response is running.',
-  steps:['AI Assistant prepares email and questionnaire','Caitlin sends email to client'],arts:['checklist','qemail','intake'],
-  guard:'Client-facing sends always need a human tap'},
- run:{status:'active · sending to the client',happened:'Email and questionnaire prepared, link minted with 6 fields pre-filled. Caitlin to send.',log:'✓ prepare · ◌ send',cta:'View draft email',human:true}},
+{id:'openq',x:452,y:136,w:170,t:T.human,title:'Note open questions',
+ d:{sub:'Decisions and data gaps'},r:{who:'Caitlin',st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Flag the decisions and data gaps that gate the strategy.',
+  needs:[['Capture project context','Project context']],produces:['Open questions and dependencies'],
+  done:'After this: the gating decisions and data gaps are written down.',
+  steps:['Caitlin decides whether a TEV is needed','Caitlin flags demand-led vs supply-led','Caitlin notes data gaps such as the 2015 peat survey'],arts:[],guard:''}},
 
-{id:'receive',x:678,y:136,w:154,t:T.data,title:'Receive input',
- d:{sub:'Client materials come in'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Fully Automated',what:'Collect the client files into one structured pack.',
-  needs:[['Send Questionnaire','Intake link']],produces:['Structured input pack','Receipt note'],
-  done:'After this: every client file is captured in one structured pack, and the client has been told we received it.',
-  steps:['AI Assistant gathers and structures input','AI Assistant confirms receipt to client'],arts:['intake'],
-  guard:'Unclear items are flagged for a human, never guessed'},
-},
+{id:'candidates',x:724,y:136,w:174,t:T.human,title:'Map candidate services',
+ d:{sub:'Interventions to markets'},r:{who:'Caitlin',st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Turn the interventions into candidate ecosystem service markets.',
+  needs:[['Note open questions','Open questions'],['Capture project context','Project context']],produces:['Candidate market list'],
+  done:'After this: each intervention is matched to the markets it could sell into.',
+  steps:['Caitlin derives candidate markets from the interventions','Caitlin notes which intervention drives each market'],arts:[],guard:''}},
 
-{id:'gate1',x:902,y:136,w:190,t:T.gate,title:'Input complete?',rows:[['yes','→ assess supply'],['no','→ follow-up']],
- d:{sub:'Checks the 14 must-haves'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Fully Automated',what:'Check the pack has all 14 must-have items.',
-  needs:[['Receive input','Structured input pack']],produces:['Pass → Assess supply','Fail → gap list'],
-  done:'After this: we know whether the pack is complete. It either moves on to supply work, or goes back to the client as a gap list.',
-  steps:['AI Assistant checks 14 must-haves','AI Assistant sends run onward, or to Follow-up','Caitlin reviews borderline items'],arts:['checklist'],
-  guard:'Missing data is never inferred'},
-},
+{id:'rulebooks',x:966,y:136,w:180,t:T.human,title:'Pull market context',
+ d:{sub:'From the ES rule books'},r:{who:'Caitlin',st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Add market context to each candidate from the ES rule books.',
+  needs:[['Map candidate services','Candidate market list'],['Hive Mind Library','ES rule books']],produces:['Supply table (chapter 2)'],
+  done:'After this: each candidate market carries readiness, sizing and dynamics from the rule books.',
+  steps:['Caitlin opens the matching ES rule book per market','Caitlin pulls readiness, indicative sizing and market dynamics','Caitlin names the anchor market'],arts:[],guard:''}},
 
-{id:'followup',x:480,y:318,w:168,t:T.human,title:'Follow-up ↺',
- d:{sub:'Close gaps with the client'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'? Caitlin or Emily',exec:'Human-led',what:'Chase the client for the missing items.',
-  needs:[['Input complete?','Gap list']],produces:['Updated input','Revised ETA'],
-  done:'After this: the client knows exactly what is still missing, and when they will send it.',
-  steps:['AI Assistant drafts gap summary','Caitlin calls, or sends if minor','Caitlin logs ETA, restarts wait clock'],arts:['gapsum'],
-  guard:'Two chases silent → escalate to client sponsor'},
-},
+{id:'beneficiaries',x:1232,y:136,w:176,t:T.human,title:'Map beneficiaries',
+ d:{sub:'Manual map, before tools'},r:{who:'Caitlin',st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Manually map who around the site could benefit, before running tools.',
+  needs:[['Pull market context','Supply table']],produces:['Beneficiary map'],
+  done:'After this: utilities, NSIPs, at-risk assets and local businesses around the site are listed.',
+  steps:['Caitlin maps utilities with assets in the catchment','Caitlin maps NSIPs and infrastructure at risk','Caitlin maps local businesses and SMEs with an interest'],arts:[],guard:''}},
 
-{id:'desktop',x:1236,y:136,w:170,t:T.agent,title:'Desktop research',
- d:{sub:'Registries, APIs and trend reports'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Agentic AI',what:'Build a cited market snapshot for each ecosystem service.',
-  needs:[['Input complete?','Complete input pack'],['Hive Mind Library','Latest ES rule books + sizing methods']],produces:['Candidate service list','Market evidence pack, cited','Indicative sizing per market','Stale rule book flags'],
-  done:'After this: the project has a candidate service list, and every candidate carries a cited market snapshot with an indicative market size.',
-  steps:['AI Assistant derives candidate services from project interventions','AI Assistant pulls hard data from registries','AI Assistant researches market signals in trend reports','AI Assistant sizes each market and compiles cited snapshots'],arts:['rulebooks','registries','evidence'],
-  guard:'Bronze soft-data findings always carry source links and are never blended with verified hard data. Estimates the methodology flags as finger-in-the-air are labelled as such.'}},
+{id:'demandtools',x:1480,y:136,w:178,t:T.human,title:'Run demand tools',
+ d:{sub:'GPAP, licences, scans'},r:{who:'Caitlin',st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Run the standard desktop-research tools to fill the gaps the manual map misses.',
+  needs:[['Map beneficiaries','Beneficiary map']],produces:['Tool-based demand signals'],
+  done:'After this: the tool-based demand signals are gathered per market.',
+  steps:['Caitlin runs a GPAP analysis for BNG demand, via Rebalance','Caitlin maps abstraction licences for water demand, via Katia and GIS','Caitlin does a quick carbon demand appraisal','Caitlin scans published TNFD, CSRD and biodiversity targets, via Google or Claude'],arts:[],guard:''}},
 
-{id:'qualres',x:1476,y:136,w:170,t:T.human,title:'Qualitative research',
- d:{sub:'Buyer and trade team signals'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Human-led',what:'Sense-check the desktop findings against real market signals.',
-  needs:[['Desktop research','Market evidence pack']],produces:['Buyer and trade signals per service','Corrections to the desktop picture'],
-  done:'After this: the desktop evidence is confirmed or corrected by live buyer conversations and trade team signals.',
-  steps:['Caitlin reviews desktop snapshots','Caitlin checks signals from active buyer conversations','Trade team flags shifts desktop analysis missed','AI Assistant logs each signal against its service'],arts:['rulebooks'],
-  guard:'Tribal knowledge gets logged, never lost: every verbal signal is noted with who said it and when.'}},
+{id:'buyers',x:1728,y:136,w:186,t:T.human,title:'Compile buyers per market',
+ d:{sub:'Ranked buyers per market'},r:{who:'Caitlin',st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Bring it together into a ranked buyer list per market.',
+  needs:[['Run demand tools','Tool-based demand signals']],produces:['Demand tables (chapter 3)'],
+  done:'After this: each market has a buyer list with why relevant, hook and relationship status.',
+  steps:['Caitlin adds existing GY relationships and who trade is talking to','Caitlin qualifies buyers per market','Caitlin fills the buyer table per market'],arts:[],guard:''}},
 
-{id:'shortes',x:1716,y:136,w:178,t:T.agent,title:'Shortlist Ecosystem Services',
- d:{sub:'Score and rank ecosystem services'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Agentic AI',what:'Score and rank the ecosystem services into a shortlist.',
-  needs:[['Qualitative research','Confirmed evidence pack']],produces:['Ranked ES shortlist','Per-category readiness scores'],
-  done:'After this: the ecosystem services are scored and ranked against the nine categories, with the reasoning behind each score.',
-  steps:['AI Assistant loads nine-category Market Readiness framework','AI Assistant scores each ES against confirmed evidence pack','AI Assistant ranks, writes rationale'],arts:['scoring'],
-  guard:'Twin of Shortlist qualified buyers: same mechanic, different criteria. Build once.'}},
+{id:'gate',x:2000,y:136,w:192,t:T.gate,title:'Investable?',rows:[['yes','→ proceed to bid'],['no','→ park']],
+ d:{sub:'Does the case add up?'},r:{st:''},
+ form:{owner:'Caitlin',exec:'Human-led',what:'Decide whether the commercial case adds up.',
+  needs:[['Compile buyers per market','Demand tables']],produces:['Yes → Proceed to bid','No → Park with learnings'],
+  done:'After this: a human has decided whether to bid.',
+  steps:['Caitlin weighs supply against demand per market','Caitlin writes the verdict and the go / no-go'],arts:[],guard:''}},
 
-{id:'gate2',x:1964,y:136,w:172,t:T.gate,title:'Viable supply?',rows:[['yes','→ assess demand'],['no','→ park project']],
- d:{sub:'The early kill gate'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'? Vertical Lead',exec:'Human-led',what:'The first kill gate: is the supply viable?',
-  needs:[['Shortlist ES','Ranked shortlist']],produces:['Yes → Assess demand','No → Park with learnings'],
-  done:'After this: a human has decided whether the supply side is strong enough to justify the demand work.',
-  steps:['Vertical Lead reviews shortlist scores','Vertical Lead decides, logs rationale'],arts:['scoring'],
-  guard:'Criteria come from the scores; the call is human.'}},
+{id:'bid',x:2264,y:136,w:150,t:T.term,title:'Proceed to bid',
+ d:{sub:''},r:{sub:'',st:'none'},
+ info:'The project clears the bar. It goes into the bid, and on onboarding runs the fuller Customer Demand Mapping.'},
 
-{id:'park',x:1500,y:318,w:190,t:T.park,title:'Park project',
- d:{sub:'Terminal · learnings + revisit date'},r:{sub:'empty',st:'none',dim:true},
- info:'A stopped project never vanishes. Learnings are logged, a revisit date is set, and the record stays queryable. Receives from all three gates.'},
-
-{id:'tradecheck',x:2296,y:136,w:162,t:T.human,title:'Trade check-in',
- d:{sub:'Sense-check demand with Trade'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'? Trade rep',exec:'Human-led',what:'Check the shortlist against live buyer conversations.',
-  needs:[['Viable supply?','Approved shortlist']],produces:['Demand flags per ES'],
-  done:'After this: Trade has flagged how hot, warm or cold real buyer demand is for each service.',
-  steps:['AI Assistant preps shortlist summary','Trade rep holds check-in call','Trade rep logs flags'],arts:[],
-  guard:'Demand-side twin of Qualitative research: human signals instead of documents.'}},
-
-{id:'shortbuyers',x:2528,y:136,w:186,t:T.agent,title:'Shortlist qualified buyers',
- d:{sub:'Qualify buyers from the database'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Izzie',exec:'Agentic AI',what:'Find and rank likely buyers for each service.',
-  needs:[['Trade check-in','Demand flags'],['Shortlist ES','Ranked shortlist']],produces:['Qualified buyer list per ES'],
-  done:'After this: there is a ranked list of qualified buyers for each ecosystem service.',
-  steps:['AI Assistant queries buyer database','AI Assistant scores against schema','AI Assistant ranks per ES'],arts:['buyerdb','scoring'],
-  guard:'Buyer database quality is the biggest external dependency.'}},
-
-{id:'gate3',x:2784,y:136,w:164,t:T.gate,title:'Viable demand?',rows:[['yes','→ finalise'],['no','→ park project']],
- d:{sub:'Credible demand for the shortlist?'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'? Vertical Lead',exec:'Human-led',what:'The second kill gate: is the demand credible?',
-  needs:[['Shortlist buyers','Buyer list']],produces:['Yes → Finalise','No → Park with learnings'],
-  done:'After this: a human has decided whether there is credible demand for what the land can sell.',
-  steps:['Vertical Lead reviews buyer list','Vertical Lead decides, logs rationale'],arts:[],guard:''}},
-
-{id:'finalprep',x:3108,y:136,w:170,t:T.agent,title:'Final check prep',
- d:{sub:'Assemble the verdict pack'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Agentic AI',what:'Assemble the one-page go/no-go pack.',
-  needs:[['Viable demand?','Approved buyer list']],produces:['Verdict pack'],
-  done:'After this: the go / no-go pack is assembled, with the shortlist, buyers, indicative revenue and confidence flags on one page.',
-  steps:['AI Assistant compiles all outputs','AI Assistant drafts one-pager','AI Assistant flags confidence per claim'],arts:['verdict'],guard:''}},
-
-{id:'gonogo',x:3348,y:136,w:176,t:T.gate,title:'Go / no-go',rows:[['go','→ share + deposit'],['no-go','→ park project']],
- d:{sub:'The verdict · never automated'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Vertical Lead',exec:'Human-led',what:'The final go/no-go verdict. Never automated.',
-  needs:[['Final check prep','Verdict pack']],produces:['Go → Share + deposit','No-go → Park'],
-  done:'After this: the Vertical Lead has made the call, to share the map with the client or to park the project.',
-  steps:['Champion presents pack','Vertical Lead decides','Vertical Lead logs verdict and rationale'],arts:['verdict'],
-  guard:'? Verdict format to agree with Vertical Lead'}},
-
-{id:'share',x:3594,y:136,w:164,t:T.det,title:'Share with customer',
- d:{sub:'Deliver the map to the client'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Caitlin',exec:'Fully Automated',what:'Send the finished demand map to the client.',
-  needs:[['Go / no-go','Go verdict']],produces:['Delivered map','Acknowledgement'],
-  done:'After this: the client has the finished demand map, and has confirmed they received it.',
-  steps:['AI Assistant renders client pack','Caitlin approves','AI Assistant sends and logs'],arts:[],
-  guard:'Human approval before send, as always'}},
-
-{id:'platform',x:3828,y:136,w:182,t:T.det,title:'Add to GY Data Platform',
- d:{sub:'Deposit structured data'},r:{sub:'not started',st:'pending',dim:true},
- form:{owner:'Harry',exec:'Fully Automated',what:'Save the finished map as structured data.',
-  needs:[['Go / no-go','Go verdict']],produces:['Platform record, provenance per field'],
-  done:'After this: the map is stored as structured data that future Workflows can build on.',
-  steps:['AI Assistant validates against schema','AI Assistant writes via API','AI Assistant logs who, when, version'],arts:[],guard:''}},
-
-{id:'store',x:3856,y:320,w:126,t:T.store,title:'Store',inert:true,
- d:{sub:'Data store'},r:{sub:'',st:'none',dim:true},
- info:'The GY Data Platform. Fields carry provenance chips. Pre-fills every future questionnaire, so nothing is asked twice.'},
-
-{id:'done',x:4080,y:136,w:160,t:T.term,title:'Complete',inert:true,
- d:{sub:'Demand Map done'},r:{sub:'',st:'pending',dim:true},
- info:'Demand Map complete. The run archives, the record lives on in the Data Platform, and the feedback hook fires for the next programme.'}
+{id:'park',x:2264,y:320,w:150,t:T.park,title:'Park',
+ d:{sub:'Terminal · learnings + revisit date'},r:{sub:'',st:'none'},
+ info:'Not investable enough right now. Log the reason and a revisit date; the lead stays queryable for later.'}
 ];
 
 const EDGES=[
- {x1:136,y1:162,x2:206,y2:162,s:'done'},
- {x1:366,y1:162,x2:436,y2:162,s:'done'},
- {x1:608,y1:162,x2:678,y2:162,s:'done'},
- {x1:832,y1:162,x2:902,y2:162,s:'done'},
- {d:'M564,318 V262 H755 V210',dRun:'M564,318 V262 H755 V254',s:'hot',dash:true,from:'followup'},
- {x1:1406,y1:162,x2:1476,y2:162,s:'lock'},
- {x1:1646,y1:162,x2:1716,y2:162,s:'lock'},
- {x1:1894,y1:162,x2:1964,y2:162,s:'lock'},
- {x1:2458,y1:162,x2:2528,y2:162,s:'lock'},
- {x1:2714,y1:162,x2:2784,y2:162,s:'lock'},
- {x1:3278,y1:162,x2:3348,y2:162,s:'lock'},
- {x1:3758,y1:162,x2:3828,y2:162,s:'lock'},
- {x1:4010,y1:162,x2:4080,y2:162,s:'lock'},
- {x1:3919,y1:200,x2:3919,y2:318,s:'lock'}
+ {x1:172,y1:162,x2:214,y2:162},
+ {x1:386,y1:162,x2:452,y2:162},
+ {x1:622,y1:162,x2:724,y2:162},
+ {x1:898,y1:162,x2:966,y2:162},
+ {x1:1146,y1:162,x2:1232,y2:162},
+ {x1:1408,y1:162,x2:1480,y2:162},
+ {x1:1658,y1:162,x2:1728,y2:162},
+ {x1:1914,y1:162,x2:2000,y2:162}
 ];
 
 const BRANCHES=[
- {n:'gate1',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H1164 V162 H1230`},
- {n:'gate1',i:1,s:'hot', mk:(x,y)=>`M${x},${y} H${x+26} V346 H654`},
- {n:'gate2',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H2216 V162 H2290`},
- {n:'gate2',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V340 H1696`},
- {n:'gate3',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3028 V162 H3102`},
- {n:'gate3',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V355 H1696`},
- {n:'gonogo',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H3560 V162 H3588`},
- {n:'gonogo',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H${x+26} V370 H1696`}
+ {n:'gate',i:0,s:'lock',mk:(x,y)=>`M${x},${y} H2234 V162 H2264`},
+ {n:'gate',i:1,s:'lock',mk:(x,y)=>`M${x},${y} H2234 V336 H2264`}
 ];
 
 function portPos(id,i){
@@ -470,7 +461,7 @@ const DOT={
 };
 
 function renderTabs(){
-  document.getElementById('crumbTitle').textContent = 'Customer Demand Mapping';
+  document.getElementById('crumbTitle').textContent = 'Upper Dee: canvas + list sidebar';
   document.querySelector('.row1').classList.toggle('editing', MODE==='design');
   document.getElementById('editChip').style.display = MODE==='design'?'inline-flex':'none';
   const tp=document.getElementById('toolsPill'); if(tp)tp.style.display = MODE==='design'?'':'none';
@@ -591,20 +582,12 @@ function openAboutL(){
     <div style="background:#F8F5ED;border:1px solid #EFEDE8;border-radius:10px;padding:11px 13px;margin-top:10px;font-size:14.5px;color:var(--ink2);line-height:1.7">${det}</div>
   </div>`;
   d.innerHTML=dhead('ti-info-circle','var(--graybg)','var(--grayd)','About Workflow','')
-  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">Customer Demand Mapping is the early-stage analysis that works out what a restoration project can sell, who would buy it, and how firm that picture is.</div>
+  +`<div class="sbody"><div style="font-size:16.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">A quick, manual check we run before bidding, to see whether a project is investable.</div>
   <div style="height:1px;background:var(--line);margin:18px 0 2px"></div>
-  ${chap(1,'Project context',
-    'The facts from onboarding, plus the standard data-needs ask we send the client early. Sets the scene; nothing is analysed here.',
-    '<b>Questions</b> · vision, interventions, outcomes, boundary<br><b>Documents</b> · GIS shapefiles, data-room link, baseline surveys<br><b>Client ask</b> · baseline data available now, markets they pursue, who leads the ES valuation')}
-  ${chap(2,'Markets and supply',
-    'The products this land can sell. Desktop research compiles cited market snapshots from the Hive Mind Library rule books, registries and APIs; qualitative research ground-truths them with buyer and trade team signals; the shortlist then scores what remains.',
-    '<b>Desktop research</b> · rule books, Allied Offsets API, registry pulls, trend scrapes<br><b>Qualitative research</b> · buyer conversations, trade team signals<br><b>Shortlist</b> · 8 nature products, scored and ranked<br><b>Product card</b> · rulebook, eligibility, volume and method, pricing and trend, indicative revenue, competitor supply, funding, confidence and next step')}
-  ${chap(3,'Demand',
-    'Who would buy: tap the GY buyer database, filter to this catchment, and qualify each candidate. Found through six channels; a light competitor scan sits here too.',
-    '<b>Buyer database</b> · filtered to catchment<br><b>Qualification</b> · relevance, hook, contact, engagement status<br><b>Channels</b> · six discovery routes')}
-  <div style="height:1px;background:var(--line);margin:22px 0 0"></div>
-  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">Why it exists</div>
-  <div class="pt" style="margin-top:4px">The commercial case for a project cannot be built until you know which revenue streams are real and which buyers are reachable. Without it, the Financial Model and Blended Finance Plan are guesses, and outreach is unfocused. It is also the first proof case for templatising GY's work, so getting its shape right matters beyond this one Workflow.</div></div>`;
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:14px">Why it exists</div>
+  <div class="pt" style="margin-top:4px">Advisory is loss-leading unless there is something to trade at the end. This lead-stage map is mostly a demand question: are there buyers in the catchment who would benefit from restoration? It tells us where to spend our time bidding.</div>
+  <div style="font-size:16px;font-weight:600;letter-spacing:-.01em;margin-top:18px">How it differs from the Customer version</div>
+  <div class="pt" style="margin-top:4px">The context ask is tiny (mission, vision, key interventions, often verbal), every step is manual for now, and it stops at a go / no-go. Once a project is won, the fuller Customer Demand Mapping runs on onboarding.</div></div>`;
   if(typeof MANUAL!=='undefined'&&MANUAL)d.innerHTML=mScrub(d.innerHTML);
   d.style.display='block';
 }
@@ -686,16 +669,9 @@ function openArtefactsL(){
 }
 
 const NEXT={
- kickoff:[['','sendq']], sendq:[['','receive']], receive:[['','gate1']],
- gate1:[['yes','desktop'],['no','followup']],
- followup:[['loops to','receive']],
- desktop:[['','qualres']], qualres:[['','shortes']], shortes:[['','gate2']],
- gate2:[['yes','tradecheck'],['no','park']],
- tradecheck:[['','shortbuyers']], shortbuyers:[['','gate3']],
- gate3:[['yes','finalprep'],['no','park']],
- finalprep:[['','gonogo']],
- gonogo:[['go','share'],['no-go','park']],
- share:[['','platform']], platform:[['','done']]
+ ctx:[['','openq']], openq:[['','candidates']], candidates:[['','rulebooks']],
+ rulebooks:[['','beneficiaries']], beneficiaries:[['','demandtools']], demandtools:[['','buyers']],
+ buyers:[['','gate']], gate:[['yes','bid'],['no','park']]
 };
 function nextRows(id){
   const nx=NEXT[id]||[];
@@ -742,30 +718,15 @@ const AVA={
  client:{txt:'J',bg:'#0F6E56',fg:'#fff',name:'J. Ruggles'}
 };
 const ACTIVITY=[
- ['1 JULY 2026',[
-  ['09:01','caitlin','<span class="mut">started with the</span> <b>Customer Demand Mapping Workflow</b> <span class="mut">for Spains Hall</span>'],
-  ['09:02','agent','<span class="mut">started</span> <b>Run #1</b> <span class="mut">from blueprint v1.0, cautious mode, Caitlin owning</span>'],
-  ['09:02','agent','<span class="mut">minted the</span> <b>questionnaire</b> <span class="mut">for J. Ruggles, 6 of 14 fields pre-filled</span>'],
-  ['09:03','agent','<span class="mut">drafted the</span> <b>kick-off brief</b> <span class="mut">and emailed it to Caitlin</span>'],
-  ['10:00','caitlin','<span class="mut">held the</span> <b>kick-off call</b> <span class="mut">· 40 min</span>',
-   'Scope confirmed: 400 ha floodplain meadow, nature market income. The 14-item input list agreed with James.'],
-  ['14:18','caitlin','<span class="mut">approved the</span> <b>questionnaire email</b>'],
-  ['14:20','agent','<span class="mut">sent it · acknowledged 15:02 ·</span> <b>wait clock started</b>']]],
- ['3 JULY 2026',[
-  ['11:34','client','<span class="mut">submitted</span> <b>6 of 14 items</b> <span class="mut">through the questionnaire</span>']]],
- ['6 JULY 2026',[
-  ['09:00','agent','<span class="mut">sent the</span> <b>first chase</b> <span class="mut">· friendly tone, as scheduled</span>']]],
- ['8 JULY 2026',[
-  ['08:52','client','<span class="mut">sent the</span> <b>tenure map</b> <span class="mut">by email reply instead of the questionnaire</span>'],
-  ['08:53','agent','<span class="mut">filed it, mapped to the checklist ·</span> <b>12 of 14</b>']]],
- ['9 JULY 2026',[
-  ['09:02','agent','<span class="mut">ran the</span> <b>completeness check</b> <span class="mut">· failed · gaps: site boundary, grazing agreement</span>'],
-  ['09:05','agent','<span class="mut">drafted the</span> <b>gap reminder</b> <span class="mut">· in Gmail, Caitlin to review</span>',
-   'Hi James, thanks for everything so far, 12 of 14 items are in and looking great. Two things would unlock the next step: the site boundary shapefile and the grazing agreement for the east parcels.']]]
+ ['30 JUNE 2026',[
+  ['09:00','caitlin','<span class="mut">started the</span> <b>Lead Customer Demand Mapping</b> <span class="mut">for Evenlode</span>'],
+  ['09:00','caitlin','<span class="mut">created the</span> <b>project context Notion page</b> <span class="mut">and captured the mission and vision</span>'],
+  ['09:08','caitlin','<span class="mut">noted the</span> <b>key interventions</b>'],
+  ['09:30','caitlin','<span class="mut">did a</span> <b>quick supply read</b> <span class="mut">and listed candidate markets</span>']]]
 ];
 const DOCV={
  mgmt:{ic:'ti-file-text',name:'estate_management_plan.pdf',body:`
-  <h2>Estate Management Plan</h2><div class="dvsub">Evenlode Landscape Recovery · prepared by the estate · 38 pages</div>
+  <h2>Estate Management Plan</h2><div class="dvsub">Upper Dee · prepared by the estate · 38 pages</div>
   <h3>1 · Vision</h3><p>Restore the estate to good ecological condition over the next decade: cleaner water, lower flood risk, richer habitat, and a durable income from nature markets alongside continued farming.</p>
   <h3>2 · The land today</h3><p>Six parcels across 400 ha of mixed arable, pasture and riparian corridor. Grazing is central to the current business and should continue on enrolled parcels.</p>
   <h3>3 · Planned interventions</h3><p>Riparian buffer planting along the main watercourse, two wetland creation areas, leaky woody dams, hedgerow restoration, and reduced inputs on enrolled parcels. Phased from spring 2027.</p>`},
@@ -799,8 +760,13 @@ function openDocViewer(id){
 }
 function closeDocViewer(){document.getElementById('dvov').classList.remove('open');}
 function closeDoc(){document.getElementById('docm').style.display='none';syncResultBtn();}
-var NOTION_URL='https://app.notion.com/p/3b18a14ed56a8131ab1ac43928d15fcf';
-function openResult(){ var u=(typeof NOTION_URL!=='undefined'?NOTION_URL:'').replace(/^https?:\/\//,'notion://'); window.location.href=u; }
+var NODE_CHAPTER={ctx:'ch1',openq:'ch1',candidates:'ch2',rulebooks:'ch2',beneficiaries:'ch3',demandtools:'ch3',buyers:'ch3',gate:'verdict'};
+var NOTION_ANCHORS={ch1:'',ch2:'',ch3:'',verdict:''};
+function openResult(nodeId){
+  var base=(typeof NOTION_URL!=='undefined'?NOTION_URL:'').replace(/^https?:\/\//,'notion://');
+  var frag=(nodeId&&NODE_CHAPTER[nodeId]&&NOTION_ANCHORS[NODE_CHAPTER[nodeId]])?NOTION_ANCHORS[NODE_CHAPTER[nodeId]]:'';
+  window.location.href=base+frag;
+}
 function toggleResult(){ openResult(); }
 function syncResultBtn(){
   const d=document.getElementById('docm'),ic=document.getElementById('resultIc'),lb=document.getElementById('resultLbl');
@@ -813,91 +779,164 @@ function syncResultBtn(){
 }
 let RESULT_COMPLETE=false;
 function toggleResultComplete(){ RESULT_COMPLETE=!RESULT_COMPLETE; openContentsDoc(); }
+function leadResultBody(){
+  const sec=(num,title,note,body)=>`<div class="dsec"><div class="dh2"><span class="dnum">${num}</span>${title}</div>${note?`<div class="rnote">${note}</div>`:''}${body}</div>`;
+  const metaRow=(k,v)=>`<div style="display:flex;gap:12px;padding:7px 0"><span style="width:150px;flex:none;color:var(--ink3)">${k}</span><span style="color:var(--ink)">${v}</span></div>`;
+  const short=(html)=>`<div class="rshort"><i class="ti ti-notebook"></i><div>${html}</div></div>`;
+  const fld=(label,ek,val)=>`<div class="rfld"><div class="rlab">${label}</div><div class="dp ledit" contenteditable="true" spellcheck="false" data-ek="${ek}">${val}</div></div>`;
+  const pq=(items)=>`<details class="pq"><summary>potential questions</summary><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></details>`;
+
+  const meta=`<div class="cbox" style="padding:8px 0 14px">`
+    +metaRow('Project name','Upper Dee')
+    +metaRow('Type','Lead')
+    +metaRow('Site / catchment','Upper Dee headwaters, Cairngorms National Park, Aberdeenshire')
+    +metaRow('Area','126,581 ha across the upper catchment estates')
+    +metaRow('Landowner(s)','Multiple estates: Balmoral, Invercauld, Mar Lodge, Glen Muick, Glentanar, Dinnet, Mar')
+    +metaRow('GY contact','Caitlin Ciceri')
+    +metaRow('Date','2026-07-23')
+    +metaRow('Status','<span class="pv" style="background:var(--greenbg);color:var(--greend)">Lead / mapping</span>')
+    +`</div>`;
+
+  const ch1=sec(1,'Project context','',
+    short('A 126,581 ha upland restoration with peatland carbon at its core and direct at-source relevance to Aberdeen\'s drinking water supply.')
+    +fld('Objective','ud_obj','Landscape-scale restoration of the biodiversity-rich, carbon-rich Upper Dee headwaters, improving water quality at source, sequestering carbon in peat, and delivering biodiversity uplift at a flagship, catchment scale.')
+    +fld('Site description and current land use','ud_site','Upper Dee catchment within the Cairngorms, including tributaries Muick, Geldie and Baddoch. Peat-dominated uplands with low tree cover (~8% in the upper catchment). The River Dee supplies Aberdeen, with a key abstraction point near Invercannie / Cairnton.')
+    +fld('Planned interventions','ud_int','Peatland restoration (top priority), native woodland creation, river and catchment restoration, and habitat enhancement across the estates.')
+    +fld('Target habitats and outcomes','ud_out','Reduced dissolved organic carbon ("brown water") and sediment runoff, improved flow regulation, carbon sequestration in restored peat, and biodiversity uplift.')
+    +fld('Constraints and dependencies','ud_con','Peatland condition data dates from 2015 and is likely outdated, so an updated survey is needed. A quick desktop analysis estimates ~6,217 ha of degraded peat across the estates. Two open strategy questions: is a TEV needed (commission Oliver at NAS), and is the commercial strategy demand-led or supply-led.')
+    +pq(['Which estates are committed to delivery and over what timeline?','Can the 2015 peat condition data be resurveyed to firm up the restorable area?','Do we need a TEV before approaching buyers?']));
+
+  const sRow=(m,from,ready,rc,size,dyn)=>`<tr><td class="rm">${m}</td><td>${from}</td><td><span class="rmk ${rc}">${ready}</span></td><td>${size}</td><td>${dyn}</td></tr>`;
+  const supplyTable=`<table class="rtbl"><thead><tr><th>Candidate market</th><th>From which interventions</th><th>Readiness</th><th>Indicative sizing</th><th>Market dynamics</th></tr></thead><tbody>`
+    +sRow('Carbon (peatland / soil)','Peatland restoration, woodland creation','Active','g','Global VCM £6.43B; UK VCM ~£396.9M. Project estimate ~544,000 credits over 20 yrs on 4,000 ha, ~£14.1M at £26/t','Buyers prefer removals. UK high-quality credits £75-125/t. Peatland via the Peatland Code; PIU pricing 30-50% below verified PCUs')
+    +sRow('Water Quality','Peatland restoration, woodland, catchment restoration','Nascent','r','£22.1B PR24 WINEP envelope (England); Scotland via Scottish Water investment','Strong buyer logic: reduces DOC, sediment and treatment cost at source. Bespoke, no MRV yet')
+    +sRow('Voluntary Biodiversity','Habitat enhancement, landscape-scale restoration','Emerging','o','Global credit sales £0.2-1.4M; domestic indicative ~£684.7M','Landscape-scale and biodiversity-rich, attractive for flagship nature-positive partnerships. TNFD adopters rising')
+    +sRow('Replenish','Catchment and river restoration, woodland','Nascent','r','Not sized; bespoke deals only','Sized by identifying demand. Coca Cola, Nestle, AstraZeneca active elsewhere. Fits water-dependent brands sourcing from the Dee')
+    +sRow('Natural Flood Management','Peatland restoration, flow regulation','Nascent','r','Not formally sized','Headwater flow regulation reduces flashy flows. Lower priority until downstream flood-risk assets identified')
+    +`</tbody></table>`;
+  const ch2=sec(2,'Supply: which ecosystem services','Interventions map to five candidate markets plus a supply-chain angle. Market context is drawn from the <a href="hive-mind-library.html" style="color:var(--blued)">ES rule books</a> (refreshed Oct 2025, from the NatWest Markets Report).',
+    short('<b>Carbon (peatland) is the anchor</b>: the largest, most active market, matched to the dominant intervention and supported by public co-funding through Peatland ACTION. Water Quality has the clearest single buyer in Scottish Water; Voluntary Biodiversity carries a warm utility and renewables cluster; Replenish and supply-chain open distillery and bottled-water buyers; NFM is parked pending a downstream flood case.')
+    +supplyTable
+    +`<div class="rnote" style="margin-top:12px"><b>Supply Chain Resilience</b> sits underneath as a further, bespoke stream: source-water protection for distilleries and bottlers that draw from the Dee, usually framed as the resilience angle inside a bundled carbon, biodiversity or replenish deal.</div>`);
+
+  const bt=(rows)=>`<table class="rtbl"><thead><tr><th>Buyer</th><th>Why relevant</th><th>Hook</th><th>Relationship status</th></tr></thead><tbody>`+rows.map(r=>`<tr><td class="rm">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')+`</tbody></table>`;
+  const dsub=(t)=>`<div class="rdsub">${t}</div>`;
+  const ch3=sec(3,'Demand','Worked per market, then split by buyer type. Manual beneficiary map run first, then tools.',
+    short('Real, warm buyers exist across carbon, water quality and voluntary biodiversity; replenish and supply chain add distillery interest; NFM has no buyers yet.')
+    +dsub('a. Carbon (peatland / soil)')
+    +bt([
+      ['Diageo','£3M fund for UK peatland restoration; Royal Lochnagar sits on the Dee','Peatland removals plus source-water protection','Warm angle via distillery'],
+      ['Peatland ACTION (NatureScot)','Public funding for peatland restoration','Blends with credit sales','Next deadline 30 Sep 2026 for post-Apr 2027 starts'],
+      ['University of St Andrews','Institutional carbon buyer','Local removals','None'],
+      ['University of Edinburgh','Institutional carbon buyer','Local removals','None'],
+      ['University of Aberdeen','Was a target carbon buyer','Local removals','Fund shut down; parked'],
+      ['BP / Shell','Large corporates seeking removals','High-integrity UK removals','None']
+    ])
+    +dsub('b. Water Quality')
+    +bt([
+      ['Scottish Water','Direct catchment reliance: abstracts from the Dee for Aberdeen near Invercannie / Cairnton; concerned about rising DOC, sediment and treatment cost','Catchment restoration to protect source water and cut treatment cost','Strongest water-quality buyer; peatland and woodland are explicitly why they invest']
+    ])
+    +`<div class="rnote">Scottish Power is present but limited in the Upper Dee and driven by biodiversity targets, whereas Scottish Water has direct catchment reliance driven by water quality and supply.</div>`
+    +dsub('c. Voluntary Biodiversity')
+    +bt([
+      ['SSEN','No net loss moving to net gain; embedding biodiversity into grid design; active BNG-style adopter in Scotland','Flagship biodiversity uplift','GY in'],
+      ['Scottish Power','Net positive biodiversity by 2030; Nature Action Plan; peatland and woodland around windfarms; transmission near the lower Dee','Flagship nature-positive partnership','GY in plus cold outreach'],
+      ['SSE plc','Parent of SSEN; nature-positive ambition','Group-level partnership','Via SSEN'],
+      ['Network Rail','Delivering biodiversity uplift and large-scale planting','Habitat compensation','GY in'],
+      ['Scottish Water','Net positive / BNG varies by programme; large landholding','Catchment-scale habitat work','Warm via water quality'],
+      ['Balfour Beatty','UK-wide BNG commitments applied to Scottish projects','Infrastructure biodiversity','None'],
+      ['Amey plc','Active in Scottish highways; biodiversity targets tied to Transport Scotland contracts','Contract-linked biodiversity','None']
+    ])
+    +dsub('d. Replenish / Supply Chain Resilience')
+    +bt([
+      ['Deeside Water Company','Bottled water from Deeside springs; brand is pristine Deeside water','Source protection for the brand','None; direct commercial incentive'],
+      ['Diageo (Royal Lochnagar)','Distillery on the Dee near Balmoral; net-zero and water-stewardship targets','Catchment resilience for a heritage distillery','Warm'],
+      ['Deeside Distillery','In the Dee catchment (Aboyne / Banchory); early-stage and flexible','Partnership pilot','None'],
+      ['Lost Loch Spirits','Craft distillery on the Cairngorms edge; nature-connected positioning','Story-driven biodiversity partnership','None'],
+      ['City of Aberdeen Distillery / Brown Forman','Regional distillers','Source-water resilience','To research']
+    ])
+    +`<div class="rnote">Distilleries were hit by drought last year (Diageo had water issues), sharpening the resilience case.</div>`
+    +dsub('e. Natural Flood Management (parked)')
+    +`<div class="dp" style="color:var(--ink2)">No buyers identified yet. Headwater flow regulation is a genuine co-benefit, but downstream flood-risk assets have not been mapped. Park until a downstream case is built.</div>`);
+
+  const verdict=`<div class="rverdict"><div class="rvttl"><i class="ti ti-trophy"></i> Verdict</div>`
+    +`<div class="rvbody"><b>The anchor is peatland carbon at landscape scale:</b> an indicative ~£14M over 20 years on 4,000 ha, against ~6,217 ha of degraded peat identified, with public co-funding available through Peatland ACTION.`
+    +`<ul><li><b>Water Quality</b> has the single clearest buyer in Scottish Water, which relies directly on the Dee.</li>`
+    +`<li><b>Voluntary Biodiversity</b> brings a warm utility and renewables cluster (SSEN, Scottish Power, Network Rail).</li>`
+    +`<li><b>Replenish and supply-chain resilience</b> add distillery and bottled-water buyers, with Diageo strongest because Royal Lochnagar sits on the river. NFM is parked.</li></ul>`
+    +`Two decisions gate the strategy: whether a TEV is commissioned, and whether GY runs this demand-led or supply-led. The main data gap is the outdated 2015 peat condition survey.`
+    +`<div class="rvgo">Go / no-go: <span class="dp ledit" contenteditable="true" spellcheck="false" data-ek="ud_gonogo" style="display:inline">…</span></div></div></div>`;
+
+  return meta+ch1+ch2+ch3+verdict;
+}
+// One editable source, shared by the full result page and the task modal.
+// Every field persists to localStorage by data-ek, so edits in either place save to both.
+function wireLedit(root){
+  root.querySelectorAll('.ledit').forEach(el=>{
+    const k='leadResult_'+(el.dataset.ek||'x');
+    try{const v=localStorage.getItem(k); if(v!=null)el.innerHTML=v;}catch(e){}
+    if(el.dataset.wired)return; el.dataset.wired='1';
+    el.addEventListener('input',()=>{try{localStorage.setItem(k,el.innerHTML);}catch(e){}});
+  });
+}
+/* Whole result body is one editable, persisted region: every field, table cell,
+   note and the verdict can be edited, Notion-style, and edits are remembered. */
+function udWire(root){
+  var el=(root||document).querySelector('.udedit'); if(!el)return;
+  var K='leadResult_upperdee_html';
+  try{var v=localStorage.getItem(K); if(v!=null)el.innerHTML=v;}catch(e){}
+  el.addEventListener('input',function(){try{localStorage.setItem(K,el.innerHTML);}catch(e){}});
+}
 function openContentsDoc(){
   const d=document.getElementById('docm');
-  const val=(label,text,prov,opts)=>{opts=opts||{};
-    const chip=opts.inf?`<span class="pv" style="background:var(--bluebg);color:var(--blued)">AI Assistant's reading · please check</span>`
-      :`<span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span>`;
-    return `<div class="dgrp"><div class="dfl">${label}${opts.nw?' <span class="pv" style="background:var(--greenbg);color:var(--greend)">new</span>':''}</div>
-    <div class="dp">${text}</div><div class="dprov">${prov} ${chip}</div></div>`;};
-  const ghostval=(label,note)=>`<div class="dgrp"><div class="dfl" style="color:var(--ink3)">${label} <span class="pv" style="background:var(--amberbg);color:var(--amberd)">missing</span></div>
-    <div style="padding:4px 0 2px"><div class="gline" style="display:block;max-width:88%;margin-bottom:8px"></div><div class="gline" style="display:block;max-width:55%"></div></div>
-    <div class="dprov">${note}</div></div>`;
-  const sec=(num,title,body)=>`<div class="dsec"><div class="dh2"><span class="dnum">${num}</span>${title}</div>${body}</div>`;
-  let body, dchips='';
-  if(isPrev()){
-    dchips=`<div class="dchips"><span class="dchip"><b>Completeness</b> 0%</span><span class="dchip"><b>Status</b> no run selected</span></div>`;
-    body=sec(1,'Project context',`<div class="dghost">The 14 must-have fields, written by Gather project context.<br>Filled once a Programme runs this Workflow.</div>`)
-    +sec(2,'Markets and supply',`<div class="dghost">Evidence pack per ecosystem service, ranked shortlist with scores.<br>Written by Research and Shortlist Ecosystem Services.</div>`)
-    +sec(3,'Demand',`<div class="dghost">Trade demand flags and the qualified buyer list.<br>Written by Trade check-in and Shortlist qualified buyers.</div>`)
-    +sec(4,'Verdict',`<div class="dghost">The go / no-go pack and decision.<br>Written by Final check prep, decided by the Vertical Lead.</div>`);
-  } else {
-    const ends=['gate1','gate2','gate3','done'];
-    const doneArr=ends.map(id=>{const nn=NODES.find(x=>x.id===id);return nn&&nn.r.st==='done';});
-    const complete=RESULT_COMPLETE||doneArr.every(Boolean);
-    const pct=Math.round(doneArr.filter(Boolean).length/4*100);
-    const scoreRow=(label,score,note)=>`<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span style="width:150px;flex:none;font-weight:500">${label}</span><div style="flex:1;min-width:0"><span style="display:block;height:8px;border-radius:99px;background:var(--graybg);position:relative;overflow:hidden;margin:5px 0 6px"><i style="position:absolute;inset:0;width:${Math.round(score/5*100)}%;background:var(--green);border-radius:99px"></i></span><span style="font-size:13.5px;color:var(--ink2)">${note}</span></div><span style="font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--greenbg);color:var(--greend);flex:none;font-weight:600">${score} / 5</span></div>`;
-    const buyerRow=(name,init,service,temp,note)=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span style="width:28px;height:28px;border-radius:50%;background:var(--graybg);color:var(--grayd);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex:none">${init}</span><div style="flex:1;min-width:0"><div style="font-weight:500">${name}</div><div style="font-size:13px;color:var(--ink3)">${service} · ${note}</div></div><span style="font-size:12px;padding:3px 10px;border-radius:999px;flex:none;font-weight:600;background:${temp==='hot'?'var(--amberbg)':'var(--tealbg)'};color:${temp==='hot'?'var(--amberd)':'var(--teald)'}">${temp}</span></div>`;
-    const vrow=(label,text)=>`<div style="display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span style="width:150px;flex:none;font-weight:500">${label}</span><span style="flex:1;color:var(--ink2)">${text}</span></div>`;
-    const filledSupply=`<div class="cbox" style="padding:6px 22px 18px"><div class="dfl">Ranked shortlist · 4 services scored</div>`+scoreRow('BNG units','4.6','Live DEFRA register, £37,967.48 avg unit, strong local demand')+scoreRow('Nutrient credits','3.8','Active catchment scheme with credible buyers')+scoreRow('Woodland carbon','3.2','WCU £22.10/tCO2e, moderate deliverable volume')+scoreRow('Natural flood mgmt','2.4','Early market, largely grant-dependent today')+`<div class="dprov" style="margin-top:14px">Written by Research and Shortlist Ecosystem Services · every figure cited</div></div>`;
-    const filledDemand=`<div class="cbox" style="padding:6px 22px 18px"><div class="dfl">Qualified buyers · 7 identified, ranked by fit</div>`+buyerRow('Aviva','AV','BNG units','hot','Fit 4.5 · active BNG mandate')+buyerRow('Severn Trent','ST','Nutrient credits','hot','Fit 4.2 · catchment obligation')+buyerRow('Nestle UK','NU','Woodland carbon','warm','Fit 3.4 · Scope 3 interest')+buyerRow('Local BNG broker','LB','BNG units','warm','Fit 3.1 · pipeline demand')+`<div class="dprov" style="margin-top:14px">Written by Trade check-in and Shortlist qualified buyers</div></div>`;
-    const filledVerdict=`<div class="cbox" style="padding:6px 22px 20px">`+vrow('Supply','3 viable services · BNG units lead')+vrow('Demand','7 qualified buyers · 2 hot markets')+vrow('Indicative revenue','£1.2m to £1.8m over 30 years · medium confidence')+`<div style="margin-top:16px;border-radius:10px;padding:12px 14px;background:var(--greenbg);color:var(--greend);font-weight:700;text-align:center;letter-spacing:.02em">Recommendation: GO · decided by the Vertical Lead</div><div class="dprov" style="margin-top:12px">Written by Final check prep, decided by the Vertical Lead</div></div>`;
-    dchips=`<div class="dchips"><span class="dchip"><b>Completeness</b> ${pct}%</span><span class="dchip">${complete?'<span class="dcdot"></span>':''}<b>Status</b> ${complete?'complete':'in progress'}</span></div>`;
-    body=sec(1,'Project context',
-      `<div class="cbox">`
-      +val('Vision and target outcomes','Restore the estate to good ecological condition, reducing nutrient pollution and flood risk, while creating habitat and a long-term income for the estate through nature markets. Outcomes: biodiversity uplift, natural flood management, woodland and soil carbon.','From the management plan · 2 Jul',{inf:true})
-      +val('Key interventions · 400 ha','Riparian buffer planting, two wetland creation areas, leaky woody dams, hedgerow restoration, and reduced inputs on enrolled parcels.','From the management plan · 2 Jul')
-      +val('Jurisdiction and timeline','England. Start spring 2027, three phases over ten years, 30-year agreement appetite.','From the questionnaire · 3 Jul')
-      +val('Tenure','tenure_map.pdf · 6 parcels, 5 owned, 1 tenanted (east). Existing agreements: SFI 2024. Prior commitments: none. Constraint: keep grazing.','From an email reply · Wed 08:52',{nw:true})
-      +(complete?val('Site boundary','Shapefile received · 400 ha across 6 parcels, matches the tenure map. Eligibility checks unlocked.','From the client · 14 of 14'):ghostval('Site boundary','Waiting on the client · a shapefile of the site boundary · unlocks eligibility checks in stage 2'))
-      +(complete?val('Grazing agreement · east parcels','Received · the licence allows outcome sales on the tenanted east parcel.','From the client · 14 of 14'):ghostval('Grazing agreement · east parcels','Waiting on the client · gates who can sell outcomes on the tenanted parcels'))
-      +`<div class="dfl">Documents from the client</div>
-      <div class="doclist">
-        <div class="docrow" onclick="openDocViewer('mgmt')"><span class="dtile"><i class="ti ti-file-text"></i></span><span class="docnm">estate_management_plan.pdf</span><span class="docmeta">via questionnaire · 2 Jul</span><i class="ti ti-chevron-right opn"></i></div>
-        <div class="docrow" onclick="openDocViewer('sfi')"><span class="dtile"><i class="ti ti-file-text"></i></span><span class="docnm">sfi_agreement_2024.pdf</span><span class="docmeta">via questionnaire · 3 Jul</span><i class="ti ti-chevron-right opn"></i></div>
-        <div class="docrow" onclick="openDocViewer('tenure')"><span class="dtile" style="background:var(--greenbg);color:var(--greend)"><i class="ti ti-map"></i></span><span class="docnm">tenure_map.pdf</span><span class="docmeta">by email reply · Wed 08:52</span><i class="ti ti-chevron-right opn"></i></div>
-      </div></div>`)
-    +sec(2,'Markets and supply',complete?filledSupply:`<div class="gbox">
-      <div class="grow"><span class="glab">BNG units</span><span class="gbar"><i style="--w:72%"></i></span><span class="gpill">score · /5</span></div>
-      <div class="grow"><span class="glab">Nutrient credits</span><span class="gbar"><i style="--w:55%"></i></span><span class="gpill">score · /5</span></div>
-      <div class="grow"><span class="glab">Carbon</span><span class="gbar"><i style="--w:38%"></i></span><span class="gpill">score · /5</span></div>
-      <div class="grow"><span class="glab">Natural flood mgmt</span><span class="gbar"><i style="--w:24%"></i></span><span class="gpill">score · /5</span></div>
-      <div class="gnote">An evidence pack per ecosystem service, scored and ranked into a shortlist.<br>Written by Research and Shortlist Ecosystem Services · wakes when the input pack completes.</div>
-    </div>`)
-    +sec(3,'Demand',complete?filledDemand:`<div class="gbox">
-      <div class="grow"><span class="gav"></span><span class="gline"></span><span class="gpill">hot / warm</span></div>
-      <div class="grow"><span class="gav"></span><span class="gline"></span><span class="gpill">hot / warm</span></div>
-      <div class="grow"><span class="gav"></span><span class="gline short"></span><span class="gline"></span><span class="gpill">hot / warm</span></div>
-      <div class="gnote">Trade demand flags and a qualified buyer list, ranked by fit and appetite.<br>Written by Trade check-in and Shortlist qualified buyers.</div>
-    </div>`)
-    +sec(4,'Verdict',complete?filledVerdict:`<div class="gbox">
-      <div class="grow"><span class="glab">Supply</span><span class="gline"></span></div>
-      <div class="grow"><span class="glab">Demand</span><span class="gline"></span></div>
-      <div class="grow"><span class="glab">Indicative revenue</span><span class="gline short"></span><span class="gpill">confidence</span></div>
-      <div class="gverdict">Recommendation: GO / NO-GO · decision rights: Vertical Lead</div>
-      <div class="gnote">The one-page verdict pack and the decision.<br>Written by Final check prep, decided by the Vertical Lead.</div>
-    </div>`);
-  }
   d.innerHTML=`<div class="doclayout" onclick="if(event.target===this)closeDoc()"><nav class="dtoc" id="dtoc"></nav>
-  <div class="docwrap">
+  <div class="docwrap leadres">
     <div class="dhead">
-      <div class="dlab">Customer Demand Mapping${isPrev()?' · Preview':''}</div>
-      <div class="dtitle">${isPrev()?'Untitled project':'Evenlode Landscape Recovery'}</div>
-      <div class="dsub">${isPrev()?'The demand map this blueprint will assemble.':'What this estate can sell, who would buy it, and how firm the picture is.'}</div>
+      <div class="dlab">Lead Customer Demand Mapping</div>
+      <div class="dtitle">Upper Dee</div>
+      <div class="dsub">Landscape-scale restoration of the Upper Dee headwaters: what it can sell, who would buy it, and how firm the picture is.</div>
     </div>
-    ${body}
+    <div class="udedit" contenteditable="true" spellcheck="false">${leadResultBody()}</div>
   </div>
   <div class="dtocpad"></div></div>`;
   d.style.display='block';
   syncResultBtn();
   buildResultToc();
+  udWire(d);
+}
+function openResultModal(){ openResult(); return; /* preview retired: go straight to Notion */
+  var el=document.getElementById('notionPanel');
+  if(!el){
+    el=document.createElement('div');el.id='notionPanel';el.className='svpanel svedit';document.body.appendChild(el);
+    window.addEventListener('resize',function(){if(el.classList.contains('on'))leadNotionPos(el);});
+  }
+  var head='<div class="sphead"><span class="sphttl">'
+    +'<span class="sphnm">Deliverable</span></span>'
+    +'<span class="sphact" style="margin-left:auto;display:flex;gap:8px">'
+    +'<button class="svnav dk" title="Open full deliverable" onclick="leadNotionClose();toggleResult()"><i class="ti ti-arrows-diagonal" style="font-size:15px"></i></button>'
+    +'<button class="svnav dk" title="Close" onclick="leadNotionClose()"><i class="ti ti-x" style="font-size:14px"></i></button>'
+    +'</span></div>';
+  var docHead='<div class="dhead" style="text-align:left">'
+    +'<div class="dlab">Lead Customer Demand Mapping</div>'
+    +'<div class="dtitle" style="font-size:27px">Upper Dee</div>'
+    +'<div class="dsub" style="margin-left:0">Landscape-scale restoration of the Upper Dee headwaters: what it can sell, who would buy it, and how firm the picture is.</div>'
+    +'</div>';
+  el.innerHTML=head+'<div class="spbody leadres" style="background:var(--bg);overflow:auto;padding:30px 36px 28px;flex:1">'+docHead+'<div class="udedit" contenteditable="true" spellcheck="false">'+leadResultBody()+'</div></div>';
+  el.classList.remove('max');
+  el.classList.add('on');
+  leadNotionPos(el);
+  wireLedit(el);
+  setTimeout(function(){
+    document.removeEventListener('mousedown',leadNotionOutside);document.addEventListener('mousedown',leadNotionOutside);
+    document.removeEventListener('keydown',leadNotionEsc);document.addEventListener('keydown',leadNotionEsc);
+  },0);
 }
 function resTocGo(i){const el=document.getElementById('dsec'+i);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 async function saveResultPDF(){
   const src=document.querySelector('#docm .docwrap');
   if(!src){toast('Open the result first, then Save as PDF');return;}
-  const title=(document.querySelector('#docm .dtitle')?.textContent||'Customer Demand Mapping').trim();
-  const base=title.replace(/[^\w\- ]+/g,' ').replace(/\s+/g,' ').trim()||'Customer Demand Mapping';
+  const title=(document.querySelector('#docm .dtitle')?.textContent||'Lead Customer Demand Mapping').trim();
+  const base=title.replace(/[^\w\- ]+/g,' ').replace(/\s+/g,' ').trim()||'Lead Customer Demand Mapping';
   const fname=base+'.pdf';
   const H2C=window.html2canvas, JS=window.jspdf&&window.jspdf.jsPDF;
   if(!H2C||!JS){ toast('PDF engine still loading, try again in a moment'); return; }
@@ -912,7 +951,6 @@ async function saveResultPDF(){
   document.body.appendChild(holder);
   try{
     const canvas=await H2C(clone,{scale:2,backgroundColor:'#ffffff',useCORS:true,width:W,windowWidth:W,scrollX:0,scrollY:0});
-    // Safe break points: the top of every atomic block, so a page never ends mid-content.
     const cTop=clone.getBoundingClientRect().top;
     const ratio=canvas.height/clone.scrollHeight;
     const safe=new Set();
@@ -934,7 +972,7 @@ async function saveResultPDF(){
       else {
         let cand=pos;
         for(const b of breaks){ if(b>pos+2 && b<=naive) cand=b; else if(b>naive) break; }
-        end=(cand>pos && (cand-pos)>=pageHpx*0.25) ? cand : naive; // keep pages reasonably full
+        end=(cand>pos && (cand-pos)>=pageHpx*0.25) ? cand : naive;
       }
       const sliceH=Math.min(end-pos, canvas.height-pos);
       const slice=document.createElement('canvas');
@@ -957,7 +995,6 @@ function buildResultToc(){
   const secs=[...d.querySelectorAll('.dsec')];
   if(!secs.length){nav.innerHTML='';return;}
   const live=MODE==='run'&&!isPrev();
-  // Granular progress: count completed STEPS across nodes, grouped by phase band.
   const bandOf=x=>{for(let bi=0;bi<BANDS.length;bi++){const b=BANDS[bi];if(x>=b.x&&x<b.x+b.w)return bi;}return -1;};
   const stepStat=n=>{const L=(n.form&&n.form.steps)?n.form.steps.length:0;if(!L)return[0,0];
     if(RESULT_COMPLETE)return[L,L];
@@ -1020,22 +1057,14 @@ const STEPLOG={
  followup:{0:'Gap summary and reminder email drafted · 09:05'}
 };
 const STEPWHO={
- kickoff:['agent','human','human'],
- sendq:['agent','human'],
- receive:['agent','agent'],
- gate1:['agent','agent','human'],
- followup:['agent','human','human'],
- desktop:['agent','agent','agent','agent'],
- qualres:['human','human','human','agent'],
- shortes:['agent','agent','agent'],
- gate2:['human','human'],
- tradecheck:['agent','human','human'],
- shortbuyers:['agent','agent','agent'],
- gate3:['human','human'],
- finalprep:['agent','agent','agent'],
- gonogo:['human','human','human'],
- share:['agent','human','agent'],
- platform:['agent','agent','agent']
+ ctx:['human','human','human','human','human'],
+ openq:['human','human','human'],
+ candidates:['human','human'],
+ rulebooks:['human','human','human'],
+ beneficiaries:['human','human','human'],
+ demandtools:['human','human','human','human'],
+ buyers:['human','human','human'],
+ gate:['human','human']
 };
 function initSteps(){
   NODES.forEach(n=>{
@@ -1081,7 +1110,7 @@ function initSteps(){
   g('desktop',3,'plain','Applies the GY sizing method to size each market, then writes one cited snapshot per service.');
 }
 function buildStamps(){
-  const ORDER=['kickoff','sendq','receive','gate1','followup','desktop','qualres','shortes','gate2','park','tradecheck','shortbuyers','gate3','finalprep','gonogo','share','platform','done'];
+  const ORDER=['ctx','openq','candidates','rulebooks','beneficiaries','demandtools','buyers','gate'];
   FLOW=ORDER.filter(id=>{const n=NODES.find(x=>x.id===id);return n&&n.form&&n.form.steps&&n.form.steps.length;});
   const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   let cur=new Date(2025,5,30,9,0); // Mon 30 Jun 2025, 09:00
@@ -1292,11 +1321,7 @@ function setZoom(v){
 }
 const TEAM=[
  {n:'Caitlin Ciceri',c:'#1D9E75',captain:true,live:true,seen:'now'},
- {n:'Emily Norton',c:'#378ADD',live:true,seen:'now'},
- {n:'Harry Fox',c:'#EF9F27',live:false,seen:'2 days ago'},
- {n:'Izzie Bell',c:'#7F77DD',live:false,seen:'4 days ago'},
- {n:'Millie Gray',c:'#D4537E',live:false,seen:'6 days ago'},
- {n:'Josh Read',c:'#639922',live:false,seen:'12 days ago'}
+ {n:'Thomas Moes',c:'#378ADD',live:true,seen:'now'}
 ];
 function avEl(m,extra){
   if(m.agent)return `<span class="av${extra||''}" style="background:#1F1F1D"><i class="ti ti-sparkles" style="font-size:13px;color:#F9DD5A"></i></span>`;
@@ -1314,12 +1339,7 @@ function renderTeam(){
       <span class="nm">${m.n}</span>
       ${m.captain?'<span class="capbadge"><i class="ti ti-crown"></i> Captain</span>':''}
       <span class="seen">${m.seen}</span>
-    </div>`).join('')
-    +`<div style="height:1px;background:var(--line);margin:6px 0"></div>
-    <div class="avrow">${avEl({agent:true,n:'AI Assistant'})}
-      <span class="nm">AI Assistant</span>
-      <span class="seen">always on</span>
-    </div>`;
+    </div>`).join('');
 }
 function toggleTeam(e){
   e.stopPropagation();
@@ -1630,7 +1650,7 @@ function renderAll(){renderTabs();renderBands();renderNodes();renderEdges();rend
 /* Lens follows the OS view mode: Simple version (gyMode 'basic') shows the
  * manual first version; North Star ('advanced') shows the AI-assisted build. */
 var _gyMode='advanced'; try{_gyMode=localStorage.getItem('gyMode')||'advanced';}catch(e){}
-var MANUAL=(_gyMode==='basic');
+var MANUAL=true;
 var MSCRUB=[
  [/GY Data Platform/g,'shared folder'],
  [/the Data Platform/g,'the shared folder'],
@@ -1768,10 +1788,6 @@ document.addEventListener('keydown',e=>{
 renderAll();
 if(EMBED_DRAWER){
   openNode(EMBED_DRAWER);
-  // Host pages can switch the drawer to another node without reloading this page.
-  window.addEventListener('message',function(e){
-    if(e.data&&e.data.gy==='open'&&e.data.id) openNode(e.data.id);
-  });
   // The drawer's own X should close the drawer in the parent (Home) page.
   document.addEventListener('click',e=>{
     if(e.target.closest('.sh .x')){
@@ -1787,11 +1803,6 @@ if(EMBED_DRAWER){
     }
   },true);
 }
-/* ?zoom=NN : start the canvas at a reduced scale. Used by the document page's
-   workflow drawer, where the flow is a calm backdrop, not the workspace. */
-try{ var _qz=new URLSearchParams(location.search).get('zoom');
-     if(_qz) setZoom(parseFloat(_qz)); }catch(_){}
-
 (function(){
   if(EMBED_DRAWER)return;
   const sc=document.querySelector('.scroll');
@@ -1814,27 +1825,240 @@ try{ var _qz=new URLSearchParams(location.search).get('zoom');
   window.addEventListener('load',()=>requestAnimationFrame(center));
 })();
 
-/* Apply created deliverable (?deliverable): crumb name + team from the create modal */
+/* ===== Lead (Simple version) manual overrides ===== */
+var NOTION_URL='https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7';
+/* Open the project-context page inside the shared svpanel preview chrome
+   (the same dark floating panel the email draft uses). A real private Notion
+   page cannot be iframed (X-Frame-Options blocks it), so this renders a
+   faithful page preview in-app and keeps a real jump-out to Notion. */
+function leadNotionPage(){
+  var mk=function(m,basis,mark,cls){return '<tr>'
+    +'<td style="padding:9px 10px;border-bottom:1px solid #EFEDE9;font-weight:500">'+m+'</td>'
+    +'<td style="padding:9px 10px;border-bottom:1px solid #EFEDE9;color:#6B6A66">'+basis+'</td>'
+    +'<td style="padding:9px 10px;border-bottom:1px solid #EFEDE9;white-space:nowrap;color:'+cls+'">'+mark+'</td></tr>';};
+  return '<div class="svprev svbig svact" style="cursor:default;display:flex;flex-direction:column;flex:1;padding:0;overflow:hidden">'
+    +'<div style="flex:1;overflow:auto;background:#fff;color:#37352F;font-family:-apple-system,system-ui,\'Segoe UI\',sans-serif">'
+    +'<div style="height:92px;background:linear-gradient(120deg,#EAF1DE,#E4EDF4)"></div>'
+    +'<div id="notionDoc" contenteditable="true" spellcheck="false" style="max-width:660px;margin:0 auto;padding:0 44px 44px;outline:none">'
+    +'<div style="font-size:50px;line-height:1;margin:-30px 0 4px">🌱</div>'
+    +'<h1 style="font-size:30px;font-weight:700;letter-spacing:-.02em;margin:6px 0 2px">Upper Dee</h1>'
+    +'<div style="font-size:14px;color:#9B9A97;margin:0 0 18px">Project context</div>'
+    +'<div style="font-size:13.5px;color:#9B9A97;display:flex;flex-direction:column;gap:8px;margin-bottom:22px">'
+    +'<div style="display:flex;gap:10px"><span style="width:110px">Owner</span><span style="color:#37352F">Caitlin Ciceri</span></div>'
+    +'<div style="display:flex;gap:10px"><span style="width:110px">Status</span><span style="background:#EAF1DE;color:#3F5A2B;border-radius:5px;padding:1px 8px;font-size:12.5px">In progress</span></div>'
+    +'<div style="display:flex;gap:10px"><span style="width:110px">Location</span><span style="color:#37352F">Evenlode catchment, Oxfordshire</span></div>'
+    +'<div style="display:flex;gap:10px"><span style="width:110px">Area</span><span style="color:#37352F">6 parcels, approx. 210 ha</span></div>'
+    +'</div>'
+    +'<hr style="border:none;border-top:1px solid #EDEBE7;margin:0 0 20px">'
+    +'<h2 style="font-size:20px;font-weight:600;margin:22px 0 8px">Mission</h2>'
+    +'<p style="font-size:15.5px;line-height:1.65;margin:0">Restore natural function across the Evenlode catchment and fund it by selling the environmental outcomes the land can credibly produce, so recovery pays for itself over time.</p>'
+    +'<h2 style="font-size:20px;font-weight:600;margin:24px 0 8px">Vision</h2>'
+    +'<p style="font-size:15.5px;line-height:1.65;margin:0">A working landscape where flood risk, water quality and biodiversity all improve together, and where each outcome has a named buyer rather than relying on grants.</p>'
+    +'<h2 style="font-size:20px;font-weight:600;margin:24px 0 8px">Interventions</h2>'
+    +'<ul style="font-size:15.5px;line-height:1.7;margin:0;padding-left:22px">'
+    +'<li>Native woodland creation on the higher parcels</li>'
+    +'<li>Floodplain reconnection and leaky-dam networks along the tributaries</li>'
+    +'<li>Hedgerow and riparian buffer planting</li>'
+    +'<li>Wetland and species-rich grassland restoration</li></ul>'
+    +'<h2 style="font-size:20px;font-weight:600;margin:24px 0 8px">Candidate markets: what could this land credibly sell?</h2>'
+    +'<p style="font-size:13.5px;color:#9B9A97;margin:0 0 10px">From Quick supply read, sense-checked for sellability</p>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:14px">'
+    +'<thead><tr style="text-align:left;color:#9B9A97;font-size:12px;text-transform:uppercase;letter-spacing:.04em">'
+    +'<th style="padding:0 10px 6px;font-weight:600">Market</th><th style="padding:0 10px 6px;font-weight:600">Basis</th><th style="padding:0 10px 6px;font-weight:600">Sellable?</th></tr></thead><tbody>'
+    +mk('BNG units','Habitat uplift across 6 parcels','Strong','#3F5A2B')
+    +mk('Woodland carbon (WCC)','Approx. 40 ha new native planting','Likely','#3F5A2B')
+    +mk('Nutrient credits','Floodplain and wetland restoration','Maybe','#8A5A10')
+    +mk('Natural flood management','Leaky dams and reconnection','Thin market','#8a3e28')
+    +'</tbody></table>'
+    +'</div></div></div>';
+}
+function leadNotionPos(el){
+  var side=document.getElementById('side');
+  var r=side?side.getBoundingClientRect():{top:80,left:window.innerWidth-460,height:window.innerHeight-140};
+  if(el.classList.contains('max')){
+    var wm=Math.min(960,window.innerWidth-48);
+    el.style.width=wm+'px';el.style.left=Math.max(24,(window.innerWidth-wm)/2)+'px';
+    el.style.top='24px';el.style.height=(window.innerHeight-48)+'px';return;
+  }
+  el.style.top=r.top+'px';
+  var w=Math.min(560,Math.max(340,r.left-28));
+  el.style.width=w+'px';el.style.left=(r.left-w-14)+'px';el.style.height=r.height+'px';
+}
+function leadNotionClose(){
+  var el=document.getElementById('notionPanel');if(el)el.classList.remove('on');
+  document.removeEventListener('mousedown',leadNotionOutside);
+  document.removeEventListener('keydown',leadNotionEsc);
+}
+function leadNotionMax(){var el=document.getElementById('notionPanel');if(!el)return;el.classList.toggle('max');leadNotionPos(el);}
+function leadNotionOutside(e){
+  var el=document.getElementById('notionPanel');
+  if(!el||!el.classList.contains('on'))return;
+  if(el.contains(e.target))return;
+  if(e.target.closest&&e.target.closest('.cta'))return; /* let the Open Notion page button re-handle */
+  leadNotionClose();
+}
+function leadNotionEsc(e){if(e.key==='Escape')leadNotionClose();}
+function leadOpenNotion(){ openResult(); return; /* preview retired: go straight to Notion */
+  var el=document.getElementById('notionPanel');
+  if(!el){
+    el=document.createElement('div');el.id='notionPanel';el.className='svpanel svedit';document.body.appendChild(el);
+    window.addEventListener('resize',function(){if(el.classList.contains('on'))leadNotionPos(el);});
+  }
+  var head='<div class="sphead"><span class="sphttl">'
+    +'<span class="gtile" style="background:#fff;color:#111;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center">N</span>'
+    +'<span class="sphnm">Project context</span><span class="sphsub">· Notion</span></span>'
+    +'<span class="sphact" style="margin-left:auto;display:flex;gap:8px">'
+    +'<button class="svnav dk" title="Open in Notion" onclick="window.open(NOTION_URL,\'_blank\',\'noopener\')"><i class="ti ti-external-link" style="font-size:14px"></i></button>'
+    +'<button class="svnav dk" title="Make larger" onclick="leadNotionMax()"><i class="ti ti-arrows-diagonal" style="font-size:15px"></i></button>'
+    +'<button class="svnav dk" title="Close" onclick="leadNotionClose()"><i class="ti ti-x" style="font-size:14px"></i></button>'
+    +'</span></div>';
+  el.innerHTML=head+'<div class="spbody">'+leadNotionPage()+'</div>';
+  el.classList.remove('max');
+  el.classList.add('on');
+  /* Temporary bridge: edits are a local draft (previews future in-app editing);
+     Notion stays the real record via "Save to Notion". */
+  var doc=el.querySelector('#notionDoc');
+  if(doc){
+    try{var saved=localStorage.getItem('leadNotionDoc'); if(saved)doc.innerHTML=saved;}catch(e){}
+    doc.addEventListener('input',function(){try{localStorage.setItem('leadNotionDoc',doc.innerHTML);}catch(e){}});
+  }
+  leadNotionPos(el);
+  setTimeout(function(){
+    document.removeEventListener('mousedown',leadNotionOutside);document.addEventListener('mousedown',leadNotionOutside);
+    document.removeEventListener('keydown',leadNotionEsc);document.addEventListener('keydown',leadNotionEsc);
+  },0);
+}
+/* Independent per-step completion: any task can be ticked (or un-ticked) on its own,
+   regardless of the steps before it. */
+accStepState=function(n,i){
+  if(MODE!=='run'||isPrev())return'';
+  var st=n.r.st||'';
+  if(st==='done')return'd';
+  if(st===''||st==='pending'||st==='none')return'';
+  var d=n.r.doneSteps;
+  if(d){ if(d[i])return'd'; if((n.r.cur??-1)===i)return'a'; return''; }
+  var p=n.r.prog??0,c=n.r.cur??-1;return i<p?'d':i===c?'a':'';
+};
+function leadDoneMap(n){
+  if(!n.r.doneSteps){ n.r.doneSteps={}; var p=n.r.prog||0; for(var k=0;k<p;k++)n.r.doneSteps[k]=true; }
+  return n.r.doneSteps;
+}
+function leadRecalc(n){
+  var total=n.form.steps.length,d=n.r.doneSteps,cnt=0,firstNot=-1;
+  for(var k=0;k<total;k++){ if(d[k])cnt++; else if(firstNot<0)firstNot=k; }
+  n.r.prog=cnt;
+  if(cnt>=total){
+    n.r.st='done'; n.r.cur=-2; renderNodes(); renderEdges();
+    var nx=(typeof NEXT!=='undefined'&&NEXT[n.id]&&NEXT[n.id][0])?NEXT[n.id][0][1]:null;
+    var nn=nx?NODES.find(function(x){return x.id===nx;}):null;
+    if(nn&&nn.form){ nn.r.st='active'; if(!nn.r.doneSteps){nn.r.prog=0;nn.r.cur=0;} renderNodes(); renderEdges(); openNode(nn.id); return; }
+    openNode(n.id); return;
+  }
+  n.r.st='active'; n.r.cur=firstNot;
+  renderNodes(); renderEdges(); openNode(n.id);
+}
+function leadComplete(i){
+  var n=NODES.find(function(x){return x.id===SELECTED;}); if(!n||!n.form)return;
+  var d=leadDoneMap(n); d[i]=true; leadRecalc(n);
+}
+function leadUncomplete(i){
+  var n=NODES.find(function(x){return x.id===SELECTED;}); if(!n||!n.form)return;
+  var d=leadDoneMap(n); delete d[i]; leadRecalc(n);
+}
+/* Override the shared accordion row for this canvas only: no tools used,
+   a single Notion CTA on every task, plus a Mark as complete secondary. */
+accRowHtml=function(n,sp,i,s){
+  var bdg=s==='d'?'<span class="tn2 d">'+(i+1)+'</span>':s==='a'?'<span class="tn2 a">'+(i+1)+'</span>':'<span class="tn2">'+(i+1)+'</span>';
+  var who=sp.ownerN||'Caitlin';
+  var rawTitle=s==='d'?toPast(sp.t):s==='a'?toActive(sp.t):sp.t;
+  var stripped=rawTitle.replace(/^(AI Assistant|Caitlin|Emily|Izzie|Millie|Harry|Josh|Trade rep|Vertical Lead)\s+/,'');
+  var title=stripped.charAt(0).toUpperCase()+stripped.slice(1);
+  var pill=s==='a'?'<span class="tstat now">now</span>':'';
+  var stamp=s==='d'?stepStampFull(n,i):'';
+  var how=stepHowHtml(n,sp);
+  var whenText=i>0?('After task '+i+' is completed'):'After previous step is completed';
+  var meta=stamp?('Completed on '+stamp):(s===''?('When: '+whenText):'');
+  var primary='';
+  var secDone=s==='d';
+  var secondary='<button class="cta" style="margin:0;background:var(--greenbg);color:var(--greend);border:1px solid #CFE3BF;display:inline-flex;align-items:center;justify-content:center;gap:7px" onclick="event.stopPropagation();'+(secDone?'leadUncomplete('+i+')':'leadComplete('+i+')')+'"><i class="ti ti-circle-check" style="font-size:15px"></i>'+(secDone?'Completed':'Mark as complete')+'</button>';
+  var actBtn=MODE==='run'?'<div class="accact" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+primary+secondary+'</div>':'';
+  var det='';
+  var firstOpenTask=n.form.steps.findIndex(function(_,k){return accStepState(n,k)!=='d';});
+  var isOpen=s==='a'||((n.r.cur??-1)<0&&firstOpenTask>-1&&i===firstOpenTask);
+  var chk=s==='d'
+    ? '<span class="taskchk done" title="Completed"><i class="ti ti-circle-check"></i></span>'
+    : '<span class="taskchk" onclick="event.stopPropagation();leadComplete('+i+')" title="Mark as complete"><i class="ti ti-circle-check"></i></span>';
+  return '<div class="tacc'+(s==='a'?' cur':'')+(s==='d'?' done':'')+(isOpen?' open':'')+'">'
+    +'<div class="acchead" onclick="taskAcc(this)">'+bdg+'<div class="tlc3">'
+    +'<div class="tlt"><span class="svgray">'+whoIc(sp)+who+'</span><span class="accright">'+pill+chk+'<i class="ti ti-chevron-down accch"></i></span></div>'
+    +'<div class="acctitle">'+title+'</div>'
+    +(meta?'<div class="tsub"><div class="tlog">'+meta+'</div></div>':'')
+    +'</div></div>'
+    +'<div class="accbody">'
+    +''
+    +actBtn
+    +det
+    +'</div>'
+    +'</div>';
+};
+
+/* ===== overlay combined-list sidebar (experiment) ===== */
 (function(){
-  try{
-    var pid=new URLSearchParams(location.search).get('deliverable');
-    if(!pid)return;
-    var arr=JSON.parse(localStorage.getItem('gyDeliverables')||'[]');
-    var d=arr.filter(function(x){return x.id===pid;})[0];
-    if(!d)return;
-    var setCrumb=function(){var el=document.getElementById('crumbTitle');if(el&&d.n)el.textContent=d.n;};
-    setCrumb();
-    if(typeof renderTabs==='function'){var _rt=renderTabs;renderTabs=function(){_rt.apply(this,arguments);setCrumb();};}
-    var COL={'Caitlin':'#1D9E75','Harry':'#EF9F27','Katia':'#7F77DD','Emily':'#378ADD','Josh':'#639922','Izzie':'#D4537E','Trade lead':'#3B82F6','Kishen':'#215274','Thomas':'#378ADD'};
-    if(typeof TEAM!=='undefined'&&Array.isArray(TEAM)){
-      TEAM.length=0;
-      TEAM.push({n:(d.champ||'Caitlin'),c:COL[d.champ]||'#1D9E75',captain:true,live:true,seen:'now'});
-      (d.team||[]).forEach(function(nm){ if(nm===d.champ)return; TEAM.push({n:nm,c:COL[nm]||'#8C887F',live:false,seen:'today'}); });
-      if(typeof renderTeam==='function')renderTeam();
-    }
-  }catch(e){}
+  function stripName(t){return t.replace(/^(AI Assistant|Caitlin|Emily|Izzie|Millie|Harry|Josh|Trade rep|Vertical Lead)\s+/,'');}
+  var STEPINFO={
+   ctx:['What the project is trying to achieve, and why now.','The catchment, current land use and key features.','The physical changes planned on the land.','The outcomes those interventions produce.','Data gaps, valuations and open decisions.'],
+   openq:['Commission a total economic valuation, or not.','Which way GY runs the commercial strategy.','Where the evidence is missing or stale.'],
+   candidates:['Which ecosystem-service markets the land could sell into.','Links each market back to an intervention.'],
+   rulebooks:['Reads the codified market context from the Hive Mind.','Copies the rule-book figures into the table.','The strongest market to lead with.'],
+   beneficiaries:['Water companies, grid and infrastructure nearby.','Major schemes and assets exposed in the catchment.','Nearby firms with a reason to buy.'],
+   demandtools:['Local BNG demand, run by George.','Water demand from licence data, via Katia.','Who might buy the carbon, roughly.','Companies with published nature targets.'],
+   buyers:['Warm contacts from HubSpot and trade.','Keeps the credible buyers, drops the rest.','Buyer, why relevant, hook, relationship status.'],
+   gate:['Where both a market and a buyer exist.','Pursue or park, with a one-line reason.']
+  };
+  window.buildAll=function(){
+    var el=document.getElementById('allpanel'); if(!el||typeof NODES==='undefined')return;
+    var order=NODES.filter(function(n){return n.form;}).map(function(n){return n.id;});
+    var h='<div class="ap-h"><div><span class="ap-t grt-h">To-dos</span><span class="ap-s">Every step, in one list.</span></div><button class="ap-x" onclick="document.getElementById(\'allpanel\').classList.remove(\'open\')" title="Close"><i class="ti ti-x"></i></button></div>';
+    order.forEach(function(nid,pi){
+      var n=NODES.find(function(x){return x.id===nid;}); if(!n||!n.form)return;
+      h+='<div class="ssec" id="side-'+nid+'"><div class="ssh"><span class="ssn">'+(pi+1)+'</span><span class="sst">'+n.title+'</span></div><div class="stlist">';
+      n.form.steps.forEach(function(sp,i){
+        var st=accStepState(n,i),done=st==='d',nowa=st==='a';
+        var t=stripName(done?toPast(sp.t):nowa?toActive(sp.t):sp.t); t=t.charAt(0).toUpperCase()+t.slice(1);
+        var owner=sp.ownerN||'Caitlin';
+        var desc=(STEPINFO[nid]&&STEPINFO[nid][i])?STEPINFO[nid][i]:'';
+        h+='<div class="srow'+(done?' done':'')+(nowa?' now':'')+'">'
+          +'<span class="schk'+(done?' on':'')+'" onclick="sideToggle(\''+nid+'\','+i+')"><i class="ti ti-check"></i></span>'
+          +'<span class="tn2'+(done?' d':nowa?' a':'')+'">'+(i+1)+'</span>'
+          +'<div class="src"><div class="stt">'+t+'</div>'+(desc?'<div class="sdesc">'+desc+'</div>':'')+'<div class="sow">'+owner+(nowa?' &middot; <span class="nowtag">now</span>':'')+'</div></div>'
+          +'</div>';
+      });
+      h+='</div></div>';
+    });
+    el.innerHTML=h;
+  };
+  window.sideToggle=function(nid,i){
+    var n=NODES.find(function(x){return x.id===nid;}); if(!n||!n.form)return;
+    var d=leadDoneMap(n); d[i]=!d[i];
+    var total=n.form.steps.length,c=0,firstNot=-1;
+    for(var k=0;k<total;k++){ if(d[k])c++; else if(firstNot<0)firstNot=k; }
+    n.r.prog=c;
+    if(c>=total){ n.r.st='done'; n.r.cur=-2; } else { n.r.st='active'; n.r.cur=firstNot; }
+    try{renderNodes();renderEdges();}catch(e){}
+    buildAll();
+  };
+  window.scrollSide=function(id){
+    var el=document.getElementById('side-'+id); if(!el)return;
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  };
+  try{ openNode=function(id){ if(id){ var p=document.getElementById('allpanel'); if(p)p.classList.add('open'); scrollSide(id); } }; }catch(e){}
+  function _initSide(){ try{ buildAll(); }catch(e){} }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',_initSide); } else { _initSide(); }
 })();
+
 </script>
 </div>
+<div id="allpanel" class="allpanel"></div>
 </body>
 </html>
