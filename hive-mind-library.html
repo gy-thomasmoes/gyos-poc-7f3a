@@ -172,7 +172,7 @@ const CATDEF={
  'Policy outlook':'Likely Policy Updates — Examines anticipated regulatory or policy changes and their projected impact on the market. Assesses whether forthcoming developments are likely to hinder, support, or remain neutral to market growth.'
 };
 const ESDATA=[
-{id:'carbon',em:'🌱',name:'Carbon',col:'#628147',type:'Compliance + voluntary',status:'g',vol:'£6.43B',volsub:'global VCM 2024',
+{id:'carbon',em:'🌱',name:'Carbon',col:'#C67F16',type:'Compliance + voluntary',status:'g',vol:'£6.43B',volsub:'global VCM 2024',
  about:'Companies offset unavoidable emissions by buying credits; one credit equals one tonne of CO2 sequestered or avoided. The most investable and stable of the natural capital markets, split into compliance markets (UK and EU ETS) and the voluntary carbon market.',
  mon:'Sell verified credits under the Woodland Carbon Code, Peatland Carbon Code, Wilder Carbon or international codes. Buyers currently prefer removals credits over avoidance.',
  ready:{Operational:'g',Governance:'g',MRV:'g',Supply:'g',Demand:'o',Regulatory:'g','Key challenges':'g','Policy outlook':'g'},
@@ -180,7 +180,7 @@ const ESDATA=[
  dyn:['Global VCM ~£6.43B (2024). Retirements up 9% in H1 2025; issuances down 15% as developers wait for buyers','Buyers pay premiums for high-quality credits with co-benefits; ICVCM-compliant credits command higher prices and broader access','UK high-quality credits sell at £75-125/tCO2; WCC typically £25-50 below Wilder Carbon','CDR offtakes surged ~200% year on year to ~20Mt by June 2025'],
  uk:['~2,500 live domestic projects under WCC / PCC / Wilder Carbon vs only 9 on international registries','WCC: 11.34M credits issued; estimated market £396.9M, rising to ~£487.5M by end 2025','Domestic buyers: law firms, SMEs, large corporates'],
  risks:['International buyers may not pay UK premium prices; comparable credits are cheaper in the Global South','Lingering reputational caution from the 2022-23 critiques']},
-{id:'bng',em:'🏡',name:'Biodiversity Net Gain',col:'#52713C',type:'Compliance · England only',status:'g',vol:'£33.8M',volsub:'since inception',
+{id:'bng',em:'🏡',name:'Biodiversity Net Gain',col:'#1E8A63',type:'Compliance · England only',status:'g',vol:'£33.8M',volsub:'since inception',
  about:'Compliance market under the Environment Act 2021: developments approved by English planning authorities must show a 10% measurable biodiversity uplift, delivered on site or by buying off-site biodiversity units. One of the only biodiversity compliance markets in the world.',
  mon:'Sell BNG units from habitat creation or enhancement, via direct deals or platforms such as BNGx, Gaia and Biodiversity Units UK. England only; outside England route to voluntary biodiversity.',
  ready:{Operational:'g',Governance:'g',MRV:'g',Supply:'g',Demand:'o',Regulatory:'o','Key challenges':'o','Policy outlook':'o'},
@@ -196,7 +196,7 @@ const ESDATA=[
  dyn:['Global credit sales to date only £0.2-1.4M across 26k-125k ha; market fragmented','TNFD adopters rising: UK 2025 adopters passed the 2024 total by October','Corporates such as Lidl, AstraZeneca and Nestlé interested in bundles that also serve supply chain resilience'],
  uk:['~125 projects for sale on Gaia; transactions minimal and rarely disclosed','Voluntary projects now sold alongside compliance BNG using the same quantification tools'],
  risks:['No standard unit or MRV; all deals bespoke','TNFD demand signals not yet converting into credit purchases at scale']},
-{id:'nn',em:'🏞',name:'Nutrient Neutrality',col:'#215274',type:'Compliance · designated zones',status:'o',vol:'£102M',volsub:'traded to date',
+{id:'nn',em:'🏞',name:'Nutrient Neutrality',col:'#1F6FB2',type:'Compliance · designated zones',status:'o',vol:'£102M',volsub:'traded to date',
  about:'Compliance mechanism: developments in designated nutrient neutrality zones must buy phosphate or nitrate credits to offset nutrient pollution before building.',
  mon:'Generate credits through wetland creation, land reversion, septic tank repair or woodland planting inside NN catchments.',
  ready:{Operational:'o',Governance:'g',MRV:'g',Supply:'o',Demand:'g',Regulatory:'o','Key challenges':'o','Policy outlook':'o'},
@@ -204,7 +204,7 @@ const ESDATA=[
  dyn:['~£102M traded; the only NatCap market where demand exceeds supply','Pricing highly variable: phosphate credits £100k+ in some areas, bundled N+P around £6k elsewhere','£400M+ government funding landscape; the 1.5M homes target drives growth'],
  uk:['Proposed P&I Bill and Nature Restoration Fund could replace direct buyer-seller deals with a levy model'],
  risks:['High borrowing costs, geographic constraints, limited lender expertise','P&I Bill could restructure the market entirely']},
-{id:'nfm',em:'🌧',name:'Natural Flood Management',col:'#2E6B94',type:'Voluntary · site specific',status:'r',vol:'Not sized',volsub:'bespoke deals only',
+{id:'nfm',em:'🌧',name:'Natural Flood Management',col:'#B5628F',type:'Voluntary · site specific',status:'r',vol:'Not sized',volsub:'bespoke deals only',
  about:'Emerging market: public and private entities finance nature projects (tree planting, floodplain restoration, wetland management) to reduce flood risk to their assets. Flooding is the UK’s most significant climate risk.',
  mon:'Bespoke deals with infrastructure owners and utilities; typically bundled with biodiversity and carbon co-benefits. Strictly geographically specific.',
  ready:{Operational:'r',Governance:'r',MRV:'r',Supply:'o',Demand:'o',Regulatory:'r','Key challenges':'o','Policy outlook':'o'},
@@ -238,7 +238,12 @@ const ESDATA=[
  risks:['No rule book yet: built per buyer, logged here as signals accumulate']}
 ];
 
-const ICMAP={carbon:'ti-leaf',bng:'ti-plant-2',volbio:'ti-paw',nn:'ti-molecule',nfm:'ti-cloud-rain',wq:'ti-droplet',rm:'ti-ripple',scr:'ti-truck'};
+/* Rule books that are also inventory products use the exact GY_ES icon and
+   colour, so a service looks the same in the Library as it does in Inventory.
+   The rest keep their own hues, deliberately outside the product palette. */
+const ICMAP={carbon:'ti-trees',bng:'ti-butterfly',nn:'ti-droplet',nfm:'ti-ripple',
+             volbio:'ti-paw',wq:'ti-glass-full',rm:'ti-droplet-half-2',scr:'ti-truck'};
+const ESTOKEN={carbon:'wcc',bng:'bng',nn:'nut',nfm:'nfm'};
 let SEL=null;
 function renderBooks(){
   document.getElementById('books').innerHTML=ESDATA.map(e=>`
@@ -263,7 +268,7 @@ function openES(id){
     :`<div class="flabel">Market readiness</div><div class="pt" style="color:var(--ink3)">Too nascent or bespoke to assess against the nine-category framework. Sized per opportunity.</div>`;
   const d=document.getElementById('drawer');
   d.innerHTML=`<div class="sh">
-    <div class="ic" style="background:#F7F6F3;font-size:19px">${e.em}</div>
+    <div class="ic" style="background:${e.col};color:#fff;font-size:19px"><i class="ti ${ICMAP[e.id]||'ti-leaf'}"></i></div>
     <div style="flex:1"><div class="nt">${e.name}</div><div class="ns">Rule book · refreshed Oct 2025 · NatWest Markets Report</div></div>
     <button class="x" onclick="closeES()" aria-label="Close"><i class="ti ti-x"></i></button></div>
   <div class="sbody">
