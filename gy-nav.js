@@ -218,7 +218,7 @@ window.gyCartoTiles = function(style){
     return ''
     +'<div class="gy-grp">Market</div>'
     +ITEM_INV_PF
-    +'<div class="sitem" onclick="gyToast(\'Deals: the deal pipeline across programmes\')"><i class="ti ti-businessplan"></i> Deals</div>'
+    +'<div class="sitem'+on('pf-deals')+'"'+(active==='pf-deals'?'':' onclick="location.href=\'deals.html\'"')+'><i class="ti ti-businessplan"></i> Deals</div>'
     +'<div class="gy-grp">Intelligence</div>'
     +ITEM_MARKETMAP
     +ITEM_GENIE
@@ -247,7 +247,7 @@ window.gyCartoTiles = function(style){
     +'<div class="sitem'+on('pf-overview')+'"'+(active==='pf-overview'?'':' onclick="location.href=\'portfolio-overview.html\'"')+'><i class="ti ti-layout-dashboard"></i> Overview</div>'
     +'<div class="gy-grp">Manage</div>'
     +ITEM_INV_PF
-    +'<div class="sitem" onclick="gyToast(\'Deals: the deal pipeline across programmes\')"><i class="ti ti-businessplan"></i> Deals</div>'
+    +'<div class="sitem'+on('pf-deals')+'"'+(active==='pf-deals'?'':' onclick="location.href=\'deals.html\'"')+'><i class="ti ti-businessplan"></i> Deals</div>'
     +'<div class="sitem" onclick="gyToast(\'Workflows: cross-programme, portfolio-level workflows live here\')"><i class="ti ti-hierarchy-2"></i> Workflows</div>'
     +'<div class="gy-grp">Intelligence</div>'
     +ITEM_MARKETMAP
@@ -711,7 +711,7 @@ window.gyCartoTiles = function(style){
     ['Quick actions','ti-plus','Start a Workflow','Action','go:deliverables-landing.html'],
     ['Quick actions','ti-note','New meeting note','Action','toast:New meeting note: records the transcript and files it under the programme'],
     ['Quick actions','ti-file-text','Create a document','Action','toast:Create a document: a versioned document in this programme'],
-    ['Quick actions','ti-businessplan','Log a deal','Action','toast:Log a deal: deals sit at Portfolio because they run across programmes'],
+    ['Quick actions','ti-businessplan','Log a deal','Action','toast:Deals are created in Hubspot and arrive here on the next sync'],
     ['Quick actions','ti-map-pin','Add a site','Action','toast:Add a site: a land parcel joins the programme it delivers for'],
     ['Quick actions','ti-user-plus','Invite someone','Action','toast:Invite people to the workspace'],
 
@@ -719,6 +719,7 @@ window.gyCartoTiles = function(style){
     ['Go to','ti-layout-dashboard','Programme overview','Page','go:programme-overview.html'],
     ['Go to','ti-layout-dashboard','Portfolio overview','Page','go:portfolio-overview.html'],
     ['Go to','ti-packages','Inventory','Page','go:inventory-overview.html'],
+    ['Go to','ti-businessplan','Deals','Page','go:deals.html'],
     ['Go to','ti-hierarchy-2','Workflows','Page','go:deliverables-landing.html'],
     ['Go to','ti-file-text','Documents','Page','go:documents-overview.html'],
     ['Go to','ti-note','Meeting notes','Page','go:meeting-notes.html'],
@@ -934,6 +935,7 @@ window.gyCartoTiles = function(style){
   var GY_CRUMB_HREF = {
     'Portfolio':'portfolio-overview.html',
     'Inventory':'inventory-overview.html',
+    'Deals':'deals.html',
     'Workflows':'deliverables-landing.html',
     'Documents':'documents-overview.html',
     'Meeting notes':'meeting-notes.html',
@@ -959,6 +961,8 @@ window.gyCartoTiles = function(style){
     'inventory-bng-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
     'inventory-wcc-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
     'inventory-all.html':               {alt:'portfolio', trail:['Inventory']},
+    'deals.html':                       {alt:'portfolio'},
+    'deal.html':                        {alt:'portfolio', trail:['Deals']},
     'market-map-kwame.html':            {alt:'portfolio', trail:['Intelligence']},
     'outcome-engine.html':              {alt:'portfolio', trail:['Intelligence']},
 

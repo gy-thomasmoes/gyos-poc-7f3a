@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deals · Portfolio · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.phead{align-items:baseline}
+
+/* review band */
+.rband{display:flex;gap:14px;align-items:flex-start;background:var(--amberbg);border:1px solid #EBD9AE;
+       border-radius:14px;padding:14px 18px;margin:0 0 20px}
+.rband .ti{font-size:19px;color:var(--amberd);margin-top:1px}
+.rband .rb{flex:1;min-width:0}
+.rband .rt{font-size:14.5px;font-weight:600;color:var(--amberd);margin-bottom:5px}
+.rband .rl{font-size:14px;color:var(--ink);display:flex;flex-wrap:wrap;gap:6px 18px}
+.rband .rl span{cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.rband .rl span:hover{color:var(--amberd)}
+
+/* table */
+.dtbl th.gh{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+            color:var(--ink3);background:var(--graybg);padding:9px 16px}
+.dtbl th.so{cursor:pointer;user-select:none}
+.dtbl th.so:hover{color:var(--ink)}
+.dtbl th.so .ca{opacity:.45}
+.dtbl th.so.on .ca{opacity:1;color:var(--ink)}
+.dtbl td.warn{width:34px;padding-left:12px;padding-right:0}
+.dtbl td.warn .ti{font-size:17px;color:#B5462F}
+.dtbl tr.flag td{background:#FDF6EE}
+.dtbl tr.flag:hover td{background:#FBEFDF}
+.dtbl td.nm{font-weight:600;letter-spacing:-.01em}
+.dtbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+.dtbl td.mut{color:var(--ink2)}
+/* ten columns inside the canonical 1080 wrap: trim the padding, let the two
+   long text columns wrap, and clip a very long deal name */
+.dtbl th,.dtbl td{padding-left:9px;padding-right:9px}
+.dtbl td.wrapc,.dtbl th.wrapc{white-space:nowrap}
+.dtbl td.prog{white-space:normal;max-width:104px}
+.dtbl td.act{width:44px;text-align:right;padding-left:0}
+.dots{border:none;background:transparent;color:var(--ink3);cursor:pointer;font-size:17px;
+      width:30px;height:30px;border-radius:8px;line-height:1}
+.dots:hover{background:var(--graybg);color:var(--ink)}
+.badge.st-won{background:var(--greenbg);color:var(--greend)}
+.badge.st-res{background:var(--amberbg);color:var(--amberd)}
+.badge.st-unres{background:var(--bluebg);color:var(--blued)}
+.badge.st-none{background:var(--graybg);color:var(--ink2)}
+.badge.st-lost{background:#F7E5E1;color:#94412F}
+.espill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+        letter-spacing:.04em;padding:3px 9px;border-radius:7px;background:var(--esc);color:#fff;white-space:nowrap}
+.espill+.espill{margin-left:4px}
+.empty{padding:40px 18px;text-align:center;color:var(--ink3);font-size:14.5px}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"pf-deals","scope":"portfolio"};</script>
+<script src="gy-nav.js?v=ee2546cc"></script>
+<script src="gy-projects.js?v=493e46ca"></script>
+<script src="gy-inventory.js?v=83d6a9e6"></script>
+<script src="gy-deals.js?v=2b768008"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Portfolio</span>
+    <span class="sep">›</span><span class="cr cur">Deals</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Deals</div>
+    <div class="acts" id="abar"></div>
+  </div>
+  <div class="pmeta"><i class="ti ti-refresh"></i><span id="syncline"></span></div>
+
+  <div id="rband"></div>
+  <div class="tblwrap"><table class="dtbl" id="tbl"></table></div>
+  <div class="showing" id="showing" style="margin-top:14px"></div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var D = window.GY_DEALS_API;
+var ALL = D.all();
+
+var ST = {
+  'Closed Won':'st-won', 'Closed Lost':'st-lost',
+  'Open (Reserved inventory)':'st-res', 'Open (Unreserved inventory)':'st-unres',
+  'Open (No inventory)':'st-none'
+};
+
+/* the list shows a compact stage, with the Hubspot wording on hover. The
+   full value is what the Stage filter and the deal page use. */
+var STAGE_SHORT = {
+  'Scoped/qualified':'Qualified',
+  'Quote confirmed or rejected':'Quote confirmed',
+  'Commercial negotiation':'Negotiation',
+  'Reservation/option agreed':'Option agreed'
+};
+
+var SHORT = {
+  'Closed Won':'Won', 'Closed Lost':'Lost',
+  'Open (Reserved inventory)':'Reserved', 'Open (Unreserved inventory)':'Unreserved',
+  'Open (No inventory)':'No inventory'
+};
+
+var state = {q:'', sort:{k:'name', d:1},
+             f:{'Status':'all','Service':'all','Programme':'all','Owner':'all','Stage':'all'}};
+
+function esPill(k){
+  var e = window.GY_ES[k]; if(!e) return '';
+  return '<span class="espill '+e.cls+'">'+e.short+'</span>';
+}
+function money(n){ return n ? '£'+n.toLocaleString() : '<span class="dash">-</span>'; }
+
+function match(d){
+  var f = state.f;
+  if(f.Service !== 'all' && d.es.indexOf(f.Service) < 0) return false;
+  if(f.Programme !== 'all' && d.programmes.indexOf(f.Programme) < 0) return false;
+  if(f.Owner === 'mine'){ if(d.owner !== D.me) return false; }
+  else if(f.Owner !== 'all' && d.owner !== f.Owner) return false;
+  if(f.Stage !== 'all' && d.stage !== f.Stage) return false;
+  if(f.Status === 'review'){ if(!d.issues.length) return false; }
+  else if(f.Status !== 'all' && d.status !== f.Status) return false;
+  if(state.q){
+    var hay = (d.name+' '+d.buyer+' '+d.ref+' '+d.owner+' '+d.programmes.join(' ')).toLowerCase();
+    if(hay.indexOf(state.q.toLowerCase()) < 0) return false;
+  }
+  return true;
+}
+function rowsFor(){ return ALL.filter(match); }
+
+function sorted(list){
+  var k = state.sort.k, dir = state.sort.d;
+  function v(d){
+    if(k === 'units') return d.units;
+    if(k === 'value') return d.value;
+    if(k === 'status') return D.statuses().indexOf(d.status);
+    if(k === 'stage') return D.stages().indexOf(d.stage);
+    return String(d[k] || '').toLowerCase();
+  }
+  return list.slice().sort(function(a,b){
+    var x = v(a), y = v(b);
+    return x < y ? -dir : x > y ? dir : 0;
+  });
+}
+
+/* -- review band -- */
+function band(){
+  var el = document.getElementById('rband');
+  var flagged = ALL.filter(function(d){ return d.issues.length; });
+  if(!flagged.length){ el.innerHTML = ''; return; }
+  var by = {};
+  flagged.forEach(function(d){ d.issues.forEach(function(i){ by[i.type] = (by[i.type]||0) + 1; }); });
+  var lines = Object.keys(by).map(function(t){
+    return '<span onclick="setStatus(\'Needs review\')">'+D.issueTypes[t].label+' ('+by[t]+')</span>';
+  }).join('');
+  el.innerHTML = '<div class="rband"><i class="ti ti-alert-triangle"></i><div class="rb">'
+    + '<div class="rt">'+flagged.length+' deals need review</div>'
+    + '<div class="rl">'+lines+'</div></div></div>';
+}
+
+/* the one filter bar owns every dimension, so the band drives it too */
+function setStatus(label){
+  if(!bar || !bar.pop) return;
+  var row = [].filter.call(bar.pop.querySelectorAll('.ar[data-g="Status"]'), function(r){
+    return r.textContent.indexOf(label) === 0; })[0];
+  if(row) row.click();
+}
+
+/* -- table -- */
+function head(){
+  function th(k, label, cls){
+    var on = state.sort.k === k;
+    return '<th class="so'+(on?' on':'')+(cls?' '+cls:'')+'" onclick="sortBy(\''+k+'\')">'
+      + label + '<span class="ca">' + (on ? (state.sort.d>0?' ↑':' ↓') : ' ⇅') + '</span></th>';
+  }
+  return '<thead>'
+    + '<tr><th class="gh"></th><th class="gh" colspan="3">Hubspot</th>'
+    + '<th class="gh vdiv" colspan="5">Great Yellow</th><th class="gh"></th></tr>'
+    + '<tr><th></th>' + th('name','Deal') + th('owner','Owner') + th('stage','Stage','wrapc')
+    + th('status','Status','vdiv') + '<th class="wrapc">Programmes</th><th>Service</th>'
+    + th('units','Units','num') + th('value','Value','num') + '<th></th></tr></thead>';
+}
+function sortBy(k){
+  if(state.sort.k === k) state.sort.d = -state.sort.d;
+  else { state.sort.k = k; state.sort.d = 1; }
+  render();
+}
+
+function render(){
+  var list = sorted(rowsFor());
+  var body = list.map(function(d){
+    var flag = d.issues.length;
+    var tip = d.issues.map(function(i){ return D.issueTypes[i.type].label+': '+i.detail; }).join('\n');
+    return '<tr class="'+(flag?'flag':'')+'" onclick="open_(\''+d.slug+'\')">'
+      + '<td class="warn">'+(flag?'<i class="ti ti-alert-triangle" title="'+tip.replace(/"/g,'')+'"></i>':'')+'</td>'
+      + '<td class="nm">'+d.name+'</td>'
+      + '<td class="mut">'+d.owner+'</td>'
+      + '<td class="mut wrapc" title="'+d.stage+'">'+(STAGE_SHORT[d.stage]||d.stage)+'</td>'
+      + '<td class="vdiv"><span class="badge '+ST[d.status]+'" title="'+d.status+'">'+SHORT[d.status]+'</span></td>'
+      + '<td class="mut prog">'+(d.programmes.join(', ') || '<span class="dash">-</span>')+'</td>'
+      + '<td>'+d.es.map(esPill).join('')+'</td>'
+      + '<td class="num">'+(d.units || '<span class="dash">-</span>')+'</td>'
+      + '<td class="num">'+money(d.value)+'</td>'
+      + '<td class="act"><button class="dots" onclick="rowMenu(event,\''+d.slug+'\')">&#8943;</button></td>'
+      + '</tr>';
+  }).join('');
+  if(!body) body = '<tr><td colspan="10" class="empty">No deals match these filters</td></tr>';
+  document.getElementById('tbl').innerHTML = head() + '<tbody>' + body + '</tbody>';
+  var review = ALL.filter(function(d){ return d.issues.length; }).length;
+  document.getElementById('showing').textContent =
+    'Showing ' + list.length + ' of ' + ALL.length + ' deals · ' + review + ' need review';
+  band();
+}
+
+function open_(slug){ location.href = 'deal.html?d=' + slug; }
+function rowMenu(e, slug){
+  e.stopPropagation();
+  gyMenu(e.currentTarget, [
+    ['ti-eye','View deal', function(){ open_(slug); }],
+    ['ti-edit','Edit inventory', function(){ open_(slug); }],
+    ['ti-lock','Reserve inventory','Reserve inventory: holds the units against this deal'],
+    ['ti-checkbox','Mark inventory as sold','Mark as sold: moves the units out of availability']
+  ]);
+}
+
+var DEAL_ACTIONS = [
+  ['label','Deals'],
+  ['ti-refresh','Sync from Hubspot','Sync runs one way. Hubspot owns the deal, Great Yellow owns the units'],
+  ['ti-file-export','Export deal register','Export: a CSV of every deal and its allocated units'],
+  '-',
+  ['label','Rules'],
+  ['ti-tag','Set prices','go:inventory-portfolio-overview.html'],
+  ['ti-shield-check','Set sales restrictions','Sales restrictions set the floor price a deal cannot go under'],
+  '-',
+  ['ti-activity','Audit log','go:activity-overview.html']
+];
+
+document.getElementById('syncline').textContent = 'Synced from ' + D.crm + ' ' + D.syncedAt;
+
+var bar = gyBar('abar', {
+  search: {placeholder:'Search deals', oninput:function(v){ state.q = v; render(); }},
+  filters: [
+    ['Status',    [['ti-circle-dot','All statuses','all'],
+                   ['ti-alert-triangle','Needs review','review']].concat(D.statuses().map(function(st){
+                     return ['ti-point', SHORT[st], st]; }))],
+    ['Service',   [['ti-circle-dot','All services','all'],
+                   ['ti-butterfly','BNG units','bng'],
+                   ['ti-trees','Woodland carbon','wcc']]],
+    ['Programme', [['ti-circle-dot','All programmes','all'],
+                   ['ti-map-pin','Evenlode','Evenlode'],
+                   ['ti-map-pin','Spains Hall','Spains Hall']]],
+    ['Owner',     [['ti-circle-dot','All owners','all'],
+                   ['ti-user','My deals','mine']].concat(D.owners().map(function(o){
+                     return ['ti-user', o, o]; }))],
+    ['Stage',     [['ti-circle-dot','All stages','all']].concat(D.stages().map(function(s){
+                     return ['ti-flag', s, s]; }))]
+  ],
+  onfilter: function(g, v){ state.f[g] = v; render(); },
+  actions: DEAL_ACTIONS,
+  primary: {icon:'ti-plus', label:'Log deal',
+            onclick:'Deals are created in Hubspot and arrive here on the next sync'}
+});
+
+/* the Inventory overview links in with ?es=bng or ?es=wcc */
+(function(){
+  var q = (location.search.match(/[?&]es=([^&]+)/) || [])[1];
+  var want = q === 'wcc' ? 'Woodland carbon' : q === 'bng' ? 'BNG units' : null;
+  if(!want || !bar || !bar.pop) return;
+  var row = [].filter.call(bar.pop.querySelectorAll('.ar[data-g="Service"]'), function(r){
+    return r.textContent.indexOf(want) === 0; })[0];
+  if(row) row.click();
+})();
+
+render();
+</script>
+</body>
+</html>

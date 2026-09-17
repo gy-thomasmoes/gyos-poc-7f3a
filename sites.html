@@ -59,7 +59,7 @@
 .srow .al,.prow .al{display:flex;flex-direction:column;gap:6px;min-width:0}
 .srow .alrow,.prow .alrow{display:flex;align-items:center;gap:9px;font-size:14.5px;min-width:0}
 .srow .alrow .pn,.prow .alrow .pn{font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.srow .alrow .pp,.prow .alrow .pp{font-size:13px;color:var(--ink3);white-space:nowrap}
+.srow .alrow .pp,.prow .alrow .pp{font-size:13px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .srow .ct{font-size:14px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .srow .ac{justify-self:end}
 .allocbtn{border:1px solid var(--line2);background:#fff;border-radius:9px;padding:7px 12px;font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;white-space:nowrap}
@@ -77,7 +77,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"prog-sites"};</script>
-<script src="gy-nav.js?v=d077449c"></script>
+<script src="gy-nav.js?v=ee2546cc"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-sites.js?v=31691678"></script>
 
@@ -97,15 +97,9 @@
     <div class="acts" id="abar"></div>
   </div>
 
-  <div class="seg" id="grainSeg" style="margin:14px 0 16px">
+  <div class="seg" id="grainSeg" style="margin:14px 0 18px">
     <button class="on" data-g="sites" onclick="setGrain('sites')">Sites</button>
     <button data-g="parcels" onclick="setGrain('parcels')">Parcels</button>
-  </div>
-
-  <div class="frow">
-    <button class="fbtn" id="allocBtn" onclick="toggleAlloc()">Allocation · All <i class="ti ti-chevron-down"></i></button>
-    <span class="spacer"></span>
-    <button class="btn-out" onclick="toast('Export land schedule: every site and parcel as a spreadsheet')">Export land schedule</button>
   </div>
 
   <div class="scards" id="scards"></div>
@@ -132,7 +126,7 @@ var LAND_ACTIONS = [
   ['ti-history','Audit log','go:activity-overview.html']
 ];
 var GRAIN='sites';
-var ONLY_UNALLOC=false;
+var ALLOC='any', LANDUSE='any', BAR=null;
 function esPill(k){ return '<span class="espill '+GY_ES[k].cls+'">'+GY_ES[k].short+'</span>'; }
 function projOf(id){ return GY_PROJECTS.filter(function(p){return p.id===id;})[0]; }
 function openSite(s){ toast(s.name+': the site page is not in this prototype yet'); }
@@ -147,7 +141,7 @@ function cards(){
      card('Sites', A.count(), '')
    + card('Land parcels', A.parcels(), '')
    + card('Total area', A.area()+' <small>ha</small>', '')
-   + '<div class="sc warn'+(ONLY_UNALLOC?' on':'')+'" onclick="toggleAlloc()">'
+   + '<div class="sc warn'+(ALLOC==='unalloc'?' on':'')+'" onclick="toggleAlloc()">'
      +'<div class="lb">Unallocated land</div>'
      +'<div class="vl">'+A.unallocatedParcels()+' <small>parcels</small></div>'
      +'<div class="sb">'+A.unallocatedArea()+' ha</div></div>';
@@ -157,9 +151,31 @@ function setGrain(g){
   document.querySelectorAll('#grainSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.g===g);});
   render();
 }
+/* allocated means it has at least one project on it */
+function byAlloc(has){ return ALLOC==='any' || (ALLOC==='alloc' ? has : !has); }
+function byUse(use){ return LANDUSE==='any' || String(use).toLowerCase().indexOf(LANDUSE)>=0; }
+/* the Unallocated land card is a shortcut into the Allocation filter, so it
+   has to move the action bar's own state with it, badge included */
+function setAlloc(v){
+  ALLOC=v;
+  if(BAR && BAR.pop){
+    BAR.filter['Allocation']=v;
+    [].forEach.call(BAR.pop.querySelectorAll('.ar[data-g="Allocation"]'), function(r){
+      r.classList.toggle('on', r.getAttribute('data-v')===v);
+    });
+    paintBadge();
+  }
+  render();
+}
+function paintBadge(){
+  var c=document.querySelector('#abar .cnt');
+  if(!c) return;
+  var n=(LANDUSE!=='any'?1:0)+(ALLOC!=='any'?1:0);
+  c.textContent = n ? String(n) : '';
+}
 function renderParcels(q){
   var rows=GY_SITES_API.parcelRows().filter(function(p){
-    if(ONLY_UNALLOC && p.project) return false;
+    if(!byAlloc(!!p.project) || !byUse(p.use)) return false;
     return (p.ref+' '+p.site+' '+p.use).toLowerCase().indexOf(q)>=0;
   });
   var h='<div class="phd"><span>Parcel</span><span>Site</span><span class="r">Area</span>'
@@ -182,12 +198,15 @@ function renderParcels(q){
 }
 function render(){
   cards();
+  var seg=document.getElementById('grainSeg').children;
+  seg[0].textContent='Sites \u00b7 '+GY_SITES_API.count();
+  seg[1].textContent='Parcels \u00b7 '+GY_SITES_API.parcels();
   var q=(window.SQ||'').toLowerCase();
   document.getElementById('stbl').hidden = (GRAIN!=='sites');
   document.getElementById('ptbl').hidden = (GRAIN!=='parcels');
   if(GRAIN==='parcels') return renderParcels(q);
   var list=GY_SITES_API.all().filter(function(s){
-    if(ONLY_UNALLOC && s.alloc.length) return false;
+    if(!byAlloc(s.alloc.length>0) || !byUse(s.use)) return false;
     return (s.name+' '+s.addr+' '+s.contact+' '+s.use).toLowerCase().indexOf(q)>=0;
   });
   var h='<div class="shd"><span>Site</span><span class="r">Parcels</span><span class="r">Area</span>'
@@ -213,20 +232,28 @@ function render(){
   }).join('') : '<div class="sempty">No sites match that search.</div>';
   document.getElementById('stbl').innerHTML=h;
 }
-function toggleAlloc(){
-  ONLY_UNALLOC=!ONLY_UNALLOC;
-  document.getElementById('allocBtn').innerHTML=(ONLY_UNALLOC?'Allocation · Unallocated':'Allocation · All')+' <i class="ti ti-chevron-down"></i>';
-  render();
-}
+function toggleAlloc(){ setAlloc(ALLOC==='unalloc'?'any':'unalloc'); }
 window.addEventListener('DOMContentLoaded',render);
 
-gyBar('abar', {
+BAR = gyBar('abar', {
   search:  {placeholder:'Search sites and parcels', oninput:function(v){ window.SQ=v; render(); }},
-  filters: [['Land use',[['ti-circle-dot','Any','any'],['ti-wheat','Arable','arable'],['ti-plant','Pasture','pasture'],
-             ['ti-layers-intersect','Mixed','mixed'],['ti-trees','Woodland','woodland'],['ti-droplet','Water','water']]]],
-  actions: LAND_ACTIONS,
-  primary: {icon:'ti-plus', label:'Add site', onclick:'Add site: address, contact and the parcels it holds'}
+  filters: [
+    ['Land use',[['ti-circle-dot','Any','any'],['ti-wheat','Arable','arable'],['ti-plant','Pasture','pasture'],
+                 ['ti-layers-intersect','Mixed','mixed'],['ti-trees','Woodland','woodland'],['ti-droplet','Water','water']]],
+    ['Allocation',[['ti-circle-dot','All','any'],['ti-map-pin-check','Allocated','alloc'],['ti-map-pin-question','Unallocated','unalloc']]]
+  ],
+  onfilter: function(group, value){
+    if(group==='Land use') LANDUSE=value; else ALLOC=value;
+    render();
+  },
+  primary: {icon:'ti-plus', label:'Add site', onclick:'Add site: address, contact and the parcels it holds'},
+  actions: LAND_ACTIONS
 });
+/* tag the Allocation rows so the Unallocated land card can tick the right one */
+if(BAR && BAR.pop){
+  var vals=['any','alloc','unalloc'];
+  [].forEach.call(BAR.pop.querySelectorAll('.ar[data-g="Allocation"]'), function(r,i){ r.setAttribute('data-v', vals[i]); });
+}
 </script>
 </body>
 </html>

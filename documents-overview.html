@@ -86,7 +86,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .glab:first-of-type{margin-top:4px}
 .count{font-size:11.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600;letter-spacing:0}
 .dtbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
-.dhd,.drow{display:grid;grid-template-columns:minmax(180px,2.1fr) minmax(120px,1.1fr) minmax(110px,1.05fr) minmax(120px,1fr) 96px;
+.dhd,.drow{display:grid;grid-template-columns:minmax(200px,2.6fr) minmax(110px,1fr) minmax(100px,.9fr) minmax(112px,.92fr) 88px;
            align-items:center;gap:14px;padding:13px 20px}
 .dhd{background:var(--graybg);border-bottom:1px solid var(--line);
      font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
@@ -100,8 +100,9 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .nm{font-size:15px;font-weight:600;letter-spacing:-.01em;min-width:0;display:flex;align-items:center;gap:8px}
 .nm .ttx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .nm .dpt{font-weight:400;font-size:11.5px;color:var(--ink3);border:1px solid var(--line);border-radius:999px;padding:1px 8px;white-space:nowrap;flex:none}
-.pill{font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content;max-width:100%;
-  background:var(--tealbg);color:var(--teald);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;
+  width:fit-content;max-width:100%;min-width:0;background:var(--tealbg);color:var(--teald)}
+.pill .px{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .dprog{display:flex;align-items:center;gap:9px;min-width:0}
 .dbar{flex:none;width:64px;height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
 .dbar i{display:block;height:100%;border-radius:999px;background:var(--ink2)}
@@ -126,7 +127,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 
 <div class="shell">
 <script>window.GYNAV={"active": "documents", "arts": "demand"};</script>
-<script src="gy-nav.js?v=d077449c"></script>
+<script src="gy-nav.js?v=ee2546cc"></script>
 <script src="gy-todos.js?v=7226a07d"></script>
 <script src="gy-docs.js?v=eb6965dc"></script>
 
@@ -242,7 +243,8 @@ function fRow(f){
   var path=PATH.concat([f.k]);
   var inside=GYD.inFolder(path,true);
   var last=inside.map(function(x){return x.on||'';}).sort().pop()||'';
-  var lab=inside.length+(inside.length===1?' item':' items')+(kids?' · '+kids+' folders':'');
+  var lab=inside.length+(inside.length===1?' item':' items')
+    +(kids?' · '+kids+(kids===1?' folder':' folders'):'');
   var d=f.dept?GYD.dept(f.dept):null;
   var tile=d?'<div class="tile fold" style="background:'+d.bg+';color:'+d.fg+'"><i class="ti ti-folder"></i></div>'
             :'<div class="tile fold"><i class="ti ti-folder"></i></div>';
@@ -276,7 +278,7 @@ function dRow(x){
       +(es?'<span class="es-chip '+es.cls+'" style="font-weight:400;font-size:12px"><i class="ti '+es.icon+'"></i>'+es.short+'</span>':'')
       +(x.attach?'<span class="dpt">'+x.attach+'</span>':'')
       +'</div></div>'
-    +'<div><span class="pill"><i class="ti ti-topology-star-3" style="font-size:13px"></i> '+x.wf+'</span></div>'
+    +'<div><span class="pill"><i class="ti ti-topology-star-3" style="font-size:13px"></i><span class="px">'+x.wf+'</span></span></div>'
     +third
     +'<div class="who"><span class="av" style="background:'+p.c+'">'+p.ini+'</span><span>'+(x.by||'')+'</span></div>'
     +'<div class="mut">'+x.upd+'</div></div>';

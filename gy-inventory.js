@@ -137,8 +137,12 @@
     };
   }
 
+  /* The deal register owns these figures. gy-deals.js derives them from the
+     allocations, so the Deals page and this block can never disagree. DEALS
+     below is only the fallback for pages that do not load gy-deals.js. */
   function deals(es, prog){
-    var d = DEALS[es] || {open:0, inDeals:0, unreserved:{u:0,deals:0}, reserved:{u:0,deals:0}};
+    var d = (window.GY_DEALS_API ? GY_DEALS_API.forService(es, prog) : null)
+         || DEALS[es] || {open:0, inDeals:0, unreserved:{u:0,deals:0}, reserved:{u:0,deals:0}};
     var avail = pipeline(es, prog).available.u || 1;
     function pct(n){ return Math.round(n/avail*100); }
     return {open:d.open, inDeals:d.inDeals, available:avail,
