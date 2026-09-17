@@ -471,6 +471,36 @@ window.gyCartoTiles = function(style){
    +'.gy-mlbl{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;'
    +'color:var(--ink3);padding:9px 11px 4px}'
    +'.gy-mdiv{height:1px;background:var(--line);margin:6px 8px}'
+   /* ── top right action bar ────────────────────────────────────────────
+      One bar for every page: Search, Filters, page buttons, Actions, then
+      the primary button. Built by gyBar() so a new page cannot drift. */
+   +'.abar{margin-left:auto;display:flex;align-items:center;gap:10px;position:relative}'
+   +'.abtn{font:inherit;font-size:14px;font-weight:500;padding:9px 15px;border-radius:10px;cursor:pointer;'
+   +'background:#fff;border:1px solid var(--line2);color:var(--ink);display:inline-flex;align-items:center;gap:7px;white-space:nowrap}'
+   +'.abtn:hover{border-color:var(--ink3)}'
+   +'.abtn .ti{font-size:16px;color:inherit}'
+   +'.abtn.on{background:var(--ink);border-color:var(--ink);color:#fff}'
+   +'.abtn.primary{background:var(--dark,#1F1F1D);border-color:var(--dark,#1F1F1D);color:#fff}'
+   +'.abtn.primary:hover{opacity:.9}'
+   +'.abtn .cnt{font-size:12px;font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums}'
+   +'.abtn.on .cnt{color:rgba(255,255,255,.75)}'
+   +'.apop{position:absolute;right:0;top:calc(100% + 9px);width:272px;background:var(--card);'
+   +'border:1px solid var(--line2);border-radius:14px;box-shadow:0 16px 44px rgba(31,31,29,.18);'
+   +'padding:7px;z-index:1400;display:none;text-align:left}'
+   +'.apop.on{display:block}'
+   +'.apop .ag{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:9px 11px 4px}'
+   +'.apop .ar{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;font-size:14px;color:var(--ink2);cursor:pointer}'
+   +'.apop .ar:hover{background:#F1EFE8}'
+   +'.apop .ar.on{color:var(--ink);font-weight:500}'
+   +'.apop .ar .ti{font-size:16px;color:var(--ink3)}'
+   +'.apop .ar .ck{margin-left:auto;font-size:16px;color:var(--greend,#2F6B3C);opacity:0}'
+   +'.apop .ar.on .ck{opacity:1}'
+   +'.apop .adiv{height:1px;background:var(--line);margin:6px 8px}'
+   +'.asearch{display:none;align-items:center;gap:9px;width:100%;max-width:420px;margin:0 0 16px;'
+   +'padding:10px 14px;background:var(--card);border:1px solid var(--line2);border-radius:11px}'
+   +'.asearch.on{display:flex}'
+   +'.asearch .ti{font-size:17px;color:var(--ink3)}'
+   +'.asearch input{border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%}'
    +'html.gyembed .snav,html.gyembed .snavpeek,html.gyembed #expandBtn,html.gyembed .scollapse{display:none!important}'
    +'html.gybare #chapnav{display:none!important}'
    +'html.gybare #floatR{display:none!important}'
@@ -1096,6 +1126,128 @@ window.gyCartoTiles = function(style){
     setTimeout(function(){ document.addEventListener('click', onDoc); }, 0);
     function onDoc(){ document.removeEventListener('click', onDoc); gyMClose(); }
   };
+  /* ── gyBar: the top right action bar ────────────────────────────────────
+     Call it once per page, after the markup exists:
+
+       gyBar('abar', {
+         search:  {placeholder:'Search projects', oninput:render},   // or {onclick:openSearch}
+         filters: [['Stage',[['ti-circle-dot','All stages','all'],['ti-pencil','Draft','draft']]]],
+         buttons: [{icon:'ti-layout-list', label:'All inventory', go:'inventory-all.html'}],
+         actions: PROJ_ACTIONS,                                      // rows for gyMenu
+         primary: {icon:'ti-plus', label:'Add project', onclick:fn}, // or onclick:'toast text'
+         onfilter: function(group, value){ ... }
+       });
+
+     Button order is fixed: Search, Filters, page buttons, Actions, primary.
+     A search with a placeholder gets its own field under the page header;
+     a search with onclick just calls that (a drawer, say). Filters keeps one
+     value per group and shows how many groups are off their default. */
+  window.gyBar = function(host, cfg){
+    var el = (typeof host === 'string') ? document.getElementById(host) : host;
+    if(!el) return null;
+    cfg = cfg || {};
+    el.classList.add('abar');
+    var bar = {cfg:cfg, filter:{}, search:null};
+
+    function btn(cls, html, fn){
+      var b=document.createElement('button');
+      b.className='abtn'+(cls?' '+cls:''); b.innerHTML=html;
+      b.onclick=function(e){ e.stopPropagation(); fn(b,e); };
+      el.appendChild(b); return b;
+    }
+    function ico(i){ return i ? '<i class="ti '+i+'"></i>' : ''; }
+    function run(a, b){
+      if(typeof a === 'function') return a(b);
+      if(typeof a === 'string'){
+        if(a.indexOf('go:')===0) location.href = a.slice(3);
+        else if(window.gyToast) gyToast(a);
+        else if(window.toast) toast(a);
+      }
+    }
+
+    /* search */
+    if(cfg.search){
+      var sb = btn('', ico('ti-search')+'<span>Search</span>', function(b){
+        closePop();
+        if(cfg.search.onclick) return run(cfg.search.onclick);
+        var on = !bar.search.classList.contains('on');
+        bar.search.classList.toggle('on', on);
+        b.classList.toggle('on', on);
+        var inp = bar.search.querySelector('input');
+        if(on) inp.focus();
+        else { inp.value=''; if(cfg.search.oninput) cfg.search.oninput(''); }
+      });
+      if(!cfg.search.onclick){
+        var box=document.createElement('div');
+        box.className='asearch';
+        box.innerHTML='<i class="ti ti-search"></i><input placeholder="'+(cfg.search.placeholder||'Search')+'">';
+        var head = el.closest('.phead') || el.parentNode;
+        head.parentNode.insertBefore(box, head.nextSibling);
+        box.querySelector('input').addEventListener('input', function(){
+          if(cfg.search.oninput) cfg.search.oninput(this.value);
+        });
+        bar.search = box;
+      }
+      bar.searchBtn = sb;
+    }
+
+    /* filters */
+    var pop=null, fbtn=null;
+    function closePop(){ if(pop&&pop.classList.contains('on')){ pop.classList.remove('on'); fbtn.classList.remove('on'); } }
+    if(cfg.filters && cfg.filters.length){
+      pop=document.createElement('div'); pop.className='apop';
+      cfg.filters.forEach(function(g,gi){
+        if(gi){ var d=document.createElement('div'); d.className='adiv'; pop.appendChild(d); }
+        var lab=document.createElement('div'); lab.className='ag'; lab.textContent=g[0]; pop.appendChild(lab);
+        bar.filter[g[0]] = g[1][0][2];
+        g[1].forEach(function(r,ri){
+          var row=document.createElement('div');
+          row.className='ar'+(ri===0?' on':'');
+          row.setAttribute('data-g', g[0]);
+          row.innerHTML=ico(r[0])+r[1]+'<i class="ti ti-check ck"></i>';
+          row.onclick=function(e){
+            e.stopPropagation();
+            /* one value per group */
+            [].forEach.call(pop.querySelectorAll('.ar[data-g="'+g[0]+'"]'), function(x){ x.classList.remove('on'); });
+            row.classList.add('on');
+            bar.filter[g[0]]=r[2];
+            paintCount();
+            if(cfg.onfilter) cfg.onfilter(g[0], r[2]);
+            else run('Filter: '+g[0].toLowerCase()+' '+String(r[1]).toLowerCase());
+          };
+          pop.appendChild(row);
+        });
+      });
+      fbtn = btn('', ico('ti-adjustments-horizontal')+'Filters<span class="cnt"></span>', function(b){
+        b.classList.toggle('on', pop.classList.toggle('on'));
+      });
+      el.appendChild(pop);
+      bar.pop = pop;
+    }
+    function paintCount(){
+      if(!fbtn) return;
+      var n=0;
+      cfg.filters.forEach(function(g){ if(bar.filter[g[0]] !== g[1][0][2]) n++; });
+      fbtn.querySelector('.cnt').textContent = n ? String(n) : '';
+    }
+
+    /* page buttons, then actions, then the primary */
+    (cfg.buttons||[]).forEach(function(b){
+      btn('', ico(b.icon)+b.label, function(el2){ closePop(); run(b.go ? 'go:'+b.go : b.onclick, el2); });
+    });
+    if(cfg.actions) btn('', 'Actions <i class="ti ti-chevron-down"></i>', function(b){
+      closePop(); gyMenu(b, cfg.actions);
+    });
+    if(cfg.primary) btn('primary', ico(cfg.primary.icon||'ti-plus')+cfg.primary.label, function(b){
+      closePop(); run(cfg.primary.onclick, b);
+    });
+
+    document.addEventListener('click', function(e){
+      if(pop && !e.target.closest('.apop')) closePop();
+    });
+    return bar;
+  };
+
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') gyMClose(); });
   window.addEventListener('resize', gyMClose);
 

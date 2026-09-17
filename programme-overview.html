@@ -66,6 +66,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .hero{margin-bottom:26px}
 .hello{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3vw,38px);line-height:1.05;letter-spacing:-.02em}
 .hsub{font-size:15.5px;color:var(--ink2);margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 14px}
+/* Programme action bar. It launches, it does not own: every button deep-links
+   to the page that performs the work, per the scatter decision. */
+/* this page carries its own stylesheet and does not link gy-shell.css, so the
+   two shared button styles are repeated here verbatim. Keep them in step. */
+.btn-dark{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn-dark:hover{background:#2C1B22}
+.btn-out{background:#fff;border:1px solid var(--line2);border-radius:10px;padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn-out:hover{border-color:var(--ink3)}
+.abar{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:20px}
+.abar .more{padding:9px 11px}
+.abar .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
 .hsub span{display:inline-flex;align-items:center;gap:6px}
 .hsub .ti{font-size:16px;color:var(--ink3)}
 
@@ -158,7 +169,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 
 <div class="shell">
 <script>window.GYNAV={"active":"overview","arts":"demand"};</script>
-<script src="gy-nav.js?v=010c5c19"></script>
+<script src="gy-nav.js?v=a31aab8f"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-sites.js?v=31691678"></script>
 <script src="gy-calendar.js?v=b1dfa958"></script>
@@ -182,6 +193,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
       <span><i class="ti ti-user"></i> James Ruggles</span>
       <span><i class="ti ti-sparkles"></i> Caitlin Ciceri</span>
       <span><i class="ti ti-calendar"></i> Started Jul 2026</span>
+    </div>
+    <div class="abar">
+      <button class="btn-dark" onclick="event.stopPropagation();gyMenu(this,PO_ADD_INV)"><i class="ti ti-plus"></i> Add inventory</button>
+      <button class="btn-out" onclick="toast('Add project: name it, pick the ecosystem service, then allocate parcels')"><i class="ti ti-map"></i> Add project</button>
+      <button class="btn-out" onclick="toast('Add site: address, contact and the parcels it holds')"><i class="ti ti-map-pin"></i> Add site</button>
+      <button class="btn-out" onclick="location.href='deliverables-landing.html'"><i class="ti ti-hierarchy-2"></i> Start workflow</button>
+      <span class="sep"></span>
+      <button class="btn-out more" onclick="event.stopPropagation();gyMenu(this,PO_MORE)" title="More actions"><i class="ti ti-dots"></i></button>
     </div>
   </header>
 
@@ -294,6 +313,25 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+/* The action bar's two menus. Every row lands on the page that owns the work,
+   so the overview stays a launcher and the bulk operations keep one home. */
+var PO_ADD_INV = [
+  ['ti-file-upload','Bulk upload inventory','go:inventory-overview.html'],
+  ['ti-plus','Add inventory manually','go:inventory-overview.html']
+];
+var PO_MORE = [
+  ['label','Inventory'],
+  ['ti-tag','Set prices','go:inventory-overview.html'],
+  ['ti-adjustments','Set sales restrictions','go:inventory-overview.html'],
+  ['label','Projects'],
+  ['ti-package-import','Add inventory to projects','go:projects.html'],
+  ['ti-arrow-up-circle','Progress unit stage','go:projects.html'],
+  ['label','Land'],
+  ['ti-map-pin-plus','Allocate parcels to projects','go:sites.html'],
+  '-',
+  ['ti-history','Audit log','go:activity-overview.html']
+];
 </script>
 <script>
 /* Projects: the top three by selling priority, straight off gy-projects.js.

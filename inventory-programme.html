@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
 <link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
-<style>.dtbl .r{text-align:right}.dtbl td.r{font-variant-numeric:tabular-nums}</style>
+<style>.dtbl .r{text-align:right}.dtbl td.r{font-variant-numeric:tabular-nums}.esrow{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -19,7 +20,7 @@
   window.GYNAV={"active": es ? 'prog-inv-'+es : 'prog-inv-list'};
 })();
 </script>
-<script src="gy-nav.js?v=010c5c19"></script>
+<script src="gy-nav.js?v=a31aab8f"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=70b0cd57"></script>
 
@@ -37,45 +38,10 @@
 <div class="wrap">
   <div class="phead">
     <div class="h1">Inventory list</div>
-    <div class="acts">
-      <button class="btn-dark" onclick="toast('Actions: add units, import, export, reserve, list for sale')">Actions <i class="ti ti-chevron-down"></i></button>
-      <button class="btn-out" onclick="toast('Programme settings')"><i class="ti ti-settings"></i> Settings</button>
-    </div>
-  </div>
-  <div class="frow">
-    <span class="flab">Filters</span>
-    <div class="segmini" id="esSeg">
-      <button class="on" data-es="" onclick="setEs('')">All ES Types</button>
-      <button data-es="bng" onclick="setEs('bng')">BNG</button>
-      <button data-es="wcc" onclick="setEs('wcc')">WCC</button>
-      <button data-es="soc" onclick="setEs('soc')">Soil</button>
-    </div>
-    <button class="fbtn">Availability <i class="ti ti-chevron-down"></i></button>
-  </div>
-  <div class="frow">
-    <span class="flab">BNG Filters</span>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> BNG Types <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Distinctiveness <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Condition <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> LPA <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> NCA <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> LNRS <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Price</button>
-  </div>
-  <div class="frow">
-    <span class="flab">WCC Filters</span>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> Status <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Vintage <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Price</button>
+    <div class="acts" id="abar"></div>
   </div>
 
-  <div class="searchbar">
-    <div class="search"><i class="ti ti-search"></i>
-      <input id="q" placeholder="Search (by Status, Habitat etc)" oninput="render()"
-             style="border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%">
-    </div>
-    <span class="showing" id="showing"></span>
-  </div>
+  <div class="searchbar"><span class="showing" id="showing"></span></div>
 
   <div class="tblwrap">
     <table class="dtbl">
@@ -131,7 +97,7 @@ function badge(a){
 function cell(v){ return v ? v : dash; }
 
 function render(){
-  var q=(document.getElementById('q').value||'').toLowerCase();
+  var q=(window.IQ||'').toLowerCase();
   var all=GY_INV_API.rows('Evenlode');
   var list=all.filter(function(r){
     if(ES_FILTER && r.es!==ES_FILTER) return false;
@@ -164,6 +130,23 @@ function setEs(k){
   render();
 }
 window.addEventListener('DOMContentLoaded',render);
+
+gyBar('abar', {
+  search:  {placeholder:'Search by status, habitat or ref', oninput:function(v){ window.IQ=v; render(); }},
+  filters: [
+    ['Availability',[['ti-circle-dot','Any','any'],['ti-circle-check','Available','available'],['ti-clock','Future','future'],['ti-bookmark','Reserved','reserved'],['ti-tag','Sold','sold']]],
+    ['BNG',[['ti-circle-dot','All types','all'],['ti-leaf','Habitat type','type'],['ti-star','Distinctiveness','distinct'],['ti-heart-rate-monitor','Condition','condition']]],
+    ['Designations',[['ti-circle-dot','Any','any'],['ti-building-bank','LPA','lpa'],['ti-map-2','NCA','nca'],['ti-map-pin','LNRS','lnrs']]],
+    ['Price',[['ti-circle-dot','Any','any'],['ti-arrow-up','High to low','desc'],['ti-arrow-down','Low to high','asc']]]
+  ],
+  buttons: [{icon:'ti-settings', label:'Settings', onclick:'Settings: columns, defaults and who can edit this inventory'}],
+  actions: [['label','Bulk'],
+            ['ti-tag','Set prices','Set prices on the selected lines'],
+            ['ti-adjustments','Set sales restrictions','Restrict who these lines can be sold to'],
+            '-',
+            ['ti-file-export','Export inventory','Export the current view as a spreadsheet'],
+            ['ti-history','Audit log','Every change to these lines, with who and when']]
+});
 </script>
 </body>
 </html>

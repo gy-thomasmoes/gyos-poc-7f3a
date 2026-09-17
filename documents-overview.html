@@ -180,7 +180,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 
 <div class="shell">
 <script>window.GYNAV={"active": "documents", "arts": "demand"};</script>
-<script src="gy-nav.js?v=010c5c19"></script>
+<script src="gy-nav.js?v=a31aab8f"></script>
 <script src="gy-todos.js?v=7226a07d"></script>
 <script src="gy-docs.js?v=8c86f270"></script>
 
@@ -197,7 +197,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 <div class="wrap">
   <div class="phead">
     <div class="h1">Documents</div>
-    <div class="acts"><button class="btn-dark" onclick="toast('Upload: drop a file here or forward a client email and the AI Assistant files it to the right run')"><i class="ti ti-plus"></i> Add document</button></div>
+    <div class="acts" id="abar"></div>
   </div>
 
   <div class="dhead">
@@ -206,9 +206,6 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
       <button id="vList" class="on" onclick="dView('list')"><i class="ti ti-list"></i> List</button>
       <button id="vCov" onclick="dView('cov')"><i class="ti ti-layout-grid"></i> Areas</button>
     </div>
-    <span class="chip" aria-label="Search"><i class="ti ti-search"></i></span>
-    <button class="fbtn2" id="fBtn" onclick="dPop(event)"><i class="ti ti-adjustments-horizontal"></i> Filters<span class="cnt" id="fCnt" style="display:none"></span></button>
-    <div class="fpop" id="fPop"></div>
   </div>
 
   <div id="listView">
@@ -289,37 +286,15 @@ function cvTile(x,d){
 
 var DDEPT='all', DES='all';
 function dScope(){
+  var q=(window.DQ||'').toLowerCase();
   return GYD.items.filter(function(x){
-    return (DDEPT==='all'||x.dept===DDEPT) && (DES==='all'||x.es===DES);
+    return (DDEPT==='all'||x.dept===DDEPT) && (DES==='all'||x.es===DES)
+      && (!q || String(x.name).toLowerCase().indexOf(q)>=0 || String(x.wf||'').toLowerCase().indexOf(q)>=0);
   });
-}
-function dPop(e){
-  if(e) e.stopPropagation();
-  var el=document.getElementById('fPop'), b=document.getElementById('fBtn');
-  var on=el.classList.toggle('on'); b.classList.toggle('on',on);
-}
-function dRow_(k,label,on,sw,ic,fn){
-  return '<div class="fr'+(on?' on':'')+'" onclick="'+fn+'(\''+k+'\')">'
-    +(sw?'<span class="sw" style="background:'+sw+'"></span>':'')
-    +(ic?'<i class="ti '+ic+'"></i>':'')
-    +label+'<i class="ti ti-check ck"></i></div>';
 }
 function dSet(k){ DDEPT=k; dRender(); }
 function dEs(k){ DES = (DES===k?'all':k); dRender(); }
-function dFilters(){
-  var f='<div class="fg">Department</div>'+dRow_('all','All departments',DDEPT==='all',null,null,'dSet');
-  GYD.depts.forEach(function(d){ f+=dRow_(d.k,d.name,DDEPT===d.k,d.fg,null,'dSet'); });
-  f+='<div class="fsep"></div><div class="fg">Ecosystem service</div>';
-  ['bng','wcc'].forEach(function(k){
-    var m=(window.GY_ES||{})[k]; if(!m)return;
-    f+=dRow_(k,m.name,DES===k,null,m.icon,'dEs').replace('class="fr','class="fr '+m.cls);
-  });
-  document.getElementById('fPop').innerHTML=f;
-  var n=(DDEPT==='all'?0:1)+(DES==='all'?0:1), c=document.getElementById('fCnt');
-  c.textContent=n; c.style.display = n?'':'none';
-}
 function dRender(){
-  dFilters();
   if(DVIEW==='cov'){ dCoverage(); return; }
 
   var rows=dScope();
@@ -448,6 +423,19 @@ if(localStorage.getItem('gyDelOpen')==='0'){
     if(w)localStorage.setItem('gyNavW',String(w));
   });
 })();
+
+gyBar('abar', {
+  search:  {placeholder:'Search documents', oninput:function(v){ window.DQ=v; dRender(); }},
+  filters: [
+    ['Department',[['ti-circle-dot','All departments','all']].concat(GYD.depts.map(function(d){return ['ti-square-rounded-filled',d.name,d.k];}))],
+    ['Ecosystem service',[['ti-circle-dot','Any','all'],['ti-butterfly','BNG units','bng'],['ti-trees','Woodland carbon','wcc']]]
+  ],
+  onfilter: function(group, value){
+    if(group==='Department') DDEPT=value; else DES=value;
+    dRender();
+  },
+  primary: {icon:'ti-plus', label:'Add document', onclick:'Upload: drop a file here or forward a client email and the AI Assistant files it to the right run'}
+});
 </script>
 </body>
 </html>

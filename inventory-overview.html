@@ -107,7 +107,6 @@
 
 /* ── Search ── */
 [hidden]{display:none!important}
-#sbar .ti{font-size:16px;margin-right:6px;vertical-align:-2px}
 
 .sdrop{position:fixed;inset:0;background:rgba(31,31,29,.28);z-index:1300;opacity:0;pointer-events:none;
        transition:opacity .22s ease}
@@ -180,7 +179,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"prog-inventory"};</script>
-<script src="gy-nav.js?v=010c5c19"></script>
+<script src="gy-nav.js?v=a31aab8f"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=70b0cd57"></script>
 
@@ -197,11 +196,7 @@
 <div class="wrap">
   <div class="phead">
     <div class="h1">Inventory</div>
-    <div class="acts">
-      <button class="btn-out" id="sbar" onclick="openSearch()"><i class="ti ti-search"></i><span>Search</span></button>
-      <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,INV_ACTIONS)">Actions <i class="ti ti-chevron-down"></i></button>
-      <button class="btn-dark" onclick="event.stopPropagation();gyMenu(this,INV_ADD)"><i class="ti ti-plus"></i> Add inventory</button>
-    </div>
+    <div class="acts" id="abar"></div>
   </div>
   <div id="results" hidden></div>
 
@@ -496,14 +491,11 @@ function runSearch(){
       + chips() + body;
   document.getElementById('results').hidden=false;
   document.getElementById('overview').hidden=true;
-  document.getElementById('sbar').querySelector('span').textContent =
-    m.length+' line'+(m.length===1?'':'s')+' \u00b7 edit';
   closeSearch();
 }
 function clearSearch(){
   document.getElementById('results').hidden=true;
   document.getElementById('overview').hidden=false;
-  document.getElementById('sbar').querySelector('span').textContent='Search';
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='/' && !/input|select|textarea/i.test((e.target.tagName||''))){ e.preventDefault(); openSearch(); }
@@ -514,6 +506,12 @@ document.addEventListener('keydown',function(e){
 });
 
 window.addEventListener('DOMContentLoaded',function(){ rail(); deals(); risks(); list(); });
+
+gyBar('abar', {
+  search:  {onclick:function(){ openSearch(); }},
+  actions: INV_ACTIONS,
+  primary: {icon:'ti-plus', label:'Add inventory', onclick:function(b){ gyMenu(b, INV_ADD); }}
+});
 </script>
 </body>
 </html>

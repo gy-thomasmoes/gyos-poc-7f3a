@@ -92,7 +92,9 @@ var CSS = `
 .rrow .rt{font-size:13.5px;font-weight:500;line-height:1.35}
 .rrow .rx{font-size:12.5px;color:var(--ink3);line-height:1.45;margin-top:2px}
 
-.invhead{display:flex;align-items:center;gap:12px;margin:30px 0 0;position:relative}
+.invhead{display:flex;align-items:center;gap:10px;margin:30px 0 0;position:relative}
+.invhead .apop{width:290px}
+.apop .ar .v{margin-left:auto;font-size:12.5px;color:var(--ink3)}
 /* grouped rows: one band per vintage, with what the band adds up to */
 .dtbl tr.grp td{background:var(--graybg);font-size:12.5px;font-weight:600;color:var(--ink2);
   padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--line)}
@@ -123,26 +125,6 @@ var CSS = `
 .invhead .sn{font-size:13px;color:var(--ink3)}
 .invhead .spacer{flex:1}
 .invdiv{height:1px;background:var(--line);margin:13px 0 16px}
-.fbtn2{font:inherit;font-size:13.5px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);
-  background:var(--card);color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex:none}
-.fbtn2:hover{border-color:var(--line2);color:var(--ink)}
-.fbtn2.on{background:var(--ink);border-color:var(--ink);color:#fff}
-.fbtn2 .ti{font-size:15px;color:inherit}
-.fbtn2 .cnt{font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
-.fbtn2.on .cnt{color:rgba(255,255,255,.7)}
-#cPop .fr .ck{margin-left:auto;font-size:16px;color:var(--greend);opacity:0}
-#cPop .fr.on .ck{opacity:1}
-#cPop .fr{color:var(--ink3)}
-#cPop .fr.on{color:var(--ink)}
-.fpop{position:absolute;right:0;top:calc(100% + 9px);width:290px;background:var(--card);border:1px solid var(--line2);
-  border-radius:14px;box-shadow:0 14px 40px rgba(31,31,29,.16);padding:7px;z-index:40;display:none}
-.fpop.on{display:block}
-.fpop .fg{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:9px 11px 4px}
-.fpop .fr{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;font-size:14px;cursor:pointer}
-.fpop .fr:hover{background:#F1EFE8}
-.fpop .fr .v{margin-left:auto;font-size:12.5px;color:var(--ink3)}
-.fpop .fr .ti{font-size:16px;color:var(--ink3)}
-.fpop .fsep{height:1px;background:var(--line);margin:6px 8px}
 `;
 
 function n(x){ return typeof x==='number' ? x.toLocaleString() : x; }
@@ -223,21 +205,21 @@ window.gyEsPage = function(cfg){
   /* ── inventory ── */
   h += '<div class="invhead"><div class="sect">Inventory</div><span class="sn">'+n(D.table.total)+' records</span>'
      + '<span class="spacer"></span>'
-     + '<button class="fbtn2" onclick="toast(\'Search this inventory\')"><i class="ti ti-search"></i> Search</button>'
-     + '<button class="fbtn2" id="fBtn" onclick="gyFPop()"><i class="ti ti-adjustments-horizontal"></i> Filters</button>'
-     + '<button class="fbtn2" id="cBtn" onclick="gyCPop(event)"><i class="ti ti-columns-3"></i> Columns</button>'
-     + '<button class="fbtn2" onclick="location.href=\''+D.allInventoryHref+'\'"><i class="ti ti-layout-list"></i> All inventory</button>'
-     + '<div class="fpop" id="cPop"><div class="fg">Show columns</div>'
+     + '<button class="abtn" onclick="toast(\'Search this inventory\')"><i class="ti ti-search"></i> Search</button>'
+     + '<button class="abtn" id="fBtn" onclick="gyFPop()"><i class="ti ti-adjustments-horizontal"></i> Filters</button>'
+     + '<button class="abtn" id="cBtn" onclick="gyCPop(event)"><i class="ti ti-columns-3"></i> Columns</button>'
+     + '<button class="abtn" onclick="location.href=\''+D.allInventoryHref+'\'"><i class="ti ti-layout-list"></i> All inventory</button>'
+     + '<div class="apop" id="cPop"><div class="ag">Show columns</div>'
        + D.table.cols.map(function(c,i){
-           return '<div class="fr" id="col'+i+'" onclick="gyColTog('+i+',event)">'+c+'<i class="ti ti-check ck"></i></div>';
+           return '<div class="ar" id="col'+i+'" onclick="gyColTog('+i+',event)">'+c+'<i class="ti ti-check ck"></i></div>';
          }).join('')
      + '</div>'
-     + '<div class="fpop" id="fPop">'
+     + '<div class="apop" id="fPop">'
        + D.filters.map(function(g){
-           return '<div class="fg">'+g[0]+'</div>' + g[1].map(function(f){
-             return '<div class="fr" onclick="toast(\'Filter by '+f[1].toLowerCase()+'\')"><i class="ti '+f[0]+'"></i>'+f[1]+'<span class="v">'+f[2]+'</span></div>';
+           return '<div class="ag">'+g[0]+'</div>' + g[1].map(function(f){
+             return '<div class="ar" onclick="toast(\'Filter by '+f[1].toLowerCase()+'\')"><i class="ti '+f[0]+'"></i>'+f[1]+'<span class="v">'+f[2]+'</span></div>';
            }).join('');
-         }).join('<div class="fsep"></div>')
+         }).join('<div class="adiv"></div>')
      + '</div></div><div class="invdiv"></div>';
 
   function cell(v,i){
@@ -282,8 +264,8 @@ window.gyEsPage = function(cfg){
      + '<div class="rh"><button class="rx" onclick="gyRecClose()"><i class="ti ti-x"></i></button>'
      + '<div class="rk" id="recK"></div><div class="rn" id="recN"></div></div>'
      + '<div class="rb" id="recB"></div>'
-     + '<div class="rfoot"><button class="fbtn2" onclick="toast(\'Evidence is not in this prototype yet\')"><i class="ti ti-paperclip"></i> Evidence</button>'
-     + '<button class="fbtn2" onclick="toast(\'Deals are not in this prototype yet\')"><i class="ti ti-file-dollar"></i> Add to deal</button></div></aside>';
+     + '<div class="rfoot"><button class="abtn" onclick="toast(\'Evidence is not in this prototype yet\')"><i class="ti ti-paperclip"></i> Evidence</button>'
+     + '<button class="abtn" onclick="toast(\'Deals are not in this prototype yet\')"><i class="ti ti-file-dollar"></i> Add to deal</button></div></aside>';
   host.outerHTML = h;
   window.__GYES = {D:D, es:es, hidden:(D.table.hide||[]).slice()};
   gyColApply();

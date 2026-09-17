@@ -14,7 +14,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"inv-denton"};</script>
-<script src="gy-nav.js?v=010c5c19"></script>
+<script src="gy-nav.js?v=a31aab8f"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -29,10 +29,7 @@
 <div class="wrap">
   <div class="phead">
     <div class="h1">Denton Reserve</div>
-    <div class="acts">
-      <button class="btn-dark" onclick="toast('Actions: add units, import, export, reserve, list for sale')">Actions <i class="ti ti-chevron-down"></i></button>
-      <button class="btn-out" onclick="toast('Programme settings')"><i class="ti ti-settings"></i> Settings</button>
-    </div>
+    <div class="acts" id="abar"></div>
   </div>
   <div class="seg" style="margin:8px 0 18px">
     <button onclick="toast('Denton Reserve dashboard is not in this prototype yet')">Dashboard</button>
@@ -40,27 +37,6 @@
     <button onclick="toast('Sites view is not in this prototype yet')">Sites</button>
   </div>
 
-  <div class="frow">
-    <span class="flab">Filters</span>
-    <div class="segmini"><button class="on">All ES Types</button><button>BNG</button><button>WCC</button></div>
-    <button class="fbtn">Availability <i class="ti ti-chevron-down"></i></button>
-  </div>
-  <div class="frow">
-    <span class="flab">BNG Filters</span>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> BNG Types <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Distinctiveness <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Condition <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> LPA <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> NCA <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> LNRS <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Price</button>
-  </div>
-  <div class="frow">
-    <span class="flab">WCC Filters</span>
-    <button class="fbtn muted"><i class="ti ti-info-circle"></i> Status <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Vintage <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn">Price</button>
-  </div>
 
   <div class="searchbar">
     <div class="search"><i class="ti ti-search"></i> Search (by Status, Habitat etc)</div>
@@ -120,6 +96,23 @@ document.getElementById('rows').innerHTML = YEARS.map(function(y){
     +'<td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td>'
     +'</tr>';
 }).join('');
+
+gyBar('abar', {
+  search:  {placeholder:'Search by status, habitat or ref', oninput:function(v){ window.IQ=v; render(); }},
+  filters: [
+    ['Availability',[['ti-circle-dot','Any','any'],['ti-circle-check','Available','available'],['ti-clock','Future','future'],['ti-bookmark','Reserved','reserved'],['ti-tag','Sold','sold']]],
+    ['BNG',[['ti-circle-dot','All types','all'],['ti-leaf','Habitat type','type'],['ti-star','Distinctiveness','distinct'],['ti-heart-rate-monitor','Condition','condition']]],
+    ['Designations',[['ti-circle-dot','Any','any'],['ti-building-bank','LPA','lpa'],['ti-map-2','NCA','nca'],['ti-map-pin','LNRS','lnrs']]],
+    ['Price',[['ti-circle-dot','Any','any'],['ti-arrow-up','High to low','desc'],['ti-arrow-down','Low to high','asc']]]
+  ],
+  buttons: [{icon:'ti-settings', label:'Settings', onclick:'Settings: columns, defaults and who can edit this inventory'}],
+  actions: [['label','Bulk'],
+            ['ti-tag','Set prices','Set prices on the selected lines'],
+            ['ti-adjustments','Set sales restrictions','Restrict who these lines can be sold to'],
+            '-',
+            ['ti-file-export','Export inventory','Export the current view as a spreadsheet'],
+            ['ti-history','Audit log','Every change to these lines, with who and when']]
+});
 </script>
 </body>
 </html>

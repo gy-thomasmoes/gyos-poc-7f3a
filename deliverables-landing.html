@@ -182,7 +182,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=010c5c19"></script>
+<script src="gy-nav.js?v=a31aab8f"></script>
 <script src="gy-docs.js?v=8c86f270"></script>
 
 <div class="mainc">
@@ -198,7 +198,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
 <div class="wrap">
   <div class="phead">
     <div class="h1">Workflows</div>
-    <div class="acts"><button class="btn-dark" onclick="openCreate()"><i class="ti ti-plus"></i> Create new Deliverable</button></div>
+    <div class="acts" id="abar"></div>
   </div>
 
   <div class="favstrip" id="favStrip"></div>
@@ -738,6 +738,10 @@ document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRende
   if(document.readyState!=='loading')paint();
 })();
 
+
+gyBar('abar', {
+  primary: {icon:'ti-plus', label:'Create new Deliverable', onclick:function(){ openCreate(); }}
+});
 </script>
 </body>
 </html>

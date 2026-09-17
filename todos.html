@@ -183,7 +183,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 
 <div class="shell">
 <script>window.GYNAV={"active": "todos"};</script>
-<script src="gy-nav.js?v=010c5c19"></script>
+<script src="gy-nav.js?v=a31aab8f"></script>
 <script src="gy-todos.js?v=7226a07d"></script>
 
 <div class="mainc">
@@ -198,7 +198,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 <div class="wrap">
   <div class="phead">
     <div class="h1">To-dos</div>
-    <div class="acts"><button class="btn-dark" onclick="toast('Add a to-do, on its own or against a deliverable step')"><i class="ti ti-plus"></i> Add to-do</button></div>
+    <div class="acts" id="abar"></div>
   </div>
 
   <div class="fbar" style="margin-top:2px">
@@ -280,6 +280,10 @@ function row(x){
 }
 function tick(id){ GYT.toggle(id); render(); }
 render();
+
+gyBar('abar', {
+  primary: {icon:'ti-plus', label:'Add to-do', onclick:'Add a to-do, on its own or against a deliverable step'}
+});
 </script>
 </body>
 </html>
