@@ -299,16 +299,14 @@ window.gyCartoTiles = function(style){
    +'.gy-anim-out{animation:gyUp .22s ease}'
    +'.gy-gap{height:14px}'
    /* Breadcrumb typography is canonical here, like the rail: one size, one
-      colour, no per-page drift. The current page differs by weight only. */
+      colour, no per-page drift. The current page differs by weight only.
+      No gydark variant on purpose: dark mode only restyles the rail, the
+      topbar stays light, so light values are correct in both modes. */
    +'.crumbs .cr.gycr,.topbar .crumb.gycr,.row1 .crumb.gycr{font-size:16px;line-height:1.35;font-weight:400;letter-spacing:0;color:#766B62;white-space:nowrap;cursor:pointer}'
    +'.crumbs .cr.gycr:hover,.topbar .crumb.gycr:hover,.row1 .crumb.gycr:hover{color:#1A0C12}'
    +'.crumbs .sep.gycr-sep,.topbar .sep.gycr-sep,.row1 .sep.gycr-sep{font-size:14px;line-height:1.35;font-weight:400;color:#A79E8D}'
    +'.crumbs .cr.cur.gycr-leaf,.crumbs .cr.gycr-leaf,.topbar .title.gycr-leaf,.row1 .title.gycr-leaf,.crumbs .gycr-leaf,.topbar .gycr-leaf,.row1 .gycr-leaf{font-size:16px;line-height:1.35;font-weight:600;letter-spacing:-.01em;color:#1A0C12;white-space:nowrap;cursor:default}'
    +'.crumbs .cr.cur.gycr-leaf:hover,.crumbs .cr.gycr-leaf:hover{color:#1A0C12}'
-   +'body.gydark .crumbs .cr.gycr,body.gydark .topbar .crumb.gycr,body.gydark .row1 .crumb.gycr{color:#A5A29B}'
-   +'body.gydark .crumbs .cr.gycr:hover,body.gydark .topbar .crumb.gycr:hover,body.gydark .row1 .crumb.gycr:hover{color:#ECEAE4}'
-   +'body.gydark .crumbs .sep.gycr-sep,body.gydark .topbar .sep.gycr-sep,body.gydark .row1 .sep.gycr-sep{color:#6F6D67}'
-   +'body.gydark .crumbs .cr.cur.gycr-leaf,body.gydark .crumbs .cr.gycr-leaf,body.gydark .topbar .title.gycr-leaf,body.gydark .row1 .title.gycr-leaf,body.gydark .crumbs .gycr-leaf,body.gydark .topbar .gycr-leaf,body.gydark .row1 .gycr-leaf{color:#ECEAE4}'
    +'.gy-picker{position:absolute;left:0;right:0;background:#fff;border:1px solid #CFCDC5;border-radius:10px;box-shadow:0 8px 28px rgba(31,31,29,.16);padding:5px;z-index:30}'
    +'.gy-pk{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:7px;cursor:pointer;font-size:14px;color:#2C2C2A}'
    +'.gy-pk:hover{background:#F1EFE8}'
