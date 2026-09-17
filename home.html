@@ -172,6 +172,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 
 /* one merged queue, one line per row */
 .qd{width:8px;height:8px;border-radius:50%;flex:none}
+.tbx{width:18px;height:18px;border-radius:5px;border:1.5px solid #D6D3CA;flex:none;background:var(--card);
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tbx .ti{font-size:11px;color:#fff;display:none}
+.tbx:hover{border-color:var(--ink3)}
+.hrow.on .tbx{background:var(--green);border-color:var(--green)}
+.hrow.on .tbx .ti{display:block}
+.hrow.on .rtitle{color:var(--ink3);text-decoration:line-through}
 .qd.you{background:var(--amber)}
 .qd.todo{background:var(--line2)}
 .hrow .rnote{font-size:12.5px;color:var(--ink3);margin-left:9px;font-weight:400}
@@ -257,40 +264,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
       </section>
 
       <section class="block">
-        <div class="blabel"><h2>Needs you</h2><span class="act" onclick="location.href='todos.html'">View all</span></div>
+        <div class="blabel"><h2>To-dos</h2><span class="act" onclick="location.href='todos.html'">View all</span></div>
         <div class="list" id="homeQueue"></div>
       </section>
 
-
-      <section class="block">
-        <div class="blabel"><h2>Messages</h2><span class="cnt">3</span><span class="act" onclick="location.href='document.html?mode=deliverable'">Open threads</span></div>
-        <div class="list">
-          <div class="msg" onclick="location.href='document.html?mode=deliverable'">
-            <span class="fa" style="--fc:#378ADD">EN</span>
-            <div class="mw">
-              <div class="mh"><b>Emily Norton</b><span>2 hours ago</span><span class="whr">Customer Demand Mapping</span></div>
-              <div class="mx">Trade have two live buyers for units here. Worth naming them before we call this viable.</div>
-              <span class="mr" onclick="event.stopPropagation();toast('Reply to Emily')">Reply</span>
-            </div>
-          </div>
-          <div class="msg" onclick="location.href='document.html?mode=deliverable'">
-            <span class="fa" style="--fc:#EF9F27">HF</span>
-            <div class="mw">
-              <div class="mh"><b>Harry Fox</b><span>Yesterday</span><span class="whr">Customer Demand Mapping</span></div>
-              <div class="mx">Parcel 3 boundary changed after the survey. Inventory says 208 ha now.</div>
-              <span class="mr" onclick="event.stopPropagation();toast('Reply to Harry')">Reply</span>
-            </div>
-          </div>
-          <div class="msg" onclick="toast('Boothby is not in this prototype yet')">
-            <span class="fa" style="--fc:#639922">JR</span>
-            <div class="mw">
-              <div class="mh"><b>Josh Read</b><span>4 days ago</span><span class="whr">Baseline evidence pack</span></div>
-              <div class="mx">Contractor says the peat survey slips to Friday. Shall I hold the run or start without it?</div>
-              <span class="mr" onclick="event.stopPropagation();toast('Reply to Josh')">Reply</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <div class="two">
         <section class="block">
@@ -320,16 +297,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
       <div class="railcard">
         <div class="blabel"><h2>Today</h2></div>
         <div class="agenda" id="agToday"></div>
-        <div class="agsec">Recent</div>
-        <div class="agenda" id="agPast"></div>
-
-        <div class="blabel" style="margin-top:30px"><h2>Around you</h2></div>
-        <div class="pres">
-          <div class="pr"><span class="fa" style="--fc:#378ADD">EN</span><div><div class="pn">Emily Norton</div><div class="pw">In Customer Demand Mapping</div></div><span class="live"></span></div>
-          <div class="pr"><span class="fa" style="--fc:#7F77DD">IB</span><div><div class="pn">Izzie Bell</div><div class="pw">In Investor Q&amp;A pack</div></div><span class="live"></span></div>
-          <div class="pr"><span class="fa" style="--fc:#EF9F27">HF</span><div><div class="pn">Harry Fox</div><div class="pw">Owes you unit pricing, Mon</div></div></div>
-          <div class="pr"><span class="fa" style="--fc:#5F5E5A">VL</span><div><div class="pn">Vertical Lead</div><div class="pw">Waiting on your rationale</div></div></div>
-        </div>
       </div>
     </aside>
   </div>
@@ -339,8 +306,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 </div>
 
 <script>
-/* Today and Recent both come from gy-calendar.js. A meeting with a generated
-   note opens the note; one still owed a note says so and offers to write it. */
+/* Today comes from gy-calendar.js. A meeting with a generated note opens the
+   note; one still owed a note says so and offers to write it. */
 (function(){
   if(!window.GY_CAL_API) return;
   function go(m){
@@ -361,9 +328,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
       +'<span class="agw"><span class="agn">'+m.title+'</span>'
       +'<span class="agm">'+meta(m)+'</span></span></div>';
   }
-  var t=document.getElementById('agToday'), p=document.getElementById('agPast');
+  var t=document.getElementById('agToday');
   if(t) t.innerHTML = GY_CAL_API.forToday().map(function(m){return row(m,false);}).join('');
-  if(p) p.innerHTML = GY_CAL_API.past(3).map(function(m){return row(m,true);}).join('');
 })();
 </script>
 
@@ -387,13 +353,15 @@ var BLOCKERS=[
 ];
 function homeQueue(){
   var el=document.getElementById('homeQueue'); if(!el||!window.GYT)return;
-  var h=BLOCKERS.map(function(b){
-    return '<div class="hrow" onclick="'+b.go+'"><span class="qd you"></span>'
+  var h=BLOCKERS.map(function(b,i){
+    return '<div class="hrow'+(b.done?' on':'')+'" onclick="'+b.go+'">'
+      +'<span class="tbx" onclick="blockTick('+i+',event)"><i class="ti ti-check"></i></span>'
       +'<div class="rmain"><div class="rtitle">'+b.t+'<span class="rnote">'+b.note+'</span></div></div>'
-      +'<div class="rwhen'+(b.warn?' due':'')+'">'+b.when+'</div></div>';
+      +'<div class="rwhen'+(b.warn&&!b.done?' due':'')+'">'+b.when+'</div></div>';
   }).join('');
   h+=GYT.bySoonest(GYT.myOpen()).slice(0,4).map(function(x){
-    return '<div class="hrow" onclick="homeTick(\''+x.id+'\',event)"><span class="qd todo"></span>'
+    return '<div class="hrow" onclick="homeTick(\''+x.id+'\',event)">'
+      +'<span class="tbx" onclick="homeTick(\''+x.id+'\',event)"><i class="ti ti-check"></i></span>'
       +'<div class="rmain"><div class="rtitle">'+x.t
       +(x.deliverable&&x.deliverable.prog?'<span class="rnote">'+x.deliverable.prog+'</span>':'')+'</div></div>'
       +'<div class="rwhen'+(x.dstate==='over'||x.dayn===0?' due':'')+'">'+(x.when||'')+'</div></div>';
@@ -403,6 +371,7 @@ function homeQueue(){
 
 }
 function homeTick(id,e){ e.stopPropagation(); GYT.toggle(id); homeQueue(); }
+function blockTick(i,e){ e.stopPropagation(); BLOCKERS[i].done=!BLOCKERS[i].done; homeQueue(); }
 window.addEventListener('DOMContentLoaded',homeQueue);
 if(document.readyState!=='loading')homeQueue();
 

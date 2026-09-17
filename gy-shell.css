@@ -51,7 +51,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 
 /* ── main + topbar ── */
 .mainc{flex:1;overflow:auto;min-width:0}
-.topbar{display:flex;align-items:center;gap:10px;padding:14px 22px;min-height:61px;box-sizing:border-box;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 22px;min-height:61px;box-sizing:border-box;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1200}
 .topbar .ti{font-size:19px;color:var(--ink2)}
 .title{font-size:18px;font-weight:600;letter-spacing:-.01em}
 .crumbs{display:flex;align-items:center;gap:9px;font-size:16px;min-width:0}

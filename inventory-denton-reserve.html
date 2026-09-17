@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>All Inventory · Great Yellow</title>
+<title>Denton Reserve · Inventory · Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,22 +13,36 @@
 </head>
 <body>
 <div class="shell">
-<script>window.GYNAV={"active":"inv-all"};</script>
+<script>window.GYNAV={"active":"inv-denton"};</script>
 <script src="gy-nav.js"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
-  <span class="title">Search</span>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='inventory-portfolio-overview.html'">Programmes</span>
+    <span class="sep">›</span><span class="cr">Denton Reserve</span>
+    <span class="sep">›</span><span class="cr cur">Inventory</span>
+  </div>
 </div>
 
 <div class="wrap">
-  <div class="phead"><div class="h1">All Inventory</div></div>
+  <div class="phead">
+    <div class="h1">Denton Reserve</div>
+    <div class="acts">
+      <button class="btn-dark" onclick="toast('Actions: add units, import, export, reserve, list for sale')">Actions <i class="ti ti-chevron-down"></i></button>
+      <button class="btn-out" onclick="toast('Programme settings')"><i class="ti ti-settings"></i> Settings</button>
+    </div>
+  </div>
+  <div class="seg" style="margin:8px 0 18px">
+    <button onclick="toast('Denton Reserve dashboard is not in this prototype yet')">Dashboard</button>
+    <button class="on">Inventory</button>
+    <button onclick="toast('Sites view is not in this prototype yet')">Sites</button>
+  </div>
 
-  <div class="frow" style="margin-top:16px">
+  <div class="frow">
     <span class="flab">Filters</span>
     <div class="segmini"><button class="on">All ES Types</button><button>BNG</button><button>WCC</button></div>
-    <button class="fbtn">Programme <i class="ti ti-chevron-down"></i></button>
     <button class="fbtn">Availability <i class="ti ti-chevron-down"></i></button>
   </div>
   <div class="frow">
@@ -50,22 +64,19 @@
 
   <div class="searchbar">
     <div class="search"><i class="ti ti-search"></i> Search (by Status, Habitat etc)</div>
-    <span class="showing" id="showing">Showing 41 of 41</span>
-    <span class="spacer"></span>
-    <button class="btn-dark" onclick="toast('Add Inventory: add BNG units or WCC credits to a programme')"><i class="ti ti-plus"></i> Add Inventory</button>
+    <span class="showing">Showing 4 of 4</span>
   </div>
 
   <div class="tblwrap">
     <table class="dtbl">
       <thead>
         <tr>
-          <th colspan="5"></th>
+          <th colspan="4"></th>
           <th colspan="8" class="vdiv"><div style="display:flex;align-items:center;justify-content:space-between;gap:20px"><span style="font-weight:600;color:var(--ink2)">BNG Data</span><span class="wccpill">WCC data <i class="ti ti-chevron-right"></i></span></div></th>
         </tr>
         <tr>
           <th><span class="chkbox"></span></th>
           <th>ES Type <span class="ca">⇅</span> <i class="ti ti-info-circle" style="font-size:13px;color:var(--ink3)"></i></th>
-          <th>Programme <span class="ca">⇅</span></th>
           <th>Availability <span class="ca">⇅</span></th>
           <th>Specific Type / Vintage <span class="ca">⇅</span></th>
           <th class="vdiv">Distinctiveness <span class="ca">⇅</span></th>
@@ -83,7 +94,7 @@
   </div>
 
   <div class="pager">
-    <span>Page 1 of 3</span>
+    <span>Page 1 of 1</span>
     <button class="pgbtn"><i class="ti ti-chevrons-left"></i></button>
     <button class="pgbtn"><i class="ti ti-chevron-left"></i></button>
     <button class="pgbtn"><i class="ti ti-chevron-right"></i></button>
@@ -97,73 +108,18 @@
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
-
 const dash='<span class="dash">—</span>';
-function bMulti(av){ return av.map(function(a){var c=a==='Available'?'avail':a==='Sold'?'sold':'future';return '<span class="badge '+c+'">'+a+'</span>';}).join(' '); }
-
-// ── dataset (41 rows) ──
-const data=[];
-function bng(prog,av,hab,cond){ data.push({t:'BNG',prog:prog,av:av,spec:hab,cond:cond,hab:hab}); }
-function wcc(prog,av,year){ data.push({t:'WCC',prog:prog,av:av,spec:year}); }
-
-// visible BNG rows
-bng('Spains Hall Estate',['Available'],'Grassland','Moderate');
-bng('Spains Hall Estate',['Available'],'Rivers and streams','Good');
-bng('Spains Hall Estate',['Future'],'Woodland and forest','Fairly Good');
-bng('Wendling Beck',['Available','Sold'],'Grassland','Good');
-bng('Wendling Beck',['Available'],'Hedgerow','Moderate');
-bng('Wendling Beck',['Future'],'Rivers and streams','Fairly Good');
-bng('Wendling Beck',['Future'],'Wetland','Fairly Good');
-bng('Wendling Beck',['Available'],'Woodland and forest','Moderate');
-// more BNG
-bng('Spains Hall Estate',['Available'],'Hedgerow','Good');
-bng('Spains Hall Estate',['Future'],'Wetland','Moderate');
-bng('Wendling Beck',['Available'],'Heathland','Good');
-bng('Wendling Beck',['Future'],'Lakes','Fairly Good');
-bng('Wendling Beck',['Available'],'Cropland','Poor');
-bng('Spains Hall Estate',['Available'],'Grassland','Fairly Good');
-bng('Wendling Beck',['Available','Sold'],'Woodland and forest','Good');
-bng('Spains Hall Estate',['Future'],'Heathland','Moderate');
-
-// WCC rows
-wcc('Denton Reserve',['Available'],'2024');
-wcc('Denton Reserve',['Available'],'2029');
-wcc('Denton Reserve',['Available'],'2034');
-wcc('Denton Reserve',['Available'],'2039');
-wcc('ELR',['Available'],'2025');
-wcc('ELR',['Available'],'2030');
-wcc('ELR',['Available','Sold'],'2035');
-wcc('ELR',['Available'],'2040');
-wcc('ELR',['Available'],'2045');
-wcc('ELR',['Future'],'2050');
-wcc('Wendling Beck',['Available'],'2026');
-wcc('Wendling Beck',['Available'],'2031');
-wcc('Wendling Beck',['Future'],'2036');
-wcc('Spains Hall Estate',['Available'],'2027');
-
-// fill remaining BNG to reach 41
-const HAB=['Grassland','Rivers and streams','Woodland and forest','Hedgerow','Wetland','Heathland','Lakes'];
-const COND=['Moderate','Good','Fairly Good','Poor'];
-const AV=[['Available'],['Future'],['Available'],['Available','Sold']];
-const PROG=['Spains Hall Estate','Wendling Beck'];
-let i=0;
-while(data.length<41){ const h=HAB[i%HAB.length]; bng(PROG[i%PROG.length],AV[i%AV.length],h,COND[i%COND.length]); i++; }
-
-document.getElementById('rows').innerHTML = data.map(function(r){
-  const isB = r.t==='BNG';
+const YEARS=['2024','2029','2034','2039'];
+document.getElementById('rows').innerHTML = YEARS.map(function(y){
   return '<tr>'
     +'<td><span class="chkbox"></span></td>'
-    +'<td><span class="estag">'+r.t+'</span></td>'
-    +'<td>'+r.prog+'</td>'
-    +'<td>'+bMulti(r.av)+'</td>'
-    +'<td>'+r.spec+'</td>'
+    +'<td><span class="estag">WCC</span></td>'
+    +'<td><span class="badge avail">Available</span></td>'
+    +'<td>'+y+'</td>'
     +'<td class="vdiv">'+dash+'</td>'
-    +'<td>'+(isB?r.cond:dash)+'</td>'
-    +'<td>'+(isB?r.hab:dash)+'</td>'
-    +'<td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td>'
+    +'<td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td><td>'+dash+'</td>'
     +'</tr>';
 }).join('');
-document.getElementById('showing').textContent='Showing '+data.length+' of '+data.length;
 </script>
 </body>
 </html>

@@ -3,32 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Woodland carbon &middot; Great Yellow</title>
+<title>Rule book &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css">
 <link rel="stylesheet" href="gy-shell.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 <div class="shell">
-<script>window.GYNAV={"active":"prog-inv-wcc","scope":"programme"};</script>
+<script>window.GYNAV={"active":"library"};</script>
 <script src="gy-nav.js"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <div class="crumbs">
-    <span class="cr" onclick="location.href='inventory-overview.html'">Evenlode</span><span class="sep">&rsaquo;</span>
-    <span class="cr" onclick="location.href='inventory-overview.html'">Inventory</span><span class="sep">&rsaquo;</span>
-    <span class="cr cur">Woodland carbon</span>
+    <span class="cr" onclick="location.href='hive-mind-library.html'">Hive Mind Library</span><span class="sep">&rsaquo;</span>
+    <span class="cr" onclick="location.href='hive-mind-library.html'">Rule books</span><span class="sep">&rsaquo;</span>
+    <span class="cr cur" id="crName">Rule book</span>
   </div>
 </div>
 
-<div id="espage"></div>
+<div id="rbpage"></div>
 </div>
 </div>
 
@@ -37,8 +35,15 @@
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
 </script>
-<script src="gy-esdata.js"></script>
-<script src="gy-espage.js"></script>
-<script>gyEsPage(GY_ESDATA['wcc.programme']);</script>
+<script src="gy-rulebooks.js"></script>
+<script src="gy-rulebook.js"></script>
+<script>
+(function(){
+  var id=(new URLSearchParams(location.search)).get('es')||'bng';
+  var d=(window.GY_RULEBOOKS||[]).filter(function(x){return x.id===id;})[0];
+  if(d){ document.getElementById('crName').textContent=d.name; document.title=d.name+' · Great Yellow'; }
+  gyRuleBook(id);
+})();
+</script>
 </body>
 </html>

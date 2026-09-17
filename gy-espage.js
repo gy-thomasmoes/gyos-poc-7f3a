@@ -93,6 +93,32 @@ var CSS = `
 .rrow .rx{font-size:12.5px;color:var(--ink3);line-height:1.45;margin-top:2px}
 
 .invhead{display:flex;align-items:center;gap:12px;margin:30px 0 0;position:relative}
+/* grouped rows: one band per vintage, with what the band adds up to */
+.dtbl tr.grp td{background:var(--graybg);font-size:12.5px;font-weight:600;color:var(--ink2);
+  padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--line)}
+.dtbl tr.grp td .gv{color:var(--ink)}
+.dtbl tr.grp td .gs{font-weight:400;color:var(--ink3);margin-left:9px;font-variant-numeric:tabular-nums}
+.dtbl tr.grp td .ti{float:right;font-size:15px;color:var(--ink3);transition:transform .15s}
+.dtbl tr.grp.closed td .ti{transform:rotate(-90deg)}
+.dtbl tr.hid{display:none}
+/* record drawer */
+.recov{position:fixed;inset:0;background:rgba(31,31,29,.20);z-index:1300;display:none}
+.recov.on{display:block}
+.recdr{position:fixed;top:0;right:0;bottom:0;width:430px;max-width:92vw;background:var(--card);
+  border-left:1px solid var(--line);box-shadow:-18px 0 50px rgba(31,31,29,.14);z-index:1310;
+  transform:translateX(100%);transition:transform .18s ease;display:flex;flex-direction:column}
+.recdr.on{transform:none}
+.recdr .rh{padding:18px 22px 15px;border-bottom:1px solid var(--line);background:var(--pc-bg)}
+.recdr .rk{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--pc-dark)}
+.recdr .rn{font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:-.01em;margin-top:4px}
+.recdr .rx{position:absolute;right:16px;top:15px;width:30px;height:30px;border-radius:9px;border:none;background:transparent;
+  cursor:pointer;color:var(--ink2);font-size:17px;display:flex;align-items:center;justify-content:center}
+.recdr .rx:hover{background:rgba(31,31,29,.07)}
+.recdr .rb{flex:1;overflow:auto;padding:6px 22px 26px}
+.recf{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.recf .fk{width:132px;flex:none;color:var(--ink3)}
+.recf .fv{font-weight:500;font-variant-numeric:tabular-nums}
+.recdr .rfoot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:9px}
 .invhead .sect{margin:0}
 .invhead .sn{font-size:13px;color:var(--ink3)}
 .invhead .spacer{flex:1}
@@ -102,6 +128,12 @@ var CSS = `
 .fbtn2:hover{border-color:var(--line2);color:var(--ink)}
 .fbtn2.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .fbtn2 .ti{font-size:15px;color:inherit}
+.fbtn2 .cnt{font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.fbtn2.on .cnt{color:rgba(255,255,255,.7)}
+#cPop .fr .ck{margin-left:auto;font-size:16px;color:var(--greend);opacity:0}
+#cPop .fr.on .ck{opacity:1}
+#cPop .fr{color:var(--ink3)}
+#cPop .fr.on{color:var(--ink)}
 .fpop{position:absolute;right:0;top:calc(100% + 9px);width:290px;background:var(--card);border:1px solid var(--line2);
   border-radius:14px;box-shadow:0 14px 40px rgba(31,31,29,.16);padding:7px;z-index:40;display:none}
 .fpop.on{display:block}
@@ -193,7 +225,13 @@ window.gyEsPage = function(cfg){
      + '<span class="spacer"></span>'
      + '<button class="fbtn2" onclick="toast(\'Search this inventory\')"><i class="ti ti-search"></i> Search</button>'
      + '<button class="fbtn2" id="fBtn" onclick="gyFPop()"><i class="ti ti-adjustments-horizontal"></i> Filters</button>'
+     + '<button class="fbtn2" id="cBtn" onclick="gyCPop(event)"><i class="ti ti-columns-3"></i> Columns</button>'
      + '<button class="fbtn2" onclick="location.href=\''+D.allInventoryHref+'\'"><i class="ti ti-layout-list"></i> All inventory</button>'
+     + '<div class="fpop" id="cPop"><div class="fg">Show columns</div>'
+       + D.table.cols.map(function(c,i){
+           return '<div class="fr" id="col'+i+'" onclick="gyColTog('+i+',event)">'+c+'<i class="ti ti-check ck"></i></div>';
+         }).join('')
+     + '</div>'
      + '<div class="fpop" id="fPop">'
        + D.filters.map(function(g){
            return '<div class="fg">'+g[0]+'</div>' + g[1].map(function(f){
@@ -202,24 +240,53 @@ window.gyEsPage = function(cfg){
          }).join('<div class="fsep"></div>')
      + '</div></div><div class="invdiv"></div>';
 
-  h += '<div class="tblwrap"><table class="dtbl"><thead><tr><th><span class="chkbox"></span></th>'
+  function cell(v,i){
+    if(i===D.table.badge) return '<td><span class="badge '+({Available:'avail',Sold:'sold',Future:'future',Reserved:'future'}[v]||'future')+'">'+v+'</span></td>';
+    return '<td>'+(v===0?'<span class="dash">&mdash;</span>':n(v))+'</td>';
+  }
+  function tr(r,ri,g){
+    return '<tr class="rec'+(g!=null?' g'+g:'')+'" onclick="gyRec('+ri+')"><td><span class="chkbox"></span></td>'
+      + r.map(cell).join('') + '</tr>';
+  }
+  var body='';
+  var G = D.table.group;
+  if(G){
+    /* one band per value of the grouped column, with the band's own total */
+    var keys=[], byk={};
+    D.table.rows.forEach(function(r,ri){
+      var k=r[G.col]; if(!byk[k]){ byk[k]=[]; keys.push(k); } byk[k].push(ri);
+    });
+    keys.sort();
+    keys.forEach(function(k,gi){
+      var sum=byk[k].reduce(function(t,ri){ var v=D.table.rows[ri][G.sum]; return t+(typeof v==='number'?v:0); },0);
+      body += '<tr class="grp" onclick="gyGrp('+gi+',event)"><td colspan="'+(D.table.cols.length+1)+'">'
+        + (G.label||D.table.cols[G.col]) + ' <span class="gv">' + k + '</span>'
+        + '<span class="gs">' + n(sum) + ' ' + (G.suffix||es.unit) + '</span>'
+        + '<i class="ti ti-chevron-down"></i></td></tr>';
+      byk[k].forEach(function(ri){ body += tr(D.table.rows[ri],ri,gi); });
+    });
+  } else {
+    body = D.table.rows.map(function(r,ri){ return tr(r,ri,null); }).join('');
+  }
+  h += '<div class="tblwrap"><table class="dtbl" id="esTbl"><thead><tr><th><span class="chkbox"></span></th>'
      + D.table.cols.map(function(c){return '<th>'+c+'</th>';}).join('')
-     + '</tr></thead><tbody>'
-     + D.table.rows.map(function(r){
-         return '<tr onclick="toast(\'Record detail is not in this prototype yet\')"><td><span class="chkbox"></span></td>'
-           + r.map(function(v,i){
-               if(i===D.table.badge) return '<td><span class="badge '+({Available:'avail',Sold:'sold',Future:'future',Reserved:'future'}[v]||'future')+'">'+v+'</span></td>';
-               return '<td>'+(v===0?'<span class="dash">&mdash;</span>':v)+'</td>';
-             }).join('') + '</tr>';
-       }).join('')
-     + '</tbody></table></div>'
+     + '</tr></thead><tbody>' + body + '</tbody></table></div>'
      + '<div class="pager"><span>Page 1 of '+Math.ceil(D.table.total/20)+'</span>'
      + '<button class="pgbtn"><i class="ti ti-chevrons-left"></i></button><button class="pgbtn"><i class="ti ti-chevron-left"></i></button>'
      + '<button class="pgbtn" onclick="toast(\'Paging is not wired up in this prototype\')"><i class="ti ti-chevron-right"></i></button>'
      + '<button class="pgbtn" onclick="toast(\'Paging is not wired up in this prototype\')"><i class="ti ti-chevrons-right"></i></button></div>';
 
   h += '</div>';
+  h += '<div class="recov" id="recOv" onclick="gyRecClose()"></div>'
+     + '<aside class="recdr" id="recDr" style="--pc:'+es.c+';--pc-bg:'+es.bg+';--pc-dark:'+es.dark+'">'
+     + '<div class="rh"><button class="rx" onclick="gyRecClose()"><i class="ti ti-x"></i></button>'
+     + '<div class="rk" id="recK"></div><div class="rn" id="recN"></div></div>'
+     + '<div class="rb" id="recB"></div>'
+     + '<div class="rfoot"><button class="fbtn2" onclick="toast(\'Evidence is not in this prototype yet\')"><i class="ti ti-paperclip"></i> Evidence</button>'
+     + '<button class="fbtn2" onclick="toast(\'Deals are not in this prototype yet\')"><i class="ti ti-file-dollar"></i> Add to deal</button></div></aside>';
   host.outerHTML = h;
+  window.__GYES = {D:D, es:es, hidden:(D.table.hide||[]).slice()};
+  gyColApply();
 
   /* map */
   var mh=document.getElementById('esMap');
@@ -241,11 +308,66 @@ window.gyEsPage = function(cfg){
   }
 };
 
+window.gyGrp = function(gi,e){
+  if(e) e.stopPropagation();
+  var head=document.querySelectorAll('#esTbl tr.grp')[gi];
+  var on=head.classList.toggle('closed');
+  [].forEach.call(document.querySelectorAll('#esTbl tr.g'+gi),function(r){ r.classList.toggle('hid',on); });
+};
+window.gyCPop = function(e){
+  if(e) e.stopPropagation();
+  var el=document.getElementById('cPop'), b=document.getElementById('cBtn');
+  document.getElementById('fPop').classList.remove('on');
+  document.getElementById('fBtn').classList.remove('on');
+  b.classList.toggle('on', el.classList.toggle('on'));
+};
+window.gyColTog = function(i,e){
+  if(e) e.stopPropagation();
+  var st=window.__GYES, k=st.hidden.indexOf(i);
+  if(k<0) st.hidden.push(i); else st.hidden.splice(k,1);
+  gyColApply();
+};
+/* hidden columns are a view setting, so they are painted, never rebuilt */
+window.gyColApply = function(){
+  var st=window.__GYES; if(!st) return;
+  var tbl=document.getElementById('esTbl'); if(!tbl) return;
+  st.D.table.cols.forEach(function(c,i){
+    var off = st.hidden.indexOf(i)>=0;
+    var row=document.getElementById('col'+i); if(row) row.classList.toggle('on',!off);
+    [].forEach.call(tbl.querySelectorAll('tr:not(.grp) > *:nth-child('+(i+2)+')'),function(cel){
+      cel.style.display = off ? 'none' : '';
+    });
+  });
+  var b=document.getElementById('cBtn');
+  if(b) b.innerHTML='<i class="ti ti-columns-3"></i> Columns <span class="cnt">'
+    +(st.D.table.cols.length-st.hidden.length)+' of '+st.D.table.cols.length+'</span>';
+};
+window.gyRec = function(ri){
+  var st=window.__GYES, D=st.D, r=D.table.rows[ri];
+  document.getElementById('recK').textContent = st.es.name;
+  document.getElementById('recN').textContent = r[0];
+  document.getElementById('recB').innerHTML = D.table.cols.map(function(c,i){
+    if(i===0) return '';
+    var v=r[i]; if(v===0||v===''||v==null) v='&mdash;';
+    else if(typeof v==='number') v=v.toLocaleString();
+    return '<div class="recf"><span class="fk">'+c+'</span><span class="fv">'+v+'</span></div>';
+  }).join('');
+  document.getElementById('recOv').classList.add('on');
+  document.getElementById('recDr').classList.add('on');
+};
+window.gyRecClose = function(){
+  document.getElementById('recOv').classList.remove('on');
+  document.getElementById('recDr').classList.remove('on');
+};
 window.gyFPop = function(){
   var el=document.getElementById('fPop'), b=document.getElementById('fBtn');
   var on=el.classList.toggle('on'); b.classList.toggle('on',on);
 };
 document.addEventListener('click',function(e){
+  if(!e.target.closest('#cPop')&&!e.target.closest('#cBtn')){
+    var c=document.getElementById('cPop');
+    if(c){ c.classList.remove('on'); var cb=document.getElementById('cBtn'); if(cb) cb.classList.remove('on'); }
+  }
   if(e.target.closest('#fPop')||e.target.closest('#fBtn'))return;
   var el=document.getElementById('fPop'); if(el){el.classList.remove('on');var b=document.getElementById('fBtn');if(b)b.classList.remove('on');}
 });

@@ -95,12 +95,33 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .nm .dpt{font-weight:400;font-size:11.5px;color:var(--ink3);margin-left:8px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;white-space:nowrap}
 .nm .needs{display:block;font-weight:400;font-size:12.5px;color:var(--ink3);margin-top:3px}
 
-/* ---- Coverage view: the whole territory, visited and not ---- */
+/* ---- Areas view: the whole territory, visited and not ---- */
+.dhead{position:relative;display:flex;align-items:center;gap:10px;margin-top:6px}
+.fbtn2{font:inherit;font-size:13.5px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex:none}
+.fbtn2:hover{border-color:var(--line2);color:var(--ink)}
+.fbtn2.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.fbtn2 .ti{font-size:15px;color:inherit}
+.fbtn2 .cnt{font-size:12px;font-weight:600;background:var(--ink);color:#fff;border-radius:999px;padding:0 7px;line-height:17px}
+.fbtn2.on .cnt{background:#fff;color:var(--ink)}
+.fpop{position:absolute;right:0;top:calc(100% + 9px);width:274px;background:var(--card);border:1px solid var(--line2);
+  border-radius:14px;box-shadow:0 14px 40px rgba(31,31,29,.16);padding:7px;z-index:40;display:none}
+.fpop.on{display:block}
+.fpop .fg{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:9px 11px 4px}
+.fpop .fr{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;font-size:14px;color:var(--ink2);cursor:pointer}
+.fpop .fr:hover{background:#F1EFE8}
+.fpop .fr.on{color:var(--ink);font-weight:500}
+.fpop .fr .sw{width:9px;height:9px;border-radius:3px;flex:none}
+.fpop .fr .ti{font-size:16px}
+.fpop .fr .ck{margin-left:auto;font-size:16px;color:var(--greend);opacity:0}
+.fpop .fr.on .ck{opacity:1}
+.fpop .fsep{height:1px;background:var(--line);margin:6px 8px}
+.dhead .vtog{position:absolute;left:50%;transform:translateX(-50%)}
 .vtog{display:inline-flex;background:var(--graybg);border-radius:999px;padding:3px}
 .vtog button{font:inherit;font-size:13.5px;font-weight:500;padding:5px 13px;border-radius:999px;border:none;background:transparent;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .vtog button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(31,31,29,.08)}
 .vtog .ti{font-size:15px}
-.cov{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:6px;align-items:start}
+.cov{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:14px;align-items:start}
 @media(max-width:900px){.cov{grid-template-columns:repeat(2,1fr)}}
 .cvcol{min-width:0}
 .cvh{padding:0 2px 10px}
@@ -109,25 +130,25 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .cvh .n{margin-left:auto;font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums;font-weight:400}
 .cvh .bar{height:4px;border-radius:999px;background:#EDEBE4;overflow:hidden;margin-top:8px}
 .cvh .bar i{display:block;height:100%;border-radius:999px}
-.cvgrid{display:flex;flex-direction:column;gap:7px}
-.cvt{position:relative;border-radius:11px;padding:10px 11px;min-height:56px;cursor:pointer;overflow:hidden;
+.cvgrid{display:flex;flex-direction:column;gap:9px}
+.cvt{position:relative;border-radius:13px;padding:14px 15px;min-height:84px;cursor:pointer;overflow:hidden;
   display:flex;flex-direction:column;justify-content:center;transition:transform .1s,box-shadow .12s,border-color .12s}
 .cvt:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(31,31,29,.07)}
-.cvt .t{font-size:12.5px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
-.cvt .m{font-size:11px;margin-top:4px;opacity:.75;font-variant-numeric:tabular-nums}
+.cvt .t{font-size:14px;font-weight:600;line-height:1.32;letter-spacing:-.01em}
+.cvt .m{font-size:12px;margin-top:6px;opacity:.75;font-variant-numeric:tabular-nums}
 /* visited, complete */
 .cvt.done{background:var(--tint);border:1px solid var(--edge);color:var(--ink)}
-.cvt.done .ck{position:absolute;top:8px;right:9px;font-size:13px;color:var(--edge)}
+.cvt.done .ck{position:absolute;top:11px;right:12px;font-size:14px;color:var(--edge)}
 /* being explored */
 .cvt.live{background:var(--card);border:1px solid var(--edge);color:var(--ink)}
-.cvt.live .fill{position:absolute;left:0;bottom:0;height:3px;background:var(--edge)}
+.cvt.live .fill{position:absolute;left:0;bottom:0;height:4px;background:var(--edge)}
 /* known, never visited */
 .cvt.none{background:transparent;border:1px dashed #DCD8CD;color:var(--ink3)}
 .cvt.none .t{font-weight:500}
 .cvt.none:hover{border-color:var(--edge);color:var(--ink2)}
 /* known, but gated behind something else */
 .cvt.locked .m{color:var(--ink3)}
-.cvt .esd{position:absolute;top:9px;right:9px;width:8px;height:8px;border-radius:2px}
+.cvt .esd{position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:2px}
 .covlegend{display:flex;gap:16px;align-items:center;font-size:12px;color:var(--ink3);margin:22px 2px 0}
 .covlegend span{display:inline-flex;align-items:center;gap:7px}
 .covlegend i.k{width:11px;height:11px;border-radius:3px;display:inline-block}
@@ -161,17 +182,17 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 </div>
 
 <div class="wrap">
-  <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+  <div class="dhead">
+    <span class="spacer"></span>
     <div class="vtog">
       <button id="vList" class="on" onclick="dView('list')"><i class="ti ti-list"></i> List</button>
-      <button id="vCov" onclick="dView('cov')"><i class="ti ti-layout-grid"></i> Coverage</button>
+      <button id="vCov" onclick="dView('cov')"><i class="ti ti-layout-grid"></i> Areas</button>
     </div>
-    <span class="spacer"></span>
     <span class="chip" aria-label="Search"><i class="ti ti-search"></i></span>
+    <button class="fbtn2" id="fBtn" onclick="dPop(event)"><i class="ti ti-adjustments-horizontal"></i> Filters<span class="cnt" id="fCnt" style="display:none"></span></button>
     <button class="btn-dark" onclick="toast('Upload: drop a file here or forward a client email and the AI Assistant files it to the right run')"><i class="ti ti-plus"></i> Add document</button>
+    <div class="fpop" id="fPop"></div>
   </div>
-
-  <div class="fbar" id="fbar"></div>
 
   <div id="listView">
     <div class="thead">
@@ -250,27 +271,38 @@ function cvTile(x,d){
 }
 
 var DDEPT='all', DES='all';
-function dSet(k){ DDEPT=k; dRender(); }
-function dEs(k){ DES = (DES===k?'all':k); dRender(); }
 function dScope(){
   return GYD.items.filter(function(x){
     return (DDEPT==='all'||x.dept===DDEPT) && (DES==='all'||x.es===DES);
   });
 }
-function dChip(k,label,on,sw,fn){
-  return '<span class="fchip'+(on?' on':'')+'" onclick="'+fn+'(\''+k+'\')">'
-    +(sw?'<span class="sw" style="background:'+sw+'"></span>':'')+label+'</span>';
+function dPop(e){
+  if(e) e.stopPropagation();
+  var el=document.getElementById('fPop'), b=document.getElementById('fBtn');
+  var on=el.classList.toggle('on'); b.classList.toggle('on',on);
 }
-function dRender(){
-  var f=dChip('all','All',DDEPT==='all',null,'dSet');
-  GYD.depts.forEach(function(d){ f+=dChip(d.k,d.name,DDEPT===d.k,d.fg,'dSet'); });
-  f+='<span class="fsep"></span>';
+function dRow_(k,label,on,sw,ic,fn){
+  return '<div class="fr'+(on?' on':'')+'" onclick="'+fn+'(\''+k+'\')">'
+    +(sw?'<span class="sw" style="background:'+sw+'"></span>':'')
+    +(ic?'<i class="ti '+ic+'"></i>':'')
+    +label+'<i class="ti ti-check ck"></i></div>';
+}
+function dSet(k){ DDEPT=k; dRender(); }
+function dEs(k){ DES = (DES===k?'all':k); dRender(); }
+function dFilters(){
+  var f='<div class="fg">Department</div>'+dRow_('all','All departments',DDEPT==='all',null,null,'dSet');
+  GYD.depts.forEach(function(d){ f+=dRow_(d.k,d.name,DDEPT===d.k,d.fg,null,'dSet'); });
+  f+='<div class="fsep"></div><div class="fg">Ecosystem service</div>';
   ['bng','wcc'].forEach(function(k){
     var m=(window.GY_ES||{})[k]; if(!m)return;
-    f+=dChip(k,m.name,DES===k,'var(--esc)','dEs').replace('class="fchip','class="fchip '+m.cls);
+    f+=dRow_(k,m.name,DES===k,null,m.icon,'dEs').replace('class="fr','class="fr '+m.cls);
   });
-  document.getElementById('fbar').innerHTML=f;
-
+  document.getElementById('fPop').innerHTML=f;
+  var n=(DDEPT==='all'?0:1)+(DES==='all'?0:1), c=document.getElementById('fCnt');
+  c.textContent=n; c.style.display = n?'':'none';
+}
+function dRender(){
+  dFilters();
   if(DVIEW==='cov'){ dCoverage(); return; }
 
   var rows=dScope();
@@ -309,6 +341,12 @@ function dRow(x){
     +third
     +'<div class="mut">'+x.upd+'</div></div>';
 }
+document.addEventListener('click',function(e){
+  if(e.target.closest('#fPop')||e.target.closest('#fBtn'))return;
+  var el=document.getElementById('fPop'); if(el&&el.classList.contains('on')){
+    el.classList.remove('on'); document.getElementById('fBtn').classList.remove('on');
+  }
+});
 window.addEventListener('DOMContentLoaded',dRender);
 if(document.readyState!=='loading')dRender();
 

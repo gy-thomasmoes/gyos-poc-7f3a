@@ -188,11 +188,19 @@ window.GY_ESDATA = {
     ['Woodland carbon',[['ti-certificate','Status','Any'],['ti-calendar','Vintage','Any'],['ti-trees','Species mix','Any']]],
     ['Designations',[['ti-building-bank','LPA','West Oxon'],['ti-map-2','NCA','Cotswolds'],['ti-shield-check','Buffer pool','Included']]]
   ],
-  table:{total:9, badge:1,
+  table:{total:8, badge:1,
+    group:{col:3, sum:8, label:'Vintage', suffix:'credits'},
+    hide:[5,6,10],
     cols:['Project','Availability','Status','Vintage','Species mix','Scheme ref','Site','Area','Projected','Available','Sold','Min price'],
     rows:[
-     ['Woodland creation','Available','Validated','2026','Oak, field maple','WCC-EV-0042','W1','22 ha',9000,9000,0,'£25'],
-     ['Riparian buffers','Future','Registered','2027','Riparian willow, alder','WCC-EV-0051','B2','9 ha',4100,0,0,'£27']
+     ['Woodland creation','Available','Validated','2025','Oak, field maple','WCC-EV-0031','W1','9 ha',3600,3600,0,'£24'],
+     ['Hedgerow planting','Available','Validated','2025','Hawthorn, blackthorn','WCC-EV-0034','H3','4 ha',900,900,0,'£24'],
+     ['Woodland creation','Available','Validated','2026','Oak, field maple','WCC-EV-0042','W1','13 ha',5400,5400,0,'£25'],
+     ['Shelterbelts','Available','Validated','2026','Alder, hazel','WCC-EV-0044','S2','6 ha',1800,1800,0,'£26'],
+     ['Scrub mosaic','Reserved','Validated','2026','Mixed native scrub','WCC-EV-0047','M1','5 ha',1400,0,0,'£26'],
+     ['Riparian buffers','Future','Registered','2027','Riparian willow, alder','WCC-EV-0051','B2','9 ha',4100,0,0,'£27'],
+     ['Woodland creation','Future','Registered','2027','Oak, small-leaved lime','WCC-EV-0055','W4','11 ha',4600,0,0,'£27'],
+     ['Floodplain woodland','Future','In preparation','2028','Willow, alder, birch','WCC-EV-0060','F1','7 ha',2800,0,0,'£29']
     ]}
 },
 

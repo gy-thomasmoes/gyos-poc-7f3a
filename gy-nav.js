@@ -175,14 +175,14 @@ window.gyCartoTiles = function(style){
     '<div class="ssub'+gyCls('invSub',progInv)+'" id="invSub">'
     +'<div class="sitem'+on('prog-inventory')+'"'+(active==='prog-inventory'?'':' onclick="location.href=\'inventory-overview.html\'"')+'>Overview</div>'
     +'<div class="sitem'+on('prog-inv-bng')+'"'+(active==='prog-inv-bng'?'':' onclick="location.href=\'inventory-bng-programme.html\'"')+'><span class="es-dot es-bng" style="margin-right:9px"></span>BNG</div>'
-    +'<div class="sitem'+on('prog-inv-wcc')+'"'+(active==='prog-inv-wcc'?'':' onclick="location.href=\'inventory-wcc-programme.html\'"')+'><span class="es-dot es-wcc" style="margin-right:9px"></span>Carbon</div>'
+    +'<div class="sitem'+on('prog-inv-wcc')+'"'+(active==='prog-inv-wcc'?'':' onclick="location.href=\'inventory-wcc-programme.html\'"')+'><span class="es-dot es-wcc" style="margin-right:9px"></span>Woodland carbon</div>'
     +'<div class="sitem'+on('prog-inv-soc')+'"'+(active==='prog-inv-soc'?'':' onclick="location.href=\'inventory-soc-programme.html\'"')+'><span class="es-dot es-soc" style="margin-right:9px"></span>Soil carbon</div>'
     +'</div>';
   var INV_PF =
     '<div class="ssub'+gyCls('pfInvSub',invActive)+'" id="pfInvSub">'
     +'<div class="sitem'+on('pf-inventory')+'"'+(active==='pf-inventory'?'':' onclick="location.href=\'inventory-portfolio-overview.html\'"')+'>Overview</div>'
     +'<div class="sitem'+on('inv-bng')+'"'+(active==='inv-bng'?'':' onclick="location.href=\'inventory-bng-portfolio.html\'"')+'><span class="es-dot es-bng" style="margin-right:9px"></span>BNG</div>'
-    +'<div class="sitem'+on('inv-wcc')+'"'+(active==='inv-wcc'?'':' onclick="location.href=\'inventory-wcc-portfolio.html\'"')+'><span class="es-dot es-wcc" style="margin-right:9px"></span>Carbon</div>'
+    +'<div class="sitem'+on('inv-wcc')+'"'+(active==='inv-wcc'?'':' onclick="location.href=\'inventory-wcc-portfolio.html\'"')+'><span class="es-dot es-wcc" style="margin-right:9px"></span>Woodland carbon</div>'
     +'</div>';
 
   /* Shared items - referenced by BOTH the advanced portfolio panel and the
@@ -298,6 +298,17 @@ window.gyCartoTiles = function(style){
    +'.gy-anim-in{animation:gyDeeper .22s ease}'
    +'.gy-anim-out{animation:gyUp .22s ease}'
    +'.gy-gap{height:14px}'
+   /* Breadcrumb typography is canonical here, like the rail: one size, one
+      colour, no per-page drift. The current page differs by weight only. */
+   +'.crumbs .cr.gycr,.topbar .crumb.gycr,.row1 .crumb.gycr{font-size:16px;line-height:1.35;font-weight:400;letter-spacing:0;color:#766B62;white-space:nowrap;cursor:pointer}'
+   +'.crumbs .cr.gycr:hover,.topbar .crumb.gycr:hover,.row1 .crumb.gycr:hover{color:#1A0C12}'
+   +'.crumbs .sep.gycr-sep,.topbar .sep.gycr-sep,.row1 .sep.gycr-sep{font-size:14px;line-height:1.35;font-weight:400;color:#A79E8D}'
+   +'.crumbs .cr.cur.gycr-leaf,.crumbs .cr.gycr-leaf,.topbar .title.gycr-leaf,.row1 .title.gycr-leaf,.crumbs .gycr-leaf,.topbar .gycr-leaf,.row1 .gycr-leaf{font-size:16px;line-height:1.35;font-weight:600;letter-spacing:-.01em;color:#1A0C12;white-space:nowrap;cursor:default}'
+   +'.crumbs .cr.cur.gycr-leaf:hover,.crumbs .cr.gycr-leaf:hover{color:#1A0C12}'
+   +'body.gydark .crumbs .cr.gycr,body.gydark .topbar .crumb.gycr,body.gydark .row1 .crumb.gycr{color:#A5A29B}'
+   +'body.gydark .crumbs .cr.gycr:hover,body.gydark .topbar .crumb.gycr:hover,body.gydark .row1 .crumb.gycr:hover{color:#ECEAE4}'
+   +'body.gydark .crumbs .sep.gycr-sep,body.gydark .topbar .sep.gycr-sep,body.gydark .row1 .sep.gycr-sep{color:#6F6D67}'
+   +'body.gydark .crumbs .cr.cur.gycr-leaf,body.gydark .crumbs .cr.gycr-leaf,body.gydark .topbar .title.gycr-leaf,body.gydark .row1 .title.gycr-leaf,body.gydark .crumbs .gycr-leaf,body.gydark .topbar .gycr-leaf,body.gydark .row1 .gycr-leaf{color:#ECEAE4}'
    +'.gy-picker{position:absolute;left:0;right:0;background:#fff;border:1px solid #CFCDC5;border-radius:10px;box-shadow:0 8px 28px rgba(31,31,29,.16);padding:5px;z-index:30}'
    +'.gy-pk{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:7px;cursor:pointer;font-size:14px;color:#2C2C2A}'
    +'.gy-pk:hover{background:#F1EFE8}'
@@ -441,7 +452,11 @@ window.gyCartoTiles = function(style){
    +'.meterlab span{display:inline-flex;align-items:center;gap:5px}'
    +'.meterlab b{color:#1F1F1D;font-weight:500;font-variant-numeric:tabular-nums}'
    +'.meterlab i.k{width:8px;height:8px;border-radius:2px;display:inline-block}'
-   +'.topbar{position:sticky;top:0;z-index:12}'
+   +'.topbar{position:sticky;top:0;z-index:1200}'
+   /* Leaflet paints its panes and controls up to z-index 1000, which put the map
+      over the sticky topbar. Giving the map container its own stacking context
+      keeps every one of those layers inside the map. */
+   +'.leaflet-container{position:relative;z-index:0}'
    +'html.gyembed .snav,html.gyembed .snavpeek,html.gyembed #expandBtn,html.gyembed .scollapse{display:none!important}'
    +'html.gybare #chapnav{display:none!important}'
    +'html.gybare #floatR{display:none!important}'
@@ -853,5 +868,169 @@ window.gyCartoTiles = function(style){
         +'<span style="margin-left:auto">of <b>'+verified.toLocaleString()+'</b> verified</span>'
       +'</div></div>';
   };
+
+
+  /* ── Breadcrumbs ──────────────────────────────────────────────────────
+     One table, one renderer, owned here for the same reason the rail CSS is:
+     every page carried its own chain and they had drifted into four
+     different roots for the same place.
+
+     Shape: <altitude root> › <bucket> › <page>. The root is Portfolio at
+     portfolio level and Portfolio › <workspace> inside a programme, so the
+     breadcrumb states the full altitude. The page's own last crumb is never
+     touched, so pages that set it from JS keep working. Spine pages (Home,
+     To-dos) and the Hive Mind sit outside the altitudes and get no root.
+
+     To add a page: one line in GY_CRUMB, keyed by filename. */
+  var GY_CRUMB_HREF = {
+    'Portfolio':'portfolio-overview.html',
+    'Inventory':'inventory-overview.html',
+    'Workflows':'deliverables-landing.html',
+    'Documents':'documents-overview.html',
+    'Meeting notes':'meeting-notes.html',
+    'Hive Mind Library':'hive-mind-library.html',
+    'Customer Demand Mapping':'demand-mapping-canvas-prototype.html',
+    'Investor Q&A Log':'investor-qa-log-canvas-prototype.html'
+  };
+  var GY_PF_INV = 'inventory-portfolio-overview.html';
+
+  /* alt: 'portfolio' | 'programme' | 'none'.  trail: buckets under the root. */
+  var GY_CRUMB = {
+    'home.html':                        {alt:'none'},
+    'todos.html':                       {alt:'none'},
+    'hive-mind-library.html':           {alt:'none'},
+    'es-rule-book.html':                {alt:'none', trail:['Hive Mind Library','Rule books']},
+    'es-rulebook.html':                 {alt:'none', trail:['Hive Mind Library','Rule books']},
+    'carbon-rule-book.html':            {alt:'none', trail:['Hive Mind Library','Rule books']},
+
+    'portfolio-overview.html':          {alt:'portfolio'},
+    'portfolio-dashboard.html':         {alt:'portfolio'},
+    'inventory-portfolio-overview.html':{alt:'portfolio'},
+    'inventory-portfolio-dashboard.html':{alt:'portfolio', trail:['Inventory']},
+    'inventory-bng-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
+    'inventory-wcc-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
+    'inventory-all.html':               {alt:'portfolio', trail:['Inventory']},
+    'market-map-kwame.html':            {alt:'portfolio', trail:['Intelligence']},
+    'outcome-engine.html':              {alt:'portfolio', trail:['Intelligence']},
+
+    'programme-overview.html':          {alt:'programme'},
+    'inventory-overview.html':          {alt:'programme'},
+    'inventory-programme.html':         {alt:'programme', trail:['Inventory']},
+    'inventory-bng-programme.html':     {alt:'programme', trail:['Inventory']},
+    'inventory-wcc-programme.html':     {alt:'programme', trail:['Inventory']},
+    'inventory-soc-programme.html':     {alt:'programme', trail:['Inventory']},
+    'inventory-denton-reserve.html':    {alt:'programme', trail:['Inventory']},
+    'projects.html':                    {alt:'programme'},
+    'sites.html':                       {alt:'programme'},
+    'deliverables-landing.html':        {alt:'programme'},
+    'documents-overview.html':          {alt:'programme'},
+    'document.html':                    {alt:'programme', trail:['Documents']},
+    'meeting-notes.html':               {alt:'programme'},
+    'meeting-notes-landing.html':       {alt:'programme'},
+    'meeting-note-kickoff.html':        {alt:'programme', trail:['Meeting notes']},
+    'meeting-note-buyer-review.html':   {alt:'programme', trail:['Meeting notes']},
+    'activity-overview.html':           {alt:'programme'},
+
+    'customer-demand-mapping-v2-canvas.html':     {alt:'programme', trail:['Workflows']},
+    'demand-mapping-canvas-prototype.html':       {alt:'programme', trail:['Workflows']},
+    'demand-mapping-text-view-canvas.html':       {alt:'programme', trail:['Workflows']},
+    'lead-demand-mapping-canvas.html':            {alt:'programme', trail:['Workflows']},
+    'lead-supply-demand-mapping-canvas.html':     {alt:'programme', trail:['Workflows']},
+    'investor-qa-log-canvas-prototype.html':      {alt:'programme', trail:['Workflows']},
+    'tender-to-bid-canvas-prototype.html':        {alt:'programme', trail:['Workflows']},
+    'upper-dee-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Workflows']},
+    'upper-dee-canvas-list-sidebar.html':         {alt:'programme', trail:['Workflows']},
+    'upper-dee-simple-drawer-canvas.html':        {alt:'programme', trail:['Workflows']},
+    'upper-dee-executor-steps-canvas.html':       {alt:'programme', trail:['Workflows']},
+    'upper-dee-deliverable-page.html':            {alt:'programme', trail:['Workflows']},
+    'workflow-experiment-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Workflows']},
+    'artefact-editor.html':             {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
+    'questionnaire-editor.html':        {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
+    'demand-mapping-intake-poc.html':   {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
+    'investor-qa-pack-example.html':    {alt:'programme', trail:['Workflows','Investor Q&A Log']}
+  };
+
+  function gyCrumbTrail(){
+    var file = (location.pathname.split('/').pop() || '').toLowerCase();
+    var def = GY_CRUMB[file];
+    if(!def) return null;
+    var out = [];
+    if(def.alt === 'portfolio' || def.alt === 'programme'){
+      out.push(['Portfolio', 'portfolio-overview.html']);
+      if(def.alt === 'programme') out.push([meta.name, 'programme-overview.html']);
+    }
+    (def.trail || []).forEach(function(t){
+      var href = GY_CRUMB_HREF[t] || '';
+      if(t === 'Inventory' && def.alt === 'portfolio') href = GY_PF_INV;
+      out.push([t, href]);
+    });
+    return out;
+  }
+
+  function gyCrumbNode(label, href, cls){
+    var el = document.createElement('span');
+    el.className = cls + ' gycr';
+    el.textContent = label;
+    if(href){ el.style.cursor = 'pointer'; el.onclick = function(){ location.href = href; }; }
+    return el;
+  }
+  function gySepNode(){
+    var s = document.createElement('span');
+    s.className = 'sep gycr-sep';
+    s.textContent = '›';
+    return s;
+  }
+
+  function gyRenderCrumbs(){
+    var anc = gyCrumbTrail();
+    if(!anc) return;
+
+    /* Three container shapes are in the POC:
+         .topbar > .crumbs > .cr        current
+         .topbar > .crumb/.sep/.title   mid
+         .row1   > .crumb/.sep/.title   older
+       Only the ancestors are rebuilt; the page's own last crumb stays put. */
+    var box = document.querySelector('.crumbs') || document.querySelector('.topbar') || document.querySelector('.row1');
+    if(!box) return;
+    var isNew = box.classList.contains('crumbs');
+
+    var leaf;
+    if(isNew){
+      var crs = box.querySelectorAll('.cr');
+      leaf = crs.length ? crs[crs.length - 1] : null;
+      if(leaf) leaf.classList.add('cur');
+    } else {
+      leaf = box.querySelector('.title');
+    }
+    if(!leaf) return;
+    leaf.classList.add('gycr-leaf');
+
+    /* the leaf can sit inside a wrapper (the rule book's dropdown, say), so
+       insert against whichever ancestor is the container's own child */
+    var anchor = leaf;
+    while(anchor && anchor.parentNode !== box) anchor = anchor.parentNode;
+    if(!anchor) return;
+
+    var kids = Array.prototype.slice.call(box.children);
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k === anchor) break;
+      var cl = k.classList;
+      var bare = k.tagName === 'SPAN' && !k.className && /^[›>/]$/.test((k.textContent || '').trim());
+      /* decorative page icon: some topbars carried one before the first crumb
+         and some did not, so the bar never lined up. Drop it everywhere. */
+      var icon = k.tagName === 'I' && cl && cl.contains('ti');
+      if((cl && (cl.contains('crumb') || cl.contains('cr') || cl.contains('sep'))) || bare || icon) box.removeChild(k);
+    }
+
+    anc.forEach(function(a){
+      box.insertBefore(gyCrumbNode(a[0], a[1], isNew ? 'cr' : 'crumb'), anchor);
+      box.insertBefore(gySepNode(), anchor);
+    });
+  }
+
+  if(document.readyState === 'loading') window.addEventListener('DOMContentLoaded', gyRenderCrumbs);
+  else gyRenderCrumbs();
+
 
 })();
