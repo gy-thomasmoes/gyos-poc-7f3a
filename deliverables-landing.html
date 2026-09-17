@@ -166,25 +166,41 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
 .favstar{margin-left:auto;flex:none;font-size:17px;color:#DEDCD4;cursor:pointer;padding:0 2px;transition:color .12s,transform .1s}
 .favstar:hover{color:#EF9F27;transform:scale(1.12)}
 .favstar.on{color:#EF9F27}
+
+/* page header: breadcrumbs in the topbar, the page name in the page */
+.crumbs{display:flex;align-items:center;gap:9px;font-size:16px;min-width:0}
+.crumbs .cr{color:var(--ink2);cursor:pointer;white-space:nowrap}
+.crumbs .cr:hover{color:var(--ink)}
+.crumbs .cr.cur{color:var(--ink);font-weight:600}
+.crumbs .sep{color:var(--ink3);font-size:14px}
+.phead{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.phead .acts{margin-left:auto;display:flex;gap:10px}
+.h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=f01e59c8"></script>
+<script src="gy-nav.js?v=25320256"></script>
 <script src="gy-docs.js?v=8c86f270"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
-  <i class="ti ti-hierarchy-2"></i>
-  <span class="title">Workflows</span>
-  <span class="spacer"></span>
-  <button class="btn-dark" onclick="openCreate()"><i class="ti ti-plus"></i> Create new Deliverable</button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">&rsaquo;</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">&rsaquo;</span><span class="cr cur">Workflows</span>
+  </div>
 </div>
 
 <div class="wrap">
+  <div class="phead">
+    <div class="h1">Workflows</div>
+    <div class="acts"><button class="btn-dark" onclick="openCreate()"><i class="ti ti-plus"></i> Create new Deliverable</button></div>
+  </div>
+
   <div class="favstrip" id="favStrip"></div>
   <div class="thead" style="margin-top:18px">
     <span>Workflow</span>

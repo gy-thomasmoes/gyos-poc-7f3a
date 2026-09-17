@@ -394,7 +394,7 @@ window.gyCartoTiles = function(style){
    +'.snav .scount{font-size:11.5px;color:#9C9A92;font-weight:400;margin-left:auto;font-variant-numeric:tabular-nums}'
    +'.snav .sdiv{background:#E3E1DB}'
    +'.snav .sarr{color:#9C9A92}'
-   +'.gy-smov{position:fixed;inset:0;background:rgba(31,31,29,.34);z-index:120;display:none;align-items:flex-start;justify-content:center;padding:11vh 16px 16px}'
+   +'.gy-smov{position:fixed;inset:0;background:rgba(31,31,29,.34);z-index:1270;display:none;align-items:flex-start;justify-content:center;padding:11vh 16px 16px}'
    +'.gy-smov.open{display:flex}'
    +'.gy-smbox{width:660px;max-width:100%;max-height:74vh;background:#fff;border:1px solid #E3E1DB;border-radius:16px;box-shadow:0 24px 70px rgba(31,31,29,.26);overflow:hidden;display:flex;flex-direction:column;font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}'
    +'.gy-smtop{display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid #E3E1DB;flex:none}'
@@ -413,7 +413,7 @@ window.gyCartoTiles = function(style){
    +'.gy-smitem.sel{background:#F1EFE8}'
    +'.gy-smempty{padding:30px 16px;text-align:center;color:#9C9A92;font-size:14.5px}'
    +'.gy-smfoot{display:flex;align-items:center;gap:16px;padding:11px 16px;border-top:1px solid #E3E1DB;background:#FBFAF5;font-size:13px;color:#9C9A92;flex:none}'
-   +'.gy-nppop{position:fixed;width:372px;max-width:92vw;background:#fff;border:1px solid #E3E1DB;border-radius:14px;box-shadow:0 18px 48px rgba(31,31,29,.2);z-index:110;overflow:hidden;font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}'
+   +'.gy-nppop{position:fixed;width:372px;max-width:92vw;background:#fff;border:1px solid #E3E1DB;border-radius:14px;box-shadow:0 18px 48px rgba(31,31,29,.2);z-index:1260;overflow:hidden;font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}'
    +'.gy-nphd{padding:15px 16px 0;font-size:17px;font-weight:600;color:#1F1F1D}'
    +'.gy-nptabs{display:flex;gap:7px;padding:11px 16px 12px;border-bottom:1px solid #E3E1DB}'
    +'.gy-nptab{font:inherit;font-size:13.5px;padding:6px 12px;border-radius:9px;border:1px solid #E3E1DB;background:#fff;color:#6B6A64;cursor:pointer}'
@@ -450,6 +450,11 @@ window.gyCartoTiles = function(style){
    +'.meterlab span{display:inline-flex;align-items:center;gap:5px}'
    +'.meterlab b{color:#1F1F1D;font-weight:500;font-variant-numeric:tabular-nums}'
    +'.meterlab i.k{width:8px;height:8px;border-radius:2px;display:inline-block}'
+   /* Layer scale. The topbar is sticky at 1200 and therefore paints over
+      ordinary page content, so ANYTHING that must cover the whole window
+      belongs above it: action menu 1250, notifications 1260, search modal
+      1270, drawer backdrop 1300 and drawer 1301. A new overlay built at the
+      usual page-level 50 to 300 will silently slide under the topbar. */
    +'.topbar{position:sticky;top:0;z-index:1200}'
    /* Leaflet paints its panes and controls up to z-index 1000, which put the map
       over the sticky topbar. Giving the map container its own stacking context

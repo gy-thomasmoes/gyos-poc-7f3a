@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Inventory overview · Portfolio · Great Yellow</title>
+<title>Inventory · Portfolio · Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=19190e15">
+<link rel="stylesheet" href="gy-shell.css?v=45933bd5">
 <style>
 :root{--gut:32px}
 .wrap{max-width:1080px;margin:0 auto;padding:36px var(--gut) 100px}
@@ -55,8 +55,31 @@
 .svc.ghost .gt{font-size:13.5px;color:var(--ink3);text-align:center;padding:0 20px;line-height:1.5}
 
 /* ── Deals ── */
-.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.dcard{border:1px solid var(--line);border-radius:16px;padding:17px 19px 19px;background:var(--card)}
+/* Deals and Risk are one wide card each, not three cards side by side.
+   One border, one padding, the services split inside it by hairline dividers,
+   so the section reads as a single object instead of three competing ones. */
+.wcard{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
+.wcols>*{padding:16px 22px 18px;border-top:1px solid var(--line);min-width:0}
+.wcols>*:first-child{border-top:none}
+/* one service per row, its content laid out across the width */
+.drow2{display:grid;grid-template-columns:200px minmax(200px,1fr) 1fr 1fr;gap:26px;align-items:start}
+.rrow2{display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:start}
+.wnm{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.wnm .nm{font-size:14px;font-weight:600}
+.wlk{display:inline-block;margin-top:6px;font-size:13px;color:var(--ink2);
+      text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.wlk:hover{color:var(--ink)}
+.wsub{font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+@media(max-width:900px){.drow2,.rrow2{grid-template-columns:1fr;gap:14px}}
+.wkey{display:flex;gap:16px;flex-wrap:wrap;padding:11px 22px;border-top:1px solid var(--line);
+      background:var(--bg);font-size:12px;color:var(--ink2)}
+.wkey span{display:inline-flex;align-items:center;gap:6px}
+.wkey i{width:8px;height:8px;border-radius:50%;flex:none;background:var(--ink2)}
+.wkey i.m{background:var(--ink3);opacity:.55}
+.wkey i.l{background:var(--graybg)}
+
+
+.dcard{min-width:0}
 .dcard .dh{display:flex;align-items:center;gap:9px;margin-bottom:12px}
 .dcard .dh .nm{font-size:14px;font-weight:600}
 .dcard .dh .lk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
@@ -65,28 +88,23 @@
 .bar2{height:7px;border-radius:99px;background:var(--graybg);overflow:hidden;margin:11px 0 0}
 .bar2 i{display:block;height:100%;border-radius:99px;background:var(--esc)}
 .bar2.lite i{background:color-mix(in srgb, var(--esc) 45%, #fff)}
-.drow{margin-top:13px;padding-top:11px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.drow{font-size:13.5px;color:var(--ink2)}
+.drow+.drow{margin-top:13px}
 .drow b{color:var(--ink);font-weight:700}
 .drow .u{text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .dempty{font-size:13.5px;color:var(--ink3);line-height:1.55}
-@media(max-width:980px){.dgrid{grid-template-columns:1fr}}
 
 /* ── Risk ── */
-.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.rcardx{border:1px solid var(--line);border-radius:16px;padding:15px 18px 17px;background:var(--card)}
+.rcardx{min-width:0}
 .rcardx .rh{display:flex;align-items:center;gap:9px;margin-bottom:10px}
 .rcardx .rh .nm{font-size:14px;font-weight:600}
-.rrow{display:grid;grid-template-columns:1fr 92px;align-items:center;gap:12px;padding:6px 0}
+.rrow{display:grid;grid-template-columns:minmax(0,220px) 1fr;align-items:center;gap:16px;padding:5px 0}
 .rrow .rl{font-size:13.5px;line-height:1.3}
 .rbarx{display:flex;height:18px;border-radius:6px;overflow:hidden;background:var(--graybg)}
 .rbarx span{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;min-width:0}
 .rbarx .s1{background:var(--esc)}
 .rbarx .s2{background:color-mix(in srgb, var(--esc) 55%, #fff);color:var(--ink)}
 .rmorex{font-size:13px;color:var(--ink2);text-decoration:underline;text-underline-offset:2px;cursor:pointer;margin-top:9px;display:inline-block}
-.rkey{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:12px;color:var(--ink2)}
-.rkey span{display:inline-flex;align-items:center;gap:6px}
-.rkey i{width:8px;height:8px;border-radius:50%;flex:none}
-@media(max-width:980px){.rgrid{grid-template-columns:1fr}}
 
 /* ── Search ── */
 [hidden]{display:none!important}
@@ -97,11 +115,11 @@
 .sbar .ti{font-size:18px;color:var(--ink3)}
 .sbar .kbd{margin-left:auto;font-size:12px;color:var(--ink3);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
 
-.sdrop{position:fixed;inset:0;background:rgba(31,31,29,.28);z-index:300;opacity:0;pointer-events:none;
+.sdrop{position:fixed;inset:0;background:rgba(31,31,29,.28);z-index:1300;opacity:0;pointer-events:none;
        transition:opacity .22s ease}
 .sdrop.on{opacity:1;pointer-events:auto}
 .sdrawer{position:fixed;top:0;right:0;bottom:0;width:460px;max-width:92vw;background:var(--card);
-         border-left:1px solid var(--line);box-shadow:-12px 0 40px rgba(31,31,29,.14);z-index:301;
+         border-left:1px solid var(--line);box-shadow:-12px 0 40px rgba(31,31,29,.14);z-index:1301;
          display:flex;flex-direction:column;transform:translateX(100%);
          transition:transform .24s cubic-bezier(.2,.7,.3,1)}
 .sdrawer.on{transform:none}
@@ -168,7 +186,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"pf-inventory","scope":"portfolio"};</script>
-<script src="gy-nav.js?v=f01e59c8"></script>
+<script src="gy-nav.js?v=25320256"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=70b0cd57"></script>
 
@@ -183,7 +201,7 @@
 
 <div class="wrap">
   <div class="phead">
-    <div class="h1">Inventory overview</div>
+    <div class="h1">Inventory</div>
     <div class="acts">
       <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,INV_ACTIONS)">Actions <i class="ti ti-chevron-down"></i></button>
       <button class="btn-dark" onclick="event.stopPropagation();gyMenu(this,INV_ADD)"><i class="ti ti-plus"></i> Add inventory</button>
@@ -199,10 +217,10 @@
   <div class="rail" id="rail"></div>
 
   <div class="bsect">Deals</div>
-  <div class="dgrid" id="deals"></div>
+  <div class="wcard" id="deals"></div>
 
   <div class="bsect">Risk</div>
-  <div class="rgrid" id="risks"></div>
+  <div class="wcard" id="risks"></div>
 
   <div class="bsect">Inventory list
     <span class="act" onclick="toast('Filters: narrow the portfolio list by programme, service or availability')">Filters</span>
@@ -290,27 +308,32 @@ function rail(){
 /* Deals */
 function dealCard(es){
   var d=GY_INV_API.deals(es,PROG), n=nameOf(es);
-  var body = !d.open
-    ? '<div class="dempty">No open deals. '+u(GY_INV_API.pipeline(es,PROG).projected.u)
-      +' projected units, nothing registered to sell yet.</div>'
-    : '<div class="big">'+d.pct+'%</div>'
+  var head = '<div><div class="wnm">'+pill(es)+'<span class="nm">'+n+'</span></div>'
+    +(d.open?'<span class="wlk" onclick="toast(\''+d.open+' open deals on '+n+'\')">'+d.open+' open</span>':'')
+    +'</div>';
+  if(!d.open){
+    return '<div class="'+GY_ES[es].cls+'"><div class="dcard drow2">'+head
+      +'<div class="dempty" style="grid-column:2 / -1">No open deals. '
+      +u(GY_INV_API.pipeline(es,PROG).projected.u)
+      +' projected units, nothing registered to sell yet.</div></div></div>';
+  }
+  return '<div class="'+GY_ES[es].cls+'"><div class="dcard drow2">'+head
+    +'<div><div class="big">'+d.pct+'%</div>'
       +'<div class="cap">('+u(d.inDeals)+' units) of available inventory in deals</div>'
-      +'<div class="bar2"><i style="width:'+d.pct+'%"></i></div>'
-      +'<div class="drow"><b>'+d.unreserved.pct+'%</b> ('+u(d.unreserved.u)+' units) in '
-        +'<span class="u" onclick="toast(\''+d.unreserved.deals+' deals against unreserved '+n+'\')">'
-        +d.unreserved.deals+' deal'+(d.unreserved.deals===1?'':'s')+' against unreserved</span>'
-        +'<div class="bar2 lite"><i style="width:'+d.unreserved.pct+'%"></i></div></div>'
-      +'<div class="drow"><b>'+d.reserved.pct+'%</b> ('+u(d.reserved.u)+' units) in '
-        +'<span class="u" onclick="toast(\''+d.reserved.deals+' deals against reserved '+n+'\')">'
-        +d.reserved.deals+' deal'+(d.reserved.deals===1?'':'s')+' against reserved</span>'
-        +'<div class="bar2"><i style="width:'+d.reserved.pct+'%"></i></div></div>';
-  return '<div class="'+GY_ES[es].cls+'"><div class="dcard">'
-    +'<div class="dh">'+pill(es)+'<span class="nm">'+n+'</span>'
-    +(d.open?'<span class="lk" onclick="toast(\''+d.open+' open deals on '+n+'\')">'+d.open+' open</span>':'')
-    +'</div>'+body+'</div></div>';
+      +'<div class="bar2"><i style="width:'+d.pct+'%"></i></div></div>'
+    +'<div class="drow"><b>'+d.unreserved.pct+'%</b> ('+u(d.unreserved.u)+' units) in '
+      +'<span class="u" onclick="toast(\''+d.unreserved.deals+' deals against unreserved '+n+'\')">'
+      +d.unreserved.deals+' deal'+(d.unreserved.deals===1?'':'s')+' against unreserved</span>'
+      +'<div class="bar2 lite"><i style="width:'+d.unreserved.pct+'%"></i></div></div>'
+    +'<div class="drow"><b>'+d.reserved.pct+'%</b> ('+u(d.reserved.u)+' units) in '
+      +'<span class="u" onclick="toast(\''+d.reserved.deals+' deals against reserved '+n+'\')">'
+      +d.reserved.deals+' deal'+(d.reserved.deals===1?'':'s')+' against reserved</span>'
+      +'<div class="bar2"><i style="width:'+d.reserved.pct+'%"></i></div></div>'
+    +'</div></div>';
 }
 function deals(){
-  document.getElementById('deals').innerHTML = GY_INV_API.services().map(dealCard).join('');
+  document.getElementById('deals').innerHTML =
+    '<div class="wcols">' + GY_INV_API.services().map(dealCard).join('') + '</div>';
 }
 
 /* Risk */
@@ -328,18 +351,18 @@ function riskCard(es){
   }).join('');
   var more = hidden>0 ? '<span class="rmorex" onclick="toggleRisk(\''+es+'\')">'
     +(open?'Show fewer':'View '+hidden+' more')+'</span>' : '';
-  return '<div class="'+GY_ES[es].cls+'"><div class="rcardx">'
-    +'<div class="rh">'+pill(es)+'<span class="nm">'+GY_INV_API.riskLabel(es)+'</span></div>'
-    +body+more
-    +'<div class="rkey">'
-      +'<span><i style="background:var(--esc)"></i>Reserved</span>'
-      +'<span><i style="background:color-mix(in srgb, var(--esc) 55%, #fff)"></i>Unreserved</span>'
-      +'<span><i style="background:var(--graybg)"></i>Not in deals</span>'
-    +'</div></div></div>';
+  return '<div class="'+GY_ES[es].cls+'"><div class="rcardx rrow2">'
+    +'<div><div class="wnm">'+pill(es)+'<span class="nm">'+nameOf(es)+'</span></div>'
+      +'<div class="wsub">'+GY_INV_API.riskLabel(es)+'</div></div>'
+    +'<div>'+body+more+'</div></div></div>';
 }
 function toggleRisk(es){ RISK_OPEN[es]=!RISK_OPEN[es]; risks(); }
 function risks(){
-  document.getElementById('risks').innerHTML = GY_INV_API.services().map(riskCard).join('');
+  document.getElementById('risks').innerHTML =
+    '<div class="wcols">' + GY_INV_API.services().map(riskCard).join('') + '</div>'
+    + '<div class="wkey"><span><i></i>Reserved</span>'
+    + '<span><i class="m"></i>Unreserved</span>'
+    + '<span><i class="l"></i>Not in deals</span></div>';
 }
 
 /* Inventory list: the first rows, the full table lives on its own page */

@@ -131,20 +131,33 @@ body.navhid .snav{display:none}
 :root{--serif:'Manner','Spectral',Georgia,serif}
 .title{font-weight:600}
 .grt-h{font-family:var(--serif);font-weight:500}
+
+/* page header: breadcrumbs in the topbar, the page name in the page */
+.crumbs{display:flex;align-items:center;gap:9px;font-size:16px;min-width:0}
+.crumbs .cr{color:var(--ink2);cursor:pointer;white-space:nowrap}
+.crumbs .cr:hover{color:var(--ink)}
+.crumbs .cr.cur{color:var(--ink);font-weight:600}
+.crumbs .sep{color:var(--ink3);font-size:14px}
+.phead{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.phead .acts{margin-left:auto;display:flex;gap:10px}
+.h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 </style>
 </head>
 <body>
 
 <script>window.GYNAV={active:'library',arts:null};</script>
-<script src="gy-nav.js?v=f01e59c8"></script>
+<script src="gy-nav.js?v=25320256"></script>
 
 <div class="mainc">
   <div class="row1">
-    <i class="ti ti-books" style="font-size:20px;color:var(--ink2)"></i>
-    <span class="title">Hive Mind Library</span>
+    <div class="crumbs">
+      <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+      <span class="sep">&rsaquo;</span><span class="cr cur">Hive Mind Library</span>
+    </div>
   </div>
 
   <div class="scroll"><div class="wrap">
+    <div class="phead"><div class="h1">Hive Mind Library</div></div>
 
     <div class="sectitle" style="margin-top:4px">Ecosystem service rule books</div>
     <div class="books" id="books"></div>

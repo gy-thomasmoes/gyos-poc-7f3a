@@ -164,24 +164,42 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 :root{--serif:'Manner','Spectral',Georgia,serif}
 .title{font-weight:600}
 .grt-h{font-family:var(--serif);font-weight:500}
+
+/* page header: breadcrumbs in the topbar, the page name in the page */
+.crumbs{display:flex;align-items:center;gap:9px;font-size:16px;min-width:0}
+.crumbs .cr{color:var(--ink2);cursor:pointer;white-space:nowrap}
+.crumbs .cr:hover{color:var(--ink)}
+.crumbs .cr.cur{color:var(--ink);font-weight:600}
+.crumbs .sep{color:var(--ink3);font-size:14px}
+.phead{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.phead .acts{margin-left:auto;display:flex;gap:10px}
+.h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active": "documents", "arts": "demand"};</script>
-<script src="gy-nav.js?v=f01e59c8"></script>
+<script src="gy-nav.js?v=25320256"></script>
 <script src="gy-todos.js?v=7226a07d"></script>
 <script src="gy-docs.js?v=8c86f270"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
-  <i class="ti ti-file-text"></i>
-  <span class="title">Documents</span>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">&rsaquo;</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">&rsaquo;</span><span class="cr cur">Documents</span>
+  </div>
 </div>
 
 <div class="wrap">
+  <div class="phead">
+    <div class="h1">Documents</div>
+    <div class="acts"><button class="btn-dark" onclick="toast('Upload: drop a file here or forward a client email and the AI Assistant files it to the right run')"><i class="ti ti-plus"></i> Add document</button></div>
+  </div>
+
   <div class="dhead">
     <span class="spacer"></span>
     <div class="vtog">
@@ -190,7 +208,6 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
     </div>
     <span class="chip" aria-label="Search"><i class="ti ti-search"></i></span>
     <button class="fbtn2" id="fBtn" onclick="dPop(event)"><i class="ti ti-adjustments-horizontal"></i> Filters<span class="cnt" id="fCnt" style="display:none"></span></button>
-    <button class="btn-dark" onclick="toast('Upload: drop a file here or forward a client email and the AI Assistant files it to the right run')"><i class="ti ti-plus"></i> Add document</button>
     <div class="fpop" id="fPop"></div>
   </div>
 

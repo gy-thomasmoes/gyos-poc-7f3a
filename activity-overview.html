@@ -124,23 +124,39 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .awrote .ti{font-size:13px}
 .atime{font-size:12.5px;color:var(--ink3);flex:none;font-variant-numeric:tabular-nums;padding-top:2px}
 .anote{font-size:13.5px;color:var(--ink3);line-height:1.5;max-width:70ch;margin:4px 4px 0}
+
+/* page header: breadcrumbs in the topbar, the page name in the page */
+.crumbs{display:flex;align-items:center;gap:9px;font-size:16px;min-width:0}
+.crumbs .cr{color:var(--ink2);cursor:pointer;white-space:nowrap}
+.crumbs .cr:hover{color:var(--ink)}
+.crumbs .cr.cur{color:var(--ink);font-weight:600}
+.crumbs .sep{color:var(--ink3);font-size:14px}
+.phead{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.phead .acts{margin-left:auto;display:flex;gap:10px}
+.h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active": "activity", "arts": "demand"};</script>
-<script src="gy-nav.js?v=f01e59c8"></script>
+<script src="gy-nav.js?v=25320256"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
-  <i class="ti ti-activity"></i>
-  <span class="title">Activity</span>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">&rsaquo;</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">&rsaquo;</span><span class="cr cur">Activity</span>
+  </div>
 </div>
 
 <div class="wrap">
-  <div class="anote">Every workflow run writes here, including the ones that produce no document. Activity is the authoritative trail of what happened in this programme.</div>
+  <div class="phead">
+    <div class="h1">Activity</div>
+    
+  </div>
   <div class="afilters">
     <button class="afilter on" data-f="all" onclick="afilter(this)">Everything</button>
     <button class="afilter" data-f="run" onclick="afilter(this)">Workflow runs</button>
