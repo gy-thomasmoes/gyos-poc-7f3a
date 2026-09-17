@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=45933bd5">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
 <style>
 :root{--gut:32px}
 .wrap{max-width:1080px;margin:0 auto;padding:36px var(--gut) 100px}
@@ -107,12 +107,7 @@
 
 /* ── Search ── */
 [hidden]{display:none!important}
-.sbar{display:flex;align-items:center;gap:11px;width:100%;margin-top:18px;padding:14px 18px;
-      background:var(--card);border:1px solid var(--line2);border-radius:12px;cursor:text;
-      font-size:15px;color:var(--ink3);text-align:left;font-family:inherit}
-.sbar:hover{border-color:var(--ink3)}
-.sbar .ti{font-size:18px;color:var(--ink3)}
-.sbar .kbd{margin-left:auto;font-size:12px;color:var(--ink3);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+#sbar .ti{font-size:16px;margin-right:6px;vertical-align:-2px}
 
 .sdrop{position:fixed;inset:0;background:rgba(31,31,29,.28);z-index:1300;opacity:0;pointer-events:none;
        transition:opacity .22s ease}
@@ -203,13 +198,11 @@
   <div class="phead">
     <div class="h1">Inventory</div>
     <div class="acts">
+      <button class="btn-out" id="sbar" onclick="openSearch()"><i class="ti ti-search"></i><span>Search</span></button>
       <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,INV_ACTIONS)">Actions <i class="ti ti-chevron-down"></i></button>
       <button class="btn-dark" onclick="event.stopPropagation();gyMenu(this,INV_ADD)"><i class="ti ti-plus"></i> Add inventory</button>
     </div>
   </div>
-  <button class="sbar" id="sbar" onclick="openSearch()">
-    <i class="ti ti-search"></i><span>Search inventory</span><span class="kbd">/</span>
-  </button>
   <div id="results" hidden></div>
 
   <div id="overview">
@@ -504,13 +497,13 @@ function runSearch(){
   document.getElementById('results').hidden=false;
   document.getElementById('overview').hidden=true;
   document.getElementById('sbar').querySelector('span').textContent =
-    m.length+' line'+(m.length===1?'':'s')+' in '+nameOf(Q.es)+' \u00b7 edit search';
+    m.length+' line'+(m.length===1?'':'s')+' \u00b7 edit';
   closeSearch();
 }
 function clearSearch(){
   document.getElementById('results').hidden=true;
   document.getElementById('overview').hidden=false;
-  document.getElementById('sbar').querySelector('span').textContent='Search inventory';
+  document.getElementById('sbar').querySelector('span').textContent='Search';
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='/' && !/input|select|textarea/i.test((e.target.tagName||''))){ e.preventDefault(); openSearch(); }

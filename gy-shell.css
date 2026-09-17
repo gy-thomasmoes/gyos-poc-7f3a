@@ -66,7 +66,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 /* ── content ── */
 .wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
 @media(max-width:900px){.wrap{padding:32px 22px 90px}}
-.phead{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.phead{display:flex;align-items:flex-start;gap:14px;padding-bottom:15px;margin-bottom:20px;border-bottom:1px solid var(--line)}
 .h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 .phead .acts{margin-left:auto;display:flex;gap:10px}
 .pmeta{font-size:14px;color:var(--ink2);display:flex;align-items:center;gap:7px;margin-bottom:20px}
@@ -154,17 +154,3 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .wccpill{border:1px solid var(--line2);background:#fff;border-radius:9px;padding:6px 11px;font-size:13px;color:var(--ink);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .link-u{text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:60;display:none;max-width:80vw}
-
-/* ── Action menu ──────────────────────────────────────────────────────────
-   One dropdown for page-level bulk operations, opened by gyMenu() in
-   gy-nav.js. Anchored to its button, appended to body so no overflow clips
-   it. Never restyle this per page. */
-.gy-mpop{position:fixed;min-width:238px;background:#fff;border:1px solid var(--line2);border-radius:12px;
-         box-shadow:0 16px 40px rgba(31,31,29,.18);z-index:1250;padding:6px;
-         font-family:-apple-system,system-ui,Inter,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
-.gy-mlbl{font-size:12px;color:var(--ink3);padding:9px 10px 4px}
-.gy-mitem{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;
-          font-size:14px;color:var(--ink);cursor:pointer;white-space:nowrap}
-.gy-mitem:hover{background:#F3F2EE}
-.gy-mitem>i{font-size:16px;color:var(--ink3);flex:none}
-.gy-mdiv{height:1px;background:var(--line);margin:5px 6px}
