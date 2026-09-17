@@ -18,7 +18,10 @@
 /* review band */
 .rband{display:flex;gap:14px;align-items:flex-start;background:var(--amberbg);border:1px solid #EBD9AE;
        border-radius:14px;padding:14px 18px;margin:0 0 20px}
-.rband .ti{font-size:19px;color:var(--amberd);margin-top:1px}
+/* direct child only: a bare .rband .ti also paints the icon inside the
+   button, which is amberd on an amberd background and so invisible */
+.rband>.ti{font-size:19px;color:var(--amberd)}
+.rband .rbtn .ti{font-size:17px;color:inherit}
 .rband .rb{flex:1;min-width:0}
 .rband{align-items:center}
 .rband .rt{font-size:14.5px;font-weight:600;color:var(--amberd)}

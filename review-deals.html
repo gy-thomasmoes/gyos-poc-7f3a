@@ -44,8 +44,12 @@
 .rc .rt{font-size:15.5px;font-weight:600;letter-spacing:-.01em;flex:1;min-width:0}
 .rc .rm{font-size:13px;color:var(--ink3);white-space:nowrap}
 .rc .rd{font-size:14px;color:var(--ink2);margin-bottom:14px}
-.rc .ra{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:15px}
-.rc .ra .sp{flex:1}
+.rc .ra{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end;
+         margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.rc .ghost{border:none;background:transparent;color:var(--ink2);border-radius:10px;padding:9px 13px;
+           font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.rc .ghost:hover{background:var(--graybg);color:var(--ink)}
+.rc .rm .lnk{color:var(--ink2)}
 .rc .lnk{font-size:13.5px;color:var(--ink2);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .rc .lnk:hover{color:var(--ink)}
 .rc.done{padding:13px 20px;background:#FBFAF6;border-left-color:var(--line2)}
@@ -191,8 +195,10 @@ function cssId(id){ return id.replace(/[^a-z0-9]+/gi,'-'); }
 function btn(label, fn, primary){
   return '<button class="'+(primary?'btn-dark':'btn-out')+'" onclick="'+fn+'">'+label+'</button>';
 }
+/* Accept is the escape hatch, never the intended ending, so it stays the
+   lightest thing in the row and sits furthest from the primary. */
 function acceptBtn(i){
-  return '<span class="lnk" onclick="acceptIssue(\''+i.id+'\')">Accept</span>';
+  return '<button class="ghost" onclick="acceptIssue(\''+i.id+'\')">Accept</button>';
 }
 
 /* -- the five bodies ---------------------------------------------------- */
@@ -234,10 +240,10 @@ function cardContested(i){
     + '</div>';
 
   var can = total <= e.supply;
-  var acts = (can ? btn('Re-cut allocations', "recut('"+i.id+"')", true)
-                  : '<button class="btn-dark" disabled style="opacity:.4;cursor:default">Re-cut allocations</button>')
+  var acts = acceptBtn(i)
     + btn('Reduce to fit', "fit('"+i.id+"')")
-    + '<span class="sp"></span>' + acceptBtn(i);
+    + (can ? btn('Re-cut allocations', "recut('"+i.id+"')", true)
+           : '<button class="btn-dark" disabled style="opacity:.4;cursor:default">Re-cut allocations</button>');
   return shell(i, esPill(i.line.es) + ' ' + i.line.prog, bar + tbl, acts);
 }
 
@@ -285,11 +291,10 @@ function cardPrice(i){
   var kv = '<div class="kv"><span>Under by<b>'+money(e.gap)+' a unit</b></span>'
     + '<span>Units<b>'+e.units+'</b></span>'
     + '<span>Cost of the gap<b>'+money(e.gap * e.units)+'</b></span></div>';
-  var acts = btn('Raise to floor', "toFloor('"+i.id+"')", true)
+  var acts = acceptBtn(i)
     + btn('Request exception', "askException('"+i.id+"')")
-    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
-    + '<span class="sp"></span>' + acceptBtn(i);
-  return shell(i, esPill(i.line.es) + ' ' + i.line.prog, lad + kv, acts);
+    + btn('Raise to floor', "toFloor('"+i.id+"')", true);
+  return shell(i, dealLink(i.deals[0]) + ' · ' + esPill(i.line.es) + ' ' + i.line.prog, lad + kv, acts);
 }
 function toFloor(id){
   var i = current(id); if(!i) return;
@@ -306,10 +311,8 @@ function cardStagegap(i){
     + '<span>Close date<b>'+e.close+'</b></span>'
     + (e.days !== null ? '<span>Days left<b>'+e.days+'</b></span>' : '')
     + '<span>Needs<b>'+((window.GY_ES[e.es]||{}).name || e.es)+'</b></span></div>';
-  var acts = btn('Find inventory', "findInv('"+i.id+"')", true)
-    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
-    + '<span class="sp"></span>' + acceptBtn(i);
-  return shell(i, D.get(i.deals[0]).owner, kv, acts);
+  var acts = acceptBtn(i) + btn('Find inventory', "findInv('"+i.id+"')", true);
+  return shell(i, dealLink(i.deals[0]) + ' · ' + D.get(i.deals[0]).owner, kv, acts);
 }
 function findInv(id){
   var i = current(id);
@@ -320,10 +323,8 @@ function findInv(id){
 function cardMarksold(i){
   var kv = '<div class="kv"><span>Units held<b>'+i.ev.units+'</b></span>'
     + '<span>Won on<b>'+i.ev.close+'</b></span></div>';
-  var acts = btn('Mark as sold', "sold('"+i.id+"')", true)
-    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
-    + '<span class="sp"></span>' + acceptBtn(i);
-  return shell(i, D.get(i.deals[0]).owner, kv, acts);
+  var acts = acceptBtn(i) + btn('Mark as sold', "sold('"+i.id+"')", true);
+  return shell(i, dealLink(i.deals[0]) + ' · ' + D.get(i.deals[0]).owner, kv, acts);
 }
 function sold(id){
   var i = current(id); if(!i) return;
@@ -345,10 +346,9 @@ function cardAmount(i){
   var kv = '<div class="kv"><span>Hubspot amount<b>'+money(e.amount)+'</b></span>'
     + '<span>Units add up to<b>'+money(e.value)+'</b></span>'
     + '<span>Difference<b>'+(e.delta > 0 ? '+' : '')+money(e.delta)+'</b></span></div>';
-  var acts = btn('Open in Hubspot', "gyToast('Hubspot owns the amount. Edit it there and it syncs back')")
-    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
-    + '<span class="sp"></span>' + acceptBtn(i);
-  return shell(i, D.get(i.deals[0]).owner, kv, acts);
+  var acts = acceptBtn(i)
+    + btn('Open in Hubspot', "gyToast('Hubspot owns the amount. Edit it there and it syncs back')", true);
+  return shell(i, dealLink(i.deals[0]) + ' · ' + D.get(i.deals[0]).owner, kv, acts);
 }
 
 var CARD = {contested:cardContested, price:cardPrice, stagegap:cardStagegap,
