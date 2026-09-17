@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rule book &middot; Great Yellow</title>
+<title>Great Yellow Press &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
 <link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
 </head>
@@ -22,28 +22,18 @@
   <div class="crumbs">
     <span class="cr" onclick="location.href='hive-mind-library.html'">Hive Mind Library</span><span class="sep">&rsaquo;</span>
     <span class="cr" onclick="location.href='hive-mind-library.html'">Rule books</span><span class="sep">&rsaquo;</span>
-    <span class="cr cur" id="crName">Rule book</span>
+    <span class="cr cur">Great Yellow Press</span>
   </div>
 </div>
 
-<div id="rbpage"></div>
+<div id="shelfmount"></div>
 </div>
 </div>
 
-<div class="toast" id="toast"></div>
-<script>
-function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
-if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
-</script>
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
 <script src="gy-rulebooks.js?v=3f7491ab"></script>
-<script src="gy-rulebook.js?v=118dc62e"></script>
-<script>
-(function(){
-  var id=(new URLSearchParams(location.search)).get('es')||'bng';
-  var d=(window.GY_RULEBOOKS||[]).filter(function(x){return x.id===id;})[0];
-  if(d){ document.getElementById('crName').textContent=d.name; document.title=d.name+' · Great Yellow'; }
-  gyRuleBook(id);
-})();
-</script>
+<script src="gy-es-covers.js?v=7e3b75a1"></script>
+<script src="gy-es-press.js?v=6e880032"></script>
+<script>gyPressShelf('shelfmount');</script>
 </body>
 </html>

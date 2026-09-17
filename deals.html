@@ -20,10 +20,12 @@
        border-radius:14px;padding:14px 18px;margin:0 0 20px}
 .rband .ti{font-size:19px;color:var(--amberd);margin-top:1px}
 .rband .rb{flex:1;min-width:0}
-.rband .rt{font-size:14.5px;font-weight:600;color:var(--amberd);margin-bottom:5px}
-.rband .rl{font-size:14px;color:var(--ink);display:flex;flex-wrap:wrap;gap:6px 18px}
-.rband .rl span{cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-.rband .rl span:hover{color:var(--amberd)}
+.rband{align-items:center}
+.rband .rt{font-size:14.5px;font-weight:600;color:var(--amberd)}
+.rband .rbtn{margin-left:auto;background:var(--amberd);color:#fff;border:none;border-radius:10px;
+             padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;
+             display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.rband .rbtn:hover{background:#6F470C}
 
 /* table */
 .dtbl th.gh{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
@@ -62,10 +64,10 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"pf-deals","scope":"portfolio"};</script>
-<script src="gy-nav.js?v=ee2546cc"></script>
+<script src="gy-nav.js?v=43976ede"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=83d6a9e6"></script>
-<script src="gy-deals.js?v=2b768008"></script>
+<script src="gy-deals.js?v=bf5a5f28"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -91,6 +93,7 @@
 </div>
 <div class="toast" id="toast"></div>
 <script>
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
 var D = window.GY_DEALS_API;
 var ALL = D.all();
 
@@ -159,16 +162,12 @@ function sorted(list){
 /* -- review band -- */
 function band(){
   var el = document.getElementById('rband');
-  var flagged = ALL.filter(function(d){ return d.issues.length; });
-  if(!flagged.length){ el.innerHTML = ''; return; }
-  var by = {};
-  flagged.forEach(function(d){ d.issues.forEach(function(i){ by[i.type] = (by[i.type]||0) + 1; }); });
-  var lines = Object.keys(by).map(function(t){
-    return '<span onclick="setStatus(\'Needs review\')">'+D.issueTypes[t].label+' ('+by[t]+')</span>';
-  }).join('');
-  el.innerHTML = '<div class="rband"><i class="ti ti-alert-triangle"></i><div class="rb">'
-    + '<div class="rt">'+flagged.length+' deals need review</div>'
-    + '<div class="rl">'+lines+'</div></div></div>';
+  var n = D.needsReview().length;
+  if(!n){ el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="rband"><i class="ti ti-alert-triangle"></i>'
+    + '<div class="rt">'+n+' deal'+(n>1?'s':'')+' need'+(n>1?'':'s')+' review</div>'
+    + '<button class="rbtn" onclick="location.href=\'review-deals.html\'">'
+    + '<i class="ti ti-list-check"></i> Review deals</button></div>';
 }
 
 /* the one filter bar owns every dimension, so the band drives it too */
@@ -219,9 +218,8 @@ function render(){
   }).join('');
   if(!body) body = '<tr><td colspan="10" class="empty">No deals match these filters</td></tr>';
   document.getElementById('tbl').innerHTML = head() + '<tbody>' + body + '</tbody>';
-  var review = ALL.filter(function(d){ return d.issues.length; }).length;
   document.getElementById('showing').textContent =
-    'Showing ' + list.length + ' of ' + ALL.length + ' deals · ' + review + ' need review';
+    'Showing ' + list.length + ' of ' + ALL.length + ' deals';
   band();
 }
 

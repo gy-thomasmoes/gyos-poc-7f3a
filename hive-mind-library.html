@@ -142,7 +142,7 @@ body.navhid .snav{display:none}
 <body>
 
 <script>window.GYNAV={active:'library',arts:null};</script>
-<script src="gy-nav.js?v=ee2546cc"></script>
+<script src="gy-nav.js?v=43976ede"></script>
 
 <div class="mainc">
   <div class="row1">
@@ -261,7 +261,7 @@ const ESTOKEN={carbon:'wcc',bng:'bng',nn:'nut',nfm:'nfm'};
 let SEL=null;
 function renderBooks(){
   document.getElementById('books').innerHTML=ESDATA.map((e,i)=>`
-  <div class="bookcv" onclick="location.href='es-rulebook.html?es=${e.id}'">
+  <div class="bookcv" onclick="location.href='es-press.html?es=${e.id}'">
     ${gyEsCover(e,i)}
     <div class="bname">${e.name}</div>
   </div>`).join('');

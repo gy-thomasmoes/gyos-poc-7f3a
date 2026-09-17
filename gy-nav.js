@@ -49,7 +49,14 @@ window.gyCartoTiles = function(style){
     if(qp.get('bare')==='1') document.documentElement.classList.add('gybare');
   }catch(e){}
 
-  window.gyToast = function(m){ if(window.toast) toast(m); };
+  /* a page with <div id="toast"> makes window.toast that ELEMENT, which is
+     truthy and not callable, so check the type rather than the truthiness. */
+  window.gyToast = function(m){
+    if(typeof window.toast === 'function') return toast(m);
+    var t = document.getElementById('toast'); if(!t) return;
+    t.textContent = m; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display = 'none'; }, 3400);
+  };
   function gyStore(){ try{ return JSON.parse(localStorage.getItem('gyOpen')||'{}'); }catch(e){ return {}; } }
   function gyIsOpen(key,def){ var o=gyStore(); return key in o ? !!o[key] : def; }
   function gyCls(key,def){ return gyIsOpen(key,def) ? '' : ' closed'; }
@@ -720,6 +727,7 @@ window.gyCartoTiles = function(style){
     ['Go to','ti-layout-dashboard','Portfolio overview','Page','go:portfolio-overview.html'],
     ['Go to','ti-packages','Inventory','Page','go:inventory-overview.html'],
     ['Go to','ti-businessplan','Deals','Page','go:deals.html'],
+    ['Quick actions','ti-list-check','Review deals','Action','go:review-deals.html'],
     ['Go to','ti-hierarchy-2','Workflows','Page','go:deliverables-landing.html'],
     ['Go to','ti-file-text','Documents','Page','go:documents-overview.html'],
     ['Go to','ti-note','Meeting notes','Page','go:meeting-notes.html'],
@@ -963,6 +971,7 @@ window.gyCartoTiles = function(style){
     'inventory-all.html':               {alt:'portfolio', trail:['Inventory']},
     'deals.html':                       {alt:'portfolio'},
     'deal.html':                        {alt:'portfolio', trail:['Deals']},
+    'review-deals.html':                {alt:'portfolio', trail:['Deals']},
     'market-map-kwame.html':            {alt:'portfolio', trail:['Intelligence']},
     'outcome-engine.html':              {alt:'portfolio', trail:['Intelligence']},
 

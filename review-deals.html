@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review deals · Portfolio · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.phead{align-items:baseline}
+
+/* progress line, sticky under the topbar */
+.prog{position:sticky;top:61px;z-index:40;background:var(--bg);display:flex;align-items:center;
+      gap:18px;padding:12px 0 13px;margin-bottom:6px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.prog .pc{font-size:14px;color:var(--ink2)}
+.prog .pc b{color:var(--ink);font-weight:600}
+.prog .jump{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.prog .jump button{border:1px solid var(--line2);background:#fff;border-radius:999px;padding:5px 12px;
+                   font-family:inherit;font-size:13px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.prog .jump button:hover{border-color:var(--ink3);color:var(--ink)}
+.prog .jump button .n{color:var(--ink3);margin-left:5px}
+
+/* group */
+.grp{margin-top:26px}
+.ghd{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.ghd .gt{font-family:var(--serif);font-weight:500;font-size:19px;letter-spacing:-.01em}
+.ghd .gn{font-size:13px;color:var(--ink3)}
+.ghd .gb{margin-left:auto}
+
+/* card */
+.rc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:12px}
+.rc.s1{border-left:3px solid #B5462F}
+.rc.s2{border-left:3px solid var(--amber)}
+.rc.s3{border-left:3px solid var(--blue)}
+.rc.s4{border-left:3px solid var(--ink3)}
+.rc.s5{border-left:3px solid var(--line2)}
+.rc .rh{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+.rc .rt{font-size:15.5px;font-weight:600;letter-spacing:-.01em;flex:1;min-width:0}
+.rc .rm{font-size:13px;color:var(--ink3);white-space:nowrap}
+.rc .rd{font-size:14px;color:var(--ink2);margin-bottom:14px}
+.rc .ra{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:15px}
+.rc .ra .sp{flex:1}
+.rc .lnk{font-size:13.5px;color:var(--ink2);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.rc .lnk:hover{color:var(--ink)}
+.rc.done{padding:13px 20px;background:#FBFAF6;border-left-color:var(--line2)}
+.rc.done .rt{font-weight:500;color:var(--ink2)}
+.rc.done .ti.ok{color:var(--green);font-size:17px}
+
+/* contention */
+.sup{margin:4px 0 16px}
+.supbar{position:relative;height:30px;border-radius:8px;background:#F1EEE6;display:flex;overflow:hidden}
+.supseg{height:100%;display:flex;align-items:center;padding:0 9px;font-size:12px;color:#2A2A28;
+        white-space:nowrap;border-right:2px solid #fff}
+.supseg:last-child{border-right:none}
+.supbar .over{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(
+  45deg,rgba(181,70,47,.22),rgba(181,70,47,.22) 6px,rgba(181,70,47,.10) 6px,rgba(181,70,47,.10) 12px)}
+.supbar .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:#B5462F}
+.suplab{display:flex;gap:18px;font-size:12.5px;color:var(--ink2);margin-top:8px}
+.suplab b{color:var(--ink)}
+.claims{width:100%;border-collapse:collapse}
+.claims th{font-size:12px;color:var(--ink2);font-weight:500;text-align:left;padding:8px 10px;
+           border-bottom:1px solid var(--line);white-space:nowrap}
+.claims td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14px;white-space:nowrap}
+.claims tr:last-child td{border-bottom:none}
+.claims td.nm{font-weight:600}
+.claims td.num{text-align:right;font-variant-numeric:tabular-nums}
+.claims input{width:62px;border:1px solid var(--line2);border-radius:8px;padding:5px 8px;
+              font-family:inherit;font-size:14px;text-align:right;background:#fff;color:var(--ink)}
+.claims input:focus{outline:none;border-color:var(--ink3)}
+.fit{font-size:13.5px;margin-top:11px}
+.fit.bad{color:#B5462F}
+.fit.good{color:var(--greend)}
+
+/* price ladder */
+.lad{position:relative;height:58px;margin:6px 0 12px}
+.ladtrack{position:absolute;left:0;right:0;top:26px;height:6px;border-radius:999px;background:#F1EEE6}
+.ladfill{position:absolute;top:26px;height:6px;border-radius:999px;background:rgba(181,70,47,.30)}
+.ladpin{position:absolute;top:18px;width:2px;height:22px;background:var(--ink3)}
+.ladpin.now{background:#B5462F;height:26px;top:16px}
+.ladpin.floor{background:var(--amberd)}
+.ladlab{position:absolute;top:0;font-size:12px;color:var(--ink2);transform:translateX(-50%);white-space:nowrap}
+.ladlab b{display:block;color:var(--ink);font-weight:600;text-align:center}
+.ladlab.now b{color:#B5462F}
+.ladlab.floor b{color:var(--amberd)}
+
+.espill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+        letter-spacing:.04em;padding:3px 9px;border-radius:7px;background:var(--esc);color:#fff}
+.kv{display:flex;gap:26px;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
+.kv b{display:block;color:var(--ink);font-size:15.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.done-empty{background:var(--card);border:1px dashed var(--line2);border-radius:16px;
+            padding:46px 20px;text-align:center}
+.done-empty .ti{font-size:26px;color:var(--green)}
+.done-empty p{font-size:15.5px;color:var(--ink2);margin:10px 0 16px}
+.accline{font-size:13.5px;color:var(--ink3);margin-top:22px}
+.accline span{cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.accline span:hover{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"pf-deals","scope":"portfolio"};</script>
+<script src="gy-nav.js?v=43976ede"></script>
+<script src="gy-projects.js?v=493e46ca"></script>
+<script src="gy-inventory.js?v=83d6a9e6"></script>
+<script src="gy-deals.js?v=bf5a5f28"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Portfolio</span>
+    <span class="sep">›</span><span class="cr" onclick="location.href='deals.html'">Deals</span>
+    <span class="sep">›</span><span class="cr cur">Review</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Review deals</div>
+    <div class="acts" id="abar"></div>
+  </div>
+  <div class="prog" id="prog"></div>
+  <div id="body"></div>
+  <div class="accline" id="accline"></div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+var D = window.GY_DEALS_API;
+var T = D.issueTypes;
+
+/* the issues that existed when the page opened, so the progress line can say
+   how many have been cleared in this sitting */
+var INITIAL = D.openIssues().map(function(i){ return i.id; });
+var DONE = {};   /* id -> {label, undo snapshot} */
+var EDIT = {};   /* contested card: issue id -> {allocKey: units} */
+
+function money(n){ return '£' + Number(n).toLocaleString(); }
+function dealLink(slug){
+  return '<span class="lnk" onclick="location.href=\'deal.html?d='+slug+'\'">'
+    + D.name(slug) + '</span>';
+}
+function esPill(k){
+  var e = window.GY_ES[k]; if(!e) return '';
+  return '<span class="espill '+e.cls+'">'+e.short+'</span>';
+}
+
+/* -- resolving ---------------------------------------------------------- */
+
+function apply(id, label, fn){
+  var snap = D.snapshot();
+  fn();
+  DONE[id] = {label:label, snap:snap};
+  render();
+  gyToast(label);
+}
+function undo(id){
+  var d = DONE[id]; if(!d) return;
+  D.restore(d.snap);
+  delete DONE[id];
+  render();
+}
+function acceptIssue(id){
+  apply(id, 'Accepted', function(){ D.accept(id); });
+}
+
+/* -- card shell --------------------------------------------------------- */
+
+function shell(i, meta, body, actions){
+  return '<div class="rc s'+i.sev+'" id="c-'+cssId(i.id)+'">'
+    + '<div class="rh"><div class="rt">'+i.title+'</div>'
+      + (meta ? '<div class="rm">'+meta+'</div>' : '')+'</div>'
+    + '<div class="rd">'+i.detail+'</div>'
+    + body
+    + '<div class="ra">'+actions+'</div></div>';
+}
+function doneCard(id, label){
+  return '<div class="rc done"><div class="rh"><i class="ti ti-circle-check ok"></i>'
+    + '<div class="rt">'+label+'</div>'
+    + '<div class="rm"><span class="lnk" onclick="undo(\''+id+'\')">Undo</span></div></div></div>';
+}
+function cssId(id){ return id.replace(/[^a-z0-9]+/gi,'-'); }
+function btn(label, fn, primary){
+  return '<button class="'+(primary?'btn-dark':'btn-out')+'" onclick="'+fn+'">'+label+'</button>';
+}
+function acceptBtn(i){
+  return '<span class="lnk" onclick="acceptIssue(\''+i.id+'\')">Accept</span>';
+}
+
+/* -- the five bodies ---------------------------------------------------- */
+
+function cardContested(i){
+  var e = i.ev, edit = EDIT[i.id] || (EDIT[i.id] = {});
+  e.claims.forEach(function(c){ if(edit[c.key] === undefined) edit[c.key] = c.units; });
+  var total = Object.keys(edit).reduce(function(s,k){ return s + (+edit[k] || 0); }, 0);
+  var span = Math.max(total, e.supply) || 1;
+
+  var segs = e.claims.map(function(c){
+    var u = +edit[c.key] || 0;
+    return '<div class="supseg" style="width:'+(u/span*100).toFixed(2)+'%">'+u+'</div>';
+  }).join('');
+  var bar = '<div class="sup"><div class="supbar">' + segs
+    + (total > e.supply ? '<div class="over" style="width:'+((total-e.supply)/span*100).toFixed(2)+'%"></div>' : '')
+    + '<div class="mark" style="left:'+(e.supply/span*100).toFixed(2)+'%"></div>'
+    + '</div><div class="suplab"><span>Claimed <b>'+total+'</b></span>'
+    + '<span>Sellable <b>'+e.supply+'</b></span>'
+    + '<span>Over by <b>'+Math.max(total-e.supply,0)+'</b></span></div></div>';
+
+  var rows = e.claims.map(function(c){
+    var d = D.get(c.deal);
+    return '<tr><td class="nm">'+dealLink(c.deal)+'</td>'
+      + '<td>'+d.owner+'</td><td>'+d.stage+'</td>'
+      + '<td>'+(c.state==='reserved'?'Reserved':'Not reserved')+'</td>'
+      + '<td class="num">'+money(c.price)+'</td>'
+      + '<td class="num"><input type="number" min="0" value="'+edit[c.key]+'" '
+        + 'oninput="setUnits(\''+i.id+'\',\''+c.key+'\',this.value)"></td>'
+      + '<td class="num"><span class="lnk" onclick="gyToast(\'Opens Inventory search for '
+        + e.claims[0].type+'\')">Move</span></td></tr>';
+  }).join('');
+  var tbl = '<table class="claims"><thead><tr><th>Deal</th><th>Owner</th><th>Stage</th>'
+    + '<th>State</th><th class="num">Price</th><th class="num">Units</th><th></th></tr></thead>'
+    + '<tbody>'+rows+'</tbody></table>'
+    + '<div class="fit '+(total > e.supply ? 'bad' : 'good')+'">'
+    + (total > e.supply ? total+' units claimed, '+e.supply+' sellable. Reduce by '+(total-e.supply)+' to re-cut.'
+                        : total+' units claimed against '+e.supply+' sellable. Ready to re-cut.')
+    + '</div>';
+
+  var can = total <= e.supply;
+  var acts = (can ? btn('Re-cut allocations', "recut('"+i.id+"')", true)
+                  : '<button class="btn-dark" disabled style="opacity:.4;cursor:default">Re-cut allocations</button>')
+    + btn('Reduce to fit', "fit('"+i.id+"')")
+    + '<span class="sp"></span>' + acceptBtn(i);
+  return shell(i, esPill(i.line.es) + ' ' + i.line.prog, bar + tbl, acts);
+}
+
+function setUnits(id, key, v){
+  EDIT[id][key] = Math.max(0, parseInt(v, 10) || 0);
+  render(true);
+}
+function fit(id){
+  var i = current(id); if(!i) return;
+  var e = i.ev, edit = EDIT[id], total = 0;
+  e.claims.forEach(function(c){ total += +edit[c.key] || 0; });
+  if(total <= e.supply) return;
+  /* trim the latest stage first, which is the deal with least commitment */
+  var order = e.claims.slice().sort(function(a,b){
+    return D.stages().indexOf(D.get(a.deal).stage) - D.stages().indexOf(D.get(b.deal).stage); });
+  var over = total - e.supply;
+  for(var n=0; n<order.length && over>0; n++){
+    var k = order[n].key, cut = Math.min(over, edit[k]);
+    edit[k] -= cut; over -= cut;
+  }
+  render(true);
+}
+function recut(id){
+  var i = current(id); if(!i) return;
+  var map = EDIT[id];
+  apply(id, 'Allocations re-cut on ' + i.ev.claims.length + ' deals', function(){ D.recut(map); });
+}
+
+function cardPrice(i){
+  var e = i.ev;
+  var pts = [{k:'now', lab:'This deal', v:e.price},
+             {k:'floor', lab:'Floor', v:e.floor},
+             {k:'', lab:'Achieved', v:e.achieved},
+             {k:'', lab:'Modelled', v:e.modelled}];
+  var vals = pts.map(function(p){ return p.v; });
+  var lo = Math.min.apply(null, vals) * 0.94, hi = Math.max.apply(null, vals) * 1.06;
+  function pc(v){ return ((v - lo) / (hi - lo) * 100).toFixed(2); }
+  var lad = '<div class="lad"><div class="ladtrack"></div>'
+    + '<div class="ladfill" style="left:'+pc(e.price)+'%;width:'+(pc(e.floor)-pc(e.price)).toFixed(2)+'%"></div>'
+    + pts.map(function(p){
+        return '<div class="ladpin '+p.k+'" style="left:'+pc(p.v)+'%"></div>'
+          + '<div class="ladlab '+p.k+'" style="left:'+pc(p.v)+'%"><b>'+money(p.v)+'</b>'+p.lab+'</div>';
+      }).join('')
+    + '</div>';
+  var kv = '<div class="kv"><span>Under by<b>'+money(e.gap)+' a unit</b></span>'
+    + '<span>Units<b>'+e.units+'</b></span>'
+    + '<span>Cost of the gap<b>'+money(e.gap * e.units)+'</b></span></div>';
+  var acts = btn('Raise to floor', "toFloor('"+i.id+"')", true)
+    + btn('Request exception', "askException('"+i.id+"')")
+    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
+    + '<span class="sp"></span>' + acceptBtn(i);
+  return shell(i, esPill(i.line.es) + ' ' + i.line.prog, lad + kv, acts);
+}
+function toFloor(id){
+  var i = current(id); if(!i) return;
+  apply(id, 'Price raised to ' + money(i.ev.floor) + ' on ' + D.name(i.deals[0]),
+        function(){ D.raiseToFloor(i.ev.alloc.key); });
+}
+function askException(id){
+  gyToast('Exception request goes to whoever owns pricing for the programme');
+}
+
+function cardStagegap(i){
+  var e = i.ev;
+  var kv = '<div class="kv"><span>Stage<b>'+e.stage+'</b></span>'
+    + '<span>Close date<b>'+e.close+'</b></span>'
+    + (e.days !== null ? '<span>Days left<b>'+e.days+'</b></span>' : '')
+    + '<span>Needs<b>'+((window.GY_ES[e.es]||{}).name || e.es)+'</b></span></div>';
+  var acts = btn('Find inventory', "findInv('"+i.id+"')", true)
+    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
+    + '<span class="sp"></span>' + acceptBtn(i);
+  return shell(i, D.get(i.deals[0]).owner, kv, acts);
+}
+function findInv(id){
+  var i = current(id);
+  gyToast('Opens Inventory search filtered to '
+    + ((window.GY_ES[i.ev.es]||{}).name || i.ev.es) + ' for this deal');
+}
+
+function cardMarksold(i){
+  var kv = '<div class="kv"><span>Units held<b>'+i.ev.units+'</b></span>'
+    + '<span>Won on<b>'+i.ev.close+'</b></span></div>';
+  var acts = btn('Mark as sold', "sold('"+i.id+"')", true)
+    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
+    + '<span class="sp"></span>' + acceptBtn(i);
+  return shell(i, D.get(i.deals[0]).owner, kv, acts);
+}
+function sold(id){
+  var i = current(id); if(!i) return;
+  apply(id, i.ev.units + ' units marked sold on ' + D.name(i.deals[0]),
+        function(){ D.markSold(i.deals[0]); });
+}
+function soldAll(){
+  var list = D.openIssues().filter(function(i){ return i.type === 'marksold'; });
+  if(!list.length) return;
+  var snap = D.snapshot(), n = 0;
+  list.forEach(function(i){ n += i.ev.units; D.markSold(i.deals[0]); });
+  list.forEach(function(i){ DONE[i.id] = {label:'Units marked sold on ' + D.name(i.deals[0]), snap:snap}; });
+  render();
+  gyToast(n + ' units marked sold across ' + list.length + ' deals');
+}
+
+function cardAmount(i){
+  var e = i.ev;
+  var kv = '<div class="kv"><span>Hubspot amount<b>'+money(e.amount)+'</b></span>'
+    + '<span>Units add up to<b>'+money(e.value)+'</b></span>'
+    + '<span>Difference<b>'+(e.delta > 0 ? '+' : '')+money(e.delta)+'</b></span></div>';
+  var acts = btn('Open in Hubspot', "gyToast('Hubspot owns the amount. Edit it there and it syncs back')")
+    + btn('Open deal', "location.href='deal.html?d="+i.deals[0]+"'")
+    + '<span class="sp"></span>' + acceptBtn(i);
+  return shell(i, D.get(i.deals[0]).owner, kv, acts);
+}
+
+var CARD = {contested:cardContested, price:cardPrice, stagegap:cardStagegap,
+            marksold:cardMarksold, amount:cardAmount};
+
+/* -- render ------------------------------------------------------------- */
+
+function current(id){
+  return D.openIssues().filter(function(i){ return i.id === id; })[0];
+}
+
+function render(keepFocus){
+  var focus = null, caret = 0;
+  if(keepFocus && document.activeElement && document.activeElement.tagName === 'INPUT'){
+    focus = document.activeElement.getAttribute('oninput');
+    caret = document.activeElement.selectionStart;
+  }
+
+  var live = D.openIssues().filter(function(i){ return !DONE[i.id]; });
+  var body = document.getElementById('body');
+  var html = '';
+
+  D.issueOrder.forEach(function(t){
+    var group = live.filter(function(i){ return i.type === t; });
+    var doneHere = Object.keys(DONE).filter(function(id){ return id.indexOf(t + ':') === 0; });
+    if(!group.length && !doneHere.length) return;
+    html += '<div class="grp" id="g-'+t+'"><div class="ghd">'
+      + '<div class="gt">'+T[t].label+'</div><div class="gn">'+group.length+'</div>'
+      + (t === 'marksold' && group.length > 1
+          ? '<div class="gb"><button class="btn-out" onclick="soldAll()">Mark all as sold</button></div>' : '')
+      + '</div>';
+    html += group.map(function(i){ return CARD[i.type](i); }).join('');
+    html += doneHere.map(function(id){ return doneCard(id, DONE[id].label); }).join('');
+    html += '</div>';
+  });
+
+  if(!live.length){
+    html += '<div class="done-empty"><i class="ti ti-circle-check"></i>'
+      + '<p>Nothing left to review</p>'
+      + '<button class="btn-dark" onclick="location.href=\'deals.html\'">Back to deals</button></div>';
+  }
+  body.innerHTML = html;
+
+  /* progress */
+  var cleared = INITIAL.filter(function(id){
+    return !live.some(function(i){ return i.id === id; }); }).length;
+  var jump = D.issueOrder.map(function(t){
+    var n = live.filter(function(i){ return i.type === t; }).length;
+    if(!n) return '';
+    return '<button onclick="document.getElementById(\'g-'+t+'\').scrollIntoView({behavior:\'smooth\'})">'
+      + T[t].label + '<span class="n">'+n+'</span></button>';
+  }).join('');
+  /* live counts, because resolving one issue can surface another: re-cutting
+     allocations changes a deal's value and that can open an amount mismatch */
+  document.getElementById('prog').innerHTML =
+      '<div class="pc"><b>'+live.length+'</b> issue'+(live.length===1?'':'s')
+      + ' across <b>' + D.needsReview().length + '</b> deals</div>'
+    + (cleared ? '<div class="pc"><b>'+cleared+'</b> cleared</div>' : '')
+    + '<div class="jump">'+jump+'</div>';
+
+  var acc = D.accepted().length;
+  document.getElementById('accline').innerHTML = acc
+    ? acc + ' accepted and hidden. <span onclick="resetAll()">Reset review state</span>'
+    : '';
+
+  if(focus){
+    var el = document.querySelector('input[oninput="'+focus.replace(/"/g,'&quot;')+'"]');
+    if(el){ el.focus(); try{ el.setSelectionRange(caret, caret); }catch(e){} }
+  }
+}
+
+function resetAll(){
+  D.reset(); DONE = {}; EDIT = {};
+  INITIAL = D.openIssues().map(function(i){ return i.id; });
+  render();
+  gyToast('Review state reset to the canonical data');
+}
+
+gyBar('abar', {
+  buttons: [{icon:'ti-table', label:'All deals', go:'deals.html'}],
+  actions: [
+    ['ti-file-export','Export review list','Export: a CSV of every open issue and the deals it touches'],
+    ['ti-rotate','Reset review state', resetAll],
+    '-',
+    ['ti-activity','Audit log','go:activity-overview.html']
+  ]
+});
+
+render();
+</script>
+</body>
+</html>

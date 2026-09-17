@@ -356,3 +356,96 @@
     open_().forEach(function(i){ i.deals.forEach(function(d){ s[d] = 1; }); });
     return Object.keys(s);
   }
+
+  /* -- fixes the review page applies ------------------------------------ */
+
+  function setOvr(key, patch){
+    OVR[key] = OVR[key] || {};
+    for(var k in patch) OVR[key][k] = patch[k];
+    save(); build();
+  }
+  function markSold(slug){
+    allocOf(slug).forEach(function(a){
+      if(a.state !== 'sold') setOvr(a.key, {state:'sold'});
+    });
+  }
+  function raiseToFloor(key){
+    var a = ROWS.filter(function(x){ return x.key === key; })[0];
+    if(a && a.ref.floor) setOvr(key, {price:a.ref.floor});
+  }
+  function recut(map){
+    Object.keys(map).forEach(function(k){ setOvr(k, {units:map[k]}); });
+  }
+  function accept(id){
+    if(ACCEPTED.indexOf(id) < 0) ACCEPTED.push(id);
+    save();
+  }
+  function snapshot(){
+    return {acc:JSON.stringify(ACCEPTED), ovr:JSON.stringify(OVR)};
+  }
+  function restore(s){
+    ACCEPTED = JSON.parse(s.acc); OVR = JSON.parse(s.ovr); save(); build();
+  }
+  function reset(){ ACCEPTED = []; OVR = {}; save(); build(); }
+
+  /* -- views ------------------------------------------------------------- */
+
+  function view(d){
+    return {slug:d.slug, name:d.name, ref:d.ref, buyer:d.buyer, owner:d.owner,
+            stage:d.stage, pipeline:d.pipeline, amount:d.amount,
+            created:d.created, close:d.close, contacts:d.contacts, note:d.note,
+            status:statusOf(d), open:isOpen(d), programmes:progs(d.slug),
+            es:esOf(d), units:units(d.slug), value:value(d.slug),
+            alloc:allocOf(d.slug), issues:issuesOf(d.slug)};
+  }
+  function all(){ return DEALS.map(view); }
+
+  /* per service figures for the Inventory overview Deals block, programme
+     scoped the same way gy-inventory.js scopes everything else. Open deals
+     only: a closed deal is history, not a claim. */
+  function forService(es, prog){
+    var res={u:0,d:{}}, unres={u:0,d:{}}, open={};
+    ROWS.forEach(function(a){
+      if(a.es!==es) return;
+      if(prog && a.prog!==prog) return;
+      var d = byId(a.deal); if(!d || !isOpen(d)) return;
+      open[a.deal]=1;
+      if(a.state==='reserved'){   res.u+=a.units;   res.d[a.deal]=1; }
+      if(a.state==='unreserved'){ unres.u+=a.units; unres.d[a.deal]=1; }
+    });
+    function n(o){ return Object.keys(o).length; }
+    return {open:n(open), inDeals:res.u+unres.u,
+            unreserved:{u:unres.u, deals:n(unres.d)},
+            reserved:{u:res.u,     deals:n(res.d)}};
+  }
+
+  window.GY_DEALS_API = {
+    crm:CRM, syncedAt:SYNC, me:ME,
+    stages:function(){ return STAGES.slice(); },
+    owners:function(){ return OWNERS.slice(); },
+    issueTypes:ISSUE,
+    issueOrder:ISSUE_ORDER.slice(),
+    all:all,
+    get:function(slug){ var d=byId(slug); return d?view(d):null; },
+    name:function(slug){ var d=byId(slug); return d?d.name:slug; },
+    statuses:function(){ return ['Open (No inventory)','Open (Unreserved inventory)',
+                                 'Open (Reserved inventory)','Closed Won','Closed Lost']; },
+    price:function(es,type){ return PRICE[es+'|'+type] || null; },
+    avgInDeals:function(es,type){
+      var l = ROWS.filter(function(a){ return a.es===es && a.type===type; });
+      if(!l.length) return null;
+      var u = l.reduce(function(s,a){return s+a.units;},0);
+      return Math.round(l.reduce(function(s,a){return s+a.total;},0)/u);
+    },
+    supplyOf:supplyOf,
+    forService:forService,
+    /* review */
+    issues:issues,
+    openIssues:open_,
+    issuesOf:issuesOf,
+    needsReview:dealsNeedingReview,
+    accepted:function(){ return issues().filter(function(i){ return i.accepted; }); },
+    markSold:markSold, raiseToFloor:raiseToFloor, recut:recut,
+    accept:accept, snapshot:snapshot, restore:restore, reset:reset
+  };
+})();
