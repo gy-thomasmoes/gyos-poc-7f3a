@@ -483,6 +483,29 @@ window.gyCartoTiles = function(style){
    +'.gy-mlbl{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;'
    +'color:var(--ink3);padding:9px 11px 4px}'
    +'.gy-mdiv{height:1px;background:var(--line);margin:6px 8px}'
+   /* ── state chip + tooltip ────────────────────────────────────────────
+      gyChip renders live state beside a page title: a status dot and a
+      short fact, never a description of the page. Hover or focus reveals
+      the rest through [data-tip], which is CSS only so any element can
+      carry one. */
+   +'.gychip{display:inline-flex;align-items:center;gap:7px;background:#F3EFE1;border-radius:999px;'
+   +'padding:4px 11px 4px 9px;font-size:12.5px;color:#766B62;white-space:nowrap;cursor:default;'
+   +'vertical-align:middle;position:relative;top:-2px}'
+   +'.gychip .gydot{width:7px;height:7px;border-radius:999px;background:#628147;flex:none}'
+   +'.gychip.stale .gydot{background:#EF9F27}'
+   +'.gychip.off .gydot{background:#A79E8D}'
+   +'[data-tip]{position:relative}'
+   +'[data-tip]::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 9px);'
+   +'transform:translateX(-50%);background:#1A0C12;color:#fff;font-size:12.5px;line-height:1.45;'
+   +'font-weight:400;letter-spacing:0;text-transform:none;padding:9px 12px;border-radius:10px;'
+   +'width:max-content;max-width:290px;white-space:pre-line;text-align:left;'
+   +'box-shadow:0 10px 30px rgba(31,31,29,.22);opacity:0;pointer-events:none;'
+   +'transition:opacity .13s .06s;z-index:1500}'
+   +'[data-tip]::before{content:"";position:absolute;left:50%;top:calc(100% + 3px);'
+   +'transform:translateX(-50%);border:5px solid transparent;border-bottom-color:#1A0C12;'
+   +'opacity:0;pointer-events:none;transition:opacity .13s .06s;z-index:1501}'
+   +'[data-tip]:hover::after,[data-tip]:focus-visible::after,'
+   +'[data-tip]:hover::before,[data-tip]:focus-visible::before{opacity:1}'
    /* ── top right action bar ────────────────────────────────────────────
       One bar for every page: Search, Filters, page buttons, Actions, then
       the primary button. Built by gyBar() so a new page cannot drift. */
@@ -508,6 +531,22 @@ window.gyCartoTiles = function(style){
    +'.apop .ar .ck{margin-left:auto;font-size:16px;color:var(--greend,#2F6B3C);opacity:0}'
    +'.apop .ar.on .ck{opacity:1}'
    +'.apop .adiv{height:1px;background:var(--line);margin:6px 8px}'
+   /* a long group gets its own search and scroll, so a facet with a hundred
+      values is as usable as one with five */
+   +'.apop{max-height:min(70vh,560px);overflow:auto}'
+   +'.apop .arows{max-height:264px;overflow:auto}'
+   +'.apop .ar.hid{display:none}'
+   +'.apop .asrch{display:flex;align-items:center;gap:8px;margin:4px 8px 6px;padding:7px 10px;'
+   +'border:1px solid var(--line2);border-radius:9px}'
+   +'.apop .asrch .ti{font-size:15px;color:var(--ink3)}'
+   +'.apop .asrch input{border:none;outline:none;background:transparent;font-family:inherit;'
+   +'font-size:13.5px;color:var(--ink);width:100%}'
+   +'.apop .anone{font-size:13px;color:var(--ink3);padding:7px 11px}'
+   +'.apop .afoot{display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);'
+   +'margin-top:6px;padding:8px 11px 4px}'
+   +'.apop .afoot .lk{font-size:13px;color:var(--ink3);cursor:pointer}'
+   +'.apop .afoot .lk:hover{color:var(--ink)}'
+   +'.apop .afoot.off{display:none}'
    +'.asearch{display:none;align-items:center;gap:9px;width:100%;max-width:420px;margin:0 0 16px;'
    +'padding:10px 14px;background:var(--card);border:1px solid var(--line2);border-radius:11px}'
    +'.asearch.on{display:flex}'
@@ -1103,6 +1142,13 @@ window.gyCartoTiles = function(style){
     if(gyMOpen && gyMOpen.parentNode) gyMOpen.parentNode.removeChild(gyMOpen);
     gyMOpen = null;
   }
+  /* gyChip(text, tip, state): live state beside a page title.
+     state is '' (fresh), 'stale' or 'off'. */
+  window.gyChip = function(text, tip, state){
+    return '<span class="gychip'+(state?' '+state:'')+'" tabindex="0"'
+      + (tip ? ' data-tip="'+String(tip).replace(/"/g,'&quot;')+'"' : '')
+      + '><i class="gydot"></i>'+text+'</span>';
+  };
   window.gyMenuClose = gyMClose;
   window.gyMenu = function(anchor, rows){
     var same = gyMOpen && gyMOpen._anc === anchor;
@@ -1209,45 +1255,132 @@ window.gyCartoTiles = function(style){
       bar.searchBtn = sb;
     }
 
-    /* filters */
-    var pop=null, fbtn=null;
+    /* filters
+       A group is ['Label', [[icon,label,value], ...]] and may carry a third
+       options object: {multi:true, search:true}. The first option is both the
+       default and the group's "any", so selecting it clears the rest.
+       Groups longer than 8 values get their own search field and scroll, and
+       the values in play are pinned under "any", which is what keeps a facet
+       with a hundred values usable. */
+    var pop=null, fbtn=null, foot=null, groups=[];
+    function gOpt(g){ return g[2]||{}; }
+    function gAny(g){ return g[1][0][2]; }
+    function gOn(g){
+      var v=bar.filter[g[0]];
+      return gOpt(g).multi ? !!(v&&v.length) : v!==gAny(g);
+    }
     function closePop(){ if(pop&&pop.classList.contains('on')){ pop.classList.remove('on'); fbtn.classList.remove('on'); } }
     if(cfg.filters && cfg.filters.length){
       pop=document.createElement('div'); pop.className='apop';
       cfg.filters.forEach(function(g,gi){
+        var multi=!!gOpt(g).multi;
+        var searchable = gOpt(g).search===undefined ? g[1].length>8 : !!gOpt(g).search;
         if(gi){ var d=document.createElement('div'); d.className='adiv'; pop.appendChild(d); }
         var lab=document.createElement('div'); lab.className='ag'; lab.textContent=g[0]; pop.appendChild(lab);
-        bar.filter[g[0]] = g[1][0][2];
+        bar.filter[g[0]] = multi ? [] : gAny(g);
+        var rows=document.createElement('div'); rows.className='arows';
+        groups.push({g:g, rows:rows, multi:multi});
+        if(searchable){
+          var sb=document.createElement('div'); sb.className='asrch';
+          sb.innerHTML='<i class="ti ti-search"></i><input placeholder="Search '+g[0].toLowerCase()+'">';
+          var inp=sb.querySelector('input');
+          inp.onclick=function(e){ e.stopPropagation(); };
+          inp.addEventListener('input', function(){
+            var q=this.value.toLowerCase(), shown=0;
+            [].forEach.call(rows.querySelectorAll('.ar'), function(x){
+              var hide = !!q && x.getAttribute('data-v')!==gAny(g) && x.getAttribute('data-l').indexOf(q)<0;
+              x.classList.toggle('hid', hide);
+              if(!hide) shown++;
+            });
+            rows.querySelector('.anone').style.display = shown>1 ? 'none' : '';
+          });
+          pop.appendChild(sb);
+        }
         g[1].forEach(function(r,ri){
           var row=document.createElement('div');
           row.className='ar'+(ri===0?' on':'');
           row.setAttribute('data-g', g[0]);
+          row.setAttribute('data-v', r[2]);
+          row.setAttribute('data-l', String(r[1]).toLowerCase());
           row.innerHTML=ico(r[0])+r[1]+'<i class="ti ti-check ck"></i>';
           row.onclick=function(e){
             e.stopPropagation();
-            /* one value per group */
-            [].forEach.call(pop.querySelectorAll('.ar[data-g="'+g[0]+'"]'), function(x){ x.classList.remove('on'); });
-            row.classList.add('on');
-            bar.filter[g[0]]=r[2];
+            var sel;
+            if(!multi){
+              bar.filter[g[0]] = sel = r[2];
+            } else {
+              var cur=(bar.filter[g[0]]||[]).slice();
+              if(ri===0) cur=[];
+              else { var at=cur.indexOf(r[2]); if(at>=0) cur.splice(at,1); else cur.push(r[2]); }
+              bar.filter[g[0]] = sel = cur;
+            }
+            paintGroup(g, rows);
+            pinGroup(g, rows);
             paintCount();
-            if(cfg.onfilter) cfg.onfilter(g[0], r[2]);
+            if(cfg.onfilter) cfg.onfilter(g[0], sel);
             else run('Filter: '+g[0].toLowerCase()+' '+String(r[1]).toLowerCase());
           };
-          pop.appendChild(row);
+          rows.appendChild(row);
         });
+        var none=document.createElement('div');
+        none.className='anone'; none.textContent='No match'; none.style.display='none';
+        rows.appendChild(none);
+        pop.appendChild(rows);
       });
+      foot=document.createElement('div'); foot.className='afoot off';
+      foot.innerHTML='<span class="lk">Clear all</span>';
+      foot.querySelector('.lk').onclick=function(e){ e.stopPropagation(); bar.clear(); };
+      pop.appendChild(foot);
       fbtn = btn('', ico('ti-adjustments-horizontal')+'Filters<span class="cnt"></span>', function(b){
         b.classList.toggle('on', pop.classList.toggle('on'));
       });
       el.appendChild(pop);
       bar.pop = pop;
     }
+    /* tick what is selected */
+    function paintGroup(g, rows){
+      var v=bar.filter[g[0]], multi=gOpt(g).multi;
+      [].forEach.call(rows.querySelectorAll('.ar'), function(x){
+        var val=x.getAttribute('data-v');
+        var on = multi ? (val===gAny(g) ? !(v&&v.length) : (v||[]).indexOf(val)>=0) : val===v;
+        x.classList.toggle('on', on);
+      });
+    }
+    /* selected values sit directly under "any", so a choice never scrolls away */
+    function pinGroup(g, rows){
+      var any=rows.querySelector('.ar[data-v="'+gAny(g)+'"]');
+      var at=any||null;
+      [].forEach.call(rows.querySelectorAll('.ar.on'), function(x){
+        if(x===any) return;
+        if(at && at.nextSibling!==x) rows.insertBefore(x, at.nextSibling);
+        at=x;
+      });
+    }
     function paintCount(){
       if(!fbtn) return;
       var n=0;
-      cfg.filters.forEach(function(g){ if(bar.filter[g[0]] !== g[1][0][2]) n++; });
+      cfg.filters.forEach(function(g){ if(gOn(g)) n++; });
       fbtn.querySelector('.cnt').textContent = n ? String(n) : '';
+      if(foot) foot.classList.toggle('off', !n);
     }
+    /* reset every group to its default and tell the page once per group */
+    bar.clear = function(){
+      groups.forEach(function(x){
+        if(!gOn(x.g)) return;
+        bar.filter[x.g[0]] = x.multi ? [] : gAny(x.g);
+        paintGroup(x.g, x.rows);
+        pinGroup(x.g, x.rows);
+        if(cfg.onfilter) cfg.onfilter(x.g[0], bar.filter[x.g[0]]);
+      });
+      paintCount();
+    };
+    /* let a page move a group from outside, such as a stat card shortcut */
+    bar.set = function(group, value){
+      var x=groups.filter(function(y){return y.g[0]===group;})[0];
+      if(!x) return;
+      bar.filter[group]=value;
+      paintGroup(x.g, x.rows); pinGroup(x.g, x.rows); paintCount();
+    };
 
     /* page buttons, then actions, then the primary */
     (cfg.buttons||[]).forEach(function(b){

@@ -97,7 +97,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"pf-deals","scope":"portfolio"};</script>
-<script src="gy-nav.js?v=43976ede"></script>
+<script src="gy-nav.js?v=82d093ac"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=83d6a9e6"></script>
 <script src="gy-deals.js?v=bf5a5f28"></script>
@@ -115,9 +115,9 @@
 <div class="wrap">
   <div class="phead">
     <div class="h1" id="dname">Deal</div>
+    <span id="synclab"></span>
     <div class="acts" id="abar"></div>
   </div>
-  <div class="pmeta"><i class="ti ti-refresh"></i><span id="syncline"></span></div>
 
   <div id="rband"></div>
   <div class="cards" id="cards"></div>
@@ -176,8 +176,10 @@ function invRow(a){
 /* -- header -- */
 document.getElementById('dname').textContent = deal.name;
 document.getElementById('crumbName').textContent = deal.name;
-document.getElementById('syncline').textContent =
-  'Synced from ' + D.crm + ' ' + D.syncedAt + ' · ' + deal.ref;
+document.getElementById('synclab').innerHTML = gyChip('Synced ' + D.syncedAt.split(' ')[0],
+  D.crm + ' · last sync ' + D.syncedAt + '\n'
+  + 'Record ' + deal.ref + '\n'
+  + D.crm + ' owns the deal, Great Yellow owns the units.');
 
 /* -- review band -- */
 var FIX = {
@@ -209,6 +211,7 @@ function cards(){
       + '<div class="note">'+deal.note+'</div></div>'
 
   + '<div class="card mirror"><h3>Hubspot</h3><dl class="dl">'
+      + '<dt>Record</dt><dd>'+deal.ref+'</dd>'
       + '<dt>Owner</dt><dd>'+deal.owner+'</dd>'
       + '<dt>Stage</dt><dd>'+deal.stage+'</dd>'
       + '<dt>Pipeline</dt><dd>'+deal.pipeline+'</dd>'

@@ -11,6 +11,9 @@
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
 <link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
 <style>.dtbl .r{text-align:right}.dtbl td.r{font-variant-numeric:tabular-nums}.esrow{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+th[data-k]{cursor:pointer;user-select:none}
+th[data-k]:hover .ca{color:var(--ink)}
+.ca.on{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -20,7 +23,7 @@
   window.GYNAV={"active": es ? 'prog-inv-'+es : 'prog-inv-list'};
 })();
 </script>
-<script src="gy-nav.js?v=43976ede"></script>
+<script src="gy-nav.js?v=82d093ac"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=83d6a9e6"></script>
 
@@ -52,12 +55,12 @@
         </tr>
         <tr>
           <th><span class="chkbox"></span></th>
-          <th>ES Type <span class="ca">⇅</span> <i class="ti ti-info-circle" style="font-size:13px;color:var(--ink3)"></i></th>
-          <th>Availability <span class="ca">⇅</span></th>
-          <th>Specific Type / Vintage <span class="ca">⇅</span></th>
-          <th class="r">Units <span class="ca">⇅</span></th>
-          <th class="vdiv">Distinctiveness <span class="ca">⇅</span></th>
-          <th>Condition <span class="ca">⇅</span></th>
+          <th data-k="es" onclick="setSort('es')">ES Type <span class="ca" data-ca="es">⇅</span> <i class="ti ti-info-circle" style="font-size:13px;color:var(--ink3)"></i></th>
+          <th data-k="avail" onclick="setSort('avail')">Availability <span class="ca" data-ca="avail">⇅</span></th>
+          <th data-k="type" onclick="setSort('type')">Specific Type / Vintage <span class="ca" data-ca="type">⇅</span></th>
+          <th class="r" data-k="units" onclick="setSort('units')">Units <span class="ca" data-ca="units">⇅</span></th>
+          <th class="vdiv" data-k="dist" onclick="setSort('dist')">Distinctiveness <span class="ca" data-ca="dist">⇅</span></th>
+          <th data-k="cond" onclick="setSort('cond')">Condition <span class="ca" data-ca="cond">⇅</span></th>
           <th>Broad Habitat</th>
           <th>Habitat ID</th>
           <th>LPA</th>
@@ -96,12 +99,54 @@ function badge(a){
 }
 function cell(v){ return v ? v : dash; }
 
+/* Every facet below is built from the rows themselves, so a filter can never
+   offer a value the inventory does not hold. F holds one array per facet and
+   an empty array means the facet is off. */
+var F={avail:[], type:[], broad:[], dist:[], cond:[], site:[]};
+function vals(key){
+  var seen={}, out=[];
+  GY_INV_API.rows('Evenlode').forEach(function(r){
+    var v=r[key]; if(v && !seen[v]){ seen[v]=1; out.push(v); }
+  });
+  return out.sort();
+}
+function keep(r){
+  for(var k in F){ if(F[k].length && F[k].indexOf(r[k])<0) return false; }
+  return true;
+}
+/* these three read in their own order, not alphabetically */
+var RANK={
+  avail:{'Available':0,'Projected':1,'Reserved':2,'Sold':3},
+  dist :{'High':0,'Medium':1,'Low':2},
+  cond :{'Good':0,'Fairly Good':1,'Moderate':2,'Poor':3}
+};
+var SORT={k:null, dir:1};
+function setSort(k){
+  SORT = (SORT.k===k) ? {k:k, dir:-SORT.dir} : {k:k, dir:1};
+  render();
+}
+function sortRows(list){
+  if(!SORT.k) return list;
+  var k=SORT.k, rank=RANK[k];
+  return list.slice().sort(function(a,b){
+    var x=a[k], y=b[k];
+    if(rank){ x=rank[x]===undefined?99:rank[x]; y=rank[y]===undefined?99:rank[y]; }
+    if(typeof x==='string'){ return SORT.dir*x.localeCompare(y); }
+    return SORT.dir*(x-y);
+  });
+}
 function render(){
   var q=(window.IQ||'').toLowerCase();
   var all=GY_INV_API.rows('Evenlode');
-  var list=all.filter(function(r){
+  var list=sortRows(all.filter(function(r){
     if(ES_FILTER && r.es!==ES_FILTER) return false;
+    if(!keep(r)) return false;
     return (r.es+' '+r.avail+' '+r.type+' '+r.site+' '+r.broad+' '+r.dist+' '+r.cond).toLowerCase().indexOf(q)>=0;
+  }));
+  document.querySelectorAll('.ca').forEach(function(c){
+    var on = c.dataset.ca===SORT.k;
+    c.classList.toggle('on', on);
+    c.textContent = on ? (SORT.dir>0?'↑':'↓') : '⇅';
   });
   document.getElementById('rows').innerHTML = list.length ? list.map(function(r){
     return '<tr>'
@@ -131,14 +176,31 @@ function setEs(k){
 }
 window.addEventListener('DOMContentLoaded',render);
 
+/* One group per real facet, values straight from the data, all multi-select.
+   Price used to sit here as a sort; sorting belongs to the column headers.
+   Designations are gone until a line carries its own LPA, NCA and LNRS:
+   today every line shares one of each, so the facet could not narrow anything. */
+function facet(label, key, icon){
+  return [label, [['ti-circle-dot','Any','any']].concat(
+    vals(key).map(function(v){ return [icon, v, v]; })
+  ), {multi:true}];
+}
 gyBar('abar', {
   search:  {placeholder:'Search by status, habitat or ref', oninput:function(v){ window.IQ=v; render(); }},
   filters: [
-    ['Availability',[['ti-circle-dot','Any','any'],['ti-circle-check','Available','available'],['ti-clock','Future','future'],['ti-bookmark','Reserved','reserved'],['ti-tag','Sold','sold']]],
-    ['BNG',[['ti-circle-dot','All types','all'],['ti-leaf','Habitat type','type'],['ti-star','Distinctiveness','distinct'],['ti-heart-rate-monitor','Condition','condition']]],
-    ['Designations',[['ti-circle-dot','Any','any'],['ti-building-bank','LPA','lpa'],['ti-map-2','NCA','nca'],['ti-map-pin','LNRS','lnrs']]],
-    ['Price',[['ti-circle-dot','Any','any'],['ti-arrow-up','High to low','desc'],['ti-arrow-down','Low to high','asc']]]
+    facet('Availability',   'avail', 'ti-circle-check'),
+    facet('Type / vintage', 'type',  'ti-leaf'),
+    facet('Broad habitat',  'broad', 'ti-map-2'),
+    facet('Distinctiveness','dist',  'ti-star'),
+    facet('Condition',      'cond',  'ti-heart-rate-monitor'),
+    facet('Site',           'site',  'ti-map-pin')
   ],
+  onfilter: function(group, value){
+    var key={'Availability':'avail','Type / vintage':'type','Broad habitat':'broad',
+             'Distinctiveness':'dist','Condition':'cond','Site':'site'}[group];
+    if(key) F[key]=value||[];
+    render();
+  },
   buttons: [{icon:'ti-settings', label:'Settings', onclick:'Settings: columns, defaults and who can edit this inventory'}],
   actions: [['label','Bulk'],
             ['ti-tag','Set prices','Set prices on the selected lines'],
