@@ -460,6 +460,17 @@ window.gyCartoTiles = function(style){
       over the sticky topbar. Giving the map container its own stacking context
       keeps every one of those layers inside the map. */
    +'.leaflet-container{position:relative;z-index:0}'
+   /* gyMenu builds its popup in JS but had no styles anywhere, so the menu
+      landed unpositioned at the foot of the page. These are its styles. */
+   +'.gy-mpop{position:fixed;min-width:232px;background:var(--card);border:1px solid var(--line2);'
+   +'border-radius:13px;box-shadow:0 16px 44px rgba(31,31,29,.18);padding:6px;z-index:1400}'
+   +'.gy-mitem{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;'
+   +'font-size:14px;color:var(--ink);cursor:pointer;white-space:nowrap}'
+   +'.gy-mitem:hover{background:#F1EFE8}'
+   +'.gy-mitem .ti{font-size:16px;color:var(--ink3)}'
+   +'.gy-mlbl{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;'
+   +'color:var(--ink3);padding:9px 11px 4px}'
+   +'.gy-mdiv{height:1px;background:var(--line);margin:6px 8px}'
    +'html.gyembed .snav,html.gyembed .snavpeek,html.gyembed #expandBtn,html.gyembed .scollapse{display:none!important}'
    +'html.gybare #chapnav{display:none!important}'
    +'html.gybare #floatR{display:none!important}'

@@ -15,6 +15,24 @@
 @media(max-width:900px){.wrap{padding:32px 22px 90px}}
 
 .phead{align-items:baseline}
+.acts{position:relative}
+/* one filter popover, so the page keeps a single row of controls */
+.fpop{position:absolute;right:0;top:calc(100% + 9px);width:268px;background:var(--card);border:1px solid var(--line2);
+  border-radius:14px;box-shadow:0 14px 40px rgba(31,31,29,.16);padding:7px;z-index:40;display:none;text-align:left}
+.fpop.on{display:block}
+.fpop .fg{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:9px 11px 4px}
+.fpop .fr{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;font-size:14px;color:var(--ink2);cursor:pointer}
+.fpop .fr:hover{background:#F1EFE8}
+.fpop .fr.on{color:var(--ink);font-weight:500}
+.fpop .fr .ck{margin-left:auto;font-size:16px;color:var(--greend);opacity:0}
+.fpop .fr.on .ck{opacity:1}
+.fpop .fsep{height:1px;background:var(--line);margin:6px 8px}
+.btn-out.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.srow{display:flex;align-items:center;gap:12px;margin:0 0 16px}
+.srow .search{margin-left:auto;width:290px}
+.plab{display:flex;align-items:center;gap:12px}
+.plab .act{margin-left:auto;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink2);cursor:pointer}
+.plab .act:hover{color:var(--ink)}
 
 /* solid ES pill */
 .espill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:7px;background:var(--esc);color:#fff;white-space:nowrap}
@@ -65,7 +83,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"prog-projects"};</script>
-<script src="gy-nav.js?v=25320256"></script>
+<script src="gy-nav.js?v=010c5c19"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 
 <div class="mainc">
@@ -82,30 +100,43 @@
   <div class="phead">
     <div class="h1">Projects</div>
     <div class="acts">
+      <button class="btn-out" id="sBtn" onclick="pSearch(event)"><i class="ti ti-search"></i> Search</button>
+      <button class="btn-out" id="fBtn" onclick="pFilters(event)"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
       <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,PROJ_ACTIONS)">Actions <i class="ti ti-chevron-down"></i></button>
       <button class="btn-dark" onclick="toast('Add project: name it, pick the ecosystem service, then allocate parcels')"><i class="ti ti-plus"></i> Add project</button>
+      <div class="fpop" id="fPop">
+        <div class="fg">Stage</div>
+        <div class="fr on" onclick="toast('Stage: all')">All stages<i class="ti ti-check ck"></i></div>
+        <div class="fr" onclick="toast('Stage: Draft')">Draft<i class="ti ti-check ck"></i></div>
+        <div class="fr" onclick="toast('Stage: Pending')">Pending<i class="ti ti-check ck"></i></div>
+        <div class="fr" onclick="toast('Stage: Registered')">Registered<i class="ti ti-check ck"></i></div>
+        <div class="fr" onclick="toast('Stage: Selling')">Selling<i class="ti ti-check ck"></i></div>
+        <div class="fr" onclick="toast('Stage: Closed')">Closed<i class="ti ti-check ck"></i></div>
+        <div class="fsep"></div>
+        <div class="fg">Habitat and vintage</div>
+        <div class="fr on" onclick="toast('Habitat and vintage: any')">Any<i class="ti ti-check ck"></i></div>
+        <div class="fr" onclick="toast('Habitat filter applies to BNG projects')">Habitat<i class="ti ti-check ck"></i></div>
+        <div class="fr" onclick="toast('Vintage filter applies to carbon projects')">Vintage<i class="ti ti-check ck"></i></div>
+      </div>
     </div>
   </div>
 
-  <div class="seg" style="margin:14px 0 16px">
-    <button class="on" data-f="all" onclick="setFilter('all')">All · 9</button>
-    <button data-f="bng" onclick="setFilter('bng')">BNG · 5</button>
-    <button data-f="wcc" onclick="setFilter('wcc')">WCC · 2</button>
-    <button data-f="soc" onclick="setFilter('soc')">Soil · 2</button>
-  </div>
-
-  <div class="frow">
-    <div class="search" style="width:400px"><i class="ti ti-search"></i>
+  <div class="srow">
+    <div class="seg">
+      <button class="on" data-f="all" onclick="setFilter('all')">All · 9</button>
+      <button data-f="bng" onclick="setFilter('bng')">BNG · 5</button>
+      <button data-f="wcc" onclick="setFilter('wcc')">WCC · 2</button>
+      <button data-f="soc" onclick="setFilter('soc')">Soil · 2</button>
+    </div>
+    <div class="search" id="qwrap" style="display:none"><i class="ti ti-search"></i>
       <input id="q" placeholder="Search projects" oninput="render()"
              style="border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%">
     </div>
-    <button class="fbtn" onclick="toast('Stage: Draft, Pending, Registered, Selling, Closed')">Stage · All <i class="ti ti-chevron-down"></i></button>
-    <button class="fbtn" onclick="toast('Habitat for BNG, vintage for carbon. The filter follows the service.')">Habitat / vintage · All <i class="ti ti-chevron-down"></i></button>
-    <span class="spacer"></span>
-    <button class="btn-out" onclick="toast('Reorder priorities: drag the cards. Only a PM can change selling order.')">Reorder priorities</button>
   </div>
 
-  <div class="plab">Selling priority</div>
+  <div class="plab">Selling priority
+    <span class="act" onclick="toast('Reorder priorities: drag the cards. Only a PM can change selling order.')">Reorder</span>
+  </div>
   <div class="top3" id="top3"></div>
 
   <div class="ptbl" id="ptbl"></div>
@@ -115,6 +146,30 @@
 
 <div class="toast" id="toast"></div>
 <script>
+/* Search is a button until it is wanted, then a field beside the chips. */
+function pSearch(e){
+  if(e) e.stopPropagation();
+  var w=document.getElementById('qwrap'), b=document.getElementById('sBtn');
+  var on = w.style.display==='none';
+  w.style.display = on ? '' : 'none';
+  if(on){ document.getElementById('q').focus(); }
+  else { document.getElementById('q').value=''; render(); }
+  b.classList.toggle('on',on);
+  pClosePop();
+}
+function pFilters(e){
+  if(e) e.stopPropagation();
+  var el=document.getElementById('fPop'), b=document.getElementById('fBtn');
+  b.classList.toggle('on', el.classList.toggle('on'));
+}
+function pClosePop(){
+  var el=document.getElementById('fPop');
+  if(el&&el.classList.contains('on')){ el.classList.remove('on'); document.getElementById('fBtn').classList.remove('on'); }
+}
+document.addEventListener('click',function(e){
+  if(e.target.closest('#fPop')||e.target.closest('#fBtn')) return;
+  pClosePop();
+});
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
 
