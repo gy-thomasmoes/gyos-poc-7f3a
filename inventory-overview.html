@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=d18f85f5">
+<link rel="stylesheet" href="gy-shell.css?v=19190e15">
 <style>
 :root{--gut:32px}
 .wrap{max-width:1080px;margin:0 auto;padding:36px var(--gut) 100px}
@@ -167,7 +167,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"prog-inventory"};</script>
-<script src="gy-nav.js?v=78673e91"></script>
+<script src="gy-nav.js?v=f01e59c8"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=70b0cd57"></script>
 
@@ -185,7 +185,8 @@
   <div class="phead">
     <div class="h1">Inventory overview</div>
     <div class="acts">
-      <button class="btn-dark" onclick="toast('Upload a BNG metric: required units are matched against available inventory')"><i class="ti ti-file-upload"></i> Upload</button>
+      <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,INV_ACTIONS)">Actions <i class="ti ti-chevron-down"></i></button>
+      <button class="btn-dark" onclick="event.stopPropagation();gyMenu(this,INV_ADD)"><i class="ti ti-plus"></i> Add inventory</button>
     </div>
   </div>
   <button class="sbar" id="sbar" onclick="openSearch()">
@@ -205,7 +206,7 @@
 
   <div class="bsect">Inventory list
     <span class="act" onclick="location.href='inventory-programme.html'">Filters</span>
-    <span class="act" onclick="toast('Actions: add units, import, export, reserve, list for sale')">Actions</span>
+    <span class="act" onclick="event.stopPropagation();gyMenu(this,INV_ACTIONS)">Actions</span>
     <span class="act" onclick="toast('Settings: columns, defaults and who can edit this inventory')">Settings</span>
   </div>
   <div class="ltbl" id="list"></div>
@@ -229,6 +230,22 @@
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+/* Bulk operations for inventory. The Manage wireframe gave each of these its
+   own card on a separate hub page; here they sit on the object they act on. */
+var INV_ADD = [
+  ['ti-file-upload','Bulk upload inventory','Bulk upload: drop a schedule, map the columns, review every line before it commits'],
+  ['ti-plus','Add inventory manually','Add one line: site, parcel, service, units and condition']
+];
+var INV_ACTIONS = [
+  ['label','Bulk'],
+  ['ti-tag','Set prices','Set prices: pick lines, apply a price or a per-unit uplift, effective from a date'],
+  ['ti-adjustments','Set sales restrictions','Sales restrictions: who may buy these units, by LPA, NCA or named buyer'],
+  '-',
+  ['ti-file-export','Export inventory','Export: every line with its stage, price and restriction as a spreadsheet'],
+  ['ti-file-upload','Match BNG metric','Upload a BNG metric: required units are matched against available inventory'],
+  ['ti-history','Audit log','go:activity-overview.html']
+];
 </script>
 <script>
 var SHORT={bng:'BNG',wcc:'WCC',soc:'Soil'};

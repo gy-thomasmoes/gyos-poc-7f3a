@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=d18f85f5">
+<link rel="stylesheet" href="gy-shell.css?v=19190e15">
 <style>
 .wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
 @media(max-width:900px){.wrap{padding:32px 22px 90px}}
@@ -52,6 +52,8 @@
 .prow .ac{justify-self:end}
 .nextbtn{border:1px solid var(--line2);background:#fff;border-radius:9px;padding:7px 13px;font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;white-space:nowrap}
 .nextbtn:hover{border-color:var(--ink3)}
+.unitbtn{border:1px solid transparent;background:transparent;border-radius:9px;padding:7px 11px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.unitbtn:hover{border-color:var(--line2);color:var(--ink)}
 .gempty{padding:26px 18px;font-size:14px;color:var(--ink3);text-align:center}
 @media(max-width:980px){
   .prow{grid-template-columns:30px 1fr 52px 62px 74px;row-gap:8px}
@@ -63,7 +65,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"prog-projects"};</script>
-<script src="gy-nav.js?v=78673e91"></script>
+<script src="gy-nav.js?v=f01e59c8"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 
 <div class="mainc">
@@ -80,6 +82,7 @@
   <div class="phead">
     <div class="h1">Projects</div>
     <div class="acts">
+      <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,PROJ_ACTIONS)">Actions <i class="ti ti-chevron-down"></i></button>
       <button class="btn-dark" onclick="toast('Add project: name it, pick the ecosystem service, then allocate parcels')"><i class="ti ti-plus"></i> Add project</button>
     </div>
   </div>
@@ -114,6 +117,18 @@
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+/* Bulk operations for projects. Stage progression lives here, not on
+   Inventory: it is a registry event applied to a project's units, and the
+   wireframe scoped it by project too. */
+var PROJ_ACTIONS = [
+  ['label','Bulk'],
+  ['ti-package-import','Add inventory to projects','Pick projects, then pick the unallocated lines that move into them'],
+  ['ti-arrow-up-circle','Progress unit stage','BNG Projected to Registered. WCC Projected to Validated (PIU) or Verified (WCU)'],
+  '-',
+  ['ti-file-export','Export project register','Export: every project with its rank, stage, units and value'],
+  ['ti-history','Audit log','go:activity-overview.html']
+];
 </script>
 <script>
 /* One list of Projects for the programme. The Programme Overview reads the
@@ -156,7 +171,9 @@ function render(){
         +'<span class="st">'+p.stage+'</span>'
         +'<span class="un">'+p.units+' u</span>'
         +'<span class="vl'+(p.value?'':' none')+'">'+(p.value||'&mdash;')+'</span>'
-        +'<span class="ac">'+(p.next?'<button class="nextbtn" onclick="event.stopPropagation();toast(\''+p.next+' · '+p.name+'\')">'+p.next+'</button>':'')+'</span>'
+        +'<span class="ac">'
+        +'<button class="unitbtn" onclick="event.stopPropagation();toast(\'Units · '+p.name+': view and edit the '+p.units+' units this project holds\')">Units</button>'
+        +(p.next?'<button class="nextbtn" onclick="event.stopPropagation();toast(\''+p.next+' · '+p.name+'\')">'+p.next+'</button>':'')+'</span>'
         +'</div>';
     }).join('') : '<div class="gempty">No projects match that search.</div>';
     h+='</div>';

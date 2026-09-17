@@ -56,6 +56,29 @@
     unallocated:function(){ return SITES.filter(function(s){return !s.alloc.length;}); },
     unallocatedParcels: function(){ return sum(window.GY_SITES_API.unallocated(), function(s){return s.parcels;}); },
     unallocatedArea:    function(){ return r1(sum(window.GY_SITES_API.unallocated(), function(s){return s.ha;})); },
+    /* Parcels are held as a count per site, so the parcel-grain list is
+       derived here rather than kept as a second copy that could drift.
+       Area splits evenly across a site's parcels, the last one absorbing
+       the rounding. Allocation walks s.alloc in order, so Bruern's three
+       parcels land on its three different Projects. */
+    parcelRows: function(){
+      var out = [];
+      SITES.forEach(function(s){
+        var code = s.id.split('-')[0].slice(0,3).toUpperCase();
+        var each = r1(s.ha / s.parcels), run = 0, queue = [];
+        s.alloc.forEach(function(a){
+          for(var i = 0; i < a.parcels; i++) queue.push(a.project);
+        });
+        for(var n = 1; n <= s.parcels; n++){
+          var ha = (n === s.parcels) ? r1(s.ha - run) : each;
+          run = r1(run + ha);
+          out.push({ref: code + '-' + (n < 10 ? '0' : '') + n,
+                    site: s.name, siteId: s.id, ha: ha, use: s.use,
+                    project: queue[n-1] || null, note: s.note});
+        }
+      });
+      return out;
+    },
     forProject: function(pid){ return SITES.filter(function(s){
                   return s.alloc.some(function(a){return a.project===pid;}); }); },
     parcelsByEs:function(k){ return sum(SITES, function(s){

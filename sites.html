@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=d18f85f5">
+<link rel="stylesheet" href="gy-shell.css?v=19190e15">
 <style>
 .wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
 @media(max-width:900px){.wrap{padding:32px 22px 90px}}
@@ -30,6 +30,19 @@
 @media(max-width:560px){.scards{grid-template-columns:1fr}}
 
 .stbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.ptbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.phd,.prow{display:grid;grid-template-columns:104px minmax(180px,1.4fr) 80px 78px minmax(210px,1.5fr) 104px;
+           align-items:center;gap:14px;padding:13px 18px}
+.phd{background:var(--graybg);border-bottom:1px solid var(--line);font-size:12px;color:var(--ink3);letter-spacing:.02em}
+.phd .r,.prow .r{text-align:right}
+.prow{border-top:1px solid var(--line);cursor:pointer}
+.prow:first-child{border-top:none}
+.prow:hover{background:#FBFAF5}
+.prow .pref{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+.prow .pst,.prow .plu{font-size:14px;color:var(--ink2)}
+.prow .par{font-size:14px;font-variant-numeric:tabular-nums}
+.pempty{padding:30px 18px;color:var(--ink3);font-size:14px}
+@media(max-width:820px){.phd{display:none}.prow{grid-template-columns:1fr auto;row-gap:8px}}
 .shd,.srow{display:grid;grid-template-columns:minmax(180px,1.45fr) 62px 80px 78px minmax(210px,1.5fr) minmax(120px,.95fr) 104px;
            align-items:center;gap:14px;padding:13px 20px}
 .shd{background:var(--graybg);border-bottom:1px solid var(--line);
@@ -43,10 +56,10 @@
 .srow .pc{font-size:14.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
 .srow .ar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
 .srow .lu{font-size:14px;color:var(--ink2)}
-.srow .al{display:flex;flex-direction:column;gap:6px;min-width:0}
-.srow .alrow{display:flex;align-items:center;gap:9px;font-size:14.5px;min-width:0}
-.srow .alrow .pn{font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.srow .alrow .pp{font-size:13px;color:var(--ink3);white-space:nowrap}
+.srow .al,.prow .al{display:flex;flex-direction:column;gap:6px;min-width:0}
+.srow .alrow,.prow .alrow{display:flex;align-items:center;gap:9px;font-size:14.5px;min-width:0}
+.srow .alrow .pn,.prow .alrow .pn{font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .alrow .pp,.prow .alrow .pp{font-size:13px;color:var(--ink3);white-space:nowrap}
 .srow .ct{font-size:14px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .srow .ac{justify-self:end}
 .allocbtn{border:1px solid var(--line2);background:#fff;border-radius:9px;padding:7px 12px;font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;white-space:nowrap}
@@ -64,9 +77,9 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"prog-sites"};</script>
-<script src="gy-nav.js?v=78673e91"></script>
+<script src="gy-nav.js?v=f01e59c8"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
-<script src="gy-sites.js?v=6ab8d262"></script>
+<script src="gy-sites.js?v=31691678"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -82,11 +95,17 @@
   <div class="phead">
     <div class="h1">Sites</div>
     <div class="acts">
+      <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,LAND_ACTIONS)">Actions <i class="ti ti-chevron-down"></i></button>
       <button class="btn-dark" onclick="toast('Add site: address, contact and the parcels it holds')"><i class="ti ti-plus"></i> Add site</button>
     </div>
   </div>
 
-  <div class="frow" style="margin-top:16px">
+  <div class="seg" id="grainSeg" style="margin:14px 0 16px">
+    <button class="on" data-g="sites" onclick="setGrain('sites')">Sites</button>
+    <button data-g="parcels" onclick="setGrain('parcels')">Parcels</button>
+  </div>
+
+  <div class="frow">
     <div class="search" style="width:400px"><i class="ti ti-search"></i>
       <input id="q" placeholder="Search sites and parcels" oninput="render()"
              style="border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%">
@@ -99,6 +118,7 @@
 
   <div class="scards" id="scards"></div>
   <div class="stbl" id="stbl"></div>
+  <div class="ptbl" id="ptbl" hidden></div>
 </div>
 </div>
 </div>
@@ -109,8 +129,19 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.sty
 if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
 </script>
 <script>
+/* Bulk operations for land. Parcel allocation is the land-side half of
+   "Add inventory to projects" on the Projects page; both ends exist. */
+var LAND_ACTIONS = [
+  ['label','Bulk'],
+  ['ti-map-pin-plus','Allocate parcels to projects','Pick unallocated parcels, then the project they join'],
+  ['ti-file-import','Import land schedule','Import sites and parcels from a spreadsheet, matched on land title'],
+  '-',
+  ['ti-file-export','Export land schedule','Export: every site and parcel as a spreadsheet'],
+  ['ti-history','Audit log','go:activity-overview.html']
+];
+var GRAIN='sites';
 var ONLY_UNALLOC=false;
-function esPill(k){ return '<span class="espill '+GY_ES[k].cls+'">'+(k==='bng'?'BNG':'WCC')+'</span>'; }
+function esPill(k){ return '<span class="espill '+GY_ES[k].cls+'">'+GY_ES[k].short+'</span>'; }
 function projOf(id){ return GY_PROJECTS.filter(function(p){return p.id===id;})[0]; }
 function openSite(s){ toast(s.name+': the site page is not in this prototype yet'); }
 
@@ -129,9 +160,40 @@ function cards(){
      +'<div class="vl">'+A.unallocatedParcels()+' <small>parcels</small></div>'
      +'<div class="sb">'+A.unallocatedArea()+' ha</div></div>';
 }
+function setGrain(g){
+  GRAIN=g;
+  document.querySelectorAll('#grainSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.g===g);});
+  render();
+}
+function renderParcels(q){
+  var rows=GY_SITES_API.parcelRows().filter(function(p){
+    if(ONLY_UNALLOC && p.project) return false;
+    return (p.ref+' '+p.site+' '+p.use).toLowerCase().indexOf(q)>=0;
+  });
+  var h='<div class="phd"><span>Parcel</span><span>Site</span><span class="r">Area</span>'
+       +'<span>Land use</span><span>Allocated to</span><span></span></div>';
+  h+= rows.length ? rows.map(function(p){
+    var pr=p.project?projOf(p.project):null;
+    var al = pr
+      ? '<div class="alrow"><span class="pn">'+pr.name+'</span>'+esPill(pr.es)+'</div>'
+      : '<div class="alrow"><span class="uchip">Unallocated</span></div>';
+    return '<div class="prow" onclick="toast(\''+p.ref+': the parcel page is not in this prototype yet\')">'
+      +'<span class="pref">'+p.ref+'</span>'
+      +'<span class="pst">'+p.site+'</span>'
+      +'<span class="par r">'+p.ha+' ha</span>'
+      +'<span class="plu">'+p.use+'</span>'
+      +'<span class="al">'+al+'</span>'
+      +'<span class="ac">'+(pr?'':'<button class="allocbtn" onclick="event.stopPropagation();toast(\'Allocate '+p.ref+' to a Project\')">Allocate <i class="ti ti-arrow-right"></i></button>')+'</span>'
+      +'</div>';
+  }).join('') : '<div class="pempty">No parcels match that search.</div>';
+  document.getElementById('ptbl').innerHTML=h;
+}
 function render(){
   cards();
   var q=(document.getElementById('q').value||'').toLowerCase();
+  document.getElementById('stbl').hidden = (GRAIN!=='sites');
+  document.getElementById('ptbl').hidden = (GRAIN!=='parcels');
+  if(GRAIN==='parcels') return renderParcels(q);
   var list=GY_SITES_API.all().filter(function(s){
     if(ONLY_UNALLOC && s.alloc.length) return false;
     return (s.name+' '+s.addr+' '+s.contact+' '+s.use).toLowerCase().indexOf(q)>=0;

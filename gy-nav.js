@@ -1027,6 +1027,62 @@ window.gyCartoTiles = function(style){
     });
   }
 
+
+  /* ── Action menus ───────────────────────────────────────────────────────
+     One dropdown component for the page-level bulk operations that the
+     Manage wireframe put on cards. Inventory, Projects and Sites all call
+     it, so the idiom cannot drift page to page.
+     rows: '-' a divider, ['label','Text'] a section label, or
+     ['ti-icon','Label', 'toast text' | 'go:page.html' | function]. */
+  var gyMOpen = null;
+  function gyMClose(){
+    if(gyMOpen && gyMOpen.parentNode) gyMOpen.parentNode.removeChild(gyMOpen);
+    gyMOpen = null;
+  }
+  window.gyMenuClose = gyMClose;
+  window.gyMenu = function(anchor, rows){
+    var same = gyMOpen && gyMOpen._anc === anchor;
+    gyMClose();
+    if(same) return;
+    var pop = document.createElement('div');
+    pop.className = 'gy-mpop';
+    pop._anc = anchor;
+    rows.forEach(function(r){
+      if(r === '-'){
+        var d = document.createElement('div'); d.className = 'gy-mdiv'; pop.appendChild(d); return;
+      }
+      if(r[0] === 'label'){
+        var l = document.createElement('div'); l.className = 'gy-mlbl'; l.textContent = r[1]; pop.appendChild(l); return;
+      }
+      var it = document.createElement('div');
+      it.className = 'gy-mitem';
+      it.innerHTML = '<i class="ti ' + r[0] + '"></i>';
+      it.appendChild(document.createTextNode(r[1]));
+      it.onclick = function(e){
+        e.stopPropagation();
+        gyMClose();
+        var a = r[2];
+        if(typeof a === 'function') a();
+        else if(a.indexOf('go:') === 0) location.href = a.slice(3);
+        else if(window.gyToast) gyToast(a);
+      };
+      pop.appendChild(it);
+    });
+    document.body.appendChild(pop);
+    var b = anchor.getBoundingClientRect();
+    var w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = (b.left + w > window.innerWidth - 12) ? b.right - w : b.left;
+    var top  = b.bottom + 6;
+    if(top + h > window.innerHeight - 8) top = Math.max(8, b.top - h - 6);
+    pop.style.left = Math.max(8, left) + 'px';
+    pop.style.top  = top + 'px';
+    gyMOpen = pop;
+    setTimeout(function(){ document.addEventListener('click', onDoc); }, 0);
+    function onDoc(){ document.removeEventListener('click', onDoc); gyMClose(); }
+  };
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') gyMClose(); });
+  window.addEventListener('resize', gyMClose);
+
   if(document.readyState === 'loading') window.addEventListener('DOMContentLoaded', gyRenderCrumbs);
   else gyRenderCrumbs();
 

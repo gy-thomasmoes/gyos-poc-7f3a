@@ -130,7 +130,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 
 <div class="shell">
 <script>window.GYNAV={"active": "activity", "arts": "demand"};</script>
-<script src="gy-nav.js?v=78673e91"></script>
+<script src="gy-nav.js?v=f01e59c8"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -147,8 +147,24 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
     <button class="afilter" data-f="wf" onclick="afilter(this)">Deliverable steps</button>
     <button class="afilter" data-f="doc" onclick="afilter(this)">Documents</button>
     <button class="afilter" data-f="person" onclick="afilter(this)">People</button>
+    <button class="afilter" data-f="audit" onclick="afilter(this)">Record changes</button>
   </div>
   <div class="aday" data-day>Wed 11 September</div>
+  <div class="arow" data-kind="audit">
+    <span class="aico" style="background:var(--graybg);color:var(--grayd)"><i class="ti ti-tag"></i></span>
+    <div class="amain"><div class="atitle">Prices set on 12 BNG lines</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Inventory</span><span>Caitlin Reeve</span><span>&pound;24,500 to &pound;26,000 per unit, effective 1 Oct</span></div></div>
+    <div class="atime">11:20</div>
+  </div>
+  <div class="arow" data-kind="audit">
+    <span class="aico" style="background:var(--greenbg);color:var(--greend)"><i class="ti ti-arrow-up-circle"></i></span>
+    <div class="amain"><div class="atitle">Unit stage progressed on Wychwood Meadows</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Projects</span><span>Caitlin Reeve</span><span>180 BNG units, Projected to Registered</span></div></div>
+    <div class="atime">10:34</div>
+  </div>
+  <div class="arow" data-kind="audit">
+    <span class="aico" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-map-pin-plus"></i></span>
+    <div class="amain"><div class="atitle">3 parcels allocated to Charlbury Soils</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Sites</span><span>Tom Ashby</span><span>CHA-02, CHA-03, CHA-04</span></div></div>
+    <div class="atime">10:02</div>
+  </div>
   <div class="arow" data-kind="run">
     <span class="aico" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-refresh"></i></span>
     <div class="amain"><div class="atitle">Inventory sync completed</div><div class="ameta"><span class="awrote"><i class="ti ti-arrow-right"></i>Inventory</span><span>Operational workflow · no document produced</span><span>40 BNG units moved to verified</span></div></div>
