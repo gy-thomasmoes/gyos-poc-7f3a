@@ -460,6 +460,11 @@ window.gyCartoTiles = function(style){
       over the sticky topbar. Giving the map container its own stacking context
       keeps every one of those layers inside the map. */
    +'.leaflet-container{position:relative;z-index:0}'
+   /* Collapsing the rail: pages carried their own rule or none at all, so the
+      button did nothing on some of them. One rule, everywhere. */
+   +'body.navhid .snav{display:none}'
+   +'body.navhid{--nav:0px}'
+   +'body.navhid .scollapse.exp{display:flex}'
    /* gyMenu builds its popup in JS but had no styles anywhere, so the menu
       landed unpositioned at the foot of the page. These are its styles. */
    +'.gy-mpop{position:fixed;min-width:232px;background:var(--card);border:1px solid var(--line2);'

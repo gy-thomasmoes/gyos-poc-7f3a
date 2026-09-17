@@ -74,9 +74,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .btn-dark:hover{background:#2C1B22}
 .btn-out{background:#fff;border:1px solid var(--line2);border-radius:10px;padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .btn-out:hover{border-color:var(--ink3)}
-.abar{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:20px}
-.abar .more{padding:9px 11px}
-.abar .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+/* page header: title and meta on the left, the standard action bar on the
+   right, one rule under the pair. Same shape as every other shell page. */
+.phead{display:flex;align-items:flex-start;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.phead .ptit{min-width:0}
+.phead .acts{margin-left:auto;display:flex;align-items:center;gap:10px;padding-top:6px}
+@media(max-width:820px){.phead{flex-wrap:wrap}.phead .acts{margin-left:0;width:100%;padding-top:2px}}
 .hsub span{display:inline-flex;align-items:center;gap:6px}
 .hsub .ti{font-size:16px;color:var(--ink3)}
 
@@ -169,7 +172,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 
 <div class="shell">
 <script>window.GYNAV={"active":"overview","arts":"demand"};</script>
-<script src="gy-nav.js?v=a31aab8f"></script>
+<script src="gy-nav.js?v=d077449c"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-sites.js?v=31691678"></script>
 <script src="gy-calendar.js?v=b1dfa958"></script>
@@ -187,20 +190,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 
 <div class="wrap">
   <header class="hero">
-    <h1 class="hello">Evenlode Landscape Recovery</h1>
-    <div class="hsub">
-      <span><i class="ti ti-map-pin"></i> Oxfordshire, England · 187.8 ha</span>
-      <span><i class="ti ti-user"></i> James Ruggles</span>
-      <span><i class="ti ti-sparkles"></i> Caitlin Ciceri</span>
-      <span><i class="ti ti-calendar"></i> Started Jul 2026</span>
-    </div>
-    <div class="abar">
-      <button class="btn-dark" onclick="event.stopPropagation();gyMenu(this,PO_ADD_INV)"><i class="ti ti-plus"></i> Add inventory</button>
-      <button class="btn-out" onclick="toast('Add project: name it, pick the ecosystem service, then allocate parcels')"><i class="ti ti-map"></i> Add project</button>
-      <button class="btn-out" onclick="toast('Add site: address, contact and the parcels it holds')"><i class="ti ti-map-pin"></i> Add site</button>
-      <button class="btn-out" onclick="location.href='deliverables-landing.html'"><i class="ti ti-hierarchy-2"></i> Start workflow</button>
-      <span class="sep"></span>
-      <button class="btn-out more" onclick="event.stopPropagation();gyMenu(this,PO_MORE)" title="More actions"><i class="ti ti-dots"></i></button>
+    <div class="phead">
+      <div class="ptit">
+        <h1 class="hello">Evenlode Landscape Recovery</h1>
+        <div class="hsub">
+          <span><i class="ti ti-map-pin"></i> Oxfordshire, England · 187.8 ha</span>
+        </div>
+      </div>
+      <div class="acts" id="abar"></div>
     </div>
   </header>
 
@@ -316,9 +313,13 @@ if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle(
 
 /* The action bar's two menus. Every row lands on the page that owns the work,
    so the overview stays a launcher and the bulk operations keep one home. */
-var PO_ADD_INV = [
+var PO_ADD = [
+  ['label','Inventory'],
   ['ti-file-upload','Bulk upload inventory','go:inventory-overview.html'],
-  ['ti-plus','Add inventory manually','go:inventory-overview.html']
+  ['ti-plus','Add inventory manually','go:inventory-overview.html'],
+  ['label','Projects and land'],
+  ['ti-map','Add project','Add project: name it, pick the ecosystem service, then allocate parcels'],
+  ['ti-map-pin','Add site','Add site: address, contact and the parcels it holds']
 ];
 var PO_MORE = [
   ['label','Inventory'],
@@ -332,6 +333,10 @@ var PO_MORE = [
   '-',
   ['ti-history','Audit log','go:activity-overview.html']
 ];
+gyBar('abar', {
+  actions: PO_MORE,
+  primary: {icon:'ti-plus', label:'Add', onclick:function(b){ gyMenu(b, PO_ADD); }}
+});
 </script>
 <script>
 /* Projects: the top three by selling priority, straight off gy-projects.js.

@@ -176,14 +176,15 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
 .phead{display:flex;align-items:flex-start;gap:14px;padding-bottom:15px;margin-bottom:20px;border-bottom:1px solid var(--line)}
 .phead .acts{margin-left:auto;display:flex;gap:10px}
 .h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
+.wfhide{display:none!important}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=a31aab8f"></script>
-<script src="gy-docs.js?v=8c86f270"></script>
+<script src="gy-nav.js?v=d077449c"></script>
+<script src="gy-docs.js?v=eb6965dc"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -739,7 +740,52 @@ document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRende
 })();
 
 
+/* The list is static markup, so search and filters work on the rows in place.
+   A hidden row keeps its own display rules, so the basic/advanced modes and
+   the accordions still behave. */
+var WFQ='', WFSTATUS='all', WFPROG='all';
+function wfText(el, sel){ var n=el.querySelector(sel); return n ? n.textContent.trim().toLowerCase() : ''; }
+function wfApply(){
+  var q=WFQ.toLowerCase();
+  document.querySelectorAll('.wrap .row').forEach(function(r){
+    var name=wfText(r,'.nm'), prog=wfText(r,'.prog'), st=wfText(r,'.st');
+    if(!prog && r.classList.contains('arch')) st='archive';
+    var ok = (!q || name.indexOf(q)>=0 || prog.indexOf(q)>=0)
+          && (WFSTATUS==='all' || st.indexOf(WFSTATUS)>=0 || (WFSTATUS==='archive' && r.classList.contains('arch')))
+          && (WFPROG==='all'   || prog.indexOf(WFPROG)>=0);
+    r.classList.toggle('wfhide', !ok);
+  });
+  /* a group header goes when everything under it has gone */
+  document.querySelectorAll('.wrap .group').forEach(function(g){
+    var any=false, n=g.nextElementSibling;
+    while(n && !n.classList.contains('group')){
+      if(n.classList.contains('row') && !n.classList.contains('wfhide')) any=true;
+      n=n.nextElementSibling;
+    }
+    g.classList.toggle('wfhide', !any && (WFQ!=='' || WFSTATUS!=='all' || WFPROG!=='all'));
+  });
+}
+
 gyBar('abar', {
+  search:  {placeholder:'Search workflows', oninput:function(v){ WFQ=v; wfApply(); }},
+  filters: [
+    ['Status',[['ti-circle-dot','Any status','all'],['ti-player-play','Live','live'],['ti-pencil','Draft','draft'],
+               ['ti-ruler-measure','In design','design'],['ti-archive','Archive','archive']]],
+    ['Programme',[['ti-circle-dot','All programmes','all'],['ti-topology-star-3','Evenlode','evenlode'],
+                  ['ti-topology-star-3','Upper Dee','upper dee'],['ti-topology-star-3','Spains Hall','spains'],
+                  ['ti-topology-star-3','Boothby','boothby']]]
+  ],
+  onfilter: function(group, value){
+    if(group==='Status') WFSTATUS=value; else WFPROG=value;
+    wfApply();
+  },
+  actions: [['label','Bulk'],
+            ['ti-copy','Duplicate workflow','Duplicate the selected workflow into this programme'],
+            ['ti-archive','Archive workflow','Archive removes it from the list without deleting the runs'],
+            '-',
+            ['ti-file-import','Import workflow','Import a workflow definition from another programme'],
+            ['ti-file-export','Export workflow','Export the definition as JSON'],
+            ['ti-history','Audit log','Every change to these workflows, with who and when']],
   primary: {icon:'ti-plus', label:'Create new Deliverable', onclick:function(){ openCreate(); }}
 });
 </script>
