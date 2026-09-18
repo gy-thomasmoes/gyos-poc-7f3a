@@ -136,6 +136,8 @@
 .pick:hover{border-color:var(--ink3)}
 .pick.on{background:var(--dark);border-color:var(--dark);color:#fff}
 .fcols{display:grid;grid-template-columns:1fr;gap:12px}
+.fld{min-width:0}
+.flab{display:block;font-size:12.5px;font-weight:500;color:var(--ink2);margin:0 0 6px 2px}
 .fcols.two{grid-template-columns:1fr 1fr}
 .fsel{width:100%;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-family:inherit;
       font-size:14px;color:var(--ink);background:#fff}
@@ -149,14 +151,34 @@
 .rhead .rc{font-size:14px;color:var(--ink2)}
 .rhead .rx{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .rhead .rx:hover{color:var(--ink)}
+.shead{display:flex;align-items:baseline;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:.06em;
+        text-transform:uppercase;color:var(--ink2);margin-bottom:11px}
+.shead b{font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums}
+.pick{display:inline-flex;align-items:center;gap:7px}
+.pick .ti{font-size:15px;color:var(--esc,var(--ink3))}
+.pick.on{background:var(--esc,var(--dark));border-color:var(--esc,var(--dark));color:#fff}
+.pick.on .ti{color:#fff}
+.addline{border:1px dashed var(--line2);border-radius:11px;padding:11px 14px;margin-top:22px;
+         font-size:13.5px;color:var(--ink2);text-align:center;cursor:pointer}
+.addline:hover{border-color:var(--ink3);color:var(--ink)}
+.lcount{font-size:13px;color:var(--ink2)}
+.lcount b{color:var(--ink);font-weight:600}
+.fit{display:inline-flex;align-items:center;font-size:11.5px;font-weight:500;border-radius:999px;padding:3px 9px}
+.fit.ex{background:var(--greenbg);color:var(--greend)}
+.fit.pa{background:var(--amberbg);color:var(--amberd)}
+.fit.su{background:var(--bluebg);color:var(--blued)}
+.shortband{display:flex;align-items:baseline;gap:14px;background:#FDF6EE;border:1px solid #EBD9AE;
+           border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:14px}
+.shortband b{color:#B5462F;white-space:nowrap}
+.shortband span{color:var(--ink2);font-size:13.5px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .chipx{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);
        background:var(--graybg);border-radius:999px;padding:5px 12px}
 .nores{border:1px dashed var(--line2);border-radius:16px;padding:34px;text-align:center;color:var(--ink3);font-size:14.5px;line-height:1.6}
 
-/* ── Inventory list preview ── */
+/* ── All inventory preview ── */
 .ltbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
-.lhd,.lrow{display:grid;grid-template-columns:62px 104px minmax(160px,1.4fr) 70px minmax(140px,1fr) 78px;
+.lhd,.lrow{display:grid;grid-template-columns:96px minmax(180px,1.5fr) 128px 66px minmax(130px,1fr) 74px;
            align-items:center;gap:14px;padding:12px 18px}
 .lhd{background:var(--graybg);border-bottom:1px solid var(--line);
      font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
@@ -179,10 +201,12 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"prog-inventory"};</script>
-<script src="gy-nav.js?v=82d093ac"></script>
+<script src="gy-nav.js?v=35621c30"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
-<script src="gy-inventory.js?v=83d6a9e6"></script>
+<script src="gy-inventory.js?v=358d8962"></script>
 <script src="gy-deals.js?v=bf5a5f28"></script>
+<script src="gy-search.js?v=7032cc3b"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -211,7 +235,7 @@
   <div class="bsect">Risk</div>
   <div class="wcard" id="risks"></div>
 
-  <div class="bsect">Inventory list
+  <div class="bsect">All inventory
     <span class="act" onclick="location.href='inventory-programme.html'">Filters</span>
     <span class="act" onclick="event.stopPropagation();gyMenu(this,INV_ACTIONS)">Actions</span>
     <span class="act" onclick="toast('Settings: columns, defaults and who can edit this inventory')">Settings</span>
@@ -224,11 +248,12 @@
 
 <div class="sdrop" id="sdrop" onclick="closeSearch()"></div>
 <aside class="sdrawer" id="sdrawer" aria-hidden="true">
-  <div class="sdhead"><b>Search inventory</b>
+  <div class="sdhead"><b>Find units for buyer</b>
     <i class="ti ti-x x" onclick="closeSearch()" title="Close"></i></div>
   <div class="sdbody" id="sbuild"></div>
   <div class="sdfoot">
-    <button class="btn-dark" onclick="runSearch()">Find options to buy</button>
+    <button class="btn-dark" onclick="runSearch()">Find units</button>
+    <span class="lcount" id="lcount"></span>
     <span class="sclose" onclick="resetQ()">Reset</span>
   </div>
 </aside>
@@ -251,7 +276,7 @@ var INV_ACTIONS = [
   '-',
   ['ti-file-export','Export inventory','Export: every line with its stage, price and restriction as a spreadsheet'],
   ['ti-file-upload','Match BNG metric','Upload a BNG metric: required units are matched against available inventory'],
-  ['ti-history','Audit log','go:activity-overview.html']
+  ['ti-history','Audit log','go:audit-log.html']
 ];
 </script>
 <script>
@@ -348,7 +373,7 @@ function risks(){
     + '<span><i class="l"></i>Not in deals</span></div>';
 }
 
-/* Inventory list: the first rows, the full table lives on its own page */
+/* All inventory: the first rows, the full table lives on its own page */
 function list(){
   var all=GY_INV_API.rows(PROG);
   var top=all.slice().sort(function(a,b){return b.units-a.units;}).slice(0,6);
@@ -370,61 +395,96 @@ function list(){
       +' inventory lines, '+u(total)+' units ›</div>';
 }
 
-/* ── Search: the criteria builder folds into this page, and running it
-   swaps the overview for the matching inventory lines. ── */
+/* ── Search: the criteria builder folds into this page. It builds a
+   Requirement, not a filter set: a scope plus one line. Adding a second line
+   promotes the same object to requirement.html, which is why REQ travels
+   through gy-search.js rather than living here. ── */
 var LPA=['West Oxfordshire DC','Cotswold DC','Cherwell DC'];
 var NCA=['Cotswolds','Upper Thames Clay Vales','Midvale Ridge'];
 var LNRS=['Oxfordshire','Gloucestershire','Warwickshire'];
-var COND=['Any condition','Poor','Moderate','Good','Excellent'];
-var Q={es:'bng', lpa:'', nca:'', lnrs:'', avail:'Now', type:'', cond:'Any condition', units:'', pmin:'', pmax:''};
+var GS=window.GY_SEARCH_API;
+var REQ=GS.newReq('bng', PROG);
 
-function typesFor(es){
-  var seen=[];
-  GY_INV_API.rowsFor(es,PROG).forEach(function(r){ if(seen.indexOf(r.type)<0) seen.push(r.type); });
-  return seen.sort();
-}
 function opts(list, cur, ph){
   return '<option value="">'+ph+'</option>'
     + list.map(function(o){ return '<option'+(o===cur?' selected':'')+'>'+o+'</option>'; }).join('');
 }
-function buildHtml(){
-  var isBng=Q.es==='bng';
-  return ''
-    +'<div class="fgrp"><div class="flabel">What do you want to buy?</div>'
-      +'<div class="pickrow">'+GY_INV_API.services().map(function(es){
-         return '<button class="pick'+(Q.es===es?' on':'')+'" onclick="setQ(\'es\',\''+es+'\')">'+SHORT[es].toUpperCase()+'</button>';
-       }).join('')+'</div></div>'
-
-    +'<div class="fgrp"><div class="flabel">Location</div>'
-      +'<div class="fcols">'
-      +'<select class="fsel" onchange="setQ(\'lpa\',this.value)">'+opts(LPA,Q.lpa,'Select LPA')+'</select>'
-      +'<select class="fsel" onchange="setQ(\'nca\',this.value)">'+opts(NCA,Q.nca,'Select NCA')+'</select>'
-      +'<select class="fsel" onchange="setQ(\'lnrs\',this.value)">'+opts(LNRS,Q.lnrs,'Select LNRS authority')+'</select>'
-      +'</div><div class="fnote">Evenlode inventory only.</div></div>'
-
-    +'<div class="fgrp"><div class="flabel">Availability</div>'
-      +'<div class="pickrow">'
-      +['Now','Projected'].map(function(a){
-         return '<button class="pick'+(Q.avail===a?' on':'')+'" onclick="setQ(\'avail\',\''+a+'\')">'+a+'</button>';
-       }).join('')+'</div></div>'
-
-    +'<div class="fgrp"><div class="flabel">'+(isBng?'What BNG types?':Q.es==='wcc'?'What vintages?':'What land types?')+'</div>'
-      +'<div class="fcols'+(isBng?' two':'')+'">'
-      +'<select class="fsel" onchange="setQ(\'type\',this.value)">'+opts(typesFor(Q.es),Q.type,'Any type')+'</select>'
-      +(isBng?'<select class="fsel" onchange="setQ(\'cond\',this.value)">'+opts(COND.slice(1),Q.cond==='Any condition'?'':Q.cond,'Any condition')+'</select>':'')
-      +'</div></div>'
-
-    +'<div class="fgrp"><div class="flabel">How many units?</div>'
-      +'<input class="fnum" type="number" placeholder="Any" value="'+Q.units+'" oninput="setQ(\'units\',this.value,1)"></div>'
-
-    +'<div class="fgrp"><div class="flabel">What price range?</div>'
-      +'<div class="frange">£<input class="fnum" type="number" placeholder="min" value="'+Q.pmin+'" oninput="setQ(\'pmin\',this.value,1)">k'
-      +'<span>to</span>£<input class="fnum" type="number" placeholder="max" value="'+Q.pmax+'" oninput="setQ(\'pmax\',this.value,1)">k</div></div>'
-
-    ;
+function setService(es){ GS.setService(REQ, es); redraw(); }
+function setScope(k,v){ REQ.scope[k]=v; redraw(); }
+function setLine(k,v,quiet){ REQ.lines[0][k]=v; redraw(quiet); }
+function redraw(quiet){
+  if(!quiet) document.getElementById('sbuild').innerHTML=buildHtml();
+  liveCount();
 }
+function liveCount(){
+  var r=GS.run(REQ, GS.progOf(REQ, PROG)), el=document.getElementById('lcount');
+  if(!el) return;
+  el.innerHTML = r.rows
+    ? '<b>'+r.rows+'</b> line'+(r.rows===1?'':'s')+' match, <b>'+u(r.units)+'</b> units'
+      + (r.short ? ' · <b>'+r.short+'</b> short' : '')
+    : 'Nothing matches yet';
+}
+
+function buildHtml(){
+  var L=REQ.lines[0], isBng=REQ.es==='bng', n=0;
+  function sec(t,body){
+    return '<div class="fgrp"><div class="shead"><b>'+(++n)+'</b>'+t+'</div>'+body+'</div>';
+  }
+  function fld(label, tip, control){
+    return '<div class="fld"><label class="flab">'+label+(tip?gyInfo(tip):'')+'</label>'+control+'</div>';
+  }
+  /* the service picker carries the ecosystem service colours, so the same
+     mark means the same product here as everywhere else */
+  function pill(es){
+    var e=GY_ES[es];
+    return '<button class="pick '+e.cls+(REQ.es===es?' on':'')+'" onclick="setService(\''+es+'\')">'
+      +'<i class="ti '+e.icon+'"></i>'+SHORT[es]+'</button>';
+  }
+  return ''
+    + sec('Service','<div class="pickrow">'+GY_INV_API.services().map(pill).join('')+'</div>')
+
+    + ((isBng || !PROG) ? sec('Where','<div class="fcols">'
+        + (isBng ? fld('LPA','Local planning authority. A BNG buyer usually has to buy inside the LPA their development sits in, or pay a spatial penalty.',
+            gySel('q-lpa',{options:LPA, value:REQ.scope.lpa, placeholder:'Any LPA', width:'100%',
+                           onchange:function(v){ setScope('lpa',v); }})) : '')
+        + (isBng ? fld('NCA','National Character Area. The next ring out if the LPA cannot be matched.',
+            gySel('q-nca',{options:NCA, value:REQ.scope.nca, placeholder:'Any NCA', width:'100%',
+                           onchange:function(v){ setScope('nca',v); }})) : '')
+        + (isBng ? fld('LNRS','Local Nature Recovery Strategy area. Units inside one carry a strategic significance uplift.',
+            gySel('q-lnrs',{options:LNRS, value:REQ.scope.lnrs, placeholder:'Any LNRS authority', width:'100%',
+                            onchange:function(v){ setScope('lnrs',v); }})) : '')
+        + (!PROG ? fld('Programme','Limit the answer to one programme. Leave it on every programme to sell from wherever the units are.',
+            gySel('q-prog',{options:[['','Every programme']].concat(GY_INV_API.programmes().map(function(x){return [x,x];})),
+                            value:REQ.scope.prog, placeholder:'Every programme', width:'100%',
+                            onchange:function(v){ setScope('prog',v); }})) : '')
+        +'</div>') : '')
+
+    + sec('What','<div class="fcols'+(isBng?' two':'')+'">'
+        + gySel('q-type',{options:function(){ return GS.typesFor(REQ.es, GS.progOf(REQ, PROG)); }, value:L.type,
+                          placeholder:isBng?'Any habitat':REQ.es==='wcc'?'Any vintage':'Any land type',
+                          width:'100%', onchange:function(v){ setLine('type',v); }})
+        + (isBng ? gySel('q-cond',{options:function(){ return GS.condsFor(GS.progOf(REQ, PROG)); }, value:L.cond,
+                          placeholder:'Any condition', width:'100%',
+                          onchange:function(v){ setLine('cond',v); }}) : '')
+        +'</div>')
+
+    + sec('Terms','<div class="fcols">'
+        + gySel('q-floor',{options:function(){ return GS.ladder(REQ.es).map(function(r){
+                             return [r.key, 'At least '+r.lc]; }); }, value:L.floor, width:'100%',
+                           onchange:function(v){ setLine('floor',v); }})
+        +'</div>'
+        +'<div class="frange" style="margin-top:8px">'
+        +'<input class="fnum" type="number" placeholder="Units" value="'+L.units+'" oninput="setLine(\'units\',this.value,1)">'
+        +'<span>at most</span>\u00a3<input class="fnum" type="number" placeholder="a unit" value="'+L.pmax+'" oninput="setLine(\'pmax\',this.value,1)">'
+        +'</div>')
+
+    + '<div class="addline" onclick="promote()">+ Add another type</div>';
+}
+function promote(){ GS.save(REQ); location.href='requirement.html'; }
+
 function openSearch(){
   document.getElementById('sbuild').innerHTML=buildHtml();
+  liveCount();
   document.getElementById('sdrawer').classList.add('on');
   document.getElementById('sdrawer').setAttribute('aria-hidden','false');
   document.getElementById('sdrop').classList.add('on');
@@ -437,69 +497,55 @@ function closeSearch(){
   document.body.style.overflow='';
 }
 function searchOpen(){ return document.getElementById('sdrawer').classList.contains('on'); }
-function setQ(k,v,quiet){ Q[k]=v; if(!quiet) document.getElementById('sbuild').innerHTML=buildHtml(); }
-function resetQ(){ Q={es:'bng',lpa:'',nca:'',lnrs:'',avail:'Now',type:'',cond:'Any condition',units:'',pmin:'',pmax:''};
-  document.getElementById('sbuild').innerHTML=buildHtml(); }
+function resetQ(){ REQ=GS.newReq('bng', PROG); redraw(); }
 
-function matches(){
-  return GY_INV_API.rows(PROG).filter(function(r){
-    if(r.es!==Q.es) return false;
-    var live = r.avail==='Available';
-    if(Q.avail==='Now' && !live) return false;
-    if(Q.avail==='Projected' && r.avail!=='Projected') return false;
-    if(Q.type && r.type!==Q.type) return false;
-    if(Q.cond && Q.cond!=='Any condition' && r.cond && r.cond!==Q.cond) return false;
-    if(Q.units && r.units < +Q.units) return false;
-    return true;
-  });
-}
-function chips(){
-  var c=[['Service',SHORT[Q.es]],['Availability',Q.avail]];
-  if(Q.lpa) c.push(['LPA',Q.lpa]);
-  if(Q.nca) c.push(['NCA',Q.nca]);
-  if(Q.lnrs) c.push(['LNRS',Q.lnrs]);
-  if(Q.type) c.push([Q.es==='wcc'?'Vintage':'Type',Q.type]);
-  if(Q.cond && Q.cond!=='Any condition') c.push(['Condition',Q.cond]);
-  if(Q.units) c.push(['At least',Q.units+' units']);
-  if(Q.pmin||Q.pmax) c.push(['Price','£'+(Q.pmin||'0')+'k to £'+(Q.pmax||'any')+'k']);
-  return '<div class="chips">'+c.map(function(x){
-    return '<span class="chipx">'+x[0]+' <b style="color:var(--ink);font-weight:600">'+x[1]+'</b></span>';
-  }).join('')+'</div>';
-}
+var FITLAB={exact:'Exact', partial:'Partial', substitute:'Substitute'};
+var FITCLS={exact:'ex', partial:'pa', substitute:'su'};
+
 function runSearch(){
-  var m=matches(), total=m.reduce(function(t,r){return t+r.units;},0);
-  var body = m.length
+  var res=GS.run(REQ, GS.progOf(REQ, PROG)), L=res.lines[0];
+  var body = L.matches.length
     ? '<div class="ltbl">'
-      +'<div class="lhd"><span>Type</span><span>Availability</span><span>Specific type / vintage</span>'
-      +'<span class="r">Units</span><span>Site</span><span class="r">Area</span></div>'
-      + m.map(function(r){
-          var cls = r.avail==='Available'?'avail':r.avail==='Sold'?'sold':'future';
+      +'<div class="lhd"><span>Fit</span><span>Inventory line</span><span>Certainty</span>'
+      +'<span class="r">Units</span><span>Site</span><span class="r">Price</span></div>'
+      + L.matches.map(function(m){
+          var r=m.row;
           return '<div class="lrow '+GY_ES[r.es].cls+'" onclick="location.href=\'inventory-programme.html?es='+r.es+'\'">'
-            +'<span>'+pill(r.es)+'</span>'
-            +'<span><span class="badge '+cls+'">'+r.avail+'</span></span>'
-            +'<span class="ty">'+r.type+'</span>'
-            +'<span class="un r">'+u(r.units)+'</span>'
+            +'<span><span class="fit '+FITCLS[m.fit]+'">'+FITLAB[m.fit]+'</span></span>'
+            +'<span class="ty">'+r.type+(r.cond?', '+r.cond:'')+'</span>'
+            +'<span class="si">'+GS.labelOf(r.es, r.avail==='Available'?'available':r.stage)+'</span>'
+            +'<span class="un r">'+u(m.units)+'</span>'
             +'<span class="si">'+r.site+'</span>'
-            +'<span class="r si">'+r.ha+' ha</span></div>';
+            +'<span class="r si">'+(m.price?'£'+u(m.price):'&mdash;')+'</span></div>';
         }).join('')
-      +'<div class="lmore" onclick="toast(\'Reserve these units, or send them to a deal\')">Reserve '+u(total)+' units \u203a</div></div>'
-    : '<div class="nores">Nothing in '+nameOf(Q.es)+' matches those criteria.<br>Widen the availability or drop the type filter.</div>';
+      +'<div class="lmore" onclick="toast(\'Add to deal: pick the deal, then units and price per line\')">'
+        +'Add '+u(L.got)+' units to a deal \u203a</div></div>'
+    : '<div class="nores">Nothing in '+nameOf(REQ.es)+' matches this requirement.<br>Lower the certainty floor or drop the type.</div>';
+
+  var short = L.short
+    ? '<div class="shortband"><b>'+L.short+' units short</b><span>Lower the certainty floor, widen the geography, or take a substitute.</span></div>'
+    : '';
 
   document.getElementById('results').innerHTML =
-      '<div class="rhead"><span class="rt">Options to buy</span>'
-      +'<span class="rc">'+m.length+' line'+(m.length===1?'':'s')+' · '+u(total)+' units</span>'
-      +'<span class="rx" onclick="clearSearch()">Clear search</span></div>'
-      + chips() + body;
+      '<div class="rhead"><span class="rt">What we can supply</span>'
+      +'<span class="rc">'+L.matches.length+' line'+(L.matches.length===1?'':'s')+' · '+u(L.got)+' units'
+        +(L.need?' of '+L.need:'')+'</span>'
+      +'<span class="rx" onclick="clearSearch()">Clear</span></div>'
+      + chips() + short + body;
   document.getElementById('results').hidden=false;
   document.getElementById('overview').hidden=true;
   closeSearch();
+}
+function chips(){
+  return '<div class="chips">'+GS.chips(REQ).map(function(x){
+    return '<span class="chipx">'+x[0]+' <b style="color:var(--ink);font-weight:600">'+x[1]+'</b></span>';
+  }).join('')+'</div>';
 }
 function clearSearch(){
   document.getElementById('results').hidden=true;
   document.getElementById('overview').hidden=false;
 }
 document.addEventListener('keydown',function(e){
-  if(e.key==='/' && !/input|select|textarea/i.test((e.target.tagName||''))){ e.preventDefault(); openSearch(); }
   if(e.key==='Escape'){
     if(searchOpen()) closeSearch();
     else if(!document.getElementById('results').hidden) clearSearch();
@@ -509,7 +555,7 @@ document.addEventListener('keydown',function(e){
 window.addEventListener('DOMContentLoaded',function(){ rail(); deals(); risks(); list(); });
 
 gyBar('abar', {
-  search:  {onclick:function(){ openSearch(); }},
+  buttons: [{icon:'ti-target-arrow', label:'Find units for buyer', onclick:function(){ openSearch(); }}],
   actions: INV_ACTIONS,
   primary: {icon:'ti-plus', label:'Add inventory', onclick:function(b){ gyMenu(b, INV_ADD); }}
 });

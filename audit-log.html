@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit log &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --blue:#378ADD; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D;
+  --serif:'Manner','Spectral',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px}
+.shell{display:flex;height:100vh;overflow:hidden}
+.snav{position:relative;width:var(--nav,264px);flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 12px 16px}
+.snavgrip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:30}
+.snavgrip:hover,.snavgrip.on{background:rgba(31,31,29,.08)}
+.sarr{margin-left:auto;font-size:14px;color:var(--ink3);transition:transform .15s;padding:2px;border-radius:5px}
+.sarr:hover{background:rgba(31,31,29,.08)}
+.ssub{margin:2px 0 4px 30px}
+.ssub .sitem{font-size:14.5px;padding:6px 10px;color:var(--ink2)}
+.ssub .sitem.on{color:var(--ink)}
+.ssub.closed{display:none}
+.sarr.closed{transform:rotate(-90deg)}
+.snav.hid{display:none}
+.sworks{display:flex;align-items:center;gap:9px;padding:4px 6px 12px}
+.sworks .wtile{width:30px;height:30px;border-radius:9px;background:#F9DD5A;color:#1A0C12;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.sworks b{font-size:15.5px;font-weight:600;flex:1;display:flex;align-items:center;gap:4px}
+.sworks .ti{font-size:15px;color:var(--ink3)}
+.scollapse{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.scollapse:hover{background:var(--graybg);color:var(--ink)}
+.sitem{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:15px;color:var(--ink);cursor:pointer;margin-bottom:1px}
+.sitem .ti{font-size:17px;color:var(--ink2)}
+.sitem:hover{background:#F3F2EE}
+.sdiv{height:1px;min-height:1px;flex:none;background:#E3E1DB;margin:8px 6px}
+.sitem.on{background:var(--graybg);font-weight:500}
+.mainc{flex:1;overflow:auto;min-width:0}
+.topbar{height:61px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:14px 22px;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.crumbs{display:flex;align-items:center;gap:9px;font-size:16px;min-width:0}
+.crumbs .cr{color:var(--ink2);cursor:pointer;white-space:nowrap}
+.crumbs .cr:hover{color:var(--ink)}
+.crumbs .cr.cur{color:var(--ink);font-weight:600}
+.crumbs .sep{color:var(--ink3);font-size:14px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.phead{display:flex;align-items:flex-start;gap:14px;padding-bottom:15px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.phead .acts{margin-left:auto;display:flex;gap:10px}
+.h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
+.btn-out{background:#fff;border:1px solid var(--line2);border-radius:10px;padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn-out:hover{border-color:var(--ink3)}
+.btn-out.on{border-color:var(--ink3);background:var(--graybg)}
+.btn-dark{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn-dark:hover{background:#2C1B22}
+.btn-dark .ti{font-size:16px;color:#fff}
+.bcount{font-size:11.5px;font-weight:700;background:var(--dark);color:#fff;border-radius:999px;min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center}
+.btn-out .ti{font-size:16px;color:var(--ink2)}
+
+
+/* filters */
+.fbar{display:none;gap:9px;flex-wrap:wrap;margin:18px 0;align-items:center}
+.fbar.open{display:flex}
+/* the house dropdown trigger. Never a native select: gyMenu draws the menu. */
+.fbtn{font:inherit;font-size:14px;padding:9px 15px 9px 14px;border:1px solid var(--line2);border-radius:10px;
+  background:#fff;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+.fbtn:hover{border-color:var(--ink3)}
+.fbtn.on{border-color:var(--ink3);font-weight:500}
+.fbtn .cv{font-size:15px;color:var(--ink3);margin-left:4px}
+.fclear{font:inherit;font-size:14px;padding:9px 13px;border:none;background:transparent;color:var(--ink2);cursor:pointer;border-radius:10px}
+.fclear:hover{background:var(--graybg);color:var(--ink)}
+.fsearch{display:none;align-items:center;gap:10px;margin:18px 0 0;padding:9px 13px;
+  border:1px solid var(--ink3);border-radius:10px;background:#fff}
+.fsearch.open{display:flex}
+.fsearch>.ti{font-size:16px;color:var(--ink3);flex:none}
+.fsearch input{flex:1;min-width:0;font:inherit;font-size:14.5px;border:none;outline:none;background:transparent;color:var(--ink)}
+.fx{border:none;background:transparent;color:var(--ink3);cursor:pointer;width:26px;height:26px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;flex:none;padding:0}
+.fx:hover{background:var(--graybg);color:var(--ink)}
+
+/* table */
+.erow.open{background:#FBF8EF}
+.ewhen{font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+.ewho{display:flex;align-items:center;gap:8px;min-width:0}
+.ewho .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.esrc{font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:999px;flex:none;display:inline-flex;align-items:center;gap:4px}
+.esrc .ti{font-size:12px}
+.eevent{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eevent b{font-weight:600}
+.eevent span{color:var(--ink2)}
+.escope{font-size:11.5px;font-weight:600;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;margin-left:7px}
+.echange{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.echange .was{color:var(--ink3);text-decoration:line-through;text-decoration-thickness:1px}
+.echange .arw{color:var(--ink3);margin:0 6px}
+.echange .now{color:var(--ink);font-weight:500}
+.echev{color:var(--ink3);font-size:17px;display:flex;justify-content:flex-end;transition:transform .14s}
+.erow.open .echev{transform:rotate(90deg)}
+
+/* expansion */
+.edet{background:#FDFCF8;border-bottom:1px solid var(--line);padding:4px 20px 18px;display:none}
+.edet.open{display:block}
+.edgrid{display:grid;grid-template-columns:132px minmax(0,1fr);gap:0 18px;font-size:14px}
+.edgrid dt{color:var(--ink3);padding:9px 0;border-top:1px solid var(--line)}
+.edgrid dd{color:var(--ink);padding:9px 0;border-top:1px solid var(--line);min-width:0;word-break:break-word}
+.edgrid dt:first-of-type,.edgrid dd:first-of-type{border-top:none}
+.edrows{margin:0;padding:0;list-style:none}
+.edrows li{font-size:13.5px;color:var(--ink2);font-variant-numeric:tabular-nums;padding:2px 0}
+.edlink{font-size:14px;color:var(--blued);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.edlink:hover{text-decoration:underline}
+.edid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--ink2)}
+
+.empty{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:28px 18px;
+  text-align:center;color:var(--ink3);font-size:14.5px;display:none}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:13.5px;color:var(--ink3);line-height:1.6;max-width:62ch}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:40;display:none;max-width:80vw}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"audit"};</script>
+<script src="gy-nav.js?v=35621c30"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">&rsaquo;</span><span class="cr cur">Audit log</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Audit log</div>
+    <div class="acts">
+      <button class="btn-out" id="searchBtn" onclick="toggleSearch()"><i class="ti ti-search"></i> Search</button>
+      <button class="btn-out" id="filterBtn" onclick="toggleFilters()"><i class="ti ti-filter"></i> Filters</button>
+      <button class="btn-dark" onclick="exportLog()"><i class="ti ti-download"></i> Export</button>
+    </div>
+  </div>
+
+  <div class="fsearch" id="searchBar">
+    <i class="ti ti-search"></i>
+    <input id="q" type="search" placeholder="Search records, values or entry references" oninput="draw()">
+    <button class="fx" onclick="toggleSearch(false)" aria-label="Close search"><i class="ti ti-x"></i></button>
+  </div>
+
+  <div class="fbar" id="filterBar">
+    <button class="fbtn" id="bcat" onclick="pickCat(this)">Any category<i class="ti ti-chevron-down cv"></i></button>
+    <button class="fbtn" id="bwho" onclick="pickWho(this)">Any actor<i class="ti ti-chevron-down cv"></i></button>
+    <button class="fbtn" id="bsrc" onclick="pickSrc(this)">Any source<i class="ti ti-chevron-down cv"></i></button>
+    <button class="fclear" onclick="clearFilters()">Clear</button>
+  </div>
+
+  <div id="log"></div>
+  <div class="empty" id="empty">No entries match those filters.</div>
+
+  <div class="foot">
+    Append only. Entries cannot be edited or deleted, by anyone, including administrators.
+    Corrections are made by recording a further entry. Retained for seven years.
+  </div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="gy-audit.js?v=c6461e23"></script>
+<script>
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(function(){t.style.display='none'},3200);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+var SRC = window.GY_AUDIT_SRC;
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
+
+/* filter state lives here, not in the DOM, because the menu is ours */
+var F = {cat:'', who:'', src:''};
+var SRCOPTS = [['person','Person'],['sync','Hubspot'],['agent','Agent'],['system','System']];
+
+function pick(btn, key, anyLabel, opts){
+  var rows = [[F[key]===''?'ti-check':'', anyLabel, function(){ F[key]=''; sync(); }], '-'];
+  opts.forEach(function(o){
+    rows.push([F[key]===o[0]?'ti-check':'', o[1], function(){ F[key]=o[0]; sync(); }]);
+  });
+  gyMenu(btn, rows);
+}
+function pickCat(b){ pick(b,'cat','Any category', GY_AUDIT_API.cats().map(function(x){return [x,x];})); }
+function pickWho(b){ pick(b,'who','Any actor',    GY_AUDIT_API.actors().map(function(x){return [x,x];})); }
+function pickSrc(b){ pick(b,'src','Any source',   SRCOPTS); }
+
+function label(id, val, anyLabel, opts){
+  var b = document.getElementById(id), text = anyLabel;
+  if(val) opts.forEach(function(o){ if(o[0]===val) text = o[1]; });
+  b.classList.toggle('on', !!val);
+  b.innerHTML = text + '<i class="ti ti-chevron-down cv"></i>';
+}
+function sync(){
+  label('bcat', F.cat, 'Any category', GY_AUDIT_API.cats().map(function(x){return [x,x];}));
+  label('bwho', F.who, 'Any actor',    GY_AUDIT_API.actors().map(function(x){return [x,x];}));
+  label('bsrc', F.src, 'Any source',   SRCOPTS);
+  paintFilterBtn();
+  draw();
+}
+
+function toggleFilters(force){
+  var bar = document.getElementById('filterBar');
+  var open = (force === undefined) ? !bar.classList.contains('open') : force;
+  bar.classList.toggle('open', open);
+  paintFilterBtn();
+}
+/* filters keep working while the bar is closed, so the button carries the count */
+function paintFilterBtn(){
+  var n = (F.cat?1:0) + (F.who?1:0) + (F.src?1:0);
+  var open = document.getElementById('filterBar').classList.contains('open');
+  var b = document.getElementById('filterBtn');
+  b.innerHTML = '<i class="ti ti-filter"></i> Filters' + (n ? ' <span class="bcount">'+n+'</span>' : '');
+  b.classList.toggle('on', open || n > 0);
+}
+
+function toggleSearch(force){
+  var bar = document.getElementById('searchBar');
+  var open = (force === undefined) ? !bar.classList.contains('open') : force;
+  bar.classList.toggle('open', open);
+  document.getElementById('searchBtn').classList.toggle('on', open);
+  if(open) document.getElementById('q').focus();
+  else { document.getElementById('q').value = ''; draw(); }
+}
+
+function matches(e){
+  var q = document.getElementById('q').value.trim().toLowerCase();
+  if(F.cat && e.cat !== F.cat) return false;
+  if(F.who && e.who !== F.who) return false;
+  if(F.src && e.src !== F.src) return false;
+  if(!q) return true;
+  var hay = [e.id,e.who,e.act,e.obj,e.from,e.to,e.note,e.cat,e.scope,(e.rows||[]).join(' ')].join(' ').toLowerCase();
+  return hay.indexOf(q) !== -1;
+}
+
+function changeCell(e){
+  if(e.from && e.to) return '<span class="was">'+esc(e.from)+'</span><span class="arw">&#8594;</span><span class="now">'+esc(e.to)+'</span>';
+  if(e.to)           return '<span class="now">'+esc(e.to)+'</span>';
+  if(e.from)         return '<span class="was">'+esc(e.from)+'</span>';
+  return '<span class="arw">&mdash;</span>';
+}
+
+function detail(e){
+  var s = SRC[e.src] || SRC.person;
+  var g = '<dl class="edgrid">';
+  g += '<dt>Entry</dt><dd><span class="edid">'+esc(e.id)+'</span></dd>';
+  g += '<dt>Recorded</dt><dd>'+esc(e.day)+' 2026, '+esc(e.time)+' Europe/London</dd>';
+  g += '<dt>Actor</dt><dd>'+esc(e.who)+', via '+esc(s.label.toLowerCase())+'</dd>';
+  g += '<dt>Category</dt><dd>'+esc(e.cat)+'</dd>';
+  g += '<dt>Record</dt><dd>'+esc(e.obj)+'</dd>';
+  g += '<dt>Before</dt><dd>'+(e.from ? esc(e.from) : 'Did not exist')+'</dd>';
+  g += '<dt>After</dt><dd>'+(e.to ? esc(e.to) : 'Removed')+'</dd>';
+  if(e.rows && e.rows.length)
+    g += '<dt>Affected</dt><dd><ul class="edrows">'
+       + e.rows.map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('') + '</ul></dd>';
+  if(e.note) g += '<dt>Context</dt><dd>'+esc(e.note)+'</dd>';
+  if(e.ref)  g += '<dt>Open</dt><dd><span class="edlink" onclick="location.href=\''+esc(e.ref)+'\'">'
+                + esc(e.obj)+' <i class="ti ti-arrow-up-right"></i></span></dd>';
+  g += '</dl>';
+  return g;
+}
+
+function draw(){
+  var list = (window.GY_AUDIT||[]).filter(matches);
+  var html = '', lastDay = null;
+  list.forEach(function(e, i){
+    /* each day closes its own card and opens the next, so the join is page, not table */
+    if(e.day !== lastDay){
+      if(lastDay !== null) html += '</div>';
+      html += '<div class="gytbl"><div class="gygrp">'+esc(e.day)+'</div>';
+      lastDay = e.day;
+    }
+    var s = SRC[e.src] || SRC.person;
+    html += '<div class="erow gyrow click" onclick="toggleRow(this)">'
+      + '<div class="ewhen">'+esc(e.time)+'</div>'
+      + '<div class="ewho"><span class="esrc" style="background:'+s.bg+';color:'+s.fg+'">'
+        + '<i class="ti '+s.icon+'"></i>'+esc(s.label)+'</span>'
+        + '<span class="nm">'+esc(e.who)+'</span></div>'
+      + '<div class="eevent"><b>'+esc(e.act)+'</b> <span>'+esc(e.obj)+'</span>'
+        + (e.scope ? '<span class="escope">'+esc(e.scope)+'</span>' : '') + '</div>'
+      + '<div class="echange">'+changeCell(e)+'</div>'
+      + '<div class="echev"><i class="ti ti-chevron-right"></i></div>'
+      + '</div>'
+      + '<div class="edet">'+detail(e)+'</div>';
+  });
+  if(lastDay !== null) html += '</div>';
+  document.getElementById('log').innerHTML = html
+    ? '<div class="gystack" style="--cols:86px 178px minmax(0,1fr) 290px 30px">'
+      + '<div class="gylegend"><span>Time</span><span>Actor</span><span>Event</span><span>Change</span><span></span></div>'
+      + html + '</div>'
+    : '';
+  document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+}
+
+function toggleRow(row){
+  var d = row.nextElementSibling;
+  if(!d || !d.classList.contains('edet')) return;
+  var open = d.classList.toggle('open');
+  row.classList.toggle('open', open);
+}
+
+function clearFilters(){
+  document.getElementById('q').value = '';
+  F.cat = F.who = F.src = '';
+  sync();
+}
+
+
+/* an export is itself an auditable event, so it writes one */
+function exportLog(){
+  var n = (window.GY_AUDIT||[]).length;
+  var now = new Date();
+  window.GY_AUDIT.unshift({
+    id:'AE-'+(4822 + Math.floor(Math.random()*40)),
+    day: GY_AUDIT[0] ? GY_AUDIT[0].day : 'Today',
+    time: ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2),
+    who:'Thomas Moes', src:'person', cat:'Data',
+    act:'Audit log exported', obj:'Audit log', from:'', to:'CSV, '+n+' rows',
+    note:'Exports are themselves recorded here'
+  });
+  draw();
+  toast('Exported '+n+' entries. The export is now the top entry.');
+}
+
+sync();
+</script>
+</body>
+</html>

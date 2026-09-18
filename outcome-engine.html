@@ -55,12 +55,14 @@
 .badge.emrg{background:#F1EEE6;color:var(--ink2)}
 .badge.live{background:var(--greenbg);color:var(--greend)}
 @media(max-width:1000px){.kpis,.layers{grid-template-columns:repeat(2,1fr)}.eins{grid-template-columns:1fr 1fr}}
+.gseat{display:block;width:100%}
 </style>
 </head>
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"outcome-engine"};</script>
-<script src="gy-nav.js?v=82d093ac"></script>
+<script src="gy-nav.js?v=35621c30"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -92,11 +94,11 @@
   <div class="epanel" id="panelMeasure">
     <div class="eins">
       <div class="ein"><label>Infrastructure asset</label>
-        <select><option>Anglian · Chelmsford WTW intake</option><option>SSEN · Chelmer substation</option><option>National Highways · A12 culvert</option></select></div>
+        <span class="gseat" id="oe1"></span></div>
       <div class="ein"><label>Intervention</label>
-        <select><option>Leaky wooden dams ×12</option><option>Beaver reintroduction</option><option>Wetland reconnection</option><option>Riparian woodland</option></select></div>
+        <span class="gseat" id="oe2"></span></div>
       <div class="ein"><label>Catchment</label>
-        <select><option>Spains Hall · R. Chelmer</option><option>Blackwater upper</option></select></div>
+        <span class="gseat" id="oe3"></span></div>
       <button class="btn-dark" onclick="toast('Prototype: this would run the causal estimate (Layer 3 Stage 1) and return a posterior distribution')" style="height:42px">Run estimate</button>
     </div>
 
@@ -119,11 +121,11 @@
   <div class="epanel" id="panelPrescribe" style="display:none">
     <div class="eins" style="grid-template-columns:1fr 1fr 1fr auto">
       <div class="ein"><label>Target outcome</label>
-        <select><option>Reduce turbidity at Chelmsford WTW</option><option>Cut peak flow at A12 culvert</option><option>Lower nitrate at intake</option></select></div>
+        <span class="gseat" id="oe4"></span></div>
       <div class="ein"><label>Catchment</label>
-        <select><option>Spains Hall · R. Chelmer</option><option>Blackwater upper</option></select></div>
+        <span class="gseat" id="oe5"></span></div>
       <div class="ein"><label>Budget</label>
-        <select><option>Up to £150k</option><option>Up to £500k</option><option>No limit</option></select></div>
+        <span class="gseat" id="oe6"></span></div>
       <button class="btn-dark" onclick="toast('Prototype: this would rank interventions by predicted effect per £ (Layer 3 Stage 2) at this unseen site')" style="height:42px">Find interventions</button>
     </div>
     <div class="eresult">
@@ -174,6 +176,29 @@ function setMode(m){
   btns[0].classList.toggle('on',m==='measure');
   btns[1].classList.toggle('on',m==='prescribe');
 }
+</script>
+<script>
+/* the one dropdown field, never a native select. See gySelect in gy-nav.js */
+(function(){
+  document.getElementById('oe1').innerHTML = gySel('oe1',{width:'100%',
+    options:["Anglian · Chelmsford WTW intake", "SSEN · Chelmer substation", "National Highways · A12 culvert"],
+    value:"Anglian · Chelmsford WTW intake"});
+  document.getElementById('oe2').innerHTML = gySel('oe2',{width:'100%',
+    options:["Leaky wooden dams ×12", "Beaver reintroduction", "Wetland reconnection", "Riparian woodland"],
+    value:"Leaky wooden dams ×12"});
+  document.getElementById('oe3').innerHTML = gySel('oe3',{width:'100%',
+    options:["Spains Hall · R. Chelmer", "Blackwater upper"],
+    value:"Spains Hall · R. Chelmer"});
+  document.getElementById('oe4').innerHTML = gySel('oe4',{width:'100%',
+    options:["Reduce turbidity at Chelmsford WTW", "Cut peak flow at A12 culvert", "Lower nitrate at intake"],
+    value:"Reduce turbidity at Chelmsford WTW"});
+  document.getElementById('oe5').innerHTML = gySel('oe5',{width:'100%',
+    options:["Spains Hall · R. Chelmer", "Blackwater upper"],
+    value:"Spains Hall · R. Chelmer"});
+  document.getElementById('oe6').innerHTML = gySel('oe6',{width:'100%',
+    options:["Up to £150k", "Up to £500k", "No limit"],
+    value:"Up to £150k"});
+})();
 </script>
 </body>
 </html>

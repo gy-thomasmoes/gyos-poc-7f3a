@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Inventory list · Evenlode · Great Yellow</title>
+<title>All inventory · Evenlode · Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,9 +23,9 @@ th[data-k]:hover .ca{color:var(--ink)}
   window.GYNAV={"active": es ? 'prog-inv-'+es : 'prog-inv-list'};
 })();
 </script>
-<script src="gy-nav.js?v=82d093ac"></script>
+<script src="gy-nav.js?v=35621c30"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
-<script src="gy-inventory.js?v=83d6a9e6"></script>
+<script src="gy-inventory.js?v=358d8962"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -34,13 +34,13 @@ th[data-k]:hover .ca{color:var(--ink)}
     <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
     <span class="sep">›</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
     <span class="sep">›</span><span class="cr" onclick="location.href='inventory-overview.html'">Inventory</span>
-    <span class="sep">›</span><span class="cr cur">Inventory list</span>
+    <span class="sep">›</span><span class="cr cur">All inventory</span>
   </div>
 </div>
 
 <div class="wrap">
   <div class="phead">
-    <div class="h1">Inventory list</div>
+    <div class="h1">All inventory</div>
     <div class="acts" id="abar"></div>
   </div>
 
@@ -103,18 +103,25 @@ function cell(v){ return v ? v : dash; }
    offer a value the inventory does not hold. F holds one array per facet and
    an empty array means the facet is off. */
 var F={avail:[], type:[], broad:[], dist:[], cond:[], site:[]};
+/* Commonest first, then alphabetical. A capped group shows its first four,
+   so the four that matter should be the ones the inventory actually holds
+   most of, not whatever sorts first. */
 function vals(key){
-  var seen={}, out=[];
+  var n={};
   GY_INV_API.rows('Evenlode').forEach(function(r){
-    var v=r[key]; if(v && !seen[v]){ seen[v]=1; out.push(v); }
+    var v=r[key]; if(v) n[v]=(n[v]||0)+1;
   });
-  return out.sort();
+  var rank=RANK[key];
+  return Object.keys(n).sort(function(a,b){
+    if(rank) return (rank[a]===undefined?99:rank[a])-(rank[b]===undefined?99:rank[b]);
+    return n[b]-n[a] || a.localeCompare(b);
+  });
 }
 function keep(r){
   for(var k in F){ if(F[k].length && F[k].indexOf(r[k])<0) return false; }
   return true;
 }
-/* these three read in their own order, not alphabetically */
+/* these three read in their own order, for both the filter and the sort */
 var RANK={
   avail:{'Available':0,'Projected':1,'Reserved':2,'Sold':3},
   dist :{'High':0,'Medium':1,'Low':2},
@@ -207,7 +214,7 @@ gyBar('abar', {
             ['ti-adjustments','Set sales restrictions','Restrict who these lines can be sold to'],
             '-',
             ['ti-file-export','Export inventory','Export the current view as a spreadsheet'],
-            ['ti-history','Audit log','Every change to these lines, with who and when']]
+            ['ti-history','Audit log','go:audit-log.html']]
 });
 </script>
 </body>

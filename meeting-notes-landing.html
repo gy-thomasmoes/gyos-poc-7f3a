@@ -63,14 +63,8 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .clink{color:var(--blued);cursor:pointer;font-size:14.5px}
 .clink:hover{text-decoration:underline}
 .lbl{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:18px 0 8px}
-.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr .9fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
-.thead span{display:flex;align-items:center;gap:6px}
-.thead .ti{font-size:14px}
 .group{font-size:14px;color:var(--ink2);padding:10px 18px 6px;display:flex;align-items:center;gap:8px}
 .count{font-size:12.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600}
-.row{display:grid;grid-template-columns:minmax(0,2.4fr) 1.2fr 1.3fr 1fr .9fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;font-size:15px}
-.row.click{cursor:pointer;transition:border-color .12s, box-shadow .12s}
-.row.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
 .row.dim{opacity:.55;cursor:default}
 .name{display:flex;align-items:center;gap:12px;min-width:0}
 .tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;font-size:17px}
@@ -94,7 +88,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 
 <div class="shell">
 <script>window.GYNAV={"active": "meeting-notes", "arts": "demand"};</script>
-<script src="gy-nav.js?v=82d093ac"></script>
+<script src="gy-nav.js?v=35621c30"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -111,7 +105,8 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
     <button class="btn-dark" onclick="toast('New note: the AI Assistant can open a blank note or start from a call recording')"><i class="ti ti-plus"></i> New note</button>
   </div>
 
-  <div class="thead" style="margin-top:18px">
+  <div class="gytbl" style="--cols:minmax(0,2.2fr) 1.1fr 1.3fr .8fr .9fr;margin-top:18px">
+  <div class="gyhd">
     <span>Meeting note</span>
     <span><i class="ti ti-stack-2"></i> Workflow</span>
     <span><i class="ti ti-users"></i> Attendees</span>
@@ -119,7 +114,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
     <span><i class="ti ti-user"></i> Author</span>
   </div>
 
-  <div class="row click" style="margin-top:6px" onclick="location.href='meeting-note-kickoff.html'">
+  <div class="gyrow click" style="margin-top:6px" onclick="location.href='meeting-note-kickoff.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg)">🤝</div>
       <div class="nm">Demand Mapping Kick-off Call</div>
@@ -131,6 +126,7 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
     </div>
     <div class="mut">Tue 1 Jul</div>
     <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>
+  </div>
   </div>
 </div>
 

@@ -73,15 +73,9 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .fav h4{font-size:16px;font-weight:600;color:var(--ink3)}
 .fav p{font-size:14px;color:var(--ink3);margin-top:4px}
 .lbl{font-size:12.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:18px 0 8px}
-.thead{display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1.2fr 1fr;gap:12px;padding:8px 18px;font-size:13.5px;color:var(--ink3)}
-.thead span{display:flex;align-items:center;gap:6px}
-.thead .ti{font-size:14px}
 .group{font-size:14px;color:var(--ink2);padding:10px 18px 6px;display:flex;align-items:center;gap:8px}
 .count{font-size:12.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600}
-.row{display:grid;grid-template-columns:minmax(0,2.4fr) 1fr 1.2fr 1fr;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:8px;font-size:15px}
 .dept{font-size:13px;font-weight:500;padding:3px 11px;border-radius:999px;white-space:nowrap}
-.row.click{cursor:pointer;transition:border-color .12s, box-shadow .12s}
-.row.click:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
 .row.dim{opacity:.55;cursor:default}
 .name{display:flex;align-items:center;gap:12px;min-width:0}
 .tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
@@ -177,13 +171,15 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
 .phead .acts{margin-left:auto;display:flex;gap:10px}
 .h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 .wfhide{display:none!important}
+.gseat{display:block;width:100%;margin-bottom:12px}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=82d093ac"></script>
+<script src="gy-nav.js?v=35621c30"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-docs.js?v=eb6965dc"></script>
 
 <div class="mainc">
@@ -203,7 +199,8 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
   </div>
 
   <div class="favstrip" id="favStrip"></div>
-  <div class="thead" style="margin-top:18px">
+  <div class="gytbl" style="--cols:minmax(0,2.4fr) 1fr 1.2fr 1fr;margin-top:18px">
+  <div class="gyhd">
     <span>Workflow</span>
     <span class="prog basiconly"><i class="ti ti-topology-star-3"></i> Programme</span>
     <span><i class="ti ti-chart-arcs"></i> Status</span>
@@ -211,7 +208,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <span><i class="ti ti-checklist"></i> Deliverable</span>
   </div>
 
-  <div class="row click basiconly" onclick="location.href='upper-dee-deliverable-page.html'">
+  <div class="gyrow click basiconly" onclick="location.href='upper-dee-deliverable-page.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-mountain"></i></div>
       <div class="nm">Upper Dee: Customer Demand Mapping</div>
@@ -221,8 +218,8 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
   </div>
 
-  <div class="group" style="margin-top:16px">Live <span class="count">1</span></div>
-  <div class="row click" id="dmRow" onclick="location.href='demand-mapping-canvas-prototype.html'">
+  <div class="gygrp">Live <span class="count">1</span></div>
+  <div class="gyrow click" id="dmRow" onclick="location.href='demand-mapping-canvas-prototype.html'">
     <div class="name">
       <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div>
       <div class="nm">Customer Demand Mapping</div>
@@ -233,9 +230,9 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
   </div>
 
   <div class="advonly">
-  <div class="group" style="margin-top:14px">Draft <span class="count">4</span></div>
+  <div class="gygrp">Draft <span class="count">4</span></div>
 
-  <div class="row click" onclick="location.href='customer-demand-mapping-v2-canvas.html'">
+  <div class="gyrow click" onclick="location.href='customer-demand-mapping-v2-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div>
       <div class="nm">Customer Demand Mapping v2</div>
@@ -245,7 +242,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='customer-demand-mapping-v2-canvas.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='customer-demand-mapping-v2-canvas.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
   </div>
 
-  <div class="row click" onclick="location.href='investor-qa-log-canvas-prototype.html'">
+  <div class="gyrow click" onclick="location.href='investor-qa-log-canvas-prototype.html'">
     <div class="name">
       <div class="tile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-messages"></i></div>
       <div class="nm">Investor Q&A Log</div>
@@ -254,7 +251,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">KI</span>Kishen</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
   </div>
 
-  <div class="row click" onclick="location.href='tender-to-bid-canvas-prototype.html'">
+  <div class="gyrow click" onclick="location.href='tender-to-bid-canvas-prototype.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-file-search"></i></div>
       <div class="nm">Tender to Bid</div>
@@ -264,7 +261,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">AR</span>Archie</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='tender-to-bid-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='tender-to-bid-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
   </div>
 
-  <div class="row click" onclick="location.href='lead-demand-mapping-canvas.html'">
+  <div class="gyrow click" onclick="location.href='lead-demand-mapping-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-map-search"></i></div>
       <div class="nm">Lead Demand mapping</div>
@@ -279,7 +276,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
   <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accDesign')"><i class="ti ti-chevron-down accarr"></i> In design <span class="count">3</span></div>
   <div class="accbody closed" id="accDesign">
 
-  <div class="row dim" onclick="toast('Market Readiness Assessment is not in this prototype yet. Demand Mapping is the pilot; each Workflow that follows gets cheaper.')">
+  <div class="gyrow dim" onclick="toast('Market Readiness Assessment is not in this prototype yet. Demand Mapping is the pilot; each Workflow that follows gets cheaper.')">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-gauge"></i></div>
       <div class="nm">Market Readiness Assessment</div>
@@ -288,7 +285,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">?</span>Trade lead</div>    <div class="mut">·</div>
   </div>
 
-  <div class="row dim" onclick="toast('Financial Model is not in this prototype yet. It will start from Demand Mapping data in the Platform, not from guesses.')">
+  <div class="gyrow dim" onclick="toast('Financial Model is not in this prototype yet. It will start from Demand Mapping data in the Platform, not from guesses.')">
     <div class="name">
       <div class="tile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-chart-line"></i></div>
       <div class="nm">Financial Model</div>
@@ -297,7 +294,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--bluebg);color:var(--blued)">JO</span>Josh</div>    <div class="mut">·</div>
   </div>
 
-  <div class="row dim" onclick="toast('Commercial Strategy is not in this prototype yet. Downstream of Demand Mapping: it consumes the map as its starting input.')">
+  <div class="gyrow dim" onclick="toast('Commercial Strategy is not in this prototype yet. Downstream of Demand Mapping: it consumes the map as its starting input.')">
     <div class="name">
       <div class="tile" style="background:var(--graybg);color:var(--grayd)"><i class="ti ti-compass"></i></div>
       <div class="nm">Commercial Strategy</div>
@@ -308,7 +305,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
   </div>
   <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accArch')"><i class="ti ti-chevron-down accarr"></i> Archive <span class="count">7</span></div>
   <div class="accbody closed" id="accArch">
-  <div class="row click basiconly arch" onclick="location.href='lead-supply-demand-mapping-canvas.html'">
+  <div class="gyrow click basiconly arch" onclick="location.href='lead-supply-demand-mapping-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-user"></i></div>
       <div class="nm">Lead Customer Demand Mapping</div>
@@ -319,7 +316,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
   </div>
 
 
-  <div class="row click basiconly arch" onclick="location.href='upper-dee-simple-drawer-canvas.html'">
+  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-simple-drawer-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-list-check"></i></div>
       <div class="nm">Upper Dee: simple drawer (experiment)</div>
@@ -329,7 +326,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
   </div>
 
-  <div class="row click basiconly arch" onclick="location.href='upper-dee-canvas-list-sidebar.html'">
+  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-canvas-list-sidebar.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right-expand"></i></div>
       <div class="nm">Upper Dee: canvas + list sidebar (experiment)</div>
@@ -339,7 +336,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
   </div>
 
-  <div class="row click basiconly arch" onclick="location.href='upper-dee-flow-list-canvas.html'">
+  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-flow-list-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right"></i></div>
       <div class="nm">Upper Dee: flow + list sidebar (experiment)</div>
@@ -349,7 +346,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
   </div>
 
-  <div class="row click basiconly arch" onclick="location.href='upper-dee-simple-views-canvas.html'">
+  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-simple-views-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-2"></i></div>
       <div class="nm">Upper Dee: simple views (experiment)</div>
@@ -359,7 +356,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
   </div>
 
-  <div class="row click arch" onclick="location.href='upper-dee-executor-steps-canvas.html'">
+  <div class="gyrow click arch" onclick="location.href='upper-dee-executor-steps-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-adjustments"></i></div>
       <div class="nm">Upper Dee: step executors (experiment)</div>
@@ -370,7 +367,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
   </div>
 
-  <div class="row click arch" onclick="location.href='demand-mapping-text-view-canvas.html'">
+  <div class="gyrow click arch" onclick="location.href='demand-mapping-text-view-canvas.html'">
     <div class="name">
       <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-align-left"></i></div>
       <div class="nm">Customer S&amp;D mapping: text view (experiment)</div>
@@ -379,6 +376,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
     <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
     <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>
     <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3b18a14ed56a8131ab1ac43928d15fcf','_blank','noopener')">Deliverable</span></div>
+  </div>
   </div>
   </div>
 </div>
@@ -394,26 +392,11 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
       <label class="cfl">Deliverable name</label>
       <input class="cin" id="cName" placeholder="e.g. Ock &amp; Thame: Customer Demand Mapping">
       <label class="cfl">Workflow blueprint</label>
-      <select class="cin" id="cWorkflow">
-        <option>Lead Customer Demand Mapping</option>
-        <option>Customer Demand Mapping</option>
-        <option>Investor Q&amp;A Log</option>
-      </select>
+      <span class="gseat" id="h-cWorkflow"></span>
       <label class="cfl">Save in project folder (Notion)</label>
-      <select class="cin" id="cFolder">
-        <option>Spains Hall Estate</option>
-        <option>Evenlode</option>
-        <option>Upper Dee</option>
-        <option>Ock &amp; Thame</option>
-        <option>The Wash</option>
-        <option>+ New project folder…</option>
-      </select>
+      <span class="gseat" id="h-cFolder"></span>
       <label class="cfl">Champion</label>
-      <select class="cin" id="cChampion">
-        <option>Caitlin</option>
-        <option>Kishen</option>
-        <option>Josh</option>
-      </select>
+      <span class="gseat" id="h-cChampion"></span>
       <label class="cfl">Team members</label>
       <div class="cms" id="cTeamField" onclick="toggleTeamPanel(event)">
         <span id="cTeamLabel" class="cms-ph">Select team members</span>
@@ -464,7 +447,7 @@ function deliverableRow(d){
   var target=CANVAS_FOR[d.w]||'lead-supply-demand-mapping-canvas.html';
   var prog=(d.f&&d.f.indexOf('New project')<0)?d.f:'New project';
   var initials=(d.champ||'').trim().slice(0,2).toUpperCase();
-  return '<div class="row click created" data-id="'+(d.id||'')+'" onclick="location.href=\''+target+'?deliverable='+encodeURIComponent(d.id||'')+'\'">'
+  return '<div class="gyrow click created" data-id="'+(d.id||'')+'" onclick="location.href=\''+target+'?deliverable='+encodeURIComponent(d.id||'')+'\'">'
     +'<div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-user"></i></div><div class="nm">'+esc(d.n)+'</div></div>'
     +'<div class="prog basiconly"><i class="ti ti-topology-star-3"></i> '+esc(prog)+'</div>'
     +'<div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>'
@@ -720,7 +703,7 @@ document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRende
       var d=GYD.dept(x.dept);
       var es=x.es?(window.GY_ES||{})[x.es]:null;
       var name=String(x.name).replace(/&amp;/g,'and').replace(/'/g,'');
-      return '<div class="row click" onclick="toast(\''+name+' is not built out in this prototype yet\')">'
+      return '<div class="gyrow click" onclick="toast(\''+name+' is not built out in this prototype yet\')">'
         +'<div class="name">'
           +'<div class="tile" style="background:'+d.bg+';color:'+d.fg+'"><i class="ti ti-topology-star-3"></i></div>'
           +'<div class="nm">'+x.wf
@@ -785,9 +768,24 @@ gyBar('abar', {
             '-',
             ['ti-file-import','Import workflow','Import a workflow definition from another programme'],
             ['ti-file-export','Export workflow','Export the definition as JSON'],
-            ['ti-history','Audit log','Every change to these workflows, with who and when']],
+            ['ti-history','Audit log','go:audit-log.html']],
   primary: {icon:'ti-plus', label:'Create new Deliverable', onclick:function(){ openCreate(); }}
 });
+</script>
+<script>
+/* the one dropdown field, never a native select. The hidden input keeps the
+   existing getElementById(...).value reads working. See gySelect in gy-nav.js */
+(function(){
+  document.getElementById('h-cWorkflow').innerHTML = gySel('cWorkflow',{id:'cWorkflow',width:'100%',
+    options:["Lead Customer Demand Mapping", "Customer Demand Mapping", "Investor Q&A Log"],
+    value:"Lead Customer Demand Mapping"});
+  document.getElementById('h-cFolder').innerHTML = gySel('cFolder',{id:'cFolder',width:'100%',
+    options:["Spains Hall Estate", "Evenlode", "Upper Dee", "Ock & Thame", "The Wash", "+ New project folder…"],
+    value:"Spains Hall Estate"});
+  document.getElementById('h-cChampion').innerHTML = gySel('cChampion',{id:'cChampion',width:'100%',
+    options:["Caitlin", "Kishen", "Josh"],
+    value:"Caitlin"});
+})();
 </script>
 </body>
 </html>

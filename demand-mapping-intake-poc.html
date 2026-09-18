@@ -182,7 +182,7 @@
   .tag.ten{background:rgba(183,90,64,.14);color:var(--orange);}
 
   .selwrap{position:relative;}
-  .selwrap select{width:100%;padding:10px 12px;border:1px solid var(--line2);border-radius:9px;font-size:13.5px;background:#fff;appearance:none;}
+  .gseat{display:block;width:100%}
 
   /* right rail */
   .rail{position:sticky;top:84px;display:flex;flex-direction:column;gap:16px;}
@@ -306,6 +306,7 @@
   .ureq.opt{background:var(--warmwhite);color:var(--grey);border:1px solid var(--line);}
   .ti{font-style:normal;}
 </style>
+<script src="gy-select.js?v=8aa301ed"></script>
 </head>
 <body>
 
@@ -572,12 +573,7 @@
           <div class="frow gap" id="addFrow">
             <div class="lbl">Additionality flag per outcome <span class="req">required</span> <span class="gaptag" id="addTag">needs you</span></div>
             <div class="selwrap">
-              <select id="addSelect" onchange="setAdditionality()">
-                <option value="" selected disabled>Select the additionality position</option>
-                <option value="a">All outcomes are additional to existing agreements</option>
-                <option value="b">Additional, except SFI-funded actions on OCK-02 / OCK-05</option>
-                <option value="c">Not yet assessed, needs Great Yellow review</option>
-              </select>
+<span class="gseat" id="h-addSelect"></span>
             </div>
             <p class="muted" style="font-size:11.5px;margin:7px 0 0">The assistant could not infer this from your files. Confirm it here, or ask the assistant on the right.</p>
           </div>
@@ -923,7 +919,7 @@
       addMsg('me','Set it based on my SFI agreements');
       setTimeout(function(){
         addMsg('ai','Done. Based on your SFI on OCK-02 and OCK-05, I have set: <b>Additional, except SFI-funded actions on those parcels</b>. You can change this any time.');
-        document.getElementById('addSelect').value='b';
+        gySelSet('add-sel','b');
         setAdditionality();
       },550);
     }else if(kind==='missing'){
@@ -1030,7 +1026,7 @@
     document.getElementById('pcSub').textContent='Parsing uploaded files';
     var addFr=document.getElementById('addFrow');addFr.classList.add('gap');
     document.getElementById('addTag').style.display='';
-    document.getElementById('addSelect').value='';
+    gySelSet('add-sel','');
     applyReviewState();
     setProgress('start');
   }
@@ -1054,6 +1050,17 @@
 if(location.search.indexOf('embed=1')!==-1){
   var r=document.querySelector('.app-rail'); if(r) r.style.display='none';
 }
+</script>
+<script>
+/* the one dropdown field, never a native select. See gySelect in gy-nav.js */
+(function(){
+  document.getElementById('h-addSelect').innerHTML = gySel('add-sel',{width:'100%', id:'addSelect',
+    placeholder:'Select the additionality position',
+    options:[['a','All outcomes are additional to existing agreements'],
+             ['b','Additional, except SFI-funded actions on OCK-02 / OCK-05'],
+             ['c','Not yet assessed, needs Great Yellow review']],
+    onchange:function(v){ if(v) setAdditionality(); }});
+})();
 </script>
 </body>
 </html>

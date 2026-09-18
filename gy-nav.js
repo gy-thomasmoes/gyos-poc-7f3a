@@ -237,7 +237,8 @@ window.gyCartoTiles = function(style){
     '<div class="gy-grp">Records</div>'
     +'<div class="sitem'+on('documents')+'" onclick="location.href=\'documents-overview.html\'"><i class="ti ti-file-text"></i> Documents <span class="scount" id="cntDocs"></span></div>'
     +'<div class="sitem'+on('meeting-notes')+'" onclick="location.href=\'meeting-notes.html\'"><i class="ti ti-note"></i> Meeting notes <span class="scount" id="cntNotes"></span></div>'
-    +'<div class="sitem'+on('activity')+'"'+(active==='activity'?'':' onclick="location.href=\'activity-overview.html\'"')+'><i class="ti ti-activity"></i> Activity</div>';
+    +'<div class="sitem'+on('activity')+'"'+(active==='activity'?'':' onclick="location.href=\'activity-overview.html\'"')+'><i class="ti ti-activity"></i> Activity</div>'
+    +'<div class="sitem'+on('audit')+'"'+(active==='audit'?'':' onclick="location.href=\'audit-log.html\'"')+'><i class="ti ti-lock"></i> Audit log</div>';
 
   function progPanel(){
     return ''
@@ -483,29 +484,6 @@ window.gyCartoTiles = function(style){
    +'.gy-mlbl{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;'
    +'color:var(--ink3);padding:9px 11px 4px}'
    +'.gy-mdiv{height:1px;background:var(--line);margin:6px 8px}'
-   /* ── state chip + tooltip ────────────────────────────────────────────
-      gyChip renders live state beside a page title: a status dot and a
-      short fact, never a description of the page. Hover or focus reveals
-      the rest through [data-tip], which is CSS only so any element can
-      carry one. */
-   +'.gychip{display:inline-flex;align-items:center;gap:7px;background:#F3EFE1;border-radius:999px;'
-   +'padding:4px 11px 4px 9px;font-size:12.5px;color:#766B62;white-space:nowrap;cursor:default;'
-   +'vertical-align:middle;position:relative;top:-2px}'
-   +'.gychip .gydot{width:7px;height:7px;border-radius:999px;background:#628147;flex:none}'
-   +'.gychip.stale .gydot{background:#EF9F27}'
-   +'.gychip.off .gydot{background:#A79E8D}'
-   +'[data-tip]{position:relative}'
-   +'[data-tip]::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 9px);'
-   +'transform:translateX(-50%);background:#1A0C12;color:#fff;font-size:12.5px;line-height:1.45;'
-   +'font-weight:400;letter-spacing:0;text-transform:none;padding:9px 12px;border-radius:10px;'
-   +'width:max-content;max-width:290px;white-space:pre-line;text-align:left;'
-   +'box-shadow:0 10px 30px rgba(31,31,29,.22);opacity:0;pointer-events:none;'
-   +'transition:opacity .13s .06s;z-index:1500}'
-   +'[data-tip]::before{content:"";position:absolute;left:50%;top:calc(100% + 3px);'
-   +'transform:translateX(-50%);border:5px solid transparent;border-bottom-color:#1A0C12;'
-   +'opacity:0;pointer-events:none;transition:opacity .13s .06s;z-index:1501}'
-   +'[data-tip]:hover::after,[data-tip]:focus-visible::after,'
-   +'[data-tip]:hover::before,[data-tip]:focus-visible::before{opacity:1}'
    /* ── top right action bar ────────────────────────────────────────────
       One bar for every page: Search, Filters, page buttons, Actions, then
       the primary button. Built by gyBar() so a new page cannot drift. */
@@ -523,7 +501,15 @@ window.gyCartoTiles = function(style){
    +'border:1px solid var(--line2);border-radius:14px;box-shadow:0 16px 44px rgba(31,31,29,.18);'
    +'padding:7px;z-index:1400;display:none;text-align:left}'
    +'.apop.on{display:block}'
-   +'.apop .ag{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:9px 11px 4px}'
+   +'.apop .ag{display:flex;align-items:center;gap:8px;cursor:pointer;border-radius:9px;'
+   +'font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:9px 11px}'
+   +'.apop .ag:hover{background:#F1EFE8}'
+   +'.apop .ag .sum{margin-left:auto;font-size:12px;font-weight:500;letter-spacing:0;'
+   +'text-transform:none;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}'
+   +'.apop .ag .chv{font-size:14px;color:var(--ink3);transition:transform .15s;flex:none}'
+   +'.apop .agrp+.agrp{border-top:1px solid var(--line);margin-top:4px;padding-top:4px}'
+   +'.apop .agrp.shut .arows,.apop .agrp.shut .asrch{display:none}'
+   +'.apop .agrp.shut .chv{transform:rotate(-90deg)}'
    +'.apop .ar{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;font-size:14px;color:var(--ink2);cursor:pointer}'
    +'.apop .ar:hover{background:#F1EFE8}'
    +'.apop .ar.on{color:var(--ink);font-weight:500}'
@@ -542,6 +528,19 @@ window.gyCartoTiles = function(style){
    +'.apop .asrch input{border:none;outline:none;background:transparent;font-family:inherit;'
    +'font-size:13.5px;color:var(--ink);width:100%}'
    +'.apop .anone{font-size:13px;color:var(--ink3);padding:7px 11px}'
+   +'.apop .amore{font-size:13px;color:var(--blued,#185FA5);cursor:pointer;padding:7px 11px;border-radius:9px}'
+   +'.apop .amore:hover{background:#F1EFE8}'
+   +'.apop .amore.hid{display:none}'
+   /* gyInfo: the small i beside a field label, explaining it on hover */
+   +'.gyinfo{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;'
+   +'border-radius:50%;border:1px solid var(--line2);color:var(--ink3);font-size:9.5px;font-weight:700;'
+   +'cursor:help;position:relative;vertical-align:-2px;margin-left:6px;font-style:normal}'
+   +'.gyinfo:hover{color:var(--ink);border-color:var(--ink3)}'
+   +'.gyinfo::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;'
+   +'transform:translateX(-50%);background:var(--dark,#1F1F1D);color:#fff;font-size:11.5px;font-weight:400;'
+   +'letter-spacing:0;text-transform:none;padding:6px 10px;border-radius:8px;width:max-content;max-width:230px;'
+   +'white-space:normal;text-align:left;line-height:1.45;opacity:0;pointer-events:none;transition:opacity .12s;z-index:1700}'
+   +'.gyinfo:hover::after{opacity:1}'
    +'.apop .afoot{display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);'
    +'margin-top:6px;padding:8px 11px 4px}'
    +'.apop .afoot .lk{font-size:13px;color:var(--ink3);cursor:pointer}'
@@ -563,6 +562,37 @@ window.gyCartoTiles = function(style){
    +'html.gybare .bandlab small{display:none}'
    +'html.gybare .band{background:rgba(255,255,255,.32)}'
    +'html.gybare .band.cur{border-width:1px;border-color:#DAD6CB;background:rgba(255,255,255,.62)}'
+      /* the canonical data table: the Sites page idiom, defined once here because
+      not every page links gy-shell.css. A table declares its own columns with
+      --cols on the container; everything else comes from these rules. */
+   +'.gytbl{border:1px solid #ECE7DB;border-radius:16px;overflow:hidden;background:#fff}'
+   +'.gyhd,.gyrow{display:grid;grid-template-columns:var(--cols,1fr);align-items:center;gap:14px;padding:13px 20px}'
+   +'.gyhd{background:#F3EFE1;border-bottom:1px solid #ECE7DB;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#766B62}'
+   +'.gyrow{border-bottom:1px solid #ECE7DB;padding:15px 20px;font-size:14.5px}'
+   +'.gyrow:last-child{border-bottom:none}'
+   +'.gyrow.click,.gyrow[onclick]{cursor:pointer}'
+   +'.gyrow.click:hover,.gyrow[onclick]:hover{background:#FBF8EF}'
+   +'.gytbl .r{text-align:right}'
+   +'.gytbl .num{font-variant-numeric:tabular-nums}'
+   +'.gytbl .nm{font-size:15.5px;font-weight:600;letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
+   +'.gytbl .mut{color:#766B62}'
+   +'.gyempty{padding:28px 20px;font-size:14px;color:#A79E8D;text-align:center}'
+   +'.gygrp{display:flex;align-items:center;gap:11px;padding:13px 20px;background:#F3EFE1;border-bottom:1px solid #ECE7DB;font-size:14.5px;font-weight:600;letter-spacing:-.01em}'
+   +'.gytbl .gygrp:not(:first-child){margin-top:15px}'
+   /* a stack turns one table into one card per group, separated by the page itself */
+   +'.gystack{display:block}'
+   +'.gystack .gytbl + .gytbl{margin-top:14px}'
+   +'.gylegend{display:grid;grid-template-columns:var(--cols,1fr);align-items:center;gap:14px;'
+     +'padding:0 21px 10px;font-size:11.5px;font-weight:600;letter-spacing:.06em;'
+     +'text-transform:uppercase;color:#766B62}'
+   /* the first band sits flush under the column header, not adrift from it */
+   +'.gytbl .gyhd + .gygrp{margin-top:0}'
+   +'table.gytbl{border-collapse:separate;border-spacing:0;width:100%}'
+   +'table.gytbl th{background:#F3EFE1;border-bottom:1px solid #ECE7DB;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#766B62;text-align:left;padding:13px 12px}'
+   +'table.gytbl td{border-bottom:1px solid #ECE7DB;padding:15px 12px;font-size:14.5px}'
+   +'table.gytbl tr:last-child td{border-bottom:none}'
+   +'table.gytbl tbody tr:hover td{background:#FBF8EF}'
+   +'@media(max-width:860px){.gyhd{display:none}.gyrow{grid-template-columns:1fr auto;row-gap:8px}}'
    +'html.gyembed body{--nav:0px}';
 
   /* keep the rail's to-do count in step with the shared store, on any page
@@ -1008,9 +1038,11 @@ window.gyCartoTiles = function(style){
     'inventory-bng-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
     'inventory-wcc-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
     'inventory-all.html':               {alt:'portfolio', trail:['Inventory']},
+    'requirement.html':                 {alt:'portfolio', trail:['Inventory']},
     'deals.html':                       {alt:'portfolio'},
     'deal.html':                        {alt:'portfolio', trail:['Deals']},
     'review-deals.html':                {alt:'portfolio', trail:['Deals']},
+    'audit-log.html':                   {alt:'portfolio'},
     'market-map-kwame.html':            {alt:'portfolio', trail:['Intelligence']},
     'outcome-engine.html':              {alt:'portfolio', trail:['Intelligence']},
 
@@ -1138,10 +1170,24 @@ window.gyCartoTiles = function(style){
      rows: '-' a divider, ['label','Text'] a section label, or
      ['ti-icon','Label', 'toast text' | 'go:page.html' | function]. */
   var gyMOpen = null;
+  /* One stable handler, always unbound on close. The old code built a fresh
+     closure per open that removed itself only when it fired, but a menu item
+     calls stopPropagation, so it never fired and never unbound. The stale
+     listener then closed the NEXT menu the instant it opened, which made
+     every menu on the page work exactly once. */
+  function gyMOnDoc(e){
+    if(gyMOpen && e && e.target && gyMOpen.contains(e.target)) return;
+    gyMClose();
+  }
   function gyMClose(){
+    document.removeEventListener('click', gyMOnDoc);
     if(gyMOpen && gyMOpen.parentNode) gyMOpen.parentNode.removeChild(gyMOpen);
     gyMOpen = null;
   }
+  /* gyInfo(tip): the small i that explains a field label on hover */
+  window.gyInfo = function(tip){
+    return '<i class="gyinfo" tabindex="0" data-tip="'+String(tip).replace(/"/g,'&quot;')+'">i</i>';
+  };
   /* gyChip(text, tip, state): live state beside a page title.
      state is '' (fresh), 'stale' or 'off'. */
   window.gyChip = function(text, tip, state){
@@ -1149,6 +1195,9 @@ window.gyCartoTiles = function(style){
       + (tip ? ' data-tip="'+String(tip).replace(/"/g,'&quot;')+'"' : '')
       + '><i class="gydot"></i>'+text+'</span>';
   };
+  /* The one dropdown field lives in gy-select.js, so a standalone page that
+     does not load this file can still use it. Never a native <select>. */
+
   window.gyMenuClose = gyMClose;
   window.gyMenu = function(anchor, rows){
     var same = gyMOpen && gyMOpen._anc === anchor;
@@ -1187,8 +1236,7 @@ window.gyCartoTiles = function(style){
     pop.style.left = Math.max(8, left) + 'px';
     pop.style.top  = top + 'px';
     gyMOpen = pop;
-    setTimeout(function(){ document.addEventListener('click', onDoc); }, 0);
-    function onDoc(){ document.removeEventListener('click', onDoc); gyMClose(); }
+    setTimeout(function(){ document.addEventListener('click', gyMOnDoc); }, 0);
   };
   /* ── gyBar: the top right action bar ────────────────────────────────────
      Call it once per page, after the markup exists:
@@ -1257,11 +1305,14 @@ window.gyCartoTiles = function(style){
 
     /* filters
        A group is ['Label', [[icon,label,value], ...]] and may carry a third
-       options object: {multi:true, search:true}. The first option is both the
-       default and the group's "any", so selecting it clears the rest.
-       Groups longer than 8 values get their own search field and scroll, and
-       the values in play are pinned under "any", which is what keeps a facet
-       with a hundred values usable. */
+       options object: {multi:true, search:true, cap:4, open:true}. The first
+       option is both the default and the group's "any", so selecting it clears
+       the rest.
+       The groups are an accordion: one open at a time, the rest collapsed to a
+       header carrying what they are set to, so six facets read as six lines.
+       Inside an open group, a list longer than 8 values gets its own search
+       field and shows only its first four values behind "Show all (N)".
+       Selected values survive both, and are pinned under "any". */
     var pop=null, fbtn=null, foot=null, groups=[];
     function gOpt(g){ return g[2]||{}; }
     function gAny(g){ return g[1][0][2]; }
@@ -1270,31 +1321,34 @@ window.gyCartoTiles = function(style){
       return gOpt(g).multi ? !!(v&&v.length) : v!==gAny(g);
     }
     function closePop(){ if(pop&&pop.classList.contains('on')){ pop.classList.remove('on'); fbtn.classList.remove('on'); } }
+    /* Up to three groups all fit open at once, so leave them open. Past that
+       the popup is long enough to be worth collapsing, and one stays open. */
+    var accordion = (cfg.filters||[]).length>3;
     if(cfg.filters && cfg.filters.length){
       pop=document.createElement('div'); pop.className='apop';
       cfg.filters.forEach(function(g,gi){
         var multi=!!gOpt(g).multi;
-        var searchable = gOpt(g).search===undefined ? g[1].length>8 : !!gOpt(g).search;
-        if(gi){ var d=document.createElement('div'); d.className='adiv'; pop.appendChild(d); }
-        var lab=document.createElement('div'); lab.className='ag'; lab.textContent=g[0]; pop.appendChild(lab);
+        var long = g[1].length>8;
+        var searchable = gOpt(g).search===undefined ? long : !!gOpt(g).search;
+        var cap = gOpt(g).cap===undefined ? (long?4:0) : gOpt(g).cap;
+        var grp=document.createElement('div');
+        grp.className='agrp'+(gOpt(g).open===undefined ? ((accordion&&gi)?' shut':'') : (gOpt(g).open?'':' shut'));
+        var lab=document.createElement('div'); lab.className='ag';
+        lab.innerHTML='<span>'+g[0]+'</span><span class="sum"></span><i class="ti ti-chevron-down chv"></i>';
+        grp.appendChild(lab);
         bar.filter[g[0]] = multi ? [] : gAny(g);
         var rows=document.createElement('div'); rows.className='arows';
-        groups.push({g:g, rows:rows, multi:multi});
+        var st={g:g, rows:rows, multi:multi, cap:cap, q:'', open:false, grp:grp, sum:lab.querySelector('.sum')};
+        groups.push(st);
+        lab.onclick=function(e){ e.stopPropagation(); openGroup(st); };
         if(searchable){
           var sb=document.createElement('div'); sb.className='asrch';
           sb.innerHTML='<i class="ti ti-search"></i><input placeholder="Search '+g[0].toLowerCase()+'">';
           var inp=sb.querySelector('input');
           inp.onclick=function(e){ e.stopPropagation(); };
-          inp.addEventListener('input', function(){
-            var q=this.value.toLowerCase(), shown=0;
-            [].forEach.call(rows.querySelectorAll('.ar'), function(x){
-              var hide = !!q && x.getAttribute('data-v')!==gAny(g) && x.getAttribute('data-l').indexOf(q)<0;
-              x.classList.toggle('hid', hide);
-              if(!hide) shown++;
-            });
-            rows.querySelector('.anone').style.display = shown>1 ? 'none' : '';
-          });
-          pop.appendChild(sb);
+          inp.addEventListener('input', function(){ st.q=this.value.toLowerCase(); showRows(st); });
+          grp.appendChild(sb);
+          st.inp=inp;
         }
         g[1].forEach(function(r,ri){
           var row=document.createElement('div');
@@ -1314,8 +1368,9 @@ window.gyCartoTiles = function(style){
               else { var at=cur.indexOf(r[2]); if(at>=0) cur.splice(at,1); else cur.push(r[2]); }
               bar.filter[g[0]] = sel = cur;
             }
-            paintGroup(g, rows);
-            pinGroup(g, rows);
+            paintGroup(st);
+            pinGroup(st);
+            showRows(st);
             paintCount();
             if(cfg.onfilter) cfg.onfilter(g[0], sel);
             else run('Filter: '+g[0].toLowerCase()+' '+String(r[1]).toLowerCase());
@@ -1325,7 +1380,14 @@ window.gyCartoTiles = function(style){
         var none=document.createElement('div');
         none.className='anone'; none.textContent='No match'; none.style.display='none';
         rows.appendChild(none);
-        pop.appendChild(rows);
+        var more=document.createElement('div');
+        more.className='amore hid';
+        more.onclick=function(e){ e.stopPropagation(); st.open=!st.open; showRows(st); };
+        rows.appendChild(more);
+        grp.appendChild(rows);
+        pop.appendChild(grp);
+        showRows(st);
+        paintSum(st);
       });
       foot=document.createElement('div'); foot.className='afoot off';
       foot.innerHTML='<span class="lk">Clear all</span>';
@@ -1337,18 +1399,59 @@ window.gyCartoTiles = function(style){
       el.appendChild(pop);
       bar.pop = pop;
     }
+    /* Which rows are on screen: the search query first, then the cap. Whatever
+       is selected always survives both, so a choice never hides behind
+       "Show all". */
+    function showRows(st){
+      var any=gAny(st.g), shown=0, total=0;
+      [].forEach.call(st.rows.querySelectorAll('.ar'), function(x){
+        if(x.getAttribute('data-v')===any){ x.classList.remove('hid'); return; }
+        if(st.q && x.getAttribute('data-l').indexOf(st.q)<0){ x.classList.add('hid'); return; }
+        total++;
+        var keep = st.open || !st.cap || x.classList.contains('on') || shown<st.cap;
+        x.classList.toggle('hid', !keep);
+        if(keep) shown++;
+      });
+      var more=st.rows.querySelector('.amore');
+      if(more){
+        more.classList.toggle('hid', !st.cap || total<=st.cap);
+        more.textContent = st.open ? 'Show less' : 'Show all ('+total+')';
+      }
+      st.rows.querySelector('.anone').style.display = total ? 'none' : '';
+    }
+    /* accordion: one group open at a time, and clicking the open one shuts it.
+       With three groups or fewer each header just toggles its own group. */
+    function openGroup(st){
+      var shut=st.grp.classList.contains('shut');
+      if(accordion) groups.forEach(function(x){ x.grp.classList.add('shut'); });
+      st.grp.classList.toggle('shut', !shut);
+      if(shut && st.inp) setTimeout(function(){ st.inp.focus(); }, 0);
+    }
+    /* a shut group still says what it is set to */
+    function paintSum(st){
+      if(!st.sum) return;
+      var g=st.g, v=bar.filter[g[0]];
+      function lbl(val){
+        var hit=g[1].filter(function(r){ return r[2]===val; })[0];
+        return hit ? hit[1] : val;
+      }
+      st.sum.textContent = st.multi
+        ? (!v || !v.length ? lbl(gAny(g)) : v.length===1 ? lbl(v[0]) : v.length+' selected')
+        : lbl(v);
+    }
     /* tick what is selected */
-    function paintGroup(g, rows){
-      var v=bar.filter[g[0]], multi=gOpt(g).multi;
-      [].forEach.call(rows.querySelectorAll('.ar'), function(x){
+    function paintGroup(st){
+      var g=st.g, v=bar.filter[g[0]];
+      [].forEach.call(st.rows.querySelectorAll('.ar'), function(x){
         var val=x.getAttribute('data-v');
-        var on = multi ? (val===gAny(g) ? !(v&&v.length) : (v||[]).indexOf(val)>=0) : val===v;
+        var on = st.multi ? (val===gAny(g) ? !(v&&v.length) : (v||[]).indexOf(val)>=0) : val===v;
         x.classList.toggle('on', on);
       });
+      paintSum(st);
     }
     /* selected values sit directly under "any", so a choice never scrolls away */
-    function pinGroup(g, rows){
-      var any=rows.querySelector('.ar[data-v="'+gAny(g)+'"]');
+    function pinGroup(st){
+      var rows=st.rows, any=rows.querySelector('.ar[data-v="'+gAny(st.g)+'"]');
       var at=any||null;
       [].forEach.call(rows.querySelectorAll('.ar.on'), function(x){
         if(x===any) return;
@@ -1368,8 +1471,9 @@ window.gyCartoTiles = function(style){
       groups.forEach(function(x){
         if(!gOn(x.g)) return;
         bar.filter[x.g[0]] = x.multi ? [] : gAny(x.g);
-        paintGroup(x.g, x.rows);
-        pinGroup(x.g, x.rows);
+        paintGroup(x);
+        pinGroup(x);
+        showRows(x);
         if(cfg.onfilter) cfg.onfilter(x.g[0], bar.filter[x.g[0]]);
       });
       paintCount();
@@ -1379,7 +1483,7 @@ window.gyCartoTiles = function(style){
       var x=groups.filter(function(y){return y.g[0]===group;})[0];
       if(!x) return;
       bar.filter[group]=value;
-      paintGroup(x.g, x.rows); pinGroup(x.g, x.rows); paintCount();
+      paintGroup(x); pinGroup(x); showRows(x); paintCount();
     };
 
     /* page buttons, then actions, then the primary */

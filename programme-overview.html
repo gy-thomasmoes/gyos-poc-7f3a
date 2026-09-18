@@ -72,9 +72,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 /* Title and meta take their colour from the picture's own shadows, a deep warm
    brown rather than the page's near-black plum, so the header reads as part of
    the band. Contrast measured against the actual pixels behind the glyphs. */
-.heroband .hello{color:#2A1A0C}
-.heroband .hsub{color:#3A2412}
-.heroband .hsub .ti{color:#4A3422}
+.heroband .hello{color:#1F1208;
+      /* one wide soft bloom, no tight edge: stacked because a single 60px blur
+         at a readable opacity is almost invisible on a busy ground */
+      text-shadow:0 0 60px rgba(255,252,246,.95),0 0 60px rgba(255,252,246,.8),0 0 60px rgba(255,252,246,.6),0 0 60px rgba(255,252,246,.4)}
+.heroband .hsub{color:#2C1A0B;
+      text-shadow:0 0 60px rgba(255,252,246,.95),0 0 60px rgba(255,252,246,.8),0 0 60px rgba(255,252,246,.55)}
+.heroband .hsub .ti{color:#3C2715}
 /* Action bar in the band takes the same warm family: the primary in the
    title's brown rather than the page's plum black, the secondary a warm cream
    that lets a little of the picture through. Scoped to .heroband so the same
@@ -200,11 +204,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 
 <div class="shell">
 <script>window.GYNAV={"active":"overview","arts":"demand"};</script>
-<script src="gy-nav.js?v=82d093ac"></script>
+<script src="gy-nav.js?v=35621c30"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-sites.js?v=31691678"></script>
 <script src="gy-calendar.js?v=b1dfa958"></script>
-<script src="gy-inventory.js?v=83d6a9e6"></script>
+<script src="gy-inventory.js?v=358d8962"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -362,7 +366,7 @@ var PO_MORE = [
   ['label','Land'],
   ['ti-map-pin-plus','Allocate parcels to projects','go:sites.html'],
   '-',
-  ['ti-history','Audit log','go:activity-overview.html']
+  ['ti-history','Audit log','go:audit-log.html']
 ];
 gyBar('abar', {
   actions: PO_MORE,

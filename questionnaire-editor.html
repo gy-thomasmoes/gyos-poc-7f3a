@@ -169,7 +169,8 @@ body.wbcol .wbpill{display:inline-flex}
 <body class="wbcol">
 
 <script>window.GYNAV={"active": "demand-mapping", "arts": "demand", "artActive": "Project context questionnaire"};</script>
-<script src="gy-nav.js?v=82d093ac"></script>
+<script src="gy-nav.js?v=35621c30"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
 
 <div class="mainc">
 <div class="row1">
@@ -300,19 +301,22 @@ function renderList(){
 function renderStage(){}
 
 function setHtml(q){
-  const typeOpts=Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${q.type===k?'selected':''}>${v.label}</option>`).join('');
-  const preOpts=[['none','Asked fresh every time'],['platform','Pre-fill from Data Platform'],['extract','AI Assistant drafts from uploads']].map(([k,v])=>`<option value="${k}" ${q.pre===k?'selected':''}>${v}</option>`).join('');
+  const PRE=[['none','Asked fresh every time'],['platform','Pre-fill from Data Platform'],['extract','AI Assistant drafts from uploads']];
   return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:2px">
     <span style="flex:1;font-weight:600;font-size:15px">${q.title}</span>
     <i class="ti ti-x" style="cursor:pointer;color:var(--ink3);font-size:16px" onclick="spopClose()"></i></div>`
-   +`<div class="pl">Question type</div><select class="fsel" onchange="setType(this.value)">${typeOpts}</select>`
+   +`<div class="pl">Question type</div>`
+   + gySel('qe-type',{width:'100%', value:q.type,
+       options:Object.entries(TYPES).map(([k,v])=>[k,v.label]),
+       onchange:v=>setType(v)})
    +((q.type!=='welcome'&&q.type!=='ending')?
      `<div class="pl">Settings</div>
       <div class="tgl"><input type="checkbox" ${q.req?'checked':''} onchange="QS.find(x=>x.id===SEL).req=this.checked;renderStage()"><span>Required<small>counts toward the completeness rule</small></span></div>
       <div class="pl">Maps to schema</div>
       <div class="mbx"><span class="tok">{ ${q.maps} }</span></div>
       <div class="nsmall">Traced to the Project context questionnaire. The Input complete? gate reads this binding.</div>
-      <div class="pl">Pre-fill</div><select class="fsel" onchange="QS.find(x=>x.id===SEL).pre=this.value;renderStage()">${preOpts}</select>
+      <div class="pl">Pre-fill</div>${gySel('qe-pre',{width:'100%', value:q.pre, options:PRE,
+        onchange:v=>{ QS.find(x=>x.id===SEL).pre=v; renderStage(); }})}
       <div class="pl">Module</div>
       <div class="mbx">${q.mod}<span class="tag" style="margin-left:auto;background:${q.mod==='Demand specifics'?'var(--amberbg)':'var(--bluebg)'};color:${q.mod==='Demand specifics'?'var(--amberd)':'var(--blued)'}">${q.mod==='Demand specifics'?'custom':'shared'}</span></div>`
     :`<div class="pl">Copy</div><div class="nsmall">Click the text on the left to edit it in place. Tone and brand accents live under Design.</div>`)

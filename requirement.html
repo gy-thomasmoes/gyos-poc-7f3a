@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Requirement · Inventory · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.phead{align-items:baseline}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.scope{padding:18px 20px;border-bottom:1px solid var(--line)}
+.srow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.srow+.shead{margin-top:18px}
+.shead{display:flex;align-items:baseline;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:.06em;
+       text-transform:uppercase;color:var(--ink2);margin-bottom:11px}
+.shead b{font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums}
+.pick{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:#fff;
+      border-radius:10px;padding:8px 15px;font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer}
+.pick:hover{border-color:var(--ink3)}
+.pick .ti{font-size:15px;color:var(--esc,var(--ink3))}
+.pick.on{background:var(--esc,var(--dark));border-color:var(--esc,var(--dark));color:#fff}
+.pick.on .ti{color:#fff}
+.fnum{border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font-family:inherit;font-size:13.5px;
+      background:#fff;color:var(--ink);width:104px}
+
+.lines{padding:18px 20px}
+.line{border:1px solid var(--line2);border-radius:13px;padding:14px 16px;margin-bottom:11px;background:#FDFCF8}
+.line .lh{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.line .lh .n{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.line .lh .st{font-size:12.5px;color:var(--ink2)}
+.line .lh .rm{margin-left:auto;font-size:12.5px;color:var(--ink3);cursor:pointer}
+.line .lh .rm:hover{color:#B5462F}
+.line .fields{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.line .fields span.x{font-size:13px;color:var(--ink3)}
+.addline{border:1px dashed var(--line2);border-radius:13px;padding:12px 16px;font-size:13.5px;color:var(--ink2);
+         text-align:center;cursor:pointer}
+.addline:hover{border-color:var(--ink3);color:var(--ink)}
+.foot{display:flex;align-items:center;gap:14px;padding:14px 20px;border-top:1px solid var(--line);background:#FBFAF6}
+.lcount{font-size:13.5px;color:var(--ink2)}
+.lcount b{color:var(--ink);font-weight:600}
+
+/* results */
+.res{margin-top:28px}
+.rgrp{margin-bottom:18px}
+.rgh{display:flex;align-items:baseline;gap:10px;margin-bottom:9px}
+.rgh .t{font-family:var(--serif);font-weight:500;font-size:19px;letter-spacing:-.01em}
+.rgh .c{font-size:13px;color:var(--ink2)}
+.ltbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.lhd,.lrow{display:grid;grid-template-columns:96px minmax(180px,1.5fr) 128px 66px minmax(130px,1fr) 74px;
+           gap:14px;align-items:center;padding:12px 18px}
+.lhd{background:var(--graybg);border-bottom:1px solid var(--line);font-size:12px;color:var(--ink2);
+     font-weight:500;letter-spacing:.02em}
+.lhd .r,.lrow .r{text-align:right}
+.lrow{border-bottom:1px solid var(--line);font-size:14.5px}
+.lrow:last-child{border-bottom:none}
+.lrow .ty{font-weight:600;letter-spacing:-.01em}
+.lrow .un{font-variant-numeric:tabular-nums}
+.lrow .si{color:var(--ink2);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fit{display:inline-flex;align-items:center;font-size:11.5px;font-weight:500;border-radius:999px;padding:3px 9px}
+.fit.ex{background:var(--greenbg);color:var(--greend)}
+.fit.pa{background:var(--amberbg);color:var(--amberd)}
+.fit.su{background:var(--bluebg);color:var(--blued)}
+.shortband{display:flex;align-items:center;gap:14px;background:#FDF6EE;border-top:1px solid #EBD9AE;
+           padding:13px 18px;font-size:14px}
+.shortband b{color:#B5462F;white-space:nowrap}
+.shortband span{color:var(--ink2);font-size:13.5px}
+.shortband .sp{flex:1}
+.nores{padding:26px 18px;text-align:center;color:var(--ink3);font-size:14px}
+.total{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);
+       border-radius:16px;padding:15px 20px;margin-top:16px;font-size:14.5px}
+.total .sp{flex:1}
+.total b{font-weight:600}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"pf-inv","scope":"portfolio"};</script>
+<script src="gy-nav.js?v=35621c30"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
+<script src="gy-projects.js?v=493e46ca"></script>
+<script src="gy-inventory.js?v=358d8962"></script>
+<script src="gy-deals.js?v=bf5a5f28"></script>
+<script src="gy-search.js?v=7032cc3b"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Portfolio</span>
+    <span class="sep">›</span><span class="cr" onclick="back()">Inventory</span>
+    <span class="sep">›</span><span class="cr cur">Requirement</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Requirement</div>
+    <span id="synclab"></span>
+    <div class="acts" id="abar"></div>
+  </div>
+
+  <div class="card">
+    <div class="scope" id="scope"></div>
+    <div class="lines" id="lines"></div>
+    <div class="foot">
+      <button class="btn-dark" onclick="runIt()">Find options</button>
+      <span class="lcount" id="lcount"></span>
+    </div>
+  </div>
+
+  <div class="res" id="res"></div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+var GS=window.GY_SEARCH_API, GI=window.GY_INV_API;
+var LPA=['West Oxfordshire DC','Cotswold DC','Cherwell DC'];
+var NCA=['Cotswolds','Upper Thames Clay Vales','Midvale Ridge'];
+var LNRS=['Oxfordshire','Gloucestershire','Warwickshire'];
+var SHORT={bng:'BNG', wcc:'WCC', soc:'Soil'};
+var FITLAB={exact:'Exact', partial:'Partial', substitute:'Substitute'};
+var FITCLS={exact:'ex', partial:'pa', substitute:'su'};
+
+/* the drawer hands the requirement over rather than making it again */
+var REQ = GS.load() || GS.newReq('bng','Evenlode');
+if(REQ.lines.length < 2) REQ.lines.push(GS.newLine(REQ.es));
+var PROG = REQ.prog || '';
+var shown = false;
+
+function u(n){ return Number(n).toLocaleString(); }
+function opts(list, cur, ph){
+  return '<option value="">'+ph+'</option>'
+    + list.map(function(o){ return '<option'+(o===cur?' selected':'')+'>'+o+'</option>'; }).join('');
+}
+function back(){ GS.clear(); location.href = PROG ? 'inventory-overview.html' : 'inventory-portfolio-overview.html'; }
+
+/* -- scope -- */
+function setService(es){ GS.setService(REQ, es); draw(); }
+function setScope(k,v){ REQ.scope[k]=v; draw(); }
+function scope(){
+  var isBng = REQ.es==='bng';
+  function pill(es){
+    var e=GY_ES[es];
+    return '<button class="pick '+e.cls+(REQ.es===es?' on':'')+'" onclick="setService(\''+es+'\')">'
+      +'<i class="ti '+e.icon+'"></i>'+SHORT[es]+'</button>';
+  }
+  var html = '<div class="shead"><b>1</b>Buying</div><div class="srow">'
+    + GI.services().map(pill).join('')
+    + gySel('r-prog',{options:function(){ return GI.programmes(); }, value:PROG,
+                      placeholder:'All programmes', onchange:setProg})
+    + '</div>';
+  if(isBng){
+    html += '<div class="shead"><b>2</b>Where</div><div class="srow">'
+      + gySel('r-lpa',{options:LPA, value:REQ.scope.lpa, placeholder:'Any LPA',
+                       onchange:function(v){ setScope('lpa',v); }})
+      + gySel('r-nca',{options:NCA, value:REQ.scope.nca, placeholder:'Any NCA',
+                       onchange:function(v){ setScope('nca',v); }})
+      + gySel('r-lnrs',{options:LNRS, value:REQ.scope.lnrs, placeholder:'Any LNRS authority',
+                        onchange:function(v){ setScope('lnrs',v); }})
+      + '</div>';
+  }
+  document.getElementById('scope').innerHTML = html;
+}
+function setProg(v){ PROG=v; REQ.prog=v; draw(); }
+
+/* -- lines -- */
+function setLine(i,k,v,quiet){ REQ.lines[i][k]=v; draw(quiet); }
+function addLine(){ REQ.lines.push(GS.newLine(REQ.es)); draw(); }
+function delLine(i){
+  REQ.lines.splice(i,1);
+  if(!REQ.lines.length) REQ.lines.push(GS.newLine(REQ.es));
+  draw();
+}
+function lineHtml(L, i, res){
+  var isBng = REQ.es==='bng';
+  var st = res ? (res.short ? res.short+' short of '+res.need : (res.need ? 'all '+res.need+' found' : res.got+' units found')) : '';
+  return '<div class="line"><div class="lh"><span class="n">Line '+(i+1)+'</span>'
+    + (st?'<span class="st">'+st+'</span>':'')
+    + (REQ.lines.length>1?'<span class="rm" onclick="delLine('+i+')">Remove</span>':'')
+    + '</div><div class="fields">'
+    + gySel('r-type-'+i,{options:function(){ return GS.typesFor(REQ.es,PROG); }, value:L.type,
+        placeholder:isBng?'Any habitat':REQ.es==='wcc'?'Any vintage':'Any land type', width:'188px',
+        onchange:function(v){ setLine(i,'type',v); }})
+    + (isBng ? gySel('r-cond-'+i,{options:function(){ return GS.condsFor(PROG); }, value:L.cond,
+        placeholder:'Any condition', width:'160px',
+        onchange:function(v){ setLine(i,'cond',v); }}) : '')
+    + gySel('r-floor-'+i,{options:function(){ return GS.ladder(REQ.es).map(function(r){
+        return [r.key, 'At least '+r.lc]; }); }, value:L.floor, width:'206px',
+        onchange:function(v){ setLine(i,'floor',v); }})
+    + '<input class="fnum" type="number" placeholder="Units" value="'+L.units+'" oninput="setLine('+i+',\'units\',this.value,1)">'
+    + '<span class="x">at most</span>'
+    + '<input class="fnum" type="number" placeholder="\u00a3 a unit" value="'+L.pmax+'" oninput="setLine('+i+',\'pmax\',this.value,1)">'
+    + '</div></div>';
+}
+function lines(res){
+  document.getElementById('lines').innerHTML =
+    REQ.lines.map(function(L,i){ return lineHtml(L,i,res?res.lines[i]:null); }).join('')
+    + '<div class="addline" onclick="addLine()">+ Add another type</div>';
+}
+
+/* -- results -- */
+function rowsHtml(r){
+  return '<div class="ltbl">'
+    + '<div class="lhd"><span>Fit</span><span>Inventory line</span><span>Certainty</span>'
+      + '<span class="r">Units</span><span>Site</span><span class="r">Price</span></div>'
+    + (r.matches.length ? r.matches.map(function(m){
+        var x=m.row;
+        return '<div class="lrow '+GY_ES[x.es].cls+'">'
+          +'<span><span class="fit '+FITCLS[m.fit]+'">'+FITLAB[m.fit]+'</span></span>'
+          +'<span class="ty">'+x.type+(x.cond?', '+x.cond:'')+'</span>'
+          +'<span class="si">'+GS.labelOf(x.es, x.avail==='Available'?'available':x.stage)+'</span>'
+          +'<span class="un r">'+u(m.units)+'</span>'
+          +'<span class="si">'+x.site+'</span>'
+          +'<span class="r si">'+(m.price?'£'+u(m.price):'&mdash;')+'</span></div>';
+      }).join('') : '<div class="nores">Nothing matches this line</div>')
+    + (r.short ? '<div class="shortband"><b>'+r.short+' units short</b>'
+        +'<span>Lower the certainty floor, widen the geography, or take a substitute.</span>'
+        +'<span class="sp"></span>'
+        +'<button class="btn-out" onclick="widen('+REQ.lines.indexOf(r.line)+')">Widen this line</button></div>' : '')
+    + '</div>';
+}
+function widen(i){
+  var L=REQ.lines[i], l=GS.ladder(REQ.es), at=0;
+  l.forEach(function(r,n){ if(r.key===L.floor) at=n; });
+  if(at>0){ L.floor=l[at-1].key; draw(); gyToast('Certainty floor lowered to '+l[at-1].lc); }
+  else gyToast('Already at the lowest rung. Widen the geography or drop the type');
+}
+function results(res){
+  var el=document.getElementById('res');
+  if(!shown){ el.innerHTML=''; return; }
+  el.innerHTML = res.lines.map(function(r,i){
+      return '<div class="rgrp"><div class="rgh"><div class="t">Line '+(i+1)+'</div>'
+        +'<div class="c">'+(r.line.type||'Any type')+' · '+r.matches.length+' match'
+        +(r.matches.length===1?'':'es')+' · '+u(r.got)+(r.need?' of '+r.need:'')+' units</div></div>'
+        + rowsHtml(r) + '</div>';
+    }).join('')
+    + '<div class="total"><b>'+u(res.units)+(res.need?' of '+u(res.need):'')+' units across '
+      + res.lines.length+' line'+(res.lines.length===1?'':'s')+'</b>'
+      + (res.short?'<span style="color:#B5462F">'+res.short+' short</span>':'')
+      + '<span class="sp"></span>'
+      + '<button class="btn-out" onclick="gyToast(\'Saved. A requirement can be re-run and attached to a deal\')">Save requirement</button>'
+      + '<button class="btn-dark" onclick="gyToast(\'Add to deal: pick the deal, then units and price per line\')">'
+      + 'Add '+u(res.units)+' units to a deal</button></div>';
+}
+
+function draw(quiet){
+  var res = GS.run(REQ, PROG);
+  if(!quiet){ scope(); lines(res); }
+  document.getElementById('lcount').innerHTML = res.rows
+    ? '<b>'+res.rows+'</b> line'+(res.rows===1?'':'s')+' match, <b>'+u(res.units)+'</b>'
+      +(res.need?' of <b>'+u(res.need)+'</b>':'')+' units'
+    : 'Nothing matches yet';
+  results(res);
+  GS.save(REQ);
+}
+function runIt(){ shown=true; draw(); }
+
+document.getElementById('synclab').innerHTML = gyChip('Not saved',
+  'A requirement is a buyer\'s need written down.\nSave it to re-run it, or attach it to a deal.', 'off');
+
+gyBar('abar', {
+  buttons: [{icon:'ti-arrow-left', label:'Inventory', onclick:back}],
+  actions: [
+    ['ti-file-upload','Import a BNG metric','A metric is a requirement already written down. Import fills the lines in'],
+    ['ti-device-floppy','Save requirement','Saved requirements can be re-run and attached to a deal'],
+    '-',
+    ['ti-rotate','Start again', function(){ REQ=GS.newReq('bng',PROG); shown=false; draw(); }]
+  ]
+});
+
+draw();
+</script>
+</body>
+</html>

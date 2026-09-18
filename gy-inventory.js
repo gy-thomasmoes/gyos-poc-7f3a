@@ -86,6 +86,32 @@
   ];
   var LPA='West Oxfordshire DC', NCA='Cotswolds', LNRS='Oxfordshire';
 
+  /* Registry stage, the second axis. ITEMS carries commercial state only
+     (Projected, Available, Reserved, Sold); how far through its own regime a
+     line has got is a different question, and search asks it. Anything that
+     has left Projected is at the top of its ladder by definition, so only the
+     projected lines need a stage. Keyed rather than added as a column so the
+     ITEMS rows stay as they are. */
+  var PROJ_STAGE = {
+    'Evenlode|bng|Lowland meadow':   'secured',      /* Ascott Floodplain, s106 signed */
+    'Evenlode|bng|Cover crops':      'feasibility',  /* Fifield Pastures, draft */
+    'Evenlode|bng|Mixed scrub':      'feasibility',
+    'Evenlode|wcc|2034 (PIU)':       'validated',
+    'Evenlode|wcc|2039 (PIU)':       'validated',
+    'Evenlode|soc|Cropland':         'projected',
+    'Evenlode|soc|Pasture':          'projected',
+    'Spains Hall|bng|Floodplain grazing marsh':'designed',
+    'Spains Hall|bng|Mixed scrub':   'designed',
+    'Spains Hall|wcc|2032 (PIU)':    'validated',
+    'Spains Hall|soc|Cropland':      'projected'
+  };
+  var TOP_STAGE = {bng:'registered', wcc:'verified', soc:'verified'};
+  var LOW_STAGE = {bng:'feasibility', wcc:'projected', soc:'projected'};
+  function stageOf(prog, es, avail, type){
+    if(avail !== 'Projected') return TOP_STAGE[es] || '';
+    return PROJ_STAGE[prog+'|'+es+'|'+type] || LOW_STAGE[es] || '';
+  }
+
   function proj(es){ return (window.GY_PROJECTS||[]).filter(function(p){return p.es===es;}); }
   function sumMoney(a,b){
     function n(x){ var m=/£([\d.]+)k/.exec(x||''); return m?parseFloat(m[1]):0; }
@@ -158,6 +184,7 @@
     return ITEMS.filter(function(r){ return !prog || r[0]===prog; }).map(function(r){
       return {prog:r[0], es:r[1], avail:r[2], type:r[3], units:r[4], ha:r[5], site:r[6],
               dist:r[7], cond:r[8], broad:r[9], hid:r[10],
+              stage:stageOf(r[0], r[1], r[2], r[3]),
               lpa:(r[1]==='bng'?LPA:''), nca:(r[1]==='bng'?NCA:''), lnrs:(r[1]==='bng'?LNRS:'')};
     });
   }
@@ -184,6 +211,7 @@
     total:     function(prog){ return rows(prog).reduce(function(t,r){return t+r.units;},0); },
     risk:      function(es){ return (RISK[es]||[]).map(function(r){
                  return {label:r[0], reserved:r[1], unreserved:r[2], free:r[3], total:r[1]+r[2]+r[3]}; }); },
+    stageOf:   stageOf,
     riskLabel: function(es){ return es==='bng' ? 'BNG specific type'
                                 : es==='wcc' ? 'WCC vintage' : 'Soil carbon land type'; }
   };
