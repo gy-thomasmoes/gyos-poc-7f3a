@@ -17,7 +17,9 @@
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .scope{padding:18px 20px;border-bottom:1px solid var(--line)}
-.srow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.srow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.srow .fld{min-width:0}
+.srow .flab{display:block;font-size:12.5px;font-weight:500;color:var(--ink2);margin:0 0 6px 2px}
 .srow+.shead{margin-top:18px}
 .shead{display:flex;align-items:baseline;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:.06em;
        text-transform:uppercase;color:var(--ink2);margin-bottom:11px}
@@ -111,7 +113,7 @@
     <div class="scope" id="scope"></div>
     <div class="lines" id="lines"></div>
     <div class="foot">
-      <button class="btn-dark" onclick="runIt()">Find options</button>
+      <button class="btn-dark" onclick="runIt()">Find units</button>
       <span class="lcount" id="lcount"></span>
     </div>
   </div>
@@ -134,7 +136,8 @@ var FITCLS={exact:'ex', partial:'pa', substitute:'su'};
 /* the drawer hands the requirement over rather than making it again */
 var REQ = GS.load() || GS.newReq('bng','Evenlode');
 if(REQ.lines.length < 2) REQ.lines.push(GS.newLine(REQ.es));
-var PROG = REQ.prog || '';
+var AT = REQ.prog || '';                 /* the altitude it was raised at */
+function PROGNOW(){ return GS.progOf(REQ, AT); }   /* what a run is scoped to */
 var shown = false;
 
 function u(n){ return Number(n).toLocaleString(); }
@@ -142,7 +145,7 @@ function opts(list, cur, ph){
   return '<option value="">'+ph+'</option>'
     + list.map(function(o){ return '<option'+(o===cur?' selected':'')+'>'+o+'</option>'; }).join('');
 }
-function back(){ GS.clear(); location.href = PROG ? 'inventory-overview.html' : 'inventory-portfolio-overview.html'; }
+function back(){ GS.clear(); location.href = AT ? 'inventory-overview.html' : 'inventory-portfolio-overview.html'; }
 
 /* -- scope -- */
 function setService(es){ GS.setService(REQ, es); draw(); }
@@ -154,24 +157,35 @@ function scope(){
     return '<button class="pick '+e.cls+(REQ.es===es?' on':'')+'" onclick="setService(\''+es+'\')">'
       +'<i class="ti '+e.icon+'"></i>'+SHORT[es]+'</button>';
   }
-  var html = '<div class="shead"><b>1</b>Buying</div><div class="srow">'
+  var n=0;
+  function fld(label, tip, control){
+    return '<div class="fld"><label class="flab">'+label+(tip?gyInfo(tip):'')+'</label>'+control+'</div>';
+  }
+  var html = '<div class="shead"><b>'+(++n)+'</b>Service</div><div class="srow">'
     + GI.services().map(pill).join('')
-    + gySel('r-prog',{options:function(){ return GI.programmes(); }, value:PROG,
-                      placeholder:'All programmes', onchange:setProg})
     + '</div>';
-  if(isBng){
-    html += '<div class="shead"><b>2</b>Where</div><div class="srow">'
-      + gySel('r-lpa',{options:LPA, value:REQ.scope.lpa, placeholder:'Any LPA',
-                       onchange:function(v){ setScope('lpa',v); }})
-      + gySel('r-nca',{options:NCA, value:REQ.scope.nca, placeholder:'Any NCA',
-                       onchange:function(v){ setScope('nca',v); }})
-      + gySel('r-lnrs',{options:LNRS, value:REQ.scope.lnrs, placeholder:'Any LNRS authority',
-                        onchange:function(v){ setScope('lnrs',v); }})
+  /* AT is the altitude the requirement was raised at: set means one programme
+     already, empty means portfolio, where the buyer's own programme scope
+     becomes a question worth asking. */
+  if(isBng || !AT){
+    html += '<div class="shead"><b>'+(++n)+'</b>Where</div><div class="srow">'
+      + (isBng ? fld('LPA','Local planning authority. A BNG buyer usually has to buy inside the LPA their development sits in, or pay a spatial penalty.',
+          gySel('r-lpa',{options:LPA, value:REQ.scope.lpa, placeholder:'Any LPA',
+                         onchange:function(v){ setScope('lpa',v); }})) : '')
+      + (isBng ? fld('NCA','National Character Area. The next ring out if the LPA cannot be matched.',
+          gySel('r-nca',{options:NCA, value:REQ.scope.nca, placeholder:'Any NCA',
+                         onchange:function(v){ setScope('nca',v); }})) : '')
+      + (isBng ? fld('LNRS','Local Nature Recovery Strategy area. Units inside one carry a strategic significance uplift.',
+          gySel('r-lnrs',{options:LNRS, value:REQ.scope.lnrs, placeholder:'Any LNRS authority',
+                          onchange:function(v){ setScope('lnrs',v); }})) : '')
+      + (!AT ? fld('Programme','Limit the answer to one programme. Leave it on every programme to sell from wherever the units are.',
+          gySel('r-prog',{options:[['','Every programme']].concat(GI.programmes().map(function(x){return [x,x];})),
+                          value:REQ.scope.prog, placeholder:'Every programme',
+                          onchange:function(v){ setScope('prog',v); }})) : '')
       + '</div>';
   }
   document.getElementById('scope').innerHTML = html;
 }
-function setProg(v){ PROG=v; REQ.prog=v; draw(); }
 
 /* -- lines -- */
 function setLine(i,k,v,quiet){ REQ.lines[i][k]=v; draw(quiet); }
@@ -188,10 +202,10 @@ function lineHtml(L, i, res){
     + (st?'<span class="st">'+st+'</span>':'')
     + (REQ.lines.length>1?'<span class="rm" onclick="delLine('+i+')">Remove</span>':'')
     + '</div><div class="fields">'
-    + gySel('r-type-'+i,{options:function(){ return GS.typesFor(REQ.es,PROG); }, value:L.type,
+    + gySel('r-type-'+i,{options:function(){ return GS.typesFor(REQ.es, PROGNOW()); }, value:L.type,
         placeholder:isBng?'Any habitat':REQ.es==='wcc'?'Any vintage':'Any land type', width:'188px',
         onchange:function(v){ setLine(i,'type',v); }})
-    + (isBng ? gySel('r-cond-'+i,{options:function(){ return GS.condsFor(PROG); }, value:L.cond,
+    + (isBng ? gySel('r-cond-'+i,{options:function(){ return GS.condsFor(PROGNOW()); }, value:L.cond,
         placeholder:'Any condition', width:'160px',
         onchange:function(v){ setLine(i,'cond',v); }}) : '')
     + gySel('r-floor-'+i,{options:function(){ return GS.ladder(REQ.es).map(function(r){
@@ -254,7 +268,7 @@ function results(res){
 }
 
 function draw(quiet){
-  var res = GS.run(REQ, PROG);
+  var res = GS.run(REQ, PROGNOW());
   if(!quiet){ scope(); lines(res); }
   document.getElementById('lcount').innerHTML = res.rows
     ? '<b>'+res.rows+'</b> line'+(res.rows===1?'':'s')+' match, <b>'+u(res.units)+'</b>'
@@ -274,7 +288,7 @@ gyBar('abar', {
     ['ti-file-upload','Import a BNG metric','A metric is a requirement already written down. Import fills the lines in'],
     ['ti-device-floppy','Save requirement','Saved requirements can be re-run and attached to a deal'],
     '-',
-    ['ti-rotate','Start again', function(){ REQ=GS.newReq('bng',PROG); shown=false; draw(); }]
+    ['ti-rotate','Start again', function(){ REQ=GS.newReq('bng',AT); shown=false; draw(); }]
   ]
 });
 
