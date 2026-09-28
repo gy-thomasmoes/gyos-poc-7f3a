@@ -44,8 +44,9 @@ window.gyCartoTiles = function(style){
      e.g. inside a Notion /embed block, showing just the scrollable board. */
   try{ var qp=new URLSearchParams(location.search);
     if(qp.get('embed')==='1') document.documentElement.classList.add('gyembed');
-    /* bare=1: also hide the canvas's own chrome (chapter nav, About, Activity)
-       for hosts that already show that state around the embed. */
+    /* bare=1: also hide the canvas's own floating controls — About Workflow,
+       Activity and Play demo — for hosts that drive those themselves. The
+       board, its node sub-lines, the chapter nav and the band state all stay. */
     if(qp.get('bare')==='1') document.documentElement.classList.add('gybare');
   }catch(e){}
 
@@ -205,7 +206,7 @@ window.gyCartoTiles = function(style){
   var ITEM_GENIE =
     '<div class="sitem" onclick="gyToast(\'Ask the data (Genie): natural-language questions over the data platform, not in this prototype yet\')"><i class="ti ti-sparkles"></i> Ask the data (Genie)</div>';
   var ITEM_WORKFLOWS =
-    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Workflows <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
+    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
     +'<div class="ssub'+delCls+'" id="delSub">'+rows(DELIVERABLES)+artsHtml+'</div>';
   /* Simple version: only the live pilot, Demand Mapping, opened in its manual first version. */
   var DELIVERABLES_BASIC = [
@@ -214,8 +215,10 @@ window.gyCartoTiles = function(style){
     ['workflow-experiment-mapping','Workflow experiment: S&D Mapping',"location.href='workflow-experiment-supply-demand-mapping-canvas.html'"],
     ['demand-mapping','Customer Demand Mapping',"location.href='demand-mapping-canvas-prototype.html'"]
   ];
+  var ITEM_AUTOMATIONS =
+    '<div class="sitem'+on('automations')+'"'+(active==='automations'?'':' onclick="location.href=\'automations.html\'"')+'><i class="ti ti-settings-automation"></i> Automations</div>';
   var ITEM_WORKFLOWS_BASIC =
-    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Workflows <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
+    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
     +'<div class="ssub'+delCls+'" id="delSub">'+rows(DELIVERABLES_BASIC)+'</div>';
 
   /* Basic POC: slimmed first-steps view, with bundle titles above the links.
@@ -248,6 +251,7 @@ window.gyCartoTiles = function(style){
     +'<div class="sitem'+on('prog-projects')+'"'+(active==='prog-projects'?'':' onclick="location.href=\'projects.html\'"')+'><i class="ti ti-map"></i> Projects</div>'
     +'<div class="sitem'+on('prog-sites')+'"'+(active==='prog-sites'?'':' onclick="location.href=\'sites.html\'"')+'><i class="ti ti-map-pin"></i> Sites</div>'
     +ITEM_WORKFLOWS
+    +ITEM_AUTOMATIONS
     +RECORDS;
   }
   function pfPanel(){
@@ -256,7 +260,7 @@ window.gyCartoTiles = function(style){
     +'<div class="gy-grp">Manage</div>'
     +ITEM_INV_PF
     +'<div class="sitem'+on('pf-deals')+'"'+(active==='pf-deals'?'':' onclick="location.href=\'deals.html\'"')+'><i class="ti ti-businessplan"></i> Deals</div>'
-    +'<div class="sitem" onclick="gyToast(\'Workflows: cross-programme, portfolio-level workflows live here\')"><i class="ti ti-hierarchy-2"></i> Workflows</div>'
+    +'<div class="sitem" onclick="gyToast(\'Deliverables: cross-programme, portfolio-level deliverables live here\')"><i class="ti ti-hierarchy-2"></i> Deliverables</div>'
     +'<div class="gy-grp">Intelligence</div>'
     +ITEM_MARKETMAP
     +RECORDS;
@@ -325,6 +329,8 @@ window.gyCartoTiles = function(style){
    +'.gy-modemenu{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:196px;background:#fff;border:1px solid #CFCDC5;border-radius:11px;box-shadow:0 12px 34px rgba(31,31,29,.18);padding:5px;z-index:45}'
    +'.gy-modemenu .gy-pk{padding-left:14px}'
    +'.gy-modemenu .gy-pkhead{padding-left:14px}'
+   +'.gy-modemenu .gy-pkdiv{margin:5px -5px}'
+   +'.gy-modemenu .gy-go{color:#9C9A92;font-size:14px}'
    +'body.gydark .gy-modemenu{background:#26252A;border-color:#3A393E}'
    +'.gy-wsmenu{position:absolute;left:4px;top:44px;width:236px;background:#fff;border:1px solid #CFCDC5;border-radius:12px;box-shadow:0 12px 34px rgba(31,31,29,.18);padding:6px;z-index:40}'
    +'.gy-usmenu{position:absolute;left:4px;right:4px;bottom:calc(100% + 6px);background:#fff;border:1px solid #CFCDC5;border-radius:12px;box-shadow:0 12px 34px rgba(31,31,29,.18);padding:6px;z-index:40}'
@@ -534,13 +540,11 @@ window.gyCartoTiles = function(style){
    /* gyInfo: the small i beside a field label, explaining it on hover */
    +'.gyinfo{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;'
    +'border-radius:50%;border:1px solid var(--line2);color:var(--ink3);font-size:9.5px;font-weight:700;'
-   +'cursor:help;position:relative;vertical-align:-2px;margin-left:6px;font-style:normal}'
+   +'cursor:help;flex:none;vertical-align:middle;margin-left:6px;font-style:normal;line-height:1}'
    +'.gyinfo:hover{color:var(--ink);border-color:var(--ink3)}'
-   +'.gyinfo::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;'
-   +'transform:translateX(-50%);background:var(--dark,#1F1F1D);color:#fff;font-size:11.5px;font-weight:400;'
-   +'letter-spacing:0;text-transform:none;padding:6px 10px;border-radius:8px;width:max-content;max-width:230px;'
-   +'white-space:normal;text-align:left;line-height:1.45;opacity:0;pointer-events:none;transition:opacity .12s;z-index:1700}'
-   +'.gyinfo:hover::after{opacity:1}'
+   +'.gy-tip{position:fixed;z-index:1800;background:var(--dark,#1F1F1D);color:#fff;font-size:11.5px;'
+   +'font-weight:400;letter-spacing:0;text-transform:none;line-height:1.45;text-align:left;padding:7px 10px;'
+   +'border-radius:8px;max-width:240px;pointer-events:none;box-shadow:0 8px 24px rgba(31,31,29,.22)}'
    +'.apop .afoot{display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);'
    +'margin-top:6px;padding:8px 11px 4px}'
    +'.apop .afoot .lk{font-size:13px;color:var(--ink3);cursor:pointer}'
@@ -552,16 +556,9 @@ window.gyCartoTiles = function(style){
    +'.asearch .ti{font-size:17px;color:var(--ink3)}'
    +'.asearch input{border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;color:var(--ink);width:100%}'
    +'html.gyembed .snav,html.gyembed .snavpeek,html.gyembed #expandBtn,html.gyembed .scollapse{display:none!important}'
-   +'html.gybare #chapnav{display:none!important}'
    +'html.gybare #floatR{display:none!important}'
-   +'html.gybare .floatL .fpill:not(#toolsPill){display:none!important}'
-   +'html.gybare .node .ns{display:none!important}'
    +'html.gybare #floatBL{display:none!important}'
-   +'html.gybare .bandlab{font-size:12.5px;letter-spacing:.08em;color:#A7A49B}'
-   +'html.gybare .bandlab.cur{color:#7C7970}'
-   +'html.gybare .bandlab small{display:none}'
-   +'html.gybare .band{background:rgba(255,255,255,.32)}'
-   +'html.gybare .band.cur{border-width:1px;border-color:#DAD6CB;background:rgba(255,255,255,.62)}'
+   +'html.gybare .floatL .fpill:not(#toolsPill){display:none!important}'
       /* the canonical data table: the Sites page idiom, defined once here because
       not every page links gy-shell.css. A table declares its own columns with
       --cols on the container; everything else comes from these rules. */
@@ -593,6 +590,69 @@ window.gyCartoTiles = function(style){
    +'table.gytbl tr:last-child td{border-bottom:none}'
    +'table.gytbl tbody tr:hover td{background:#FBF8EF}'
    +'@media(max-width:860px){.gyhd{display:none}.gyrow{grid-template-columns:1fr auto;row-gap:8px}}'
+      /* one checkbox for the whole app: styled on the element itself so every list,
+      filter and toggle matches without each page opting in. */
+   +'input[type=\"checkbox\"]{-webkit-appearance:none;appearance:none;width:16px;height:16px;flex:none;'
+     +'border:1.5px solid #B4B2A9;border-radius:4px;background:#fff;cursor:pointer;position:relative;'
+     +'margin:0;vertical-align:middle;transition:background .12s,border-color .12s}'
+   +'input[type=\"checkbox\"]:hover{border-color:#6B6A64}'
+   +'input[type=\"checkbox\"]:checked,input[type=\"checkbox\"]:indeterminate{background:#185FA5;border-color:#185FA5}'
+   +'input[type=\"checkbox\"]:checked::after{content:\"\";position:absolute;left:50%;top:50%;'
+     +'width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;'
+     +'transform:translate(-50%,-58%) rotate(45deg)}'
+   +'input[type=\"checkbox\"]:indeterminate::after{content:\"\";position:absolute;left:50%;top:50%;'
+     +'width:8px;height:2px;border-radius:1px;background:#fff;transform:translate(-50%,-50%)}'
+   +'input[type=\"checkbox\"]:focus-visible{outline:2px solid #185FA5;outline-offset:2px}'
+   /* the selection bar. Dark so an active selection is never mistaken for chrome. */
+   +'.gysbar{display:flex;align-items:center;gap:9px;background:#14456F;color:#F6F1E8;border-radius:12px;'
+     +'padding:9px 11px 9px 15px;margin-bottom:12px;font-size:14px;'
+     +'box-shadow:0 6px 18px rgba(20,69,111,.22)}'
+   +'.gysbn{font-weight:500;display:inline-flex;align-items:center;gap:9px;white-space:nowrap}'
+   +'.gysbn .gysbghost{margin-left:3px}'
+   +'.gysbk{background:#F9DD5A;color:#1A0C12;border-radius:999px;min-width:22px;height:22px;padding:0 7px;'
+     +'font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}'
+   +'.gysbsp{flex:1}'
+   +'.gysbbtn{font:inherit;font-size:13.5px;font-weight:500;padding:7px 13px;border-radius:9px;cursor:pointer;'
+     +'flex:none;width:auto;'
+     +'background:transparent;border:1px solid rgba(246,241,232,.34);color:#F6F1E8;'
+     +'display:inline-flex;align-items:center;gap:7px;white-space:nowrap}'
+   +'.gysbbtn:hover{background:#F6F1E8;border-color:#F6F1E8;color:#14456F}'
+   +'.gysbbtn .ti{font-size:15px}'
+   +'.gysbdiv{width:1px;height:22px;background:rgba(246,241,232,.22);margin:0 4px;flex:none}'
+   /* clearing is not one of the actions, so it sits a level down */
+   +'.gysbghost{font:inherit;font-size:13px;font-weight:400;padding:5px 9px;border-radius:8px;cursor:pointer;'
+     +'background:transparent;border:none;color:rgba(246,241,232,.64);'
+     +'display:inline-flex;align-items:center;gap:5px;flex:none;white-space:nowrap}'
+   +'.gysbghost:hover{color:#F6F1E8;background:rgba(246,241,232,.16)}'
+   +'.gysbghost .ti{font-size:14px}'
+   +'@media(max-width:820px){.gysbar{flex-wrap:wrap}.gysbsp{flex-basis:100%;height:0}}'
+      /* gyChip: a quiet status label beside a page title, a dot and muted text, no pill.
+      gyChip() has emitted .gychip/.gydot all along but the styles were missing, so it
+      rendered as plain text at title scale. */
+   /* The dot is absolutely positioned so the chip's baseline comes from its own text
+      rather than from the dot, which matters wherever a chip sits in running copy.
+      Inside .phead the row centres instead, so alignment no longer depends on it. */
+   /* The title row centres its contents. Five pages had set align-items:baseline,
+      which pushed the 30px title DOWN inside a line sized by the taller action
+      buttons, so anything else in the row appeared to sag. Centring is what those
+      pages actually wanted and it makes the chip land without a nudge. */
+   +'.phead{align-items:center}'
+   +'.gychip{position:relative;display:inline-flex;align-items:center;font-size:13px;font-weight:500;'
+     +'color:#5F5850;background:#F3EFE1;border-radius:999px;padding:4px 12px 4px 26px;'
+     +'white-space:nowrap;cursor:default;transition:background .12s}'
+   +'.gychip:hover{background:#EBE6D6;color:#3F3A34}'
+   +'.gychip:focus-visible{outline:2px solid #185FA5;outline-offset:2px}'
+   +'.gydot{position:absolute;left:11px;top:50%;margin-top:-3.5px;width:7px;height:7px;'
+     +'border-radius:50%;background:#578A1D}'
+   /* the dot carries the state; the pill only tints when something needs attention */
+   +'.gychip.warn{background:#FAEEDA;color:#854F0B}'
+   +'.gychip.warn:hover{background:#F5E4C7}'
+   +'.gychip.warn .gydot{background:#C87F0A}'
+   +'.gychip.bad{background:#FBE6E3;color:#A3342B}'
+   +'.gychip.bad:hover{background:#F7D8D3}'
+   +'.gychip.bad .gydot{background:#C0392B}'
+   +'.gychip.idle{color:#8A8279}'
+   +'.gychip.idle .gydot{background:#A79E8D}'
    +'html.gyembed body{--nav:0px}';
 
   /* keep the rail's to-do count in step with the shared store, on any page
@@ -664,7 +724,7 @@ window.gyCartoTiles = function(style){
         +'Caitlin'
         +'<span class="gy-fend">'
           +'<span class="gy-modewrap">'
-            +'<i class="ti ti-stack-2" id="gyModeIcon" onclick="event.stopPropagation();gyModeMenu()" title="Switch view" aria-label="Switch between North Star and Simple version"></i>'
+            +'<i class="ti ti-stack-2" id="gyModeIcon" onclick="event.stopPropagation();gyModeMenu()" title="Switch view" aria-label="Switch view or open the design system"></i>'
           +'</span>'
         +'</span>'
       +'</div>'
@@ -672,6 +732,8 @@ window.gyCartoTiles = function(style){
         +'<div class="gy-pkhead">View</div>'
         +'<div class="gy-pk" onclick="event.stopPropagation();gySetMode(\'advanced\')"><span>North Star version</span>'+(mode==='advanced'?'<i class="ti ti-check gy-ck"></i>':'')+'</div>'
         +'<div class="gy-pk" onclick="event.stopPropagation();gySetMode(\'basic\')"><span>Simple version</span>'+(mode==='basic'?'<i class="ti ti-check gy-ck"></i>':'')+'</div>'
+        +'<div class="gy-pkdiv"></div>'
+        +'<div class="gy-pk" onclick="event.stopPropagation();location.href=\'design-system.html\'"><span>Design system</span><i class="ti ti-arrow-up-right gy-ck gy-go"></i></div>'
       +'</div>'
       +'<div class="gy-usmenu" id="gyUsMenu" style="display:none">'
         +'<div class="gy-wstop">'
@@ -797,7 +859,8 @@ window.gyCartoTiles = function(style){
     ['Go to','ti-packages','Inventory','Page','go:inventory-overview.html'],
     ['Go to','ti-businessplan','Deals','Page','go:deals.html'],
     ['Quick actions','ti-list-check','Review deals','Action','go:review-deals.html'],
-    ['Go to','ti-hierarchy-2','Workflows','Page','go:deliverables-landing.html'],
+    ['Go to','ti-hierarchy-2','Deliverables','Page','go:deliverables-landing.html'],
+    ['Go to','ti-settings-automation','Automations','Page','go:automations.html'],
     ['Go to','ti-file-text','Documents','Page','go:documents-overview.html'],
     ['Go to','ti-note','Meeting notes','Page','go:meeting-notes.html'],
     ['Go to','ti-activity','Activity','Page','go:activity-overview.html'],
@@ -910,7 +973,7 @@ window.gyCartoTiles = function(style){
   var GY_NOTIFS = [
     ['ti-checkup-list','#FAEEDA','#854F0B','Approval needed: send the questionnaire to James Ruggles','Evenlode · Customer Demand Mapping · 20m'],
     ['ti-at','#E6F1FB','#185FA5','Emily mentioned you on the catchment mapping layer','Evenlode · Documents · 2h'],
-    ['ti-circle-check','#EAF3DE','#27500A','Lead Demand mapping finished its run','Spains Hall · Workflows · Yesterday'],
+    ['ti-circle-check','#EAF3DE','#27500A','Lead Demand mapping finished its run','Spains Hall · Deliverables · Yesterday'],
     ['ti-alert-triangle','#FAEEDA','#854F0B','Three BNG units are missing a vintage','Portfolio · Inventory · Yesterday']
   ];
   function gyNpTab(which){
@@ -1013,7 +1076,8 @@ window.gyCartoTiles = function(style){
     'Portfolio':'portfolio-overview.html',
     'Inventory':'inventory-overview.html',
     'Deals':'deals.html',
-    'Workflows':'deliverables-landing.html',
+    'Deliverables':'deliverables-landing.html',
+    'Automations':'automations.html',
     'Documents':'documents-overview.html',
     'Meeting notes':'meeting-notes.html',
     'Hive Mind Library':'hive-mind-library.html',
@@ -1025,6 +1089,7 @@ window.gyCartoTiles = function(style){
   /* alt: 'portfolio' | 'programme' | 'none'.  trail: buckets under the root. */
   var GY_CRUMB = {
     'home.html':                        {alt:'none'},
+    'design-system.html':               {alt:'none'},
     'todos.html':                       {alt:'none'},
     'hive-mind-library.html':           {alt:'none'},
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind Library','Rule books']},
@@ -1056,6 +1121,7 @@ window.gyCartoTiles = function(style){
     'projects.html':                    {alt:'programme'},
     'sites.html':                       {alt:'programme'},
     'deliverables-landing.html':        {alt:'programme'},
+    'automations.html':                 {alt:'programme'},
     'documents-overview.html':          {alt:'programme'},
     'document.html':                    {alt:'programme', trail:['Documents']},
     'meeting-notes.html':               {alt:'programme'},
@@ -1064,19 +1130,20 @@ window.gyCartoTiles = function(style){
     'meeting-note-buyer-review.html':   {alt:'programme', trail:['Meeting notes']},
     'activity-overview.html':           {alt:'programme'},
 
-    'customer-demand-mapping-v2-canvas.html':     {alt:'programme', trail:['Workflows']},
-    'demand-mapping-canvas-prototype.html':       {alt:'programme', trail:['Workflows']},
-    'demand-mapping-text-view-canvas.html':       {alt:'programme', trail:['Workflows']},
-    'lead-demand-mapping-canvas.html':            {alt:'programme', trail:['Workflows']},
-    'lead-supply-demand-mapping-canvas.html':     {alt:'programme', trail:['Workflows']},
-    'investor-qa-log-canvas-prototype.html':      {alt:'programme', trail:['Workflows']},
-    'tender-to-bid-canvas-prototype.html':        {alt:'programme', trail:['Workflows']},
-    'upper-dee-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Workflows']},
-    'upper-dee-canvas-list-sidebar.html':         {alt:'programme', trail:['Workflows']},
-    'upper-dee-simple-drawer-canvas.html':        {alt:'programme', trail:['Workflows']},
-    'upper-dee-executor-steps-canvas.html':       {alt:'programme', trail:['Workflows']},
-    'upper-dee-deliverable-page.html':            {alt:'programme', trail:['Workflows']},
-    'workflow-experiment-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Workflows']},
+    'customer-demand-mapping-v2-canvas.html':     {alt:'programme', trail:['Deliverables']},
+    'demand-mapping-canvas-prototype.html':       {alt:'programme', trail:['Deliverables']},
+    'demand-mapping-text-view-canvas.html':       {alt:'programme', trail:['Deliverables']},
+    'lead-demand-mapping-canvas.html':            {alt:'programme', trail:['Deliverables']},
+    'lead-supply-demand-mapping-canvas.html':     {alt:'programme', trail:['Deliverables']},
+    'investor-qa-log-canvas-prototype.html':      {alt:'programme', trail:['Deliverables']},
+    'tender-to-bid-canvas-prototype.html':        {alt:'programme', trail:['Deliverables']},
+    'upper-dee-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Deliverables']},
+    'upper-dee-canvas-list-sidebar.html':         {alt:'programme', trail:['Deliverables']},
+    'upper-dee-simple-drawer-canvas.html':        {alt:'programme', trail:['Deliverables']},
+    'upper-dee-executor-steps-canvas.html':       {alt:'programme', trail:['Deliverables']},
+    'upper-dee-deliverable-page.html':            {alt:'programme', trail:['Deliverables']},
+    'workflow-experiment-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Deliverables']},
+    'object-bar-sketch.html':           {alt:'programme', trail:['Deliverables']},
     'artefact-editor.html':             {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
     'questionnaire-editor.html':        {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
     'demand-mapping-intake-poc.html':   {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
@@ -1184,6 +1251,43 @@ window.gyCartoTiles = function(style){
     if(gyMOpen && gyMOpen.parentNode) gyMOpen.parentNode.removeChild(gyMOpen);
     gyMOpen = null;
   }
+  /* One tooltip layer for every [data-tip] in the shell. It lives on the body
+     and is positioned fixed, so a drawer or a table that scrolls cannot clip
+     it, and it flips below the element when there is no room above.
+     .sav and .info paint their own bubbles in their page's CSS, so they are
+     left alone rather than given a second one. */
+  var gyTipEl = null;
+  function gyTipHide(){
+    if(gyTipEl && gyTipEl.parentNode) gyTipEl.parentNode.removeChild(gyTipEl);
+    gyTipEl = null;
+  }
+  function gyTipShow(el){
+    var t = el.getAttribute('data-tip');
+    if(!t) return;
+    gyTipHide();
+    gyTipEl = document.createElement('div');
+    gyTipEl.className = 'gy-tip';
+    gyTipEl.textContent = t;
+    document.body.appendChild(gyTipEl);
+    var b = el.getBoundingClientRect(), w = gyTipEl.offsetWidth, h = gyTipEl.offsetHeight;
+    var left = Math.min(Math.max(8, b.left + b.width/2 - w/2), window.innerWidth - w - 8);
+    var top  = b.top - h - 8;
+    if(top < 8) top = b.bottom + 8;
+    gyTipEl.style.left = Math.round(left) + 'px';
+    gyTipEl.style.top  = Math.round(top) + 'px';
+  }
+  function gyTipTarget(e){
+    var el = e.target && e.target.closest ? e.target.closest('[data-tip]') : null;
+    return (el && !el.classList.contains('sav') && !el.classList.contains('info')) ? el : null;
+  }
+  document.addEventListener('mouseover', function(e){ var el=gyTipTarget(e); if(el) gyTipShow(el); });
+  document.addEventListener('mouseout',  function(e){ if(gyTipTarget(e)) gyTipHide(); });
+  document.addEventListener('focusin',   function(e){ var el=gyTipTarget(e); if(el) gyTipShow(el); });
+  document.addEventListener('focusout',  gyTipHide);
+  window.addEventListener('scroll', gyTipHide, true);
+  window.addEventListener('resize', gyTipHide);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') gyTipHide(); });
+
   /* gyInfo(tip): the small i that explains a field label on hover */
   window.gyInfo = function(tip){
     return '<i class="gyinfo" tabindex="0" data-tip="'+String(tip).replace(/"/g,'&quot;')+'">i</i>';
@@ -1197,6 +1301,28 @@ window.gyCartoTiles = function(style){
   };
   /* The one dropdown field lives in gy-select.js, so a standalone page that
      does not load this file can still use it. Never a native <select>. */
+
+  /* selection bar markup. actions are [icon, label, onclick expression]. */
+  window.gySelBar = function(n, actions, clearCall){
+    if(!n) return '';
+    return '<div class="gysbar">'
+      + '<span class="gysbn"><span class="gysbk">' + n + '</span> selected'
+      + '<button class="gysbghost" onclick="' + clearCall + '" title="Clear selection">'
+      + 'Clear<i class="ti ti-x"></i></button></span>'
+      + '<span class="gysbsp"></span>'
+      + (actions||[]).map(function(a){
+          return '<button class="gysbbtn" onclick="' + a[2] + '">'
+               + '<i class="ti ' + a[0] + '"></i>' + a[1] + '</button>';
+        }).join('')
+      + '</div>';
+  };
+  /* the select-all box is tri-state: none, some, all. Call it after every render,
+     because an innerHTML rebuild cannot carry the indeterminate property. */
+  window.gySelAll = function(el, total, selected){
+    if(!el) return;
+    el.checked = total > 0 && selected === total;
+    el.indeterminate = selected > 0 && selected < total;
+  };
 
   window.gyMenuClose = gyMClose;
   window.gyMenu = function(anchor, rows){
@@ -1393,8 +1519,25 @@ window.gyCartoTiles = function(style){
       foot.innerHTML='<span class="lk">Clear all</span>';
       foot.querySelector('.lk').onclick=function(e){ e.stopPropagation(); bar.clear(); };
       pop.appendChild(foot);
+      /* The popup is absolute inside .abar, so without this it pins to the bar's
+         right edge and opens under the primary button instead of under Filters.
+         Place it after the toggle, when it has a width to measure. */
+      function placePop(b){
+        pop.style.right = 'auto';
+        var bar = el.getBoundingClientRect(), br = b.getBoundingClientRect();
+        var w = pop.offsetWidth || 272;
+        var left = br.left - bar.left;                    /* under the button */
+        /* If that would run off the right edge, slide left just enough. The
+           offset may go negative: a bar narrower than the popup cannot contain
+           it, so clamping to the bar instead of the viewport leaves it off screen. */
+        if(br.left + w > window.innerWidth - 12) left = (window.innerWidth - 12 - w) - bar.left;
+        if(bar.left + left < 12) left = 12 - bar.left;
+        pop.style.left = Math.round(left) + 'px';
+      }
       fbtn = btn('', ico('ti-adjustments-horizontal')+'Filters<span class="cnt"></span>', function(b){
-        b.classList.toggle('on', pop.classList.toggle('on'));
+        var on = pop.classList.toggle('on');
+        b.classList.toggle('on', on);
+        if(on) placePop(b);
       });
       el.appendChild(pop);
       bar.pop = pop;

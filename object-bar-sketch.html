@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Demand Mapping · Evenlode · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+
+/* topbar right: everything that belongs to the whole deliverable */
+.tbact{margin-left:auto;display:flex;align-items:center;gap:4px}
+.tbtn{font-size:14.5px;font-weight:500;padding:7px 13px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;line-height:1}
+.tbtn:hover{background:var(--graybg);color:var(--ink)}
+.tbtn.on{background:var(--graybg);color:var(--ink)}
+.tbtn.fill{background:var(--graybg);color:var(--ink2)}
+.tbtn.fill:hover{color:var(--ink)}
+.tbtn.ic{padding:7px;position:relative}
+.tbtn .ti{font-size:19px;color:inherit}
+.cdot{position:absolute;top:2px;right:1px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:var(--blue);color:#fff;font-size:10.5px;font-weight:600;line-height:15px;text-align:center;border:1.5px solid var(--card)}
+.facepile{display:flex;align-items:center;cursor:pointer;padding:2px 6px 2px 2px;border-radius:999px;margin-right:6px}
+.facepile:hover{background:var(--graybg)}
+.fa{width:27px;height:27px;border-radius:999px;background:var(--fc,#9C9A92);color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--card);margin-left:-8px;letter-spacing:.02em}
+
+/* object bar: outputs on the left, the view of the current output on the right */
+.obar{display:flex;align-items:stretch;gap:0;padding:0 22px 0 0;height:56px;box-sizing:border-box;
+      background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+      position:sticky;top:61px;z-index:1100}
+.oai{display:flex;align-items:center;justify-content:center;padding:0 22px;font-size:14px;
+     color:var(--ink2);cursor:pointer;border:none;border-right:1px solid var(--line);flex:none;
+     font-family:inherit;background:transparent;transition:width .24s cubic-bezier(.2,.7,.3,1)}
+.oai:hover{color:var(--ink)}
+.oai .ti{font-size:19px;color:var(--ink2)}
+.oai:hover .ti{color:var(--ink)}
+body.agent .oai{width:380px}
+.otabs{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:auto;padding-left:22px;
+        scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
+.otabs::-webkit-scrollbar{display:none}
+.otab{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;font-size:14px;
+      color:var(--ink2);cursor:pointer;white-space:nowrap;border:1px solid transparent;font-family:inherit;background:transparent}
+.otab .ti{font-size:16px;color:var(--ink3)}
+.otab:hover{background:#F6F3EA}
+.otab.on{background:#fff;border-color:var(--line2);color:var(--ink);font-weight:500}
+.otab.on .ti{color:var(--ink2)}
+.otab.add{color:var(--ink3);padding:7px 9px}
+.otab .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.otab{max-width:158px}
+.otab .cm{width:6px;height:6px;border-radius:999px;background:var(--blue);flex:none}
+.oright{margin-left:auto;display:flex;align-items:center;gap:10px;flex:none}
+.opill{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:11px;font-size:14px;
+       font-family:inherit;color:var(--ink2);background:var(--graybg);border:none;cursor:pointer;white-space:nowrap}
+.opill:hover{color:var(--ink)}
+.opill.on{background:#fff;color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(26,12,18,.08)}
+.opill .n{font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.ocost{font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap;margin-right:2px}
+.oicon{width:32px;height:32px;border-radius:8px;border:none;background:transparent;color:var(--ink3);
+       cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:17px;position:relative}
+.oicon:hover{background:var(--graybg);color:var(--ink)}
+.oicon.on{background:var(--graybg);color:var(--ink)}
+
+/* agent: left column between the rail and the work, under the topbar */
+.agpane{position:fixed;top:117px;bottom:0;left:var(--nav,264px);width:380px;background:var(--card);
+        border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:1100;
+        transform:translateX(-100%);opacity:0;pointer-events:none;
+        transition:transform .24s cubic-bezier(.2,.7,.3,1),opacity .18s,left .18s}
+body.agent .agpane{transform:none;opacity:1;pointer-events:auto}
+body.agent .wrap{margin-left:380px;margin-right:auto}
+@media(max-width:1180px){body.agent .wrap{margin-left:380px;padding-left:26px}}
+.agscope{font-size:12.5px;color:var(--ink3);padding:16px 16px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.agbody{flex:1;overflow:auto;padding:14px 16px 10px}
+.agq{background:var(--graybg);border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.5;margin:0 0 16px auto;max-width:86%}
+.agline{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--ink2);margin-bottom:12px;line-height:1.45}
+.agline .ti{font-size:16px;color:var(--ink3);margin-top:1px;flex:none}
+.agline code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--ink3)}
+.agsay{font-size:14.5px;line-height:1.6;margin-bottom:14px}
+.agout{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:12px;
+       padding:11px 13px;margin-bottom:14px;cursor:pointer;background:var(--card)}
+.agout:hover{border-color:var(--line2)}
+.agout .ic{width:32px;height:32px;border-radius:9px;background:var(--graybg);color:var(--ink2);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.agout .nm{font-size:14px;font-weight:500;line-height:1.3}
+.agout .ty{font-size:12.5px;color:var(--ink3)}
+.agout .go{margin-left:auto;color:var(--ink3);font-size:16px}
+.agcomp{border-top:1px solid var(--line);padding:12px 14px 10px}
+.agin{border:1px solid var(--line2);border-radius:12px;padding:11px 13px;background:var(--card)}
+.agin .ph{font-size:14px;color:var(--ink3);min-height:22px}
+.agtools{display:flex;align-items:center;gap:6px;margin-top:9px}
+.agtool{border:none;background:transparent;color:var(--ink3);font:inherit;font-size:13px;cursor:pointer;
+        display:inline-flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px}
+.agtool:hover{background:var(--graybg);color:var(--ink2)}
+.agsend{margin-left:auto;width:30px;height:30px;border-radius:9px;border:none;background:var(--dark);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+.agfoot{font-size:12px;color:var(--ink3);text-align:right;padding:8px 2px 0;font-variant-numeric:tabular-nums}
+
+/* document view */
+.obdoc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px 32px}
+.obdoc .dh{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:-.01em;
+           display:flex;align-items:center;gap:11px;margin:26px 0 14px}
+.obdoc .dh:first-child{margin-top:0}
+.obdoc .dn{width:26px;height:26px;border-radius:8px;background:var(--graybg);color:var(--ink2);
+           font-family:var(--sans);font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.obdoc .fl{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+.obdoc .p{font-size:15px;line-height:1.6;color:var(--ink);margin-bottom:6px}
+.obdoc .gp{padding:12px 0;border-bottom:1px solid var(--line)}
+.obdoc .gp:last-child{border-bottom:none}
+.obdoc .prov{font-size:12.5px;color:var(--ink3)}
+.obdoc .pv{font-size:11.5px;font-weight:600;border-radius:6px;padding:2px 7px;margin-left:6px}
+
+/* workflow view: the canvas, house style from gy-canvas.css */
+.obwf{background:#FCFAF4;background-image:radial-gradient(#E7E0D0 1px,transparent 1px);background-size:14px 14px;
+      border:1px solid var(--line);border-radius:16px;padding:20px 18px}
+.obwf .wftop{display:flex;align-items:center;gap:10px;margin:0 2px 16px}
+.obwf .wfnow{font-size:12.5px;color:var(--ink3);margin-right:auto}
+.obwf .wfrun{border:none;background:var(--dark);color:#fff;border-radius:10px;padding:8px 14px;
+             font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;
+             display:inline-flex;align-items:center;gap:7px}
+.obwf .wfrun:hover{background:#2C1B22}
+.obwf .wfbtn{border:1px solid var(--line2);background:#fff;color:var(--ink);border-radius:10px;
+             padding:8px 12px;font-family:inherit;font-size:13.5px;cursor:pointer;
+             display:inline-flex;align-items:center;gap:7px}
+.obwf .wfbtn:hover{border-color:var(--ink3)}
+.obwf .flow{display:flex;align-items:flex-start}
+.obwf .band{flex:1;min-width:0;background:rgba(255,255,255,.4);border-radius:14px;padding:12px 12px 14px}
+.obwf .band.cur{background:rgba(255,255,255,.74)}
+.obwf .bandlab{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2);
+               display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.obwf .bandlab small{font-weight:500;letter-spacing:0;text-transform:none;font-size:11.5px;color:var(--ink3)}
+.obwf .livdot{width:7px;height:7px;border-radius:999px;background:var(--amber);flex:none}
+.obwf .edge{flex:none;width:20px;margin-top:64px;border-top:1.5px solid #DBD9D2}
+.obwf .edge.done{border-top:2px solid #639922}
+.obwf .edge.hot{border-top:2px solid #EF9F27}
+.obwf .node{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;
+            padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.obwf .node:last-child{margin-bottom:0}
+.obwf .node .ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+                font-size:16px;flex:none}
+.obwf .node .tx{min-width:0}
+.obwf .node .nt{display:block;font-size:13.5px;font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obwf .node .ns{display:block;font-size:12px;color:var(--ink3);line-height:1.3;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obwf .node .port{position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:9px;height:9px;
+                  border-radius:999px;background:#DBD9D2;border:1.5px solid #FCFAF4}
+.obwf .node .port.done{background:#639922}
+.obwf .node .port.hot{background:#EF9F27}
+.obwf .t-human{background:var(--amberbg);color:var(--amberd)}
+.obwf .t-agent{background:var(--bluebg);color:var(--blued)}
+.obwf .t-gate{background:var(--amberbg);color:var(--amberd)}
+.obwf .t-det{background:var(--graybg);color:var(--ink2)}
+.obwf .t-term{background:var(--greenbg);color:var(--greend)}
+.obwf .wffoot{display:flex;align-items:center;gap:18px;margin-top:16px;font-size:12.5px;color:var(--ink3)}
+.obwf .wfleg{display:inline-flex;align-items:center;gap:7px}
+.obwf .wfleg i{width:16px;height:0;border-top:2px solid #DBD9D2;display:inline-block}
+.obwf .wfleg i.done{border-top-color:#639922}
+.obwf .wfleg i.hot{border-top-color:#EF9F27}
+
+/* sources view */
+.obsrc .rd{color:var(--blued)}
+.obsrc .wr{color:var(--amberd)}
+
+/* comments panel: belongs to the output you are looking at */
+.cpanel{position:fixed;top:61px;right:0;bottom:0;width:352px;background:var(--card);border-left:1px solid var(--line);box-shadow:-8px 0 28px rgba(31,31,29,.07);z-index:1150;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+.cpanel.on{transform:none}
+.chead{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid var(--line)}
+.chead b{font-size:15.5px;font-weight:600}
+.chead .x{margin-left:auto;cursor:pointer;color:var(--ink3);font-size:19px}
+.con{font-size:12.5px;color:var(--ink3);padding:10px 16px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cbody{flex:1;overflow:auto;padding:14px 16px 20px}
+.thr{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--card)}
+.qt{font-size:12.5px;color:var(--ink2);border-left:2px solid var(--amber);padding-left:8px;margin-bottom:9px;line-height:1.45}
+.cmt{display:flex;gap:9px;margin-bottom:10px}
+.cmt:last-of-type{margin-bottom:0}
+.cmt .fa{margin-left:0;width:26px;height:26px;font-size:10.5px;border:none;flex:none}
+.cmt .cw{min-width:0;flex:1}
+.cmt .cn{font-size:13.5px;font-weight:600;line-height:1.3}
+.cmt .cn span{font-weight:400;color:var(--ink3);font-size:12px;margin-left:6px}
+.cmt .cx{font-size:13.5px;color:var(--ink);line-height:1.5;margin-top:2px}
+.cact{display:flex;align-items:center;gap:12px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+.cact .creply{flex:1;font:inherit;font-size:13px;color:var(--ink3);cursor:text}
+.cact .cres{font-size:13px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.cempty{font-size:13.5px;color:var(--ink3);text-align:center;padding:26px 10px;line-height:1.5}
+
+/* to-dos panel: belongs to the deliverable, the same list the workflow shows */
+.tdpanel{position:fixed;top:61px;right:0;bottom:0;width:372px;background:var(--card);border-left:1px solid var(--line);box-shadow:-8px 0 28px rgba(31,31,29,.07);z-index:1150;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+.tdpanel.on{transform:none}
+.tdmeter{padding:13px 16px 4px}
+.tdbar{height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
+.tdbar i{display:block;height:100%;border-radius:999px;background:var(--green)}
+.tdmt{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink3);margin-top:7px}
+.tdbody{flex:1;overflow:auto;padding:8px 10px 20px}
+.tdlab{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:12px 6px 6px}
+.td{display:flex;gap:10px;align-items:flex-start;padding:9px 6px;border-radius:9px;cursor:pointer}
+.td:hover{background:var(--graybg)}
+.tdbox{width:17px;height:17px;border-radius:5px;border:1.5px solid #D6D3CA;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;background:var(--card)}
+.tdbox .ti{font-size:11px;color:#fff;display:none}
+.td.on .tdbox{background:var(--green);border-color:var(--green)}
+.td.on .tdbox .ti{display:block}
+.tdw{min-width:0;flex:1}
+.tdt{font-size:14px;line-height:1.4}
+.td.on .tdt{color:var(--ink3);text-decoration:line-through}
+.tdm{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:12px;color:var(--ink3);flex-wrap:wrap}
+.tdm .fa{width:18px;height:18px;font-size:8.5px;border:none;margin-left:0}
+.tdm .due{color:var(--amberd);background:var(--amberbg);border-radius:999px;padding:1px 8px}
+.tdm .lnk{border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.tdadd{display:flex;align-items:center;gap:10px;padding:11px 6px;margin-top:6px;border-top:1px solid var(--line);color:var(--ink3);font-size:13.5px;cursor:pointer}
+</style>
+</head>
+<body class="agent">
+<div class="shell">
+<script>window.GYNAV={"active":"deliverables","scope":"programme"};</script>
+<script src="gy-nav.js?v=668c831e"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr cur">Customer Demand Mapping</span>
+  </div>
+  <div class="tbact">
+    <div class="facepile" onclick="gyToast('Caitlin owns this deliverable, five others have access')" title="People on this deliverable">
+      <span class="fa" style="--fc:#1D9E75">CC</span>
+      <span class="fa" style="--fc:#378ADD">EN</span>
+      <span class="fa" style="--fc:#EF9F27">HF</span>
+      <span class="fa" style="--fc:#7F77DD">IB</span>
+    </div>
+    <button class="tbtn fill" onclick="gyToast('Share this deliverable')">Share</button>
+    <button class="tbtn fill ic" onclick="gyToast('Rename, duplicate, move, version history, export')" title="More"><i class="ti ti-dots"></i></button>
+  </div>
+</div>
+
+<div class="obar">
+  <button class="oai" id="agBtn" onclick="toggleAgent()" title="AI Assistant"><i class="ti ti-sparkles"></i></button>
+  <div class="otabs" id="otabs"></div>
+  <div class="oright">
+    <div class="seg" id="oview"></div>
+    <button class="opill" id="tdBtn" onclick="toggleTodos()">To-dos<span class="n" id="tdCount">8</span></button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1" id="h1">Customer Demand Mapping</div>
+  </div>
+  <div id="view"></div>
+</div>
+</div>
+</div>
+
+<aside class="agpane" id="agpane">
+  <div class="agscope" id="agScope"></div>
+  <div class="agbody" id="agBody"></div>
+  <div class="agcomp">
+    <div class="agin" onclick="gyToast('Ask a question, or ask it to do a step')">
+      <div class="ph">Ask, or ask it to run a step</div>
+      <div class="agtools">
+        <button class="agtool" onclick="event.stopPropagation();gyToast('Add a source: inventory, a document, a gatekeeper')"><i class="ti ti-plug"></i>Add source</button>
+        <button class="agtool" id="agModel" onclick="event.stopPropagation();modelMenu(this)">Claude Opus 5 <i class="ti ti-chevron-down"></i></button>
+        <button class="agsend" onclick="event.stopPropagation();gyToast('Runs against this output')"><i class="ti ti-arrow-up"></i></button>
+      </div>
+    </div>
+    <div class="agfoot" id="agFoot">24,613 tokens &middot; &pound;0.42</div>
+  </div>
+</aside>
+
+<aside class="cpanel" id="cpanel">
+  <div class="chead"><b>Comments</b><i class="ti ti-x x" onclick="toggleComments()"></i></div>
+  <div class="con" id="con"></div>
+  <div class="cbody" id="cbody"></div>
+</aside>
+
+<aside class="tdpanel" id="tdpanel">
+  <div class="chead"><b>To-dos</b><i class="ti ti-x x" onclick="toggleTodos()"></i></div>
+  <div class="tdmeter">
+    <div class="tdbar"><i style="width:50%"></i></div>
+    <div class="tdmt"><span>8 of 16 done</span><span>Evenlode</span></div>
+  </div>
+  <div class="tdbody" id="tdbody"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+<script>
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+/* One Deliverable, its outputs, and the views each output has.
+   Slot three is always Sources, whatever the output is.
+   Comments hang off an output. To-dos hang off the deliverable.
+   The agent hangs off whatever the object bar says you are looking at. */
+var OUT = [
+  {id:'doc',   icon:'ti-file-text',        name:'Customer Demand Mapping', cost:'£0.42', tok:'24,613', cmt:3,
+   views:[['Document','doc'],['Workflow','wf']]},
+  {id:'buyers',icon:'ti-table',            name:'Evenlode buyer list',     cost:'£0.08', tok:'6,204',  cmt:1,
+   views:[['Table','tbl']]},
+  {id:'map',   icon:'ti-map-2',            name:'Beneficiary map',         cost:'£0.11', tok:'8,890',  cmt:0,
+   views:[['Map','map']]},
+  {id:'result',icon:'ti-file-description', name:'Supply and demand verdict', cost:'£0.06', tok:'4,117', cmt:0,
+   views:[['Page','page']]}
+];
+var VIEWNAME = {doc:'Document', wf:'Workflow', src:'Sources', tbl:'Table', map:'Map', page:'Page'};
+var THREADS = {
+  doc: [
+    ['2. Demand · In short', [['EN','#378ADD','Emily Norton','2 hours ago','Trade have two live buyers for units here. Worth naming them before we call this viable.'],
+                              ['CC','#1D9E75','Caitlin Ciceri','41 minutes ago','Agreed. Adding them once the questionnaire comes back.']]],
+    ['1. Project context · Site description', [['HF','#EF9F27','Harry Fox','Yesterday','Parcel 3 boundary changed after the survey. Inventory says 208 ha now.']]],
+    ['3. Supply', [['IB','#7F77DD','Izzie Bell','Monday','Soil carbon is still assumed. Flag it as unverified until the survey lands.']]]
+  ],
+  buyers: [
+    ['Row 4 · Blenheim Estate', [['EN','#378ADD','Emily Norton','Today','Cold is generous. We have not spoken to them since April.']]]
+  ],
+  map: [], result: []
+};
+var TODOS = [
+  ['Beneficiary map and Buyer list','CC','#1D9E75','You','Due 17 Sep','2.4',false],
+  ['Check with Trade','EN','#378ADD','Emily Norton','Overdue 18 Sep','2.5',false],
+  ['Check: Information complete?','CC','#1D9E75','You','Due 21 Sep','2.6',false],
+  ['Create summary','CC','#1D9E75','You','Due 24 Sep','4.1',false],
+  ['Research Ecosystem Services','CC','#1D9E75','You','','3.1',true],
+  ['GPAP Analysis','HF','#EF9F27','Harry Fox','','2.1',true]
+];
+var cur = 'doc', view = 'doc';
+
+function out(){ return OUT.filter(function(o){ return o.id===cur; })[0]; }
+function tabs(){
+  document.getElementById('otabs').innerHTML = OUT.map(function(o){
+    return '<button class="otab'+(o.id===cur?' on':'')+'" onclick="pickTab(\''+o.id+'\')">'
+      + '<i class="ti '+o.icon+'"></i><span class="lb">'+o.name+'</span>'
+      + (o.cmt ? '<span class="cm" title="Open comments"></span>' : '')+'</button>';
+  }).join('') + '<button class="otab add" onclick="gyToast(\'New output from this deliverable\')" title="New output"><i class="ti ti-plus"></i></button>';
+}
+function views(){
+  document.getElementById('oview').innerHTML = out().views.map(function(v){
+    return '<button class="'+(v[1]===view?'on':'')+'" onclick="pickView(\''+v[1]+'\')">'+v[0]+'</button>';
+  }).join('');
+}
+function pickTab(id){
+  cur = id; view = out().views[0][1];
+  document.getElementById('h1').textContent = out().name;
+  tabs(); views(); body(); comments(); agent();
+}
+function pickView(v){ view = v; views(); body(); agent(); }
+
+/* agent: left column, scoped to the current output and view */
+function toggleAgent(){
+  var on = !document.body.classList.contains('agent');
+  document.body.classList.toggle('agent', on);
+  if(on && window.innerWidth < 1400) document.body.classList.add('navhid');
+  if(on) agent();
+}
+function agMenu(el){  /* right click or long press on AI */
+  gyMenu(el, [
+    ['ti-plus','New thread','New thread on this deliverable'],
+    ['ti-history','Earlier threads','Threads on this deliverable, newest first'],
+    '-',
+    ['ti-layout-sidebar','Close assistant', function(){ toggleAgent(); }]
+  ]);
+}
+function modelMenu(el){
+  gyMenu(el, [
+    ['label','Model'],
+    ['ti-check','Claude Opus 5', function(){ el.innerHTML = 'Claude Opus 5 <i class="ti ti-chevron-down"></i>'; }],
+    ['ti-circle','Claude Sonnet',  function(){ el.innerHTML = 'Claude Sonnet <i class="ti ti-chevron-down"></i>'; }],
+    ['ti-circle','Local model',    function(){ el.innerHTML = 'Local model <i class="ti ti-chevron-down"></i>'; }]
+  ]);
+}
+function agent(){
+  var o = out();
+  document.getElementById('agScope').textContent = 'On ' + o.name + ' · ' + (VIEWNAME[view] || '');
+  document.getElementById('agFoot').innerHTML = o.tok + ' tokens &middot; ' + o.cost;
+  var TH = {
+    doc: '<div class="agq">Who should we be talking to in this catchment, and put them somewhere Trade can work from?</div>'
+       + '<div class="agline"><i class="ti ti-search"></i><div>Read Inventory<br><code>evenlode &middot; 1,450 units available</code></div></div>'
+       + '<div class="agline"><i class="ti ti-book"></i><div>Read from Hive Mind: Sector Profiles v2.1</div></div>'
+       + '<div class="agsay">Six categories carry real demand here. I put the buyers in a sheet so Trade can work from it, and wrote the summary into chapter 2.</div>'
+       + '<div class="agout" onclick="pickTab(\'buyers\')"><span class="ic"><i class="ti ti-table"></i></span>'
+       + '<span><span class="nm">Evenlode buyer list</span><br><span class="ty">Sheet</span></span><i class="ti ti-arrow-up-right go"></i></div>'
+       + '<div class="agline"><i class="ti ti-pencil"></i><div>Wrote 2. Demand &middot; In short</div></div>'
+       + '<div class="agsay">Water utilities and developers do not compete for the same parcels, which is the part worth checking with Emily.</div>',
+    buyers: '<div class="agq">Add anyone in the catchment we have already met but have not listed.</div>'
+       + '<div class="agline"><i class="ti ti-plug"></i><div>Read Deals through the Hubspot gatekeeper</div></div>'
+       + '<div class="agsay">Two contacts exist in Hubspot but not here. I added them and left the relationship as stated there.</div>'
+       + '<div class="agline"><i class="ti ti-pencil"></i><div>Added 2 rows</div></div>',
+    map: '<div class="agq">Which beneficiaries sit downstream of the two flood parcels?</div>'
+       + '<div class="agsay">Three, and one of them is a water utility already on the buyer list.</div>',
+    result: '<div class="agq">Draft the verdict from what the chapters now say.</div>'
+       + '<div class="agline"><i class="ti ti-file-text"></i><div>Read Customer Demand Mapping</div></div>'
+       + '<div class="agsay">Drafted. It reads from the chapters, so it moves when they move.</div>'
+  };
+  document.getElementById('agBody').innerHTML = TH[cur] || '';
+}
+
+/* right panels: one at a time, comments follow the output you are on */
+function toggleComments(){
+  var p = document.getElementById('cpanel'), on = !p.classList.contains('on');
+  document.getElementById('tdpanel').classList.remove('on');
+  document.getElementById('tdBtn').classList.remove('on');
+  p.classList.toggle('on', on);
+  if(on) comments();
+}
+function toggleTodos(){
+  var p = document.getElementById('tdpanel'), on = !p.classList.contains('on');
+  document.getElementById('cpanel').classList.remove('on');
+  p.classList.toggle('on', on);
+  document.getElementById('tdBtn').classList.toggle('on', on);
+  if(on) todos();
+}
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape') return;
+  document.getElementById('cpanel').classList.remove('on');
+  document.getElementById('tdpanel').classList.remove('on');
+  document.getElementById('tdBtn').classList.remove('on');
+});
+
+function comments(){
+  var t = THREADS[cur] || [];
+  document.getElementById('con').textContent = 'On ' + out().name;
+  document.getElementById('cbody').innerHTML = t.length ? t.map(function(th){
+    return '<div class="thr"><div class="qt">'+th[0]+'</div>'
+      + th[1].map(function(c){
+          return '<div class="cmt"><span class="fa" style="--fc:'+c[1]+'">'+c[0]+'</span><div class="cw">'
+            + '<div class="cn">'+c[2]+'<span>'+c[3]+'</span></div><div class="cx">'+c[4]+'</div></div></div>'; }).join('')
+      + '<div class="cact"><span class="creply" onclick="gyToast(\'Reply to this thread\')">Reply...</span>'
+      + '<span class="cres" onclick="gyToast(\'Thread resolved\')">Resolve</span></div></div>';
+  }).join('') : '<div class="cempty">No comments on this output</div>';
+}
+
+function todos(){
+  function row(x){
+    return '<div class="td'+(x[6]?' on':'')+'" onclick="gyToast(\'Opens the step in the Workflow view\')">'
+      + '<span class="tdbox"><i class="ti ti-check"></i></span><span class="tdw">'
+      + '<div class="tdt">'+x[0]+'</div><div class="tdm">'
+      + '<span class="fa" style="--fc:'+x[2]+'">'+x[1]+'</span>'+x[3]
+      + (x[4] ? '<span class="due">'+x[4]+'</span>' : '')
+      + '<span class="lnk">'+x[5]+'</span></div></span></div>';
+  }
+  var open = TODOS.filter(function(x){ return !x[6]; }), done = TODOS.filter(function(x){ return x[6]; });
+  document.getElementById('tdbody').innerHTML =
+      '<div class="tdlab">To do '+open.length+'</div>' + open.map(row).join('')
+    + '<div class="tdlab">Done '+done.length+'</div>' + done.map(row).join('')
+    + '<div class="tdadd" onclick="gyToast(\'Adds a step to the workflow, off template\')"><i class="ti ti-plus"></i>Add a to-do</div>';
+}
+
+function body(){
+  var h = document.getElementById('view');
+  if(view === 'doc')  return h.innerHTML = docView();
+  if(view === 'wf')   return h.innerHTML = wfView();
+  if(view === 'src')  return h.innerHTML = srcView();
+  if(view === 'tbl')  return h.innerHTML = tblView();
+  if(view === 'map')  return h.innerHTML = mapView();
+  h.innerHTML = pageView();
+}
+
+function docView(){
+  return '<div class="obdoc">'
+  + '<div class="dh"><span class="dn">1</span>Project context</div>'
+  + '<div class="gp"><div class="fl">Objective</div>'
+    + '<div class="p">Durable income alongside continued farming, lower flood risk downstream, and a habitat legacy the family can point to.</div>'
+    + '<div class="prov">Written by Kick-off meeting<span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span></div></div>'
+  + '<div class="gp"><div class="fl">Site description and current land use</div>'
+    + '<div class="p">187.8 ha across 18 parcels in the Evenlode valley, west Oxfordshire, held across seven farms and estates. Two tenancies expire in 2027.</div>'
+    + '<div class="prov">Written by Discovery information request<span class="pv" style="background:var(--greenbg);color:var(--greend)">confirmed by client</span></div></div>'
+  + '<div class="dh"><span class="dn">2</span>Demand</div>'
+  + '<div class="gp"><div class="fl">In short</div>'
+    + '<div class="p">Six buyer categories carry real demand in the catchment. Water utilities lead on nutrient and flood, developers lead on units, and the two do not compete for the same parcels.</div>'
+    + '<div class="prov">Reads Evenlode buyer list<span class="pv" style="background:var(--bluebg);color:var(--blued)">recalculated today</span></div></div>'
+  + '</div>';
+}
+
+function wfView(){
+  var BANDS = [
+    ['1. Project context', 'done', [
+      ['ti-users','Kick-off meeting','Caitlin','t-human','done'],
+      ['ti-mail','Discovery request','Caitlin','t-human','done'],
+      ['ti-git-branch','Check: complete?','Gate','t-gate','done']]],
+    ['2. Demand', 'cur', [
+      ['ti-sparkles','Demand protocol','Agent \u00B7 Kwame','t-agent','done'],
+      ['ti-sparkles','Buyer list','Agent \u00B7 Hubspot','t-agent','hot'],
+      ['ti-users','Check with Trade','Emily','t-human','']]],
+    ['3. Supply', 'done', [
+      ['ti-sparkles','Research services','Agent','t-agent','done'],
+      ['ti-git-branch','Check: complete?','Gate','t-gate','done']]],
+    ['4. Summary', '', [
+      ['ti-file-text','Create summary','Caitlin','t-human',''],
+      ['ti-send','Share with customer','Terminal','t-term','']]]
+  ];
+  var EDGE = ['done','hot',''];
+  var h = '<div class="obwf">'
+    + '<div class="wftop">'
+    + '<span class="wfnow">Buyer list running since 09:14</span>'
+    + '<button class="wfbtn" onclick="gyToast(\'Edit the workflow, off template\')"><i class="ti ti-pencil"></i>Edit</button>'
+    + '<button class="wfrun" onclick="gyToast(\'Runs the steps that are ready, and writes their results back into this deliverable\')">'
+    + '<i class="ti ti-player-play"></i>Run workflow</button>'
+    + '</div>'
+    + '<div class="flow">';
+  BANDS.forEach(function(b, i){
+    h += '<div class="band'+(b[1]==='cur'?' cur':'')+'">'
+       + '<div class="bandlab">'+(b[1]==='cur'?'<span class="livdot"></span>':'')+b[0]
+       + (b[1]==='cur'?'<small>running</small>':'')+'</div>'
+       + b[2].map(function(n){
+           return '<div class="node"><span class="ic '+n[3]+'"><i class="ti '+n[0]+'"></i></span>'
+                + '<span class="tx"><span class="nt">'+n[1]+'</span>'
+                + '<span class="ns">'+n[2]+'</span></span>'
+                + '<span class="port'+(n[4]?' '+n[4]:'')+'"></span></div>'; }).join('')
+       + '</div>';
+    if(i < BANDS.length - 1) h += '<div class="edge'+(EDGE[i]?' '+EDGE[i]:'')+'"></div>';
+  });
+  h += '</div>'
+     + '<div class="wffoot"><span>8 of 16 steps</span>'
+     + '<span class="wfleg"><i class="done"></i>done</span>'
+     + '<span class="wfleg"><i class="hot"></i>running</span>'
+     + '<span class="wfleg"><i></i>not started</span></div></div>';
+  return h;
+}
+
+function srcView(){
+  var rows = [
+    ['Inventory','Great Yellow register','Reads','14 minutes ago'],
+    ['Deals','Hubspot gatekeeper','Reads','Today 09:12'],
+    ['Sector Profiles','Hive Mind','Reads','v2.1'],
+    ['Planning applications','Databricks gatekeeper','Reads','12 September'],
+    ['Evenlode buyer list','This deliverable','Writes','Today 09:14'],
+    ['Supply and demand verdict','Notion','Writes','3 days ago']
+  ];
+  return '<div class="obsrc"><div class="tblwrap"><table class="dtbl"><thead><tr>'
+    + '<th>Source</th><th>Reached through</th><th>Direction</th><th>Last</th></tr></thead><tbody>'
+    + rows.map(function(r){
+        return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td>'
+             + '<td class="'+(r[2]==='Reads'?'rd':'wr')+'">'+r[2]+'</td><td>'+r[3]+'</td></tr>'; }).join('')
+    + '</tbody></table></div></div>';
+}
+
+function tblView(){
+  var rows = [
+    ['Thames Water','Water utility','Nutrient and flood','Warm','High'],
+    ['Bloor Homes','Developer','BNG units','Contacted','High'],
+    ['West Oxfordshire DC','Local authority','BNG units','Warm','Medium'],
+    ['Blenheim Estate','Landowner','Soil carbon','Cold','Medium'],
+    ['Cotswold NL','Programme body','Flood','Warm','Low']
+  ];
+  return '<div class="tblwrap"><table class="dtbl"><thead><tr>'
+    + '<th>Buyer</th><th>Sector</th><th>Wants</th><th>Relationship</th><th>Signal</th>'
+    + '</tr></thead><tbody>'
+    + rows.map(function(r){ return '<tr><td>'+r.join('</td><td>')+'</td></tr>'; }).join('')
+    + '</tbody></table></div>';
+}
+
+function mapView(){
+  return '<div class="pcard" style="min-height:320px;display:flex;align-items:center;justify-content:center;'
+    + 'color:var(--ink3);font-size:15px">Beneficiary map</div>';
+}
+
+function pageView(){
+  return '<div class="obdoc"><div class="dh"><span class="dn">4</span>Verdict</div>'
+    + '<div class="gp"><div class="p">Demand is sufficient to take the programme to Plan. Water utilities are the anchor buyer, '
+    + 'developer demand covers the unit gap, and no category depends on the same parcels as another.</div>'
+    + '<div class="prov">Reads Customer Demand Mapping<span class="pv" style="background:var(--bluebg);color:var(--blued)">recalculated today</span></div></div></div>';
+}
+
+
+tabs(); views(); body(); comments(); todos(); agent();
+if(window.innerWidth < 1400) document.body.classList.add('navhid');
+</script>
+</body>
+</html>

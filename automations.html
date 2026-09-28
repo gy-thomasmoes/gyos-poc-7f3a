@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automations · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+
+<style>
+:root{
+  --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
+  --ink:#1F1F1D; --ink2:#6B6A64; --ink3:#9C9A92;
+  --green:#639922; --greenbg:#EAF3DE; --greend:#27500A;
+  --amber:#EF9F27; --amberbg:#FAEEDA; --amberd:#854F0B;
+  --blue:#378ADD; --bluebg:#E6F1FB; --blued:#185FA5;
+  --teal:#1D9E75; --tealbg:#E1F5EE; --teald:#0F6E56;
+  --graybg:#F1EFE8; --grayd:#5F5E5A; --dark:#1F1F1D;
+  --serif:'Manner','Spectral',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px;-webkit-font-smoothing:antialiased}
+.shell{display:flex;height:100vh;overflow:hidden}
+.mainc{flex:1;overflow:auto;min-width:0}
+.topbar{height:61px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:14px 22px;background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1200}
+.crumbs{display:flex;align-items:center;gap:9px;font-size:16px;min-width:0}
+.crumbs .cr{color:var(--ink2);cursor:pointer;white-space:nowrap}
+.crumbs .cr:hover{color:var(--ink)}
+.crumbs .cr.cur{color:var(--ink);font-weight:600}
+.crumbs .sep{color:var(--ink3);font-size:14px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.phead{display:flex;align-items:flex-start;gap:14px;padding-bottom:15px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+.phead .acts{margin-left:auto;display:flex;gap:10px}
+.h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
+
+.name{display:flex;align-items:center;gap:12px;min-width:0}
+.tile{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.tile .ti{font-size:17px}
+.nm{font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st{font-size:13.5px;font-weight:500;padding:3px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;width:fit-content}
+.setup{display:flex;align-items:center;gap:6px;min-width:0}
+.setup .st{white-space:nowrap}
+.state{font-size:14.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.outs{display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
+.clink{color:var(--blued);cursor:pointer;font-size:14.5px}
+.clink:hover{text-decoration:underline}
+.mut{color:var(--ink3);font-size:14.5px}
+.count{font-size:12.5px;background:var(--graybg);color:var(--grayd);border-radius:6px;padding:1px 7px;font-weight:600}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:1900;display:none;max-width:80vw}
+.wfhide{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active": "automations"};</script>
+<script src="gy-nav.js?v=668c831e"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
+    <span class="sep">&rsaquo;</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
+    <span class="sep">&rsaquo;</span><span class="cr cur">Automations</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Automations</div>
+    <div class="acts" id="abar"></div>
+  </div>
+
+  <div style="--cols:minmax(0,2.4fr) 1.1fr 1.15fr 1.1fr 1.05fr;margin-top:18px">
+  <div class="gylegend"><span>Automation</span><span>Setup</span><span>Schedule</span><span>Last run</span><span>Writes to</span></div>
+  <div class="gytbl">
+
+  <div class="gyrow click" data-state="running" onclick="toast('Create BNG units is not built out in this prototype yet.')">
+    <div class="name">
+      <div class="tile" style="background:var(--graybg);color:var(--grayd)"><i class="ti ti-settings-automation"></i></div>
+      <div class="nm">Create BNG units</div>
+    </div>
+    <div><span class="st" style="background:var(--greenbg);color:var(--greend)">Ready</span></div>
+    <div class="state">Every night, 02:00</div>
+    <div class="state">Ran 20 min ago</div>
+    <div class="outs"><span class="clink" onclick="event.stopPropagation();location.href='inventory-overview.html'">Inventory</span></div>
+  </div>
+
+  <div class="gyrow click" data-state="paused" onclick="toast('Refresh price curves is not built out in this prototype yet.')">
+    <div class="name">
+      <div class="tile" style="background:var(--graybg);color:var(--grayd)"><i class="ti ti-settings-automation"></i></div>
+      <div class="nm">Refresh price curves</div>
+    </div>
+    <div class="setup"><span class="st" style="background:var(--amberbg);color:var(--amberd)">2 to configure</span><span class="gyinfo" tabindex="0" data-tip="No schedule and no destination set" style="margin-left:0">i</span></div>
+    <div class="state mut">Not scheduled</div>
+    <div class="state mut">Never run</div>
+    <div class="mut">&middot;</div>
+  </div>
+
+  </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(msg){
+  var t=document.getElementById('toast'); t.textContent=msg; t.style.display='block';
+  clearTimeout(t._h); t._h=setTimeout(function(){t.style.display='none';},3600);
+}
+
+/* Static markup, so search and the state filter work on the rows in place. */
+var AQ='', ASTATE='all';
+function aApply(){
+  var q=AQ.toLowerCase();
+  document.querySelectorAll('.wrap .gyrow').forEach(function(r){
+    var n=r.querySelector('.nm'), name=n?n.textContent.trim().toLowerCase():'';
+    var ok=(!q||name.indexOf(q)>=0) && (ASTATE==='all'||(r.dataset.state||'')===ASTATE);
+    r.classList.toggle('wfhide', !ok);
+  });
+  document.querySelectorAll('.wrap .gytbl').forEach(function(c){
+    var any=[].slice.call(c.querySelectorAll('.gyrow')).some(function(r){return !r.classList.contains('wfhide');});
+    c.classList.toggle('wfhide', !any);
+  });
+}
+
+gyBar('abar', {
+  search:  {placeholder:'Search automations', oninput:function(v){ AQ=v; aApply(); }},
+  filters: [
+    ['State',[['ti-circle-dot','Any state','all'],['ti-clock','Running','running'],
+              ['ti-player-pause','Paused','paused']]]
+  ],
+  onfilter: function(group, value){ ASTATE=value; aApply(); },
+  actions: [['label','Bulk'],
+            ['ti-player-pause','Pause automation','Pause stops future runs without deleting the automation'],
+            ['ti-repeat','Run now','Run once, outside the schedule'],
+            '-',
+            ['ti-history','Audit log','go:audit-log.html']],
+  primary: {icon:'ti-plus', label:'Create automation', onclick:function(){ toast('Creating automations is not built out in this prototype yet.'); }}
+});
+</script>
+</body>
+</html>

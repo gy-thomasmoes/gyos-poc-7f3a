@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upper Dee: Customer Demand Mapping &middot; Great Yellow</title>
+<!-- sketch 5: the document and the workflow become framed panels hovering on a tinted ground -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+/* v4-chat — the same deliverable with the assistant in the lead.
+   Everything from the document view is still here; it has just swapped
+   places with the conversation. The document becomes one tab of a docked
+   panel, and the workflow shows up as the run log inside the thread. */
+
+/* This page is a place to work rather than a place to browse, so it opens
+   with the rail folded away and the path folded down to the name. Both are one
+   click from coming back, and the choice is remembered for this page only. */
+/* The folded path is two slashes and an ellipsis, quiet until you go near it.
+   Hovering names the path, clicking unfolds it in place. */
+.crmore{flex:none;border:none;background:none;padding:2px 2px;font-family:inherit;font-size:14px;
+  line-height:1;color:var(--ink3);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  transition:color .12s}
+.crmore .sl{color:var(--line2);transition:color .12s}
+.crmore .el{letter-spacing:.09em}
+.crmore:hover{color:var(--ink)}
+.crmore:hover .sl{color:var(--ink3)}
+.crmore.hide{display:none}
+.crtrail{display:none;align-items:center}
+.crtrail.on{display:inline-flex}
+.mainc{overflow:hidden;display:flex;flex-direction:column}
+.v5row{flex:1;display:flex;min-height:0}
+
+/* ── the thread, which is now the page ──────────────────────────────────── */
+.v5chat{position:relative;width:var(--chatw,400px);flex:none;min-width:0;display:flex;
+  flex-direction:column;background:transparent}
+body.pclosed .v5chat{display:none}
+@media(max-width:1100px){.v5chat{width:min(var(--chatw,400px),360px)}}
+/* Drag the edge to trade width between the assistant and the document. The
+   handle is the border until you reach for it. */
+.v5grip{position:absolute;top:0;bottom:0;right:-3px;width:7px;cursor:col-resize;z-index:6}
+.v5grip:after{content:'';position:absolute;top:0;bottom:0;left:2px;width:3px;border-radius:2px;
+  background:transparent;transition:background .12s}
+.v5grip:hover:after,body.dragging .v5grip:after{background:var(--line2)}
+body.dragging{cursor:col-resize;user-select:none}
+.v5log{flex:1;overflow:auto;padding:28px 22px 6px}
+.v5in{max-width:none}
+
+
+.v5turn{margin-bottom:30px}
+.v5you{background:#F6EFE2;border-radius:16px 16px 5px 16px;padding:12px 15px;font-size:15px;line-height:1.5;
+  margin-left:auto;max-width:90%;width:fit-content}
+.v5say{font-size:15px;line-height:1.62;color:var(--ink);margin:13px 0}
+.v5say b{font-weight:600}
+
+/* what it did, in the order it did it */
+.v5step{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:14px;color:var(--ink2)}
+.v5step .bx{width:15px;height:15px;border-radius:4px;flex:none;margin-top:3px;background:var(--greend);position:relative}
+.v5step .bx:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5step .bx.run{background:none;border:1.5px solid var(--amber)}
+.v5step .bx.run:after{display:none}
+.v5step div{min-width:0}
+.v5step em{display:block;font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:12px;
+  color:var(--ink3);margin-top:3px}
+.v5step .w{color:var(--ink)}
+
+/* something it made */
+.v5made{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:14px;
+  padding:13px 15px;margin:14px 0;background:var(--card);cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.v5made:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.06)}
+.v5mt{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5mn{flex:1;min-width:0}
+.v5mn b{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5mn span{font-size:13.5px;color:var(--ink3)}
+.v5made .ti.go{font-size:17px;color:var(--ink3);flex:none}
+
+/* The one thing to do next, in the assistant column, as a card with a single
+   button. Automated steps run themselves; a person's step is just marked. */
+/* The run should look like it is happening. Tasks rise in one at a time, the
+   in-flight marker spins, the live step's dot breathes, the chapter bars slide
+   and a freshly written field flashes once. */
+@keyframes gyspin{to{transform:rotate(360deg)}}
+@keyframes gyrise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes gypip{0%,100%{box-shadow:0 0 0 3px var(--amberbg)}50%{box-shadow:0 0 0 7px rgba(239,159,39,.20)}}
+@keyframes gyflash{0%{background:#FEF6D8;border-color:#E9D79A}100%{background:var(--card);border-color:var(--line)}}
+@keyframes gyglow{0%,100%{box-shadow:0 2px 10px rgba(31,31,29,.05)}50%{box-shadow:0 2px 18px rgba(24,95,165,.18)}}
+.gyspin{animation:gyspin .9s linear infinite;display:inline-block}
+.v5step.rise{animation:gyrise .22s ease both}
+.v5wf.cur .dot,.dlpip.live{animation:gypip 1.5s ease-in-out infinite}
+.v5inp.just{animation:gyflash 1.2s ease-out}
+.v5tw.just,.v5win.just{animation:gyflash 1.2s ease-out}
+.dlsgb i{transition:width .45s ease}
+.v5rc.live{animation:gyglow 1.6s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+  .gyspin,.v5step.rise,.v5wf.cur .dot,.dlpip.live,.v5inp.just,.v5rc.live{animation:none}
+}
+.v5rc{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:16px 17px;
+  margin-top:8px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5rch{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5rch .ti{font-size:17px;color:var(--blued);flex:none}
+.v5rcb{font-size:14px;line-height:1.55;color:var(--ink2);margin-top:9px}
+.v5rcw{font-size:12.5px;color:var(--ink3);margin-top:9px;display:flex;align-items:center;gap:7px}
+.v5rcw .dlav{width:18px;height:18px;font-size:8.5px}
+.v5go{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;
+  border-radius:12px;padding:11px 16px;margin-top:14px;font-family:inherit;font-size:14.5px;
+  font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5go.sec{background:var(--card);color:var(--ink);border:1px solid var(--line2)}
+.v5go .ti{font-size:16px}
+.v5pl{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5pl .ti{font-size:15px}
+.v5sug{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.v5sug button{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer}
+.v5sug button:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* ── composer ───────────────────────────────────────────────────────────── */
+.v5comp{flex:none;padding:10px 22px 14px}
+.v5box{max-width:none;border:1px solid var(--line2);border-radius:18px;background:var(--card);
+  padding:14px 16px 11px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5box .q{font-size:14.5px;color:var(--ink3);padding-bottom:11px}
+.v5tools{display:flex;align-items:center;gap:9px}
+.v5tb{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:none;border-radius:999px;
+  padding:6px 12px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.v5tb:hover{border-color:var(--line2);color:var(--ink)}
+.v5send{margin-left:auto;width:34px;height:34px;border-radius:11px;border:none;background:var(--dark);color:#fff;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+
+/* ── the docked panel, tabs across the top ──────────────────────────────── */
+.v5panel{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:transparent}
+/* The assistant, the document and the drawer all stand on the same ground.
+   Nothing is a column with a fill of its own; the only object is the card. */
+.v5row{background:var(--bg)}
+/* A quiet pair of icons in the panel's top corner: the same sixteen steps as
+   a list, or as the canvas they live on. It floats in the body's top padding
+   so it stays put while the list scrolls under it. */
+.v5vt{flex:none;display:flex;gap:2px;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:2px;margin-left:12px}
+.v5vb{width:29px;height:26px;border:none;background:none;border-radius:8px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .12s,color .12s}
+.v5vb:hover{background:var(--graybg);color:var(--ink2)}
+.v5vb.on{background:var(--graybg);color:var(--ink)}
+/* The second bar spans the whole page, above the three columns, so its width
+   never moves when a column opens or closes. Everything the buttons open —
+   the assistant on the left, the document in the middle, a drawer on the
+   right — appears underneath it. */
+.v5tabs{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.v5tabgrp{flex:1;min-width:0;display:flex;align-items:center;gap:3px;padding-right:4px;overflow-x:auto;scrollbar-width:none}
+.v5tabgrp::-webkit-scrollbar{display:none}
+.v5tab{position:relative;display:inline-flex;align-items:center;gap:6px;border:none;background:none;
+  border-radius:10px;padding:7px 10px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.v5tab:hover{background:var(--graybg)}
+.v5tab.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5tab .ti{font-size:16px;color:var(--ink3)}
+.v5tab.on .ti{color:var(--ink)}
+.v5tab b{min-width:16px;height:16px;border-radius:999px;background:var(--graybg);color:var(--grayd);
+  font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.v5tab.chat{flex:none;order:-2;border:1px solid var(--line)}
+.v5tdiv{order:-1;flex:none;width:1px;align-self:stretch;background:var(--line);margin:2px 2px 2px 0}
+.v5tab.chat .ti{color:var(--blued)}
+.v5tab.chat.on{background:var(--bluebg);border-color:#CBE1F5;color:var(--blued)}
+.v5tab.chat.on .ti{color:var(--blued)}
+/* the right-hand drawer: Comments, To-dos and Sources open here, and the
+   assistant closes when they do, because the page holds one side panel at a
+   time and the middle should never be squeezed from both ends at once. */
+.v5dr{width:360px;flex:none;display:flex;flex-direction:column;min-width:0;
+  background:transparent}
+.v5dr.hide{display:none}
+.v5drh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;
+  padding:11px 12px 11px 18px;border-bottom:1px solid var(--line)}
+.v5drt{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5dri{width:30px;height:30px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5dri .ti{font-size:16px}
+.v5dri.hide{display:none}
+.v5drx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+.v5drx:hover{background:var(--graybg);color:var(--ink)}
+.v5drb{flex:1;overflow:auto;padding:20px 20px 40px;font-size:14px;line-height:1.55}
+.v5drgrp{flex:none;display:flex;align-items:center;gap:3px;margin-left:auto}
+.v5tab.dr.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5body{flex:1;overflow:auto;padding:46px 40px 110px}
+.v5bin{max-width:780px;margin:0 auto}
+
+/* ── the framed tabs ──────────────────────────────────────────────────────
+   The document and the workflow are one component each: a chrome bar naming
+   what you are looking at, and the page under it, in a single card hovering
+   on the shared ground. No frame around the frame. */
+.v5body.framed{padding:16px;overflow:hidden;display:flex;min-height:0}
+.v5body.framed #pbody{max-width:none;margin:0;flex:1;display:flex;min-width:0}
+.v5card{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--card);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 2px 16px rgba(26,12,18,.07),0 1px 3px rgba(26,12,18,.05)}
+.v5frh{flex:none;display:flex;align-items:center;gap:11px;min-height:56px;padding:12px 16px;
+  border-bottom:1px solid var(--line)}
+.v5frh .dlonm{flex:1 1 auto;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v5frh .n{margin-left:auto;font-size:12.5px;color:var(--ink3);flex:none;white-space:nowrap}
+.v5out{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:7px;border:none;
+  border-radius:999px;padding:8px 15px 8px 13px;background:var(--dark);color:#fff;font-family:inherit;
+  font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.v5out:hover{background:#31202A}
+.v5out .ti{font-size:16px;color:var(--yellow)}
+.v5cbody{flex:1;min-height:0;overflow:auto;padding:42px 40px 70px}
+.v5cin{max-width:780px;margin:0 auto}
+.v5cbody.list{padding:24px 26px 34px}
+.v5cbody.list .v5cin{max-width:860px}
+/* Home holds its own blocks, so it gets room rather than a reading measure. */
+.v5cbody.home{padding:32px 32px 60px}
+.v5cbody.home .v5cin{max-width:1060px}
+/* the canvas carries its own ground, so it fills the card edge to edge */
+.v5cbody.bare{padding:0;overflow:hidden;display:flex}
+
+/* the document, living inside the panel */
+.v5dt{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  padding-bottom:22px;border-bottom:1px solid var(--line)}
+
+/* A chapter is a block of fields with one heading. The guidance that used to
+   sit in a grey box under the heading now hangs off the i beside it, so the
+   page is fields and nothing else. */
+.v5sec{margin-top:54px}
+.v5ch{display:flex;align-items:center;gap:11px;margin-bottom:30px}
+.v5chn{width:30px;height:30px;border-radius:9px;background:var(--dark);color:var(--yellow);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.v5cht{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.v5ch .gyinfo{margin-left:1px}
+
+/* One field: a label row, then the field itself. Filled fields read as a
+   completed input, unwritten ones as an empty one, so the document looks like
+   something with blanks in it rather than prose with gaps. */
+.v5f{margin-bottom:34px}
+.v5f:last-child{margin-bottom:0}
+.v5flab{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-height:20px}
+.v5fl{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.v5inp{border:1px solid var(--line);border-radius:12px;background:var(--card);
+  padding:16px 18px;font-size:16.5px;line-height:1.6;color:var(--ink);outline:none;
+  transition:border-color .12s,box-shadow .12s,background .12s}
+.v5inp:hover{border-color:var(--line2);box-shadow:0 2px 8px rgba(31,31,29,.04)}
+.v5inp:focus{background:var(--card);border-style:solid;border-color:#9FC4E4;
+  box-shadow:0 0 0 3px rgba(24,95,165,.10)}
+/* An unwritten field is an empty field with a hint in it, so the first thing
+   you can do to it is type. The dashed frame clears itself on the first
+   keystroke, along with the chip that said it was not written yet. */
+.v5inp.empty{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;min-height:78px;
+  font-size:14.5px;color:var(--ink3)}
+.v5inp.empty:before{content:attr(data-ph);color:var(--ink3)}
+.v5inp.empty:focus:before{opacity:.45}
+.v5inp.parked{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;
+  font-size:14.5px;line-height:1.6;color:var(--ink3)}
+.v5tbl td[contenteditable]{outline:none}
+.v5tbl td[contenteditable]:focus{background:#F4F8FC;box-shadow:inset 0 0 0 2px #9FC4E4}
+.v5dt[contenteditable]{outline:none}
+.v5dt[contenteditable]:focus{box-shadow:inset 0 0 0 2px #9FC4E4;border-radius:8px}
+
+/* Provenance did not go away, it went quiet: one dot, coloured by how much the
+   field can be trusted, tooltip on hover, click for the full record. */
+.v5dot{width:9px;height:9px;border-radius:50%;flex:none;cursor:pointer;
+  box-shadow:0 0 0 3px transparent;transition:box-shadow .12s}
+.v5dot:hover{box-shadow:0 0 0 3px rgba(31,31,29,.07)}
+.v5dot.ai{background:var(--blued)}
+.v5dot.ok{background:var(--greend)}
+/* Chapter 2 splits into lettered markets, each with a buyer table; chapter 3
+   is one wide table. Tables scroll inside their own frame so the page never
+   does. An empty cell is drawn as an empty cell, not as nothing, because in
+   the source those blanks are work that has not happened yet. */
+.v5sh{font-size:15.5px;font-weight:600;letter-spacing:-.01em;margin:34px 0 13px;color:var(--ink)}
+.v5sec .v5sh:first-of-type{margin-top:0}
+.v5tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.v5tbl{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5}
+.v5tbl th{text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:bottom}
+.v5tbl td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+/* Chapter 3 has seven columns. Squeezing them into the panel turns every cell
+   into a column of single words, so the table keeps its natural width and the
+   frame scrolls instead. */
+.v5tbl.wide{width:auto;min-width:1180px}
+.v5tbl.wide td,.v5tbl.wide th{min-width:150px}
+.v5tbl.wide td:nth-child(4),.v5tbl.wide td:nth-child(5){min-width:230px}
+.v5tbl tr:last-child td{border-bottom:none}
+.v5tbl td.k{color:var(--ink);font-weight:600;min-width:150px}
+.v5tbl td.mt{background:#FBF9F2}
+.v5note{font-size:13.5px;line-height:1.6;color:var(--ink3);margin-top:11px}
+.v5call{display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:15px 17px;
+  margin-top:18px;font-size:14.5px;line-height:1.6;color:var(--ink2);background:var(--card)}
+.v5call > .ti{font-size:16px;color:var(--ink3);flex:none;margin-top:3px}
+.v5call ul{margin:0;padding-left:17px}
+.v5call li{margin:5px 0}
+.v5call b{color:var(--ink)}
+.v5win{background:#FEFAE6;border:1px solid #F1E3A6;border-radius:14px;padding:22px 24px}
+.v5win p{font-size:16.5px;line-height:1.62;color:var(--ink)}
+.v5win ul{margin:15px 0 0;padding-left:19px;font-size:15px;line-height:1.62;color:var(--ink2)}
+.v5win li{margin:8px 0}
+.v5win .gate{margin-top:17px;padding-top:15px;border-top:1px solid #F1E3A6;font-size:15px;color:var(--ink)}
+.v5txt{font-size:17px;line-height:1.62;color:var(--ink)}
+.v5pv{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--ink3)}
+.v5pv b{font-weight:400;color:var(--ink2)}
+.v5cf{font-size:12px;font-weight:500;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.v5cf.ai{background:var(--bluebg);color:var(--blued)}
+.v5cf.ok{background:var(--greenbg);color:var(--greend)}
+.v5cf.none{background:var(--amberbg);color:var(--amberd);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.v5cf.click{cursor:pointer}
+.v5cf.click:hover{filter:brightness(.97)}
+
+/* ── the Home tab ─────────────────────────────────────────────────────────
+   The v3 deliverable layout, lifted into the panel: progress as one reading,
+   the document and the workflow as real previews of themselves, then every
+   object this deliverable is wired to, grouped by the verb. Its .dl* names
+   never meet the .v5* ones, so it came across unchanged. */
+.dlav{width:30px;height:30px;border-radius:50%;color:#fff;font-size:11.5px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+/* ── progress, the one big reading on the page ── */
+/* The workflow bar carries the same title bar as the Document block, and
+   leads with the step in flight rather than with a big total. Smaller, but
+   the amber pip and the live step do the work the 28px number used to. */
+.dlpb{margin-bottom:18px;padding:11px 16px 13px}
+/* A ribbon, not a block: no title bar of its own, everything live on one
+   line, and four hairline bars under it. Two rows, about 70px. */
+.dlnow{display:flex;align-items:center;gap:9px;flex-wrap:nowrap;margin-bottom:11px;min-width:0}
+.dlnow > .ti{font-size:16px;color:#12684C;flex:none}
+.dlpip{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;
+  box-shadow:0 0 0 3px var(--amberbg);margin-left:3px}
+.dlnow .k{font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--amberd);flex:none;margin-right:1px}
+.dlnow .v{font-size:14px;font-weight:600;letter-spacing:-.01em;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlnow .w{margin-left:auto;font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:6px;
+  flex:none;white-space:nowrap}
+.dlnow .w .dlav{width:17px;height:17px;font-size:8px}
+.dlnow .c{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap;
+  padding-left:10px;margin-left:2px;border-left:1px solid var(--line)}
+.dlseg{display:flex;gap:6px}
+.dlsg{flex-basis:0;min-width:0}
+.dlsgb{height:5px;border-radius:999px;background:#F0EEE7;overflow:hidden;display:flex}
+.dlsgb i{display:block;height:100%}
+.dlsgb i.done{background:var(--greend)}
+.dlsgb i.cur{background:var(--yellow)}
+.dlsgl{display:flex;align-items:baseline;gap:5px;margin-top:6px;font-size:11px;color:var(--ink2);min-width:0}
+.dlsgl .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlsgl .c{color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
+.dlsg.off .dlsgl{color:var(--ink3)}
+
+/* ── the two objects the deliverable really is ── */
+.dlhero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:980px){.dlhero{grid-template-columns:minmax(0,1fr)}}
+.dlcol{display:flex;flex-direction:column;gap:18px}
+
+.dlobj{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.dlobj:hover{border-color:var(--line2);box-shadow:0 4px 16px rgba(31,31,29,.08)}
+.dlohd{display:flex;align-items:center;gap:11px;padding:13px 15px}
+.dltile{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.dltile .ti{font-size:17px}
+.dlonm{flex:1 1 auto;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlkeb{width:28px;height:28px;flex:none;border:none;background:transparent;border-radius:8px;
+  color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.dlkeb:hover{background:var(--graybg);color:var(--ink)}
+.dloft{display:flex;align-items:center;gap:10px;padding:12px 15px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.dloft .r{margin-left:auto;color:var(--ink);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.dloft .r .ti{font-size:15px}
+
+/* the document, as a small true miniature of the editor page */
+.dlthumb{position:relative;height:414px;overflow:hidden;background:#F1EDE0;padding:16px 0 0;
+  display:flex;justify-content:center;align-items:flex-start;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dlpage{width:900px;flex:none;background:#fff;border-radius:4px 4px 0 0;padding:50px 64px;
+  box-shadow:0 3px 14px rgba(26,12,18,.12);transform:scale(.5);transform-origin:top center;
+  font-family:var(--serif);color:var(--ink);text-align:left}
+.dlthumb:after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(rgba(241,237,224,0),#F1EDE0)}
+.dlpage h1{font-size:38px;font-weight:500;letter-spacing:-.02em;margin-bottom:10px}
+.dlpage .by{font-family:var(--sans);font-size:15px;color:var(--ink3);margin-bottom:34px}
+.dlpage h2{font-size:25px;font-weight:500;letter-spacing:-.015em;margin:30px 0 12px}
+.dlpage h2:first-of-type{margin-top:0}
+.dlpage p{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:13px}
+.dlpage ul{margin:0 0 13px 22px}
+.dlpage li{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:7px}
+.dlpage table{width:100%;border-collapse:collapse;margin:0 0 15px;font-family:var(--sans);font-size:15.5px}
+.dlpage th{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1.5px solid var(--line2);padding:7px 10px 7px 0}
+.dlpage td{border-bottom:1px solid var(--line);padding:7px 10px 7px 0;color:#33272C}
+.dlpage .blank{font-family:var(--sans);font-size:15.5px;color:var(--ink3);font-style:italic}
+.dlpage .em{background:#FEF6D8;padding:1px 3px;border-radius:3px}
+
+/* the workflow, as a viewport onto the real canvas: one line of nodes that
+   runs off both edges, parked on the step you are actually on */
+.dlwf{position:relative;height:182px;overflow:hidden;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background-color:#FBFAF5;background-image:radial-gradient(circle,#E0DED6 1px,transparent 1px);background-size:13px 13px}
+.dlstrip{position:absolute;top:50%;transform:translateY(-50%);display:flex;align-items:center}
+.dlwn{width:104px;flex:none;background:#fff;border:1px solid var(--line);border-radius:11px;
+  padding:8px 9px 9px;box-shadow:0 1px 3px rgba(31,31,29,.06)}
+.dlwn .h{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.dlwn .ic{width:21px;height:21px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlwn .ic .ti{font-size:12px}
+.dlwn .n{font-size:9.5px;color:var(--ink3);font-variant-numeric:tabular-nums;margin-left:auto}
+.dlwn .t{font-size:11px;line-height:1.3;color:var(--ink);height:43px;overflow:hidden}
+.dlwn.pend{background:#FCFBF7;border-color:#EAE6DA}
+.dlwn.pend .ic{background:#F1EFE8;color:#C6C1B4}
+.dlwn.pend .t{color:var(--ink3)}
+.dlwn.cur{box-shadow:0 0 0 2.5px var(--yellow),0 3px 10px rgba(31,31,29,.10)}
+.dlwl{width:17px;height:2px;border-radius:1px;background:#D8D2C4;flex:none}
+.dlwl.pend{background:#EAE6DC}
+.dlwph{position:absolute;top:18px;font-size:10px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+
+/* to-dos */
+.dlcardb{padding:4px 17px 14px}
+/* In a narrow panel the count gives way before the block's name does. */
+.dlohd .n{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--ink3);
+  flex:0 5 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlohd .n.warn{color:var(--amberd)}
+.dltd{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dltd:first-of-type{border-top:none}
+.dltd .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dltd .d{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap}
+.dltd .d.warn{color:var(--amberd)}
+.dltd .dlav{width:21px;height:21px;font-size:9.5px;box-shadow:none}
+.dlmore{border:none;background:transparent;color:var(--ink2);font-family:inherit;font-size:13px;
+  cursor:pointer;padding:9px 0 0;display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);width:100%;margin-top:2px}
+.dlmore:hover{color:var(--ink)}
+
+/* ── related objects: the verb is the relationship, the noun is the type,
+      and each object is a tile whose width its own content decides ── */
+/* Everything the deliverable leans on, in one block rather than three
+   loose lists. The verb and the count came off the group headings: inside a
+   named block, the noun is enough. */
+.dlrun{margin-top:24px}
+.dlrunb{padding:2px 18px 20px}
+.dlg{padding:20px 0 2px;border-top:1px solid var(--line)}
+.dlg:first-child{border-top:none;padding-top:16px}
+.dlghd{margin-bottom:13px}
+.dlghd .t{font-family:var(--serif);font-size:17.5px;font-weight:500;letter-spacing:-.01em}
+/* One line per object, nothing but what it is. The group header already
+   says how many there are and how many need attention. */
+.dlgw{display:flex;flex-direction:column}
+.dlr{display:flex;align-items:center;gap:14px;padding:15px 2px;border-top:1px solid var(--line);
+  cursor:pointer;font-size:15px;transition:padding-left .12s}
+.dlr:first-child{border-top:none}
+.dlr:hover{padding-left:6px}
+.dlr .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlr .ic .ti{font-size:17px}
+.dlr .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlr .go{font-size:16px;color:var(--ink3);flex:none;opacity:0;transition:opacity .12s}
+.dlr:hover .go{opacity:1}
+.dlr.miss .nm{color:var(--ink3)}
+
+/* Documents are shown as documents: the same page preview as the main
+   thumbnail, at a size you can line four of up. */
+.dlfilm{display:flex;flex-wrap:wrap;gap:16px}
+.dlfile{width:146px;cursor:pointer}
+.dlfp{height:104px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden;
+  padding:13px 12px;transition:border-color .12s,box-shadow .12s}
+.dlfile:hover .dlfp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dlfp b{display:block;height:6px;border-radius:2px;background:#D9D4C6;width:72%;margin-bottom:9px}
+.dlfp i{display:block;height:4px;border-radius:2px;background:#EDEAE1;margin-bottom:6px}
+.dlfile.miss .dlfp{border-style:dashed;background:transparent;display:flex;align-items:center;
+  justify-content:center;color:var(--ink3);font-size:12.5px;text-align:center;padding:13px}
+.dlfn{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;min-width:0}
+.dlfn .ti{font-size:15px;flex:none;color:var(--ink3)}
+.dlfn .ti.pdf{color:#C0432C}
+.dlfn .ti.doc{color:#185FA5}
+.dlfn .ti.xls{color:#1C7A4E}
+.dlfn span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlfile.miss .dlfn span{color:var(--ink3)}
+.dltool{width:146px;cursor:pointer}
+.dltp{height:78px;border:1px solid var(--line);border-radius:10px;display:flex;
+  align-items:center;justify-content:center;transition:border-color .12s,box-shadow .12s}
+.dltp .ti{font-size:28px}
+.dltool:hover .dltp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dltn{margin-top:10px;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The document miniature and the object tiles want more room than a column
+   of prose does, so the Home tab widens the measure. */
+.v5bin.wide{max-width:1060px}
+
+/* the other tabs */
+.v5item{padding:13px 0;border-top:1px solid var(--line)}
+.v5item:first-child{border-top:none;padding-top:0}
+.v5who{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.v5who .v5av{width:22px;height:22px;font-size:9.5px}
+.v5who b{font-size:13.5px;font-weight:600}
+.v5who span{font-size:12.5px;color:var(--ink3);margin-left:auto}
+.v5sub{font-size:12.5px;color:var(--ink3);margin-bottom:5px}
+.v5srow{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line);min-width:0;font-size:14px}
+.v5srow:first-child{border-top:none;padding-top:0}
+.v5srow .ti{font-size:16px;color:var(--ink3);flex:none}
+.v5srow .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v5srow .s{flex:none;font-size:13px;color:var(--ink3);white-space:nowrap}
+.v5srow .s.warn{color:var(--amberd)}
+.v5srow .s.ok{color:var(--greend)}
+.v5box2{width:15px;height:15px;border-radius:4px;border:1.5px solid #B4B2A9;flex:none;margin-top:2px;background:#fff}
+.v5box2.on{background:#185FA5;border-color:#185FA5;position:relative}
+.v5box2.on:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5td{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.45}
+.v5td:first-child{border-top:none;padding-top:0}
+/* workflow tab */
+.v5wfc{display:flex;align-items:baseline;gap:10px;margin:22px 0 8px;font-size:12px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.v5wfc:first-child{margin-top:0}
+.v5wfc{padding:0 10px}
+
+/* ── the step detail: what it is for, the tasks inside it, what it leaves ── */
+.v5sk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.v5swhat{font-size:15px;line-height:1.55;color:var(--ink);margin-bottom:22px}
+.v5tkb{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.v5tkr{position:relative;display:flex;gap:12px;padding:14px;border-top:1px solid var(--line)}
+.v5tkr:first-child{border-top:none}
+.v5tkr:before{content:'';position:absolute;left:25px;top:0;height:14px;width:1px;background:var(--line)}
+.v5tkr:after{content:'';position:absolute;left:25px;top:36px;bottom:0;width:1px;background:var(--line)}
+.v5tkr:first-child:before,.v5tkr:last-child:after{display:none}
+.v5tkn{position:relative;z-index:1;width:22px;height:22px;border-radius:50%;flex:none;background:var(--card);
+  border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v5tkc{min-width:0}
+.v5act{display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-size:11.5px;font-weight:500;
+  padding:3px 10px 3px 5px;margin-bottom:8px}
+.v5act.ai{background:var(--dark);color:#fff}
+.v5act.ai .ti{font-size:13px;color:var(--yellow)}
+.v5act.who{background:var(--graybg);color:var(--ink)}
+.v5act.who .dlav{width:17px;height:17px;font-size:8px}
+.v5tkt{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.4}
+.v5tkw{font-size:12.5px;color:var(--ink3);margin-top:5px}
+.v5aft{display:flex;gap:11px;background:var(--bluebg);border-radius:12px;padding:14px 16px;margin-top:20px;
+  font-size:13.5px;line-height:1.55;color:var(--blued)}
+.v5aft .ti{font-size:16px;flex:none;margin-top:1px}
+
+/* ── the canvas view ──────────────────────────────────────────────────────
+   Not a redrawing of the canvas: the canvas itself. gy-nav.js already reads
+   ?embed=1 and drops its own sidebar, top bar and collapse control, which is
+   what that flag exists for, so the page arrives as the world plus its own
+   floating pills and side panel. The panel goes full-bleed to receive it. */
+.v5cvf{display:block;width:100%;height:100%;border:none;background:#FBFAF5}
+.v5wfc span{margin-left:auto;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400;color:var(--ink3)}
+/* A step is an object you can open, so the row behaves like one. */
+.v5wf{display:flex;align-items:center;gap:11px;padding:10px 10px;border-top:1px solid var(--line);
+  font-size:14.5px;cursor:pointer;transition:background .12s}
+.v5wf:hover{background:var(--graybg)}
+.v5wf.sel{background:var(--graybg)}
+.v5wf .ch{flex:none;font-size:15px;color:var(--ink3);opacity:0;transition:opacity .12s}
+.v5wf:hover .ch,.v5wf.sel .ch{opacity:1}
+.v5wf .dot{width:15px;height:15px;border-radius:50%;flex:none;border:1.5px solid var(--line2);position:relative}
+.v5wf.done .dot{background:var(--greend);border-color:var(--greend)}
+.v5wf.done .dot:after{content:'';position:absolute;left:50%;top:50%;width:3.5px;height:7px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5wf.cur .dot{border-color:var(--amber);border-width:4px}
+.v5wf .no{flex:none;font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums;width:26px}
+.v5wf .ti2{flex:1;min-width:0}
+.v5wf.pend .ti2,.v5wf.pend .no{color:var(--ink3)}
+.v5wf.cur .ti2{font-weight:600}
+.v5wf .now{flex:none;font-size:12px;font-weight:500;color:var(--amberd);background:var(--amberbg);
+  padding:2px 8px;border-radius:999px}
+.v5dl{display:flex;gap:12px;padding:8px 0;font-size:13.5px}
+.v5dl dt{flex:none;width:84px;color:var(--ink3)}
+.v5dl dd{flex:1;min-width:0}
+.v5back{display:inline-flex;align-items:center;gap:7px;border:none;background:none;font-family:inherit;
+  font-size:13.5px;color:var(--blued);cursor:pointer;padding:0;margin-bottom:14px}
+.v5back:hover{text-decoration:underline}
+
+/* ── header bits ────────────────────────────────────────────────────────── */
+.v5av{border-radius:50%;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;
+  justify-content:center;flex:none;width:30px;height:30px}
+.v5pile{display:flex;align-items:center}
+.v5pile .v5av{margin-left:-9px;box-shadow:0 0 0 2px var(--bg)}
+.v5pile .v5av:first-child{margin-left:0}
+.v5keb{width:34px;height:34px;flex:none;border:none;background:transparent;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px}
+.v5keb:hover{background:var(--graybg);color:var(--ink)}
+.v5keb.on{background:var(--graybg);color:var(--ink)}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"deliverables","arts":"demand"};</script>
+<script src="gy-nav.js?v=668c831e"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Show the sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <button class="crmore" id="crmore" onclick="crExpand()"
+      data-tip="Portfolio &rsaquo; Upper Dee &rsaquo; Deliverables"><span class="sl">/</span><span class="el">&hellip;</span><span class="sl">/</span></button>
+    <span class="crtrail" id="crtrail">
+      <span class="cr" onclick="location.href='portfolio-overview.html'">Portfolio</span><span class="sep">&rsaquo;</span>
+      <span class="cr" onclick="location.href='programme-overview.html'">Upper Dee</span><span class="sep">&rsaquo;</span>
+      <span class="cr" onclick="location.href='deliverables-landing.html'">Deliverables</span><span class="sep">&rsaquo;</span>
+    </span>
+    <span class="cr cur">Customer Demand Mapping</span>
+  </div>
+  <div class="spacer"></div>
+  <div class="v5pile" id="pile"></div>
+  <button class="btn-out" onclick="gyToast('Sharing is not wired up in this sketch')"><i class="ti ti-users"></i> Share</button>
+  <button class="v5keb" onclick="gyMenu(this,[
+    ['ti-file-text','Open the document view','go:deliverable-sketch-v4-doc.html'],
+    ['ti-layout-dashboard','Open the deliverable','go:deliverable-sketch-v4.html'],
+    ['ti-download','Export PDF','Export, not in this sketch']].concat(
+      DEMO ? [['ti-rotate','Reset this run','run:reset']] : []))">&#8942;</button>
+</div>
+
+<div class="v5tabs" id="tabs"></div>
+
+<div class="v5row">
+
+  <div class="v5chat">
+    <div class="v5grip" id="chatgrip" title="Drag to resize"></div>
+    <div class="v5log">
+      <div class="v5in" id="chatin">
+
+        <div class="v5turn">
+          <div class="v5you">What is still holding chapter 1 up?</div>
+          <div class="v5say">One thing, and it is a big one: the peat condition data is from <b>2015</b>. My desktop
+            pass puts roughly <b>6,217 ha</b> of degraded peat across the estates, but that number is doing a lot of
+            work in the carbon case and it has not been resurveyed. The other two are decisions rather than gaps &mdash;
+            whether a TEV gets commissioned, and whether we run this demand-led or supply-led.</div>
+        </div>
+
+        <div class="v5turn">
+          <div class="v5you">Who should we be talking to in this catchment, and put them somewhere Trade can work from?</div>
+
+          <div style="margin-top:16px">
+            <div class="v5step"><span class="bx"></span><div><span class="w">Read the abstraction licences</span>
+              <em>Dee at Invercannie / Cairnton &middot; Scottish Water</em></div></div>
+            <div class="v5step"><span class="bx"></span><div><span class="w">Scanned the public funding registers</span>
+              <em>Peatland ACTION &middot; next deadline 30 Sep 2026</em></div></div>
+            <div class="v5step"><span class="bx"></span><div><span class="w">Read from the Hive Mind</span>
+              <em>ES rule books, Oct 2025 &middot; 5 candidate markets</em></div></div>
+          </div>
+
+          <div class="v5say">Four markets carry real demand here, plus NFM which I have parked. I put the buyers in a
+            sheet so Trade can work from it, and wrote the four tables into chapter 2.</div>
+
+          <div class="v5made" onclick="gyToast('The buyer list sheet is not built out in this sketch')">
+            <div class="v5mt" style="background:var(--greenbg);color:var(--greend)"><i class="ti ti-table"></i></div>
+            <div class="v5mn"><b>Upper Dee buyer list</b><span>Sheet &middot; 19 rows &middot; shared with Trade</span></div>
+            <i class="ti ti-arrow-up-right go"></i>
+          </div>
+
+          <div class="v5step"><span class="bx"></span><div><span class="w">Wrote 2. Demand &middot; markets a to e</span>
+            <em>chapter 2 &middot; 4 tables written</em></div></div>
+          <div class="v5step"><span class="bx run"></span><div><span class="w">Trade sense-check</span>
+            <em>step 2.5 &middot; waiting on Izzie</em></div></div>
+
+          <div class="v5say">Scottish Water is the clearest single buyer, because it abstracts from the Dee for
+            Aberdeen and already invests in peatland and woodland for exactly this reason. Worth checking with Emily
+            before the verdict goes anywhere near a client.</div>
+
+          <div class="v5sug">
+            <button onclick="gyToast('Not wired up in this sketch')">Draft the Trade check</button>
+            <button onclick="openTab('doc')">Show me chapter 2</button>
+            <button onclick="gyToast('Not wired up in this sketch')">Chase the peat resurvey</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="v5comp">
+      <div class="v5box">
+        <div class="q">Ask, or ask it to run a step</div>
+        <div class="v5tools">
+          <button class="v5tb" onclick="goSources()"><i class="ti ti-paperclip"></i> Add source</button>
+          <button class="v5tb" onclick="gyToast('The step picker is not wired up in this sketch')"><i class="ti ti-player-play"></i> Run a step</button>
+          <button class="v5send" onclick="gyToast('Not wired up in this sketch')"><i class="ti ti-arrow-up"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v5panel" id="panel">
+    <div class="v5body"><div class="v5bin" id="pbody"></div></div>
+  </div>
+
+  <div class="v5dr hide" id="drawer">
+    <div class="v5drh">
+      <span class="v5dri hide" id="dricon"></span>
+      <div class="v5drt" id="drtitle"></div>
+      <button class="v5drx" onclick="closeDrawer()" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="v5drb" id="drbody"></div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+/* ── v4-chat ───────────────────────────────────────────────────────────────
+   Same deliverable, same parts, different lead. The assistant thread is the
+   page and the document is one tab of a docked panel. The workflow is not a
+   band here: it shows up as the run log inside the answer, which is where the
+   steps actually happen. Nothing from the document view is lost — the four
+   other rail panels became the other tabs. */
+
+var TEAM = [['CC','Caitlin Ciceri','#1F6B4A'],['EN','Emily Norton','#3B82F6'],
+            ['HF','Harry Fox','#EF9F27'],['IB','Izzie Bell','#7C6BD6']];
+document.getElementById('pile').innerHTML = TEAM.map(function(p){
+  return '<span class="v5av" style="background:'+p[2]+'" data-tip="'+p[1]+'" tabindex="0">'+p[0]+'</span>'; }).join('');
+
+function runCard(icon, head, body, who, btn, act, sec){
+  return '<div class="v5rc"><div class="v5rch"><i class="ti '+icon+'"></i>'+head+'</div>'
+    + (body ? '<div class="v5rcb">'+body+'</div>' : '')
+    + (who ? '<div class="v5rcw">'+avName(who)+who+' owns this step</div>' : '')
+    + '<button class="v5go'+(sec?' sec':'')+'" onclick="'+act+'">'
+      + '<i class="ti '+(sec?'ti-check':'ti-player-play')+'"></i>'+btn+'</button></div>';
+}
+function paintChat(){
+  var el = document.getElementById('chatin');
+  if(!el || !DEMO) return;   /* the reference sketch keeps its written thread */
+  var byKey = {};
+  stepList().forEach(function(x){ byKey[x.k] = x; });
+  var h = '<div class="v5turn"><div class="v5say">Created from the <b>'
+    + (DEMO.w || 'Customer Demand Mapping') + '</b> blueprint: sixteen steps across four chapters. '
+    + 'Nothing is written yet.</div></div>';
+
+  RUNDONE.forEach(function(k){
+    var d = STEPD[k], st = byKey[k]; if(!d || !st) return;
+    h += '<div class="v5turn"><div class="v5say"><b>'+k+' &middot; '+st.t+'</b></div>'
+      + '<div style="margin-top:12px">' + d.tasks.map(function(t){
+          return '<div class="v5step"><span class="bx"></span><div><span class="w">'+t[1]+'</span>'
+            + '<em>'+(t[0]==='ai' ? 'AI Assistant' : t[0])+'</em></div></div>';
+        }).join('') + '</div>'
+      + '<div class="v5say">'+d.after.charAt(0).toUpperCase()+d.after.slice(1)+'</div></div>';
+  });
+
+  /* the step in flight, its tasks arriving one at a time */
+  if(RUNNING_K){
+    var d = STEPD[RUNNING_K], st = byKey[RUNNING_K];
+    if(d && st){
+      h += '<div class="v5turn"><div class="v5say"><b>'+RUNNING_K+' &middot; '+st.t+'</b></div>'
+        + '<div style="margin-top:12px">'
+        + d.tasks.slice(0, RUNTASK + 1).map(function(t,i){
+            var fin = i < RUNTASK;
+            return '<div class="v5step rise"><span class="bx'+(fin?'':' run')+'"></span><div>'
+              + '<span class="w">'+t[1]+'</span>'
+              + '<em>'+(t[0]==='ai' ? 'AI Assistant' : t[0])+'</em></div></div>';
+          }).join('')
+        + '</div></div>';
+    }
+    h += '<div class="v5rc live"><div class="v5rch">'
+      + '<i class="ti ti-loader-2 gyspin"></i>Working&hellip;</div>'
+      + '<button class="v5go sec" onclick="runPause()">'
+        + '<i class="ti ti-player-pause"></i>Pause</button></div>';
+    el.innerHTML = h;
+    var lg = el.parentNode; if(lg) lg.scrollTop = lg.scrollHeight;
+    return;
+  }
+
+  var n = nextStep();
+  if(RUNSTATE === 'idle'){
+    h += runCard('ti-player-play','Ready to run',
+      'I will run my own steps back to back and stop whenever one needs a person.',
+      '', 'Play the run', 'runPlay()', 0);
+  } else if(!n){
+    h += runCard('ti-circle-check','All sixteen steps done',
+      'Every chapter is written and the verdict is in chapter 4.',
+      '', 'Reset the run', 'runReset()', 1);
+  } else if(isAi(n.k)){
+    h += runCard('ti-sparkles','Next: '+n.k+' '+n.t, STEPD[n.k].what,
+      '', 'Carry on', 'runPlay()', 0);
+  } else {
+    h += runCard('ti-user','Over to you: '+n.k+' '+n.t,
+      STEPD[n.k].what + ' The run waits here until this is done.',
+      stepActor(n.k), 'Mark as done and carry on', 'runAdvance()', 1);
+  }
+  el.innerHTML = h;
+  var log = el.parentNode; if(log) log.scrollTop = log.scrollHeight;
+}
+
+/* the document, written as data so the chips can open their own provenance */
+/* In a run the document starts blank and each step fills its own fields, in
+   wording that does not presume a particular catchment. */
+var FIELDS = {
+  a0:{l:'Objective', by:'Kick-off meeting', cf:['ai',"Assistant's reading"], at:'1.1',
+      g:'Landscape-scale restoration across the project area, improving water quality at source, sequestering carbon, and delivering biodiversity uplift at catchment scale.',
+      t:'Landscape-scale restoration of the biodiversity-rich, carbon-rich Upper Dee headwaters, improving water quality at source, sequestering carbon in peat, and delivering biodiversity uplift at a flagship, catchment scale.'},
+  a1:{at:'1.2', g:'The project area sits within a single catchment, with peat-dominated uplands and low tree cover. A public water supply abstracts downstream of the site.', l:'Site description and current land use', by:'Land management plan', cf:['ok','Confirmed by client'],
+      t:'Upper Dee catchment within the Cairngorms, including tributaries Muick, Geldie and Baddoch. Peat-dominated uplands with low tree cover (~8% in the upper catchment). The River Dee supplies Aberdeen, with a key abstraction point near Invercannie / Cairnton.'},
+  a2:{at:'1.2', g:'Peatland restoration as the first priority, native woodland creation, river and catchment restoration, and habitat enhancement across the holdings.', l:'Planned interventions', by:'Land management plan', cf:['ok','Confirmed by client'],
+      t:'Peatland restoration (top priority), native woodland creation, river and catchment restoration, and habitat enhancement across the estates.'},
+  a3:{at:'1.2', g:'Reduced dissolved organic carbon and sediment runoff, improved flow regulation, carbon sequestration in restored peat, and measurable biodiversity uplift.', l:'Target habitats and outcomes', by:'Land management plan', cf:['ai',"Assistant's reading"],
+      t:'Reduced dissolved organic carbon (&ldquo;brown water&rdquo;) and sediment runoff, improved flow regulation, carbon sequestration in restored peat, and biodiversity uplift.'},
+  a4:{at:'1.3', g:'Habitat condition data predates the current baseline and needs resurveying before the carbon case can be relied on. Two open strategy questions: whether a valuation is commissioned, and whether the approach is demand-led or supply-led.', l:'Constraints and dependencies', by:'Desktop peat analysis, step 1.3', cf:['ai',"Assistant's reading"],
+      t:'Peatland condition data dates from 2015 and is likely outdated, so an updated survey is needed. A quick desktop analysis estimates ~6,217 ha of degraded peat across the estates. Two open strategy questions: is a TEV needed (commission Oliver at NAS), and is the commercial strategy demand-led or supply-led.'}
+};
+
+/* Buyer tables, chapter 2, one per market. Same four columns throughout. */
+var BUYCOLS = ['Buyer','Why relevant','Hook','Relationship status'];
+var DEMO_MARKETS = [
+  ['a. Carbon (peatland / soil)', [
+    ['Public restoration fund','Grant funding for peatland restoration','Blends with credit sales','Next window to confirm'],
+    ['Corporate removals buyer','Seeking high-integrity domestic removals','Local removals at landscape scale','None'],
+    ['Institutional buyer','University or similar with a standing carbon budget','Local removals','None']], ''],
+  ['b. Water Quality', [
+    ['Downstream water utility','Abstracts below the site; exposed to rising DOC, sediment and treatment cost',
+     'Catchment restoration to protect source water','Clearest buyer in the catchment']],
+    'Presence is not the same as reliance: the utility that abstracts downstream has a direct interest, others only a target to meet.'],
+  ['c. Voluntary Biodiversity', [
+    ['Transmission operator','Moving from no net loss to net gain across the network','Flagship biodiversity uplift','In conversation'],
+    ['Renewables generator','Nature-positive commitment with land holdings nearby','Nature-positive partnership','Cold outreach'],
+    ['Infrastructure contractor','Group-level biodiversity commitments applied per project','Habitat compensation','None']], ''],
+  ['d. Replenish / Supply Chain Resilience', [
+    ['Bottler sourcing from the catchment','Brand rests on the quality of the water it draws','Source protection for the brand','Direct commercial incentive'],
+    ['Distiller in the catchment','Water-stewardship and net-zero targets','Catchment resilience','Warm'],
+    ['Food or drink processor','Water-dependent operation downstream','Supply-chain resilience','To research']],
+    'Drought in recent seasons has sharpened the resilience case for everyone drawing from the catchment.']
+];
+var MARKETS = [
+  ['a. Carbon (peatland / soil)', [
+    ['Diageo','&pound;3M fund for UK peatland restoration; Royal Lochnagar sits on the Dee','Peatland removals plus source-water protection','Warm angle via distillery'],
+    ['Peatland ACTION (NatureScot)','Public funding for peatland restoration','Blends with credit sales','Next deadline 30 Sep 2026 for post-Apr 2027 starts'],
+    ['University of St Andrews','Institutional carbon buyer','Local removals','None'],
+    ['University of Edinburgh','Institutional carbon buyer','Local removals','None'],
+    ['University of Aberdeen','Was a target carbon buyer','Local removals','Fund shut down; parked'],
+    ['BP / Shell','Large corporates seeking removals','High-integrity UK removals','None']], ''],
+  ['b. Water Quality', [
+    ['Scottish Water','Direct catchment reliance: abstracts from the Dee for Aberdeen near Invercannie / Cairnton; concerned about rising DOC, sediment and treatment cost','Catchment restoration to protect source water and cut treatment cost','Strongest water-quality buyer; peatland and woodland are explicitly why they invest']],
+    'Scottish Power is present but limited in the Upper Dee and driven by biodiversity targets, whereas Scottish Water has direct catchment reliance driven by water quality and supply.'],
+  ['c. Voluntary Biodiversity', [
+    ['SSEN','No net loss moving to net gain; embedding biodiversity into grid design; active BNG-style adopter in Scotland','Flagship biodiversity uplift','GY in'],
+    ['Scottish Power','Net positive biodiversity by 2030; Nature Action Plan; peatland and woodland around windfarms; transmission near the lower Dee','Flagship nature-positive partnership','GY in plus cold outreach'],
+    ['SSE plc','Parent of SSEN; nature-positive ambition','Group-level partnership','Via SSEN'],
+    ['Network Rail','Delivering biodiversity uplift and large-scale planting','Habitat compensation','GY in'],
+    ['Scottish Water','Net positive / BNG varies by programme; large landholding','Catchment-scale habitat work','Warm via water quality'],
+    ['Balfour Beatty','UK-wide BNG commitments applied to Scottish projects','Infrastructure biodiversity','None'],
+    ['Amey plc','Active in Scottish highways; biodiversity targets tied to Transport Scotland contracts','Contract-linked biodiversity','None']], ''],
+  ['d. Replenish / Supply Chain Resilience', [
+    ['Deeside Water Company','Bottled water from Deeside springs; brand is pristine Deeside water','Source protection for the brand','None; direct commercial incentive'],
+    ['Diageo (Royal Lochnagar)','Distillery on the Dee near Balmoral; net-zero and water-stewardship targets','Catchment resilience for a heritage distillery','Warm'],
+    ['Deeside Distillery','In the Dee catchment (Aboyne / Banchory); early-stage and flexible','Partnership pilot','None'],
+    ['Lost Loch Spirits','Craft distillery on the Cairngorms edge; nature-connected positioning','Story-driven biodiversity partnership','None'],
+    ['City of Aberdeen Distillery / Brown Forman','Regional distillers','Source-water resilience','To research']],
+    'Distilleries were hit by drought last year (Diageo had water issues), sharpening the resilience case.']
+];
+
+/* Chapter 3. The fifth column carries market dynamics but has no heading in
+   the source, so it has none here either. */
+var SUPCOLS = ['Candidate market','From which interventions','Market readiness<br>demand side',
+  'Market dynamics / indicative sizing<br>demand side','','Target methodology?','Estimated project offering'];
+var DEMO_SUPROWS = [
+  ['Carbon (peatland / soil)','Peatland restoration, woodland creation','Active',
+   'Sized from the ES rule books against the restorable area','Buyers prefer removals; peatland via the Peatland Code','',''],
+  ['Water Quality','Peatland restoration, woodland, catchment restoration','Nascent',
+   'Via the downstream utility\'s investment programme','Reduces treatment cost at source. Bespoke, no MRV yet','',''],
+  ['Voluntary Biodiversity','Habitat enhancement, landscape-scale restoration','Emerging',
+   'Domestic indicative range from the rule books','Landscape scale suits flagship nature-positive partnerships','',''],
+  ['Replenish','Catchment and river restoration, woodland','Nascent','Not sized; bespoke deals only',
+   'Sized by identifying demand. Fits water-dependent brands sourcing from the catchment','',''],
+  ['Natural Flood Management','Peatland restoration, flow regulation','Nascent','Not formally sized',
+   'Lower priority until downstream flood-risk assets are identified','','']
+];
+var SUPROWS = [
+  ['Carbon (peatland / soil)','Peatland restoration, woodland creation','Active',
+   'Global VCM &pound;6.43B; UK VCM ~&pound;396.9M. Project estimate ~544,000 credits over 20 yrs on 4,000 ha, ~&pound;14.1M at &pound;26/t',
+   'Buyers prefer removals. UK high-quality credits &pound;75&ndash;125/t. Peatland via the Peatland Code; PIU pricing 30&ndash;50% below verified PCUs','',
+   'Estimated &pound;6M on 9,000 ha, carbon team knows. Can do this with the Claude carbon curve for the habitat, but needs a carbon expert (like Treeconomy) to estimate'],
+  ['Water Quality','Peatland restoration, woodland, catchment restoration','Nascent',
+   '&pound;22.1B PR24 WINEP envelope (England); Scotland via Scottish Water investment',
+   'Strong buyer logic: reduces DOC, sediment and treatment cost at source. Bespoke, no MRV yet','',''],
+  ['Voluntary Biodiversity','Habitat enhancement, landscape-scale restoration','Emerging',
+   'Global credit sales &pound;0.2&ndash;1.4M; domestic indicative ~&pound;684.7M',
+   'Landscape-scale and biodiversity-rich, attractive for flagship nature-positive partnerships. TNFD adopters rising','',''],
+  ['Replenish','Catchment and river restoration, woodland','Nascent','Not sized; bespoke deals only',
+   'Sized by identifying demand. Coca-Cola, Nestl&eacute; and AstraZeneca active elsewhere. Fits water-dependent brands sourcing from the Dee','',''],
+  ['Natural Flood Management','Peatland restoration, flow regulation','Nascent','Not formally sized',
+   'Headwater flow regulation reduces flashy flows. Lower priority until downstream flood-risk assets identified','','']
+];
+function tableHtml(cols, rows, wide){
+  return '<div class="v5tw"><table class="v5tbl'+(wide?' wide':'')+'"><thead><tr>'
+    + cols.map(function(c){ return '<th>'+c+'</th>'; }).join('')
+    + '</tr></thead><tbody>'
+    + rows.map(function(r){
+        return '<tr>' + r.map(function(c,i){
+          return '<td contenteditable="true" spellcheck="false" class="'
+            + (i===0?'k':(c===''?'mt':''))+'">'+c+'</td>';
+        }).join('') + '</tr>';
+      }).join('')
+    + '</tbody></table></div>';
+}
+function fieldHtml(k){
+  var f = FIELDS[k], h;
+  /* In a run, a field is empty until the step that writes it has run. */
+  if(DEMO) f = {l:f.l, by:f.by, cf:f.cf, at:f.at, t:f.g,
+                empty:!runDone(f.at), just:f.at === JUSTAT && runDone(f.at)};
+  if(f.empty){
+    h = '<div class="v5flab"><span class="v5fl">'+f.l+'</span>'
+      + '<span class="v5cf none">Not written yet</span></div>'
+      + '<div class="v5inp empty" contenteditable="true" spellcheck="false"'
+      + ' data-ph="Waiting on '+f.by+'"></div>';
+  } else {
+    h = '<div class="v5flab"><span class="v5fl">'+f.l+'</span>'
+      + '<span class="v5dot '+f.cf[0]+'" tabindex="0" onclick="openProv(\''+k+'\')"'
+      + ' data-tip="'+f.cf[1]+' \u00b7 from '+f.by+'. Click for the full record."></span></div>'
+      + '<div class="v5inp'+(f.just?' just':'')+'" contenteditable="true" spellcheck="false"'
+      + ' data-ph="Waiting on '+f.by+'">'+f.t+'</div>';
+  }
+  return '<div class="v5f">'+h+'</div>';
+}
+
+/* left of the row: what the middle shows. right of the row: what opens in a
+   drawer beside it. Two different jobs, so two different groups. */
+var TABS = [
+  ['home','ti-home','Home',''],
+  ['doc','ti-file-text','Document',''],
+  ['workflow','ti-hierarchy-2','Workflow','']
+];
+function wfBadge(){ return doneCount() + '/16'; }
+var DRAWERS = [
+  ['comments','ti-message-circle','Comments','3'],
+  ['todos','ti-checklist','To-dos','2']
+];
+function drBadge(k, fallback){
+  if(!DEMO) return fallback;
+  if(k === 'comments') return '';
+  var n = stepList().filter(function(x){ return !runDone(x.k); }).length;
+  return n ? String(n) : '';
+}
+
+/* ── the demo run ─────────────────────────────────────────────────────────
+   Opened with ?deliverable=<id>, the page stops being a finished example and
+   becomes that deliverable: nothing written, nothing done, waiting for Play.
+   Progress lives on the record in localStorage, so leaving and coming back
+   picks the run up where it was. Without the parameter the page is the
+   reference sketch it has always been. */
+var DEMO = null, RUNDONE = [], RUNSTATE = 'idle';
+var DTITLE = 'Upper Dee: Customer Demand Mapping';
+(function(){
+  var id = null;
+  try{ id = new URLSearchParams(location.search).get('deliverable'); }catch(e){}
+  if(!id) return;
+  var arr = [];
+  try{ arr = JSON.parse(localStorage.getItem('gyDeliverables') || '[]'); }catch(e){}
+  for(var i=0;i<arr.length;i++) if(arr[i].id === id) DEMO = arr[i];
+  if(!DEMO) return;
+  DEMO.run = DEMO.run || {state:'idle',done:[]};
+  DTITLE = DEMO.n || 'Untitled deliverable';
+  var cr = document.querySelector('.crumbs .cr.cur'); if(cr) cr.textContent = DTITLE;
+  var crs = document.querySelectorAll('.crumbs .cr');
+  if(DEMO.f && crs[1]) crs[1].textContent = DEMO.f.replace(/^\+ /,'');
+  var more = document.getElementById('crmore');
+  if(more && DEMO.f) more.setAttribute('data-tip',
+    'Portfolio \u203a ' + DEMO.f.replace(/^\+ /,'') + ' \u203a Deliverables');
+  document.title = DTITLE + ' \u00b7 Great Yellow';
+  RUNDONE = DEMO.run.done || [];
+  RUNSTATE = DEMO.run.state || 'idle';
+})();
+function runSave(){
+  if(!DEMO) return;
+  DEMO.run = {state:RUNSTATE, done:RUNDONE};
+  try{
+    var arr = JSON.parse(localStorage.getItem('gyDeliverables') || '[]');
+    for(var i=0;i<arr.length;i++) if(arr[i].id === DEMO.id) arr[i] = DEMO;
+    localStorage.setItem('gyDeliverables', JSON.stringify(arr));
+  }catch(e){}
+}
+function runDone(k){ return RUNDONE.indexOf(k) >= 0; }
+/* the flat step order, so 'next' has one meaning everywhere */
+function stepList(){
+  var out = [];
+  WF.forEach(function(c){ c.s.forEach(function(st){ out.push(st); }); });
+  return out;
+}
+function nextStep(){
+  var all = stepList();
+  for(var i=0;i<all.length;i++) if(!runDone(all[i].k)) return all[i];
+  return null;
+}
+/* Who does a step is the actor on its first task, which is already written. */
+function stepActor(k){ var d = STEPD[k]; return d ? d.tasks[0][0] : 'ai'; }
+function isAi(k){ return stepActor(k) === 'ai'; }
+/* One state function for the list, the canvas, the ribbon and the counts. */
+function stState(st){
+  if(!DEMO) return st.d ? 'done' : (st.c ? 'cur' : 'pend');
+  if(runDone(st.k)) return 'done';
+  var n = nextStep();
+  return (RUNSTATE === 'running' && n && n.k === st.k) ? 'cur' : 'pend';
+}
+function doneCount(){
+  if(!DEMO) return 8;
+  return RUNDONE.length;
+}
+function chapDone(c){
+  if(!DEMO) return c.s.filter(function(x){ return x.d; }).length;
+  return c.s.filter(function(x){ return runDone(x.k); }).length;
+}
+
+/* RUNGO is the chain: while it is true the automatic steps run themselves,
+   one after another, and it drops the moment a step needs a person. */
+var RUNGO = false, RUNNING_K = null, RUNTASK = 0, RUNT = null, JUSTAT = null;
+var T_START = 380, T_TASK = 300, T_SETTLE = 340, T_GAP = 420;
+function runClear(){ if(RUNT){ clearTimeout(RUNT); RUNT = null; } }
+function runPlay(){
+  RUNSTATE = 'running'; runSave(); RUNGO = true; runPaint(); runAuto();
+}
+function runPause(){
+  RUNGO = false; runClear(); RUNNING_K = null; RUNTASK = 0; runPaint();
+}
+function runAuto(){
+  if(!RUNGO) return;
+  var n = nextStep();
+  if(!n){
+    RUNSTATE = 'done'; RUNGO = false; runSave(); runPaint();
+    gyToast('All sixteen steps done');
+    return;
+  }
+  if(!isAi(n.k)){          /* a person's step: hand it over and wait */
+    RUNGO = false; RUNNING_K = null; runPaint();
+    gyToast('Over to ' + stepActor(n.k) + ' \u00b7 ' + n.k + ' ' + n.t);
+    return;
+  }
+  runAnimate(n);
+}
+function runAnimate(st){
+  RUNNING_K = st.k; RUNTASK = 0; runPaint();
+  var total = (STEPD[st.k] || {tasks:[]}).tasks.length;
+  function tick(){
+    if(!RUNGO) return;
+    RUNTASK++;
+    paintChat();
+    if(RUNTASK < total){ RUNT = setTimeout(tick, T_TASK); return; }
+    RUNT = setTimeout(function(){
+      if(!RUNGO) return;
+      RUNDONE.push(st.k); JUSTAT = st.k; RUNNING_K = null; RUNTASK = 0;
+      runSave(); runPaint();
+      RUNT = setTimeout(function(){ JUSTAT = null; runAuto(); }, T_GAP);
+    }, T_SETTLE);
+  }
+  RUNT = setTimeout(tick, T_START);
+}
+/* marking a person's step done picks the chain back up */
+function runAdvance(){
+  var n = nextStep(); if(!n) return;
+  RUNDONE.push(n.k); JUSTAT = n.k;
+  if(!nextStep()) RUNSTATE = 'done';
+  RUNGO = true;
+  runSave(); runPaint();
+  RUNT = setTimeout(function(){ JUSTAT = null; runAuto(); }, T_GAP);
+}
+function runReset(){
+  RUNGO = false; runClear(); RUNNING_K = null; RUNTASK = 0; JUSTAT = null;
+  RUNDONE = []; RUNSTATE = 'idle'; STEPSEL = null;
+  runSave(); closeDrawer(); runPaint(); gyToast('Run reset');
+}
+/* Everything on the page reads the same run, so one repaint covers it. */
+function runPaint(){
+  paintTabs();
+  openTab(TAB);
+  paintChat();
+}
+
+/* ── what the Home tab is made of ────────────────────────────────────────
+   Carried over from deliverable-sketch-v3, with the content moved to Upper
+   Dee so the tab agrees with the document beside it. */
+var TEAM = [
+  ['Caitlin Ciceri','CC','#1D9E75','Champion'],
+  ['Harry Fox','HF','#EF9F27','Analysis'],
+  ['Izzie Bell','IB','#7F77DD','Trade input'],
+  ['Emily Norton','EN','#378ADD','Review']
+];
+function av(p,cls){
+  return '<span class="dlav '+(cls||'')+'" style="background:'+p[2]+'" title="'+p[0]+', '+p[3]+'">'+p[1]+'</span>';
+}
+function avName(n){
+  for(var i=0;i<TEAM.length;i++) if(TEAM[i][0]===n) return av(TEAM[i]);
+  return av([n,'?','#9C9A92','']);
+}
+
+var CHAPTERS = [
+  {n:'1. Project context', short:'Project context', steps:3, done:3},
+  {n:'2. Demand',          short:'Demand',          steps:6, done:3, cur:1},
+  {n:'3. Supply',          short:'Supply',          steps:2, done:2},
+  {n:'4. Summary',         short:'Summary',         steps:5, done:0}
+];
+
+var PAL = {
+  teal :['var(--tealbg,#E2F3EC)','#12684C'], amber:['var(--amberbg)','var(--amberd)'],
+  blue :['var(--bluebg)','var(--blued)'],    green:['var(--greenbg)','var(--greend)'],
+  gray :['var(--graybg)','#766B62']
+};
+var STEPS = [
+  ['1.1','Kick-off meeting','ti-calendar-event','amber','done'],
+  ['1.2','Discovery request','ti-mail','blue','done'],
+  ['1.3','Information complete?','ti-git-branch','gray','done'],
+  ['2.1','GPAP analysis','ti-search','teal','done'],
+  ['2.2','Abstraction licences','ti-droplet','blue','done'],
+  ['2.3','Public funding scan','ti-database','blue','done'],
+  ['2.4','Beneficiary map and buyer list','ti-map-2','teal','cur'],
+  ['2.5','Check with Trade','ti-users','amber','pend'],
+  ['2.6','Information complete?','ti-git-branch','gray','pend'],
+  ['3.1','Research ecosystem services','ti-book','amber','done'],
+  ['3.2','Information complete?','ti-git-branch','gray','done'],
+  ['4.1','Create summary','ti-file-text','green','pend'],
+  ['4.2','Generate PDF','ti-file-check','green','pend'],
+  ['4.3','Share with customer','ti-send','blue','pend'],
+  ['4.4','Send to data platform','ti-database','blue','pend'],
+  ['4.5','Gather learnings','ti-refresh','green','pend']
+];
+var NODE_W = 104, GAP = 17, PITCH = NODE_W + GAP;
+function wfStrip(){
+  var curIdx = 0;
+  var html = STEPS.map(function(st,i){
+    if(st[4]==='cur') curIdx = i;
+    var pl = PAL[st[3]] || PAL.gray, pend = st[4]==='pend';
+    var ic = pend ? '' : ' style="background:'+pl[0]+';color:'+pl[1]+'"';
+    return (i ? '<span class="dlwl'+(pend?' pend':'')+'"></span>' : '')
+      + '<div class="dlwn '+st[4]+'">'
+        + '<div class="h"><span class="ic"'+ic+'><i class="ti '+st[2]+'"></i></span>'
+          + '<span class="n">'+st[0]+'</span></div>'
+        + '<div class="t">'+st[1]+'</div></div>';
+  }).join('');
+  return '<div class="dlstrip" style="left:calc(50% - '+(curIdx*PITCH + NODE_W/2)+'px)">'+html+'</div>';
+}
+
+/* the document, as the editor would render it, at half size */
+var PAGE =
+  '<h1>Upper Dee: Customer Demand Mapping</h1>'
++ '<div class="by">Caitlin Ciceri &middot; Customer Demand Mapping &middot; Last written Wednesday 09:05</div>'
++ '<h2>1. Project context</h2>'
++ '<p>Landscape-scale restoration of the biodiversity-rich, carbon-rich Upper Dee headwaters, '
++ 'improving water quality at source, sequestering carbon in peat, and delivering biodiversity '
++ 'uplift at a flagship, catchment scale.</p>'
++ '<p>Upper Dee catchment within the Cairngorms, including tributaries Muick, Geldie and '
++ 'Baddoch. Peat-dominated uplands with low tree cover. The River Dee supplies Aberdeen, with '
++ 'a key abstraction point near Invercannie / Cairnton.</p>'
++ '<h2>2. Demand</h2>'
++ '<p>Worked per market, then split by buyer type. Four markets carry real demand; natural '
++ 'flood management is <span class="em">parked until a downstream case is built</span>.</p>'
++ '<ul>'
++ '<li>Carbon: Diageo, Peatland ACTION, three universities, BP / Shell</li>'
++ '<li>Water quality: Scottish Water, which abstracts from the Dee for Aberdeen</li>'
++ '<li>Voluntary biodiversity: SSEN, Scottish Power, Network Rail and four more</li>'
++ '<li>Replenish: Deeside Water, Royal Lochnagar and three other distillers</li>'
++ '</ul>'
++ '<h2>3. Supply</h2>'
++ '<table><tr><th>Candidate market</th><th>Readiness</th><th>Indicative sizing</th></tr>'
++ '<tr><td>Carbon (peatland / soil)</td><td>Active</td><td>~&pound;14.1M over 20 yrs</td></tr>'
++ '<tr><td>Water quality</td><td>Nascent</td><td>Via Scottish Water investment</td></tr>'
++ '<tr><td>Voluntary biodiversity</td><td>Emerging</td><td>~&pound;684.7M domestic</td></tr>'
++ '<tr><td>Replenish</td><td>Nascent</td><td>Bespoke deals only</td></tr></table>'
++ '<h2>4. Summary</h2>'
++ '<p>Lead with peatland carbon at landscape scale, ~&pound;14M over 20 years on 4,000 ha, '
++ 'against ~6,217 ha of degraded peat, with public co-funding through Peatland ACTION.</p>';
+
+/* The miniature reads from the same gates as the document, so the preview and
+   the page never disagree about what has been written. */
+function pendingSteps(){
+  return stepList().filter(function(x){ return !runDone(x.k); });
+}
+function todoLabel(){
+  if(!DEMO) return '4 open, 1 overdue';
+  var n = pendingSteps().length;
+  return n ? n + ' open' : 'all done';
+}
+function demoTodos(){
+  var pend = pendingSteps().slice(0,4);
+  if(!pend.length) return '<div class="v5sub">Every step is done.</div>';
+  return pend.map(function(x,i){
+    var who = isAi(x.k) ? 'AI Assistant' : stepActor(x.k);
+    return '<div class="dltd"><input type="checkbox">'
+      + (who==='AI Assistant' ? '<i class="ti ti-sparkles" style="color:var(--blued);font-size:15px"></i>' : avName(who))
+      + '<div class="t">'+x.k+' '+x.t+'</div>'
+      + '<div class="d'+(i===0&&RUNSTATE==='running'?' warn':'')+'">'
+        + (i===0&&RUNSTATE==='running'?'next':'')+'</div></div>';
+  }).join('');
+}
+function pageHtml(){
+  if(!DEMO) return PAGE;
+  var blank = function(t){ return '<p class="blank">'+t+'</p>'; };
+  var h = '<h1>'+DTITLE+'</h1>'
+    + '<div class="by">'+(DEMO.champ || 'Unassigned')+' &middot; '+(DEMO.w || 'Customer Demand Mapping')
+    + ' &middot; '+(RUNDONE.length ? 'Last written just now' : 'Not written yet')+'</div>'
+    + '<h2>1. Project context</h2>';
+  ['a0','a1','a2','a3','a4'].forEach(function(k){
+    var f = FIELDS[k];
+    h += runDone(f.at) ? '<p>'+f.g+'</p>' : blank(f.l+' — not written yet');
+  });
+  h += '<h2>2. Demand</h2>'
+    + (runDone('2.4')
+        ? '<p>Worked per market, then split by buyer type. Four markets carry real demand; '
+          + 'natural flood management is parked until a downstream case is built.</p><ul>'
+          + '<li>Carbon: a public restoration fund and corporate removals buyers</li>'
+          + '<li>Water quality: the utility abstracting downstream of the site</li>'
+          + '<li>Voluntary biodiversity: a utility and renewables cluster</li>'
+          + '<li>Replenish: water-dependent brands sourcing from the catchment</li></ul>'
+        : blank('Waiting on 2.4 Beneficiary map and buyer list'))
+    + '<h2>3. Supply</h2>'
+    + (runDone('3.1')
+        ? '<table><tr><th>Candidate market</th><th>Readiness</th><th>Indicative sizing</th></tr>'
+          + '<tr><td>Carbon (peatland / soil)</td><td>Active</td><td>From the rule books</td></tr>'
+          + '<tr><td>Water quality</td><td>Nascent</td><td>Via utility investment</td></tr>'
+          + '<tr><td>Voluntary biodiversity</td><td>Emerging</td><td>Domestic indicative</td></tr>'
+          + '<tr><td>Replenish</td><td>Nascent</td><td>Bespoke deals only</td></tr></table>'
+        : blank('Waiting on 3.1 Research ecosystem services'))
+    + '<h2>4. Summary</h2>'
+    + (runDone('4.1')
+        ? '<p>Lead with peatland carbon at landscape scale, with public co-funding available to '
+          + 'blend against credit sales. Water quality has the clearest single buyer.</p>'
+        : blank('Waiting on 4.1 Create summary'));
+  return h;
+}
+
+var TODOS = [
+  ['Beneficiary map and buyer list','Caitlin Ciceri','Today','warn'],
+  ['Trade sense-check on the buyer list','Izzie Bell','Tomorrow',''],
+  ['Commission the peat condition resurvey','Harry Fox','24 Sep',''],
+  ['Create summary','Caitlin Ciceri','26 Sep','']
+];
+
+var REL = [
+  {verb:'Takes in', type:'Documents', n:'3 of 4 received', warn:true, film:1,
+   bg:'var(--bluebg)', fg:'var(--blued)', rows:[
+    ['ti-file-type-pdf','upper_dee_land_management_plan.pdf','Questionnaire &middot; 2 July','ok',0],
+    ['ti-file-type-pdf','cairngorms_tenure_map.pdf','Email reply &middot; Wednesday','ok',0],
+    ['ti-file-description','peat_condition_survey_2015.pdf','Out of date, resurvey needed','warn',0],
+    ['ti-file-spreadsheet','tev_valuation.xlsx','Outstanding from NAS','warn',1]
+  ]},
+  {verb:'Reads from', type:'Sources', n:'1 stale', warn:true,
+   bg:'var(--graybg)', fg:'#766B62', rows:[
+    ['ti-database','GPAP register','Synced Wednesday 06:00','ok',0],
+    ['ti-database','SEPA abstraction licences','Synced Wednesday 06:00','ok',0],
+    ['ti-database','Peatland ACTION funding register','Last synced 5 September','warn',0],
+    ['ti-book','ES rule books','Hive Mind Library &middot; Oct 2025','ok',0]
+  ]},
+  {verb:'Runs on', type:'Tools', n:'3 connected', warn:false, block:1,
+   bg:'var(--tealbg,#E2F3EC)', fg:'#12684C', rows:[
+    ['ti-map-2','Market Map','The assistant runs two steps here','',0],
+    ['ti-checkup-list','Questionnaire editor','Sends the intake pack','',0],
+    ['ti-database','GY Data platform','Receives the buyer rows','',0]
+  ]}
+];
+
+var VIEWS = {
+  home: function(){
+    var tot = 0, done = 0;
+    CHAPTERS.forEach(function(c,i){ tot += c.steps; done += chapDone(WF[i]); });
+    var hd = function(icon,bg,fg,name,meta){
+      return '<div class="dlohd"><span class="dltile" style="background:'+bg+';color:'+fg+'">'
+        + '<i class="ti '+icon+'"></i></span><span class="dlonm">'+name+'</span>'
+        + (meta || '') + '</div>';
+    };
+
+    var h = '<div class="v5dt" style="border:none;padding-bottom:0;margin-bottom:18px">'
+      + DTITLE + '</div>';
+
+    /* the workflow bar: what is running, then how far each chapter has got */
+    h += '<div class="dlobj dlpb" onclick="openTab(\'workflow\')">'
+      + (function(){
+          var n = nextStep();
+          if(DEMO && RUNSTATE === 'idle'){
+            return '<div class="dlnow"><i class="ti ti-route"></i><span class="dlpip" style="background:var(--line2);box-shadow:none"></span>'
+              + '<span class="k" style="color:var(--ink3)">Not started</span>'
+              + '<span class="v" style="font-weight:500;color:var(--ink2)">Sixteen steps, nothing run yet</span>'
+              + '<span class="w"><button class="v5pl" onclick="event.stopPropagation();runPlay()">'
+                + '<i class="ti ti-player-play"></i>Play</button></span>'
+              + '<span class="c">0 of '+tot+'</span></div>';
+          }
+          var live = DEMO && RUNGO;
+          var label = DEMO ? (n ? n.k+' '+n.t : 'All steps done')
+                           : '2.4 Beneficiary map and buyer list';
+          var owner = DEMO ? (n ? (isAi(n.k) ? 'AI Assistant' : stepActor(n.k)) : '')
+                           : 'Caitlin Ciceri';
+          return '<div class="dlnow"><i class="ti ti-route"></i>'
+            + '<span class="dlpip'+(live?' live':'')+'"></span>'
+            + '<span class="k">'+(n ? (live ? 'Running' : 'Now on') : 'Done')+'</span>'
+            + '<span class="v">'+label+'</span>'
+            + (DEMO && n
+                ? '<span class="w">' + (live
+                    ? '<button class="v5pl" onclick="event.stopPropagation();runPause()">'
+                      + '<i class="ti ti-player-pause"></i>Pause</button>'
+                    : '<button class="v5pl" onclick="event.stopPropagation();'
+                      + (isAi(n.k) ? 'runPlay()' : 'runAdvance()')+'">'
+                      + '<i class="ti ti-player-play"></i>'+(isAi(n.k)?'Resume':'Mark done')+'</button>')
+                  + '</span>'
+                : owner ? '<span class="w">'+(owner==='AI Assistant'
+                  ? '<i class="ti ti-sparkles" style="color:var(--blued)"></i>' : avName(owner))
+                  + owner+(DEMO?'':', due today')+'</span>' : '')
+            + '<span class="c">'+done+' of '+tot+'</span></div>';
+        })()
+      + '<div class="dlseg">'
+      + CHAPTERS.map(function(c,i){
+          var cd = chapDone(WF[i]);
+          var curHere = DEMO ? (WF[i].s.some(function(x){ return stState(x)==='cur'; }) ? 1 : 0) : (c.cur||0);
+          var d = cd/c.steps*100, k = curHere/c.steps*100;
+          return '<div class="dlsg'+(cd?'':' off')+'" style="flex-grow:'+c.steps+'">'
+            + '<div class="dlsgb"><i class="done" style="width:'+d+'%"></i>'
+              + (k?'<i class="cur" style="width:'+k+'%"></i>':'')+'</div>'
+            + '<div class="dlsgl"><span class="nm">'+c.short+'</span>'
+              + '<span class="c">'+cd+'/'+c.steps+'</span></div></div>';
+        }).join('')
+      + '</div></div>';
+
+    h += '<div class="dlhero"><div>'
+      + '<div class="dlobj" onclick="openTab(\'doc\')">'
+      + hd('ti-file-text','var(--bluebg)','var(--blued)','Document','<span class="n">4 chapters</span>')
+      + '<div class="dlthumb"><div class="dlpage">'+pageHtml()+'</div></div>'
+      + '<div class="dloft">'+DTITLE
+        + '<span class="r">Open the document<i class="ti ti-arrow-right"></i></span></div>'
+      + '</div></div>'
+      + '<div class="dlcol"><div class="dlobj">'
+        + hd('ti-checkbox','var(--amberbg)','var(--amberd)','To-dos',
+             '<span class="n'+(DEMO?'':' warn')+'">'+todoLabel()+'</span>')
+        + '<div class="dlcardb">'
+        + (DEMO ? demoTodos() : TODOS.map(function(t){
+            return '<div class="dltd"><input type="checkbox">'+avName(t[1])
+              + '<div class="t">'+t[0]+'</div><div class="d '+t[3]+'">'+t[2]+'</div></div>';
+          }).join(''))
+        + '<button class="dlmore" onclick="openDrawer(\'todos\')">'
+          + '<i class="ti ti-arrow-right"></i>All to-dos on this deliverable</button>'
+        + '</div></div></div></div>';
+
+    /* what it draws on: documents as documents, tools as tools, the rest
+       as a plain list, all inside one block */
+    var FT = function(n){
+      if(/\.pdf$/i.test(n))            return ['ti-file-type-pdf','pdf'];
+      if(/\.(docx?|pages)$/i.test(n))  return ['ti-file-type-docx','doc'];
+      if(/\.(xlsx?|csv|numbers)$/i.test(n)) return ['ti-file-type-xls','xls'];
+      return ['ti-file-text',''];
+    };
+    var recvd = (DEMO && !runDone('1.2')) ? 0 : 3;
+    h += '<div class="dlobj dlrun">'
+      + hd('ti-affiliate','var(--graybg)','#766B62','What it draws on',
+           '<span class="n">'+(DEMO ? recvd+' of 4 documents in' : '11 objects')+'</span>')
+      + '<div class="dlrunb">'
+      + REL.map(function(c){
+          var body;
+          if(c.film){
+            body = '<div class="dlfilm">' + c.rows.map(function(r){
+              var t = FT(r[1]);
+              var missing = r[4] || (DEMO && !runDone('1.2'));
+              return '<div class="dlfile'+(missing?' miss':'')+'" data-tip="'+r[1]+'"'
+                + ' onclick="gyToast(\''+r[1].replace(/\'/g,'')+', its own page\')">'
+                + '<div class="dlfp">'
+                  + (missing ? (r[4] ? r[2] : 'Not received yet')
+                          : '<b></b><i style="width:100%"></i><i style="width:94%"></i>'
+                            + '<i style="width:98%"></i><i style="width:62%"></i>'
+                            + '<i style="width:88%"></i><i style="width:71%"></i>')
+                + '</div>'
+                + '<div class="dlfn"><i class="ti '+t[0]+' '+t[1]+'"></i><span>'+r[1]+'</span></div></div>';
+            }).join('') + '</div>';
+          } else if(c.block){
+            body = '<div class="dlfilm">' + c.rows.map(function(r){
+              return '<div class="dltool" data-tip="'+r[2]+'"'
+                + ' onclick="gyToast(\''+r[1].replace(/\'/g,'')+', its own page\')">'
+                + '<div class="dltp" style="background:'+c.bg+';color:'+c.fg+'">'
+                  + '<i class="ti '+r[0]+'"></i></div>'
+                + '<div class="dltn">'+r[1]+'</div></div>';
+            }).join('') + '</div>';
+          } else {
+            body = '<div class="dlgw">' + c.rows.map(function(r){
+              return '<div class="dlr'+(r[4]?' miss':'')+'" onclick="gyToast(\''+r[1].replace(/\'/g,'')+', its own page\')">'
+                + '<span class="ic" style="background:'+c.bg+';color:'+c.fg+'"><i class="ti '+r[0]+'"></i></span>'
+                + '<span class="nm">'+r[1]+'</span>'
+                + '<i class="ti ti-arrow-up-right go"></i></div>';
+            }).join('') + '</div>';
+          }
+          return '<div class="dlg" id="g-'+c.type.toLowerCase()+'">'
+            + '<div class="dlghd"><span class="t">'+c.type+'</span></div>'
+            + body + '</div>';
+        }).join('')
+      + '</div></div>';
+    return h;
+  },
+  doc: function(){
+    var head = function(n,t,tip){
+      return '<div class="v5ch"><span class="v5chn">'+n+'</span><span class="v5cht">'+t+'</span>'+gyInfo(tip)+'</div>';
+    };
+    var h = '<div class="v5dt" contenteditable="true" spellcheck="false">'+DTITLE+'</div>';
+    /* the sheet is the page now, so the first chapter needs no extra lift */
+
+    h += '<section class="v5sec">'
+      + head(1,'Project context',
+             "The project's essentials from onboarding: objective, site, planned interventions, target outcomes and constraints. It sets the scene; nothing is analysed here.")
+      + ['a0','a1','a2','a3','a4'].map(fieldHtml).join('')
+      + '<div class="v5call"><i class="ti ti-help-circle"></i><div><b>Potential questions</b><ul>'
+        + '<li>Which estates are committed to delivery and over what timeline?</li>'
+        + '<li>Can the 2015 peat condition data be resurveyed to firm up the restorable area?</li>'
+        + '<li>Do we need a TEV before approaching buyers?</li></ul></div></div>'
+      + '</section>';
+
+    h += '<section class="v5sec">'
+      + head(2,'Demand',
+             'Worked per market, then split by buyer type. Manual beneficiary map run first, then tools. Protocol run once for this project; buyer results follow per market.')
+      + (DEMO && !runDone('2.4')
+          ? '<div class="v5inp empty" data-ph="Waiting on 2.4 Beneficiary map and buyer list"></div>'
+          : (DEMO ? DEMO_MARKETS : MARKETS).map(function(m){
+          return '<div class="v5sh">'+m[0]+'</div>' + tableHtml(BUYCOLS, m[1])
+            + (m[2] ? '<div class="v5note">'+m[2]+'</div>' : '');
+        }).join(''))
+      + (DEMO && !runDone('2.4') ? '' : '<div class="v5sh">e. Natural Flood Management (parked)</div>'
+      + '<div class="v5inp parked" contenteditable="true" spellcheck="false">No buyers identified yet. Headwater flow regulation is a genuine co-benefit, '
+        + 'but downstream flood-risk assets have not been mapped. Park until a downstream case is built.</div>')
+      + '</section>';
+
+    h += '<section class="v5sec">'
+      + head(3,'Supply',
+             'Interventions map to five candidate markets. Market context is drawn from the ES rule books, refreshed Oct 2025 from the NatWest Markets Report.')
+      + (DEMO && !runDone('3.1')
+          ? '<div class="v5inp empty" data-ph="Waiting on 3.1 Research ecosystem services"></div>'
+          : tableHtml(SUPCOLS, DEMO ? DEMO_SUPROWS : SUPROWS, 1))
+      + '<div class="v5call"><i class="ti ti-info-circle"></i><div><b>Supply chain resilience</b> sits underneath as a '
+        + 'further, bespoke stream: source-water protection for distilleries and bottlers that draw from the Dee, '
+        + 'usually framed as the resilience angle inside a bundled carbon, biodiversity or replenish deal.</div></div>'
+      + '</section>';
+
+    h += '<section class="v5sec">'
+      + head(4,'Summary','Written once the first three chapters are filled in. The verdict the client sees.')
+      + (DEMO && !runDone('4.1')
+          ? '<div class="v5inp empty" data-ph="Waiting on 4.1 Create summary"></div>'
+          : DEMO
+          ? '<div class="v5win"><p>Lead with peatland carbon at landscape scale, on the restorable area '
+            + 'identified so far, with public co-funding available to blend against credit sales.</p><ul>'
+            + '<li><b>Water quality</b> has the clearest single buyer: the utility abstracting downstream.</li>'
+            + '<li><b>Voluntary biodiversity</b> brings a utility and renewables cluster already in conversation.</li>'
+            + '<li><b>Replenish</b> adds water-dependent brands sourcing from the catchment. NFM is parked.</li></ul>'
+            + '<div class="gate"><b>Gating decision:</b> whether a valuation is commissioned, and whether this '
+            + 'runs demand-led or supply-led. The main data gap is the habitat condition survey.</div></div>'
+          : '<div class="v5win"><p>Lead with peatland carbon at landscape scale, an indicative ~&pound;14M over 20 years '
+        + 'on 4,000 ha, against ~6,217 ha of degraded peat identified, with public co-funding available through '
+        + 'Peatland ACTION.</p><ul>'
+        + '<li><b>Water Quality</b> has the single clearest buyer in Scottish Water, which relies directly on the Dee.</li>'
+        + '<li><b>Voluntary Biodiversity</b> brings a warm utility and renewables cluster (SSEN, Scottish Power, Network Rail).</li>'
+        + '<li><b>Replenish and supply-chain resilience</b> add distillery and bottled-water buyers, with Diageo strongest '
+          + 'because Royal Lochnagar sits on the river. NFM is parked.</li></ul>'
+        + '<div class="gate"><b>Gating decision:</b> whether a TEV is commissioned, and whether GY runs this demand-led '
+          + 'or supply-led. The main data gap is the outdated 2015 peat condition survey.</div></div>')
+      + '</section>';
+    return h;
+  },
+  comments: function(){
+    if(DEMO) return '<div class="v5sub">No comments yet.</div>';
+    return [['IB','Izzie Bell','#7C6BD6','Yesterday','on Voluntary Biodiversity',
+             'Hold off on Scottish Power until I have checked what they did at Clyde. Their appetite changed in the spring.'],
+            ['HF','Harry Fox','#EF9F27','Wed 11:20','on Constraints and dependencies',
+             'The 6,217 ha is a desktop figure off 2015 data. Worth saying so in the summary, not just here.'],
+            ['CC','Caitlin Ciceri','#1F6B4A','Wed 09:12','on Objective',
+             'Pulled this from the kick-off recording, so it needs the estates to confirm the wording before it goes near the summary.']
+    ].map(function(c){
+      return '<div class="v5item"><div class="v5who"><span class="v5av" style="background:'+c[2]+'">'+c[0]+'</span>'
+        + '<b>'+c[1]+'</b><span>'+c[3]+'</span></div><div class="v5sub">'+c[4]+'</div>'+c[5]+'</div>';
+    }).join('');
+  },
+  todos: function(){
+    if(DEMO){
+      var pend = stepList().filter(function(x){ return !runDone(x.k); }).slice(0,5);
+      if(!pend.length) return '<div class="v5sub">Every step is done.</div>';
+      return pend.map(function(x,i){
+        var who = isAi(x.k) ? 'AI Assistant' : stepActor(x.k);
+        return '<div class="v5td"><span class="v5box2"></span><div>'
+          + '<span>'+x.k+' '+x.t+'</span>'
+          + '<div class="v5sub" style="margin:2px 0 0">'+who
+            + (i===0 && RUNSTATE==='running' ? ' &middot; next' : '')+'</div></div></div>';
+      }).join('');
+    }
+    return [['Beneficiary map and buyer list','Caitlin &middot; due Friday &middot; step 2.4',false],
+            ['Trade sense-check on the buyer list','Izzie &middot; blocked by 2.4',false],
+            ['Commission the peat condition resurvey','Oliver &middot; gating the carbon case',false],
+            ['Abstraction licences in catchment','Harry &middot; done Wed',true]
+    ].map(function(t){
+      return '<div class="v5td"><span class="v5box2'+(t[2]?' on':'')+'"></span><div>'
+        + '<span'+(t[2]?' style="color:var(--ink3);text-decoration:line-through"':'')+'>'+t[0]+'</span>'
+        + '<div class="v5sub" style="margin:2px 0 0">'+t[1]+'</div></div></div>';
+    }).join('');
+  },
+  workflow: function(){
+    return WFVIEW === 'canvas' ? VIEWS.wfCanvas() : VIEWS.wfList();
+  },
+  wfCanvas: function(){
+    return '<iframe class="v5cvf" src="'+CANVAS_SRC+'" title="Workflow canvas"></iframe>';
+  },
+  wfList: function(){
+    return WF.map(function(c){
+      var done = chapDone(c);
+      return '<div class="v5wfc"><b>'+c.n+'</b><span>'+done+' of '+c.s.length+'</span></div>'
+        + c.s.map(function(s){
+            var st = stState(s);
+            return '<div class="v5wf '+st+(STEPSEL===s.k?' sel':'')+'" onclick="openStep(\''+s.k+'\')">'
+              + '<span class="dot"></span>'
+              + '<span class="no">'+s.k+'</span><span class="ti2">'+s.t+'</span>'
+              + (s.c?'<span class="now">Running</span>':'')
+              + '<i class="ti ti-chevron-right ch"></i>'
+            + '</div>';
+          }).join('');
+    }).join('');
+  },
+  sources: function(){
+    return [['ti-database','GPAP register','Synced &middot; Wed 06:00',''],
+            ['ti-database','SEPA abstraction licences','Synced &middot; Wed 06:00',''],
+            ['ti-database','Peatland ACTION funding register','Stale &middot; 5 Sep','warn'],
+            ['ti-book','ES rule books','Library &middot; Oct 2025','ok'],
+            ['ti-file-type-pdf','upper_dee_land_management_plan.pdf','Input &middot; 2 Jul',''],
+            ['ti-file-type-pdf','cairngorms_tenure_map.pdf','Input &middot; Wed',''],
+            ['ti-file-description','peat_condition_survey_2015.pdf','Input &middot; Out of date','warn']
+    ].map(function(s){
+      return '<div class="v5srow"><i class="ti '+s[0]+'"></i><span class="n">'+s[1]+'</span>'
+        + '<span class="s'+(s[3]?' '+s[3]:'')+'">'+s[2]+'</span></div>';
+    }).join('');
+  }
+};
+
+/* the 16 canonical steps, the same ones the canvas and the to-dos use */
+var WF = [
+  {n:'1. Project context', s:[
+    {k:'1.1',t:'Kick-off meeting',d:1},{k:'1.2',t:'Discovery information request',d:1},
+    {k:'1.3',t:'Check: information complete?',d:1}]},
+  {n:'2. Demand', s:[
+    {k:'2.1',t:'GPAP analysis',d:1},{k:'2.2',t:'Abstraction licences in catchment',d:1},
+    {k:'2.3',t:'Public funding scan',d:1},{k:'2.4',t:'Beneficiary map and buyer list',c:1},
+    {k:'2.5',t:'Check with Trade'},{k:'2.6',t:'Check: information complete?'}]},
+  {n:'3. Supply', s:[
+    {k:'3.1',t:'Research ecosystem services',d:1},{k:'3.2',t:'Check: information complete?',d:1}]},
+  {n:'4. Summary', s:[
+    {k:'4.1',t:'Create summary'},{k:'4.2',t:'Generate PDF with summary'},
+    {k:'4.3',t:'Share summary with customer'},{k:'4.4',t:'Send to data platform'},
+    {k:'4.5',t:'Gather learnings'}]}
+];
+
+/* ── the output ────────────────────────────────────────────────────────────
+   The PDF is built from the document view itself rather than from a second
+   copy of the content, so the two can never drift. What changes on paper is
+   the dressing: the form boxes become prose, the editing affordances go, and
+   the deliverable gets a branded cover. The browser's own print-to-PDF does
+   the rest, which keeps it working offline with no libraries. */
+var PDF_CSS =
+  '@page{size:A4;margin:17mm 15mm 20mm}'
++ 'html,body{margin:0;background:#fff}'
+/* on paper @page owns the margins; on screen it needs its own, in case the
+   print dialog is dismissed and the page is simply read */
++ '@media screen{body{max-width:940px;margin:0 auto;padding:30px 38px 70px}}'
++ 'body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;color:#1F1F1D;font-size:11pt;line-height:1.55}'
++ '.pdcov{display:flex;align-items:flex-start;gap:14px;padding-bottom:20px;border-bottom:2px solid #1A0C12;margin-bottom:6px}'
++ '.pdmark{width:40px;height:40px;border-radius:11px;background:#F9DD5A;color:#1A0C12;flex:none;'
++   'display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;letter-spacing:-.02em}'
++ '.pdco{flex:1;min-width:0}'
++ '.pdco b{display:block;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6B6A64}'
++ '.pdco span{display:block;font-size:11pt;color:#6B6A64;margin-top:5px}'
+/* the document, reset for paper */
++ '.v5dt{font-family:"Manner","Spectral",Georgia,serif;font-size:26pt;font-weight:500;letter-spacing:-.02em;'
++   'line-height:1.12;border:none;padding:22px 0 0;margin:0 0 26px}'
++ '.v5sec{margin-top:26px;break-inside:auto}'
++ '.v5ch{display:flex;align-items:center;gap:9px;margin:0 0 14px;break-after:avoid}'
++ '.v5chn{width:22px;height:22px;border-radius:6px;background:#1A0C12;color:#F9DD5A;flex:none;'
++   'display:flex;align-items:center;justify-content:center;font-size:10pt;font-weight:600}'
++ '.v5cht{font-family:"Manner","Spectral",Georgia,serif;font-size:15pt;font-weight:500}'
++ '.v5f{margin:0 0 16px;break-inside:avoid}'
++ '.v5flab{display:flex;align-items:center;gap:8px;margin-bottom:4px}'
++ '.v5fl{font-size:8.5pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6B6A64}'
++ '.v5inp{border:none;border-radius:0;padding:0;background:none;font-size:11pt;line-height:1.55;color:#1F1F1D}'
++ '.v5inp.empty{color:#9C9A92;font-style:italic}'
++ '.v5inp.empty:before{content:attr(data-ph)}'
++ '.v5inp.parked{color:#6B6A64}'
++ '.v5cf{font-size:7.5pt;font-weight:600;letter-spacing:.06em;text-transform:uppercase;'
++   'padding:2px 7px;border-radius:99px;background:#FAEEDA;color:#854F0B}'
++ '.v5sh{font-size:11pt;font-weight:600;margin:18px 0 7px;break-after:avoid}'
++ '.v5tw{overflow:visible;border:none;border-radius:0}'
++ '.v5tbl,.v5tbl.wide{width:100%;min-width:0;border-collapse:collapse;font-size:8.5pt;line-height:1.4;break-inside:auto}'
++ '.v5tbl th{text-align:left;font-size:7pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;'
++   'color:#6B6A64;padding:6px 8px 6px 0;border-bottom:1.2px solid #1A0C12;vertical-align:bottom}'
++ '.v5tbl td{padding:6px 8px 6px 0;border-bottom:.5px solid #E3E1DB;vertical-align:top;color:#33272C;min-width:0}'
++ '.v5tbl td.k{font-weight:600;color:#1F1F1D}'
++ '.v5tbl td.mt{background:none}'
++ '.v5tbl tr{break-inside:avoid}'
++ '.v5note{font-size:9pt;color:#6B6A64;margin-top:7px;font-style:italic}'
++ '.v5call{display:flex;gap:9px;border:none;border-left:2.5px solid #E3E1DB;border-radius:0;'
++   'padding:2px 0 2px 12px;margin-top:14px;font-size:9.5pt;line-height:1.5;color:#6B6A64;break-inside:avoid}'
++ '.v5call ul{margin:4px 0 0;padding-left:15px}'
++ '.v5win{background:#FEFAE6;border:1px solid #F1E3A6;border-radius:8px;padding:16px 18px;break-inside:avoid}'
++ '.v5win p{font-size:11pt;line-height:1.55}'
++ '.v5win ul{margin:10px 0 0;padding-left:16px;font-size:10pt}'
++ '.v5win li{margin:5px 0}'
++ '.v5win .gate{margin-top:12px;padding-top:10px;border-top:1px solid #F1E3A6;font-size:10pt}'
++ '.v5dot,.gyinfo,.v5skel{display:none!important}'
++ '.pdfoot{margin-top:26px;padding-top:10px;border-top:.5px solid #E3E1DB;font-size:8pt;color:#9C9A92}';
+
+function viewOutput(){
+  var base = location.href.replace(/[^\/]*$/, '');
+  var when = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  var who  = DEMO ? (DEMO.champ || 'Unassigned') : 'Caitlin Ciceri';
+  var body = VIEWS.doc()
+    .replace(/ contenteditable="true"/g, '')
+    .replace(/ spellcheck="false"/g, '')
+    .replace(/onclick="[^"]*"/g, '');
+  var html = '<!DOCTYPE html><html><head><meta charset="utf-8">'
+    + '<title>' + DTITLE + '</title>'
+    + '<link rel="stylesheet" href="' + base + 'gy-manner-font.css">'
+    + '<style>' + PDF_CSS + '</style></head><body>'
+    + '<div class="pdcov"><span class="pdmark">GY</span><span class="pdco">'
+      + '<b>Great Yellow</b>'
+      + '<span>' + (DEMO ? (DEMO.w || 'Customer Demand Mapping') : 'Customer Demand Mapping')
+      + ' &middot; ' + who + ' &middot; ' + when + '</span></span></div>'
+    + body
+    + '<div class="pdfoot">Great Yellow &middot; ' + DTITLE + ' &middot; ' + when
+      + ' &middot; ' + doneCount() + ' of 16 workflow steps complete</div>'
+    + '</body></html>';
+  var w = window.open('', '_blank');
+  if(!w){ gyToast('The browser blocked the output window'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+  /* give the webfont a moment, then hand it to the browser's print-to-PDF */
+  var go = function(){ try{ w.focus(); w.print(); }catch(e){} };
+  if(w.document.fonts && w.document.fonts.ready) w.document.fonts.ready.then(function(){ setTimeout(go, 120); });
+  else setTimeout(go, 600);
+}
+
+/* the drawer views are the same builders; VIEWS holds every panel body and
+   the two groups just read different keys out of it. */
+var DVIEWS = VIEWS;
+
+/* ── what each step consists of ───────────────────────────────────────────
+   A step is not an atom: it has a purpose, a handful of tasks with an actor
+   and a trigger each, and something it leaves behind. 'ai' is the assistant;
+   anything else is a name from TEAM. */
+var STEPD = {
+ '1.1':{what:'Meet the estates and record what the project is actually for.',
+   tasks:[['Caitlin Ciceri','Runs the call with the estate representatives'],
+          ['ai','Transcribes the recording and drafts the chapter 1 fields'],
+          ['ai','Flags what the source material does not cover']],
+   after:'the project has an objective, a site description and a list of open questions.'},
+ '1.2':{what:'Ask the client for the documents chapter 1 cannot be written without.',
+   tasks:[['ai','Builds the request from the gaps left in chapter 1'],
+          ['Harry Fox','Sends the pack and chases the replies'],
+          ['ai','Files each reply against the field it answers']],
+   after:'the land management plan, tenure map and peat data are on file or formally outstanding.'},
+ '1.3':{what:'A gate, not a task: chapter 1 either stands up or the request goes out again.',
+   tasks:[['ai','Lists every field still unwritten and what it waits on'],
+          ['Caitlin Ciceri','Decides whether to proceed or hold']],
+   after:'chapter 2 can start, or discovery runs a second time.'},
+ '2.1':{what:'Read the planning register for demand signals inside the catchment.',
+   tasks:[['ai','Pulls applications inside the catchment boundary'],
+          ['ai','Filters to those naming off-site units'],
+          ['ai','Writes the beneficiary rows with a source on every claim']],
+   after:'the catchment has a counted, sourced set of planning-driven buyers.'},
+ '2.2':{what:'Find who takes water from the Dee and how exposed they are.',
+   tasks:[['ai','Queries the abstraction licence register for the catchment'],
+          ['Harry Fox','Confirms the abstraction points and volumes'],
+          ['ai','Notes expiry dates and treatment-cost exposure']],
+   after:'the abstractors are on the list, each with its reliance on the catchment stated.'},
+ '2.3':{what:'Check what public money could blend with credit sales.',
+   tasks:[['ai','Scans the public funding registers for open windows'],
+          ['ai','Records the deadline and eligibility for each scheme']],
+   after:'the routes that can co-fund delivery are known, with their deadlines.'},
+ '2.4':{what:'Turn the signals into a per-market buyer list Trade can work from.',
+   tasks:[['ai','Groups the beneficiaries into candidate markets'],
+          ['ai','Drafts why relevant and a hook for each buyer'],
+          ['ai','Writes the four tables into chapter 2'],
+          ['ai','Leaves relationship status blank for the team']],
+   after:'chapter 2 holds a buyer table per market, and a sheet Trade can edit.'},
+ '2.5':{what:'Trade tests the list against what they already know about each buyer.',
+   tasks:[['Izzie Bell','Reviews each buyer and fills in relationship status'],
+          ['Emily Norton','Flags anyone not to approach yet, and why'],
+          ['ai','Folds the corrections back into chapter 2']],
+   after:'the buyer list carries a real relationship status and nobody is approached blind.'},
+ '2.6':{what:'A gate on chapter 2 before any supply work begins.',
+   tasks:[['ai','Reports which markets still have no named buyer'],
+          ['Caitlin Ciceri','Decides whether the demand picture is good enough']],
+   after:'chapter 3 can start.'},
+ '3.1':{what:'Build a cited market snapshot for each ecosystem service.',
+   tasks:[['ai','Derives candidate services from the project interventions'],
+          ['ai','Pulls hard data from the registries'],
+          ['ai','Researches market signals in the trend reports'],
+          ['ai','Sizes each market and compiles cited snapshots']],
+   after:'the project has a candidate service list with readiness, sizing and sources.'},
+ '3.2':{what:'A gate on chapter 3, mostly about whether the numbers can be relied on.',
+   tasks:[['ai','Lists the sizing cells still empty, and why'],
+          ['Harry Fox','Decides whether a carbon expert is needed before the verdict']],
+   after:'the summary can be written, or a specialist is commissioned first.'},
+ '4.1':{what:'Write the verdict the client actually reads.',
+   tasks:[['ai','Reads the three chapters and ranks the markets'],
+          ['ai','Drafts the lead recommendation and the gating decision'],
+          ['Caitlin Ciceri','Edits and signs off the wording']],
+   after:'chapter 4 holds a verdict with a lead market and a named gating decision.'},
+ '4.2':{what:'Produce the on-brand document that leaves Great Yellow.',
+   tasks:[['ai','Renders the four chapters into the GY template'],
+          ['ai','Checks every figure back to its source'],
+          ['Caitlin Ciceri','Approves the file for sending']],
+   after:'a dated PDF exists and is logged against this deliverable.'},
+ '4.3':{what:'Get the verdict in front of the estates and record what they say.',
+   tasks:[['Emily Norton','Walks the estates through the verdict'],
+          ['ai','Records the response and any corrections']],
+   after:'the client has the verdict and their reaction is on file.'},
+ '4.4':{what:'Push the structured rows out so the rest of GY can use them.',
+   tasks:[['ai','Maps the buyer and market rows to the platform schema'],
+          ['ai','Writes the rows and verifies the count']],
+   after:'the buyer list is queryable outside this deliverable.'},
+ '4.5':{what:'Feed what this project taught back into the blueprint.',
+   tasks:[['ai','Compares what happened with what the blueprint expected'],
+          ['Caitlin Ciceri','Decides which changes go back to the Hive Mind'],
+          ['ai','Drafts the blueprint amendment']],
+   after:'the next demand mapping starts from a better blueprint.'}
+};
+function actorChip(a){
+  if(a === 'ai') return '<span class="v5act ai"><i class="ti ti-sparkles"></i>AI Assistant</span>';
+  return '<span class="v5act who">'+avName(a)+a+'</span>';
+}
+function stepBody(k){
+  var d = STEPD[k];
+  if(!d) return '<div class="v5swhat">Not written out in this sketch.</div>';
+  return '<div class="v5sk">What</div><div class="v5swhat">'+d.what+'</div>'
+    + '<div class="v5sk">Tasks</div>'
+    + '<div class="v5tkb">' + d.tasks.map(function(t,i){
+        return '<div class="v5tkr"><span class="v5tkn">'+(i+1)+'</span><div class="v5tkc">'
+          + actorChip(t[0])
+          + '<div class="v5tkt">'+t[1]+'</div>'
+          + '<div class="v5tkw">When: '+(i ? 'After task '+i+' is completed'
+                                          : 'After the previous step is completed')+'</div>'
+        + '</div></div>';
+      }).join('') + '</div>'
+    + '<div class="v5aft"><i class="ti ti-flag"></i><div>After this: '+d.after+'</div></div>';
+}
+
+/* The deliverable's own canvas page, embedded rather than imitated. */
+var CANVAS_SRC = 'customer-demand-mapping-v2-canvas.html?embed=1&bare=1';
+var WFVIEW = 'list';
+try{ if(localStorage.getItem('gyWfView') === 'canvas') WFVIEW = 'canvas'; }catch(e){}
+var VT = [['list','ti-list','List'],['canvas','ti-hierarchy-2','Canvas']];
+function vtHtml(){
+  return '<span class="v5vt">' + VT.map(function(v){
+    return '<button class="v5vb'+(WFVIEW===v[0]?' on':'')+'" data-tip="'+v[2]+' view"'
+      + ' onclick="setWfView(\''+v[0]+'\')"><i class="ti '+v[1]+'"></i></button>';
+  }).join('') + '</span>';
+}
+function setWfView(v){
+  if(WFVIEW === v) return;
+  WFVIEW = v;
+  try{ localStorage.setItem('gyWfView', v); }catch(e){}
+  openTab('workflow');
+}
+
+var TAB = 'home', DR = null, STEPSEL = null;
+/* Opening a step is opening the drawer, so it follows the same rule: one side
+   panel at a time, and clicking the open one closes it. */
+function openStep(k){
+  if(DR === 'step' && STEPSEL === k) return closeDrawer();
+  var st = null;
+  STEPS.forEach(function(x){ if(x[0] === k) st = x; });
+  var pl = st ? (PAL[st[3]] || PAL.gray) : PAL.gray;
+  STEPSEL = k; DR = 'step';
+  document.body.classList.add('pclosed');
+  var ic = document.getElementById('dricon');
+  ic.className = 'v5dri';
+  ic.style.background = pl[0]; ic.style.color = pl[1];
+  ic.innerHTML = '<i class="ti '+(st ? st[2] : 'ti-circle')+'"></i>';
+  document.getElementById('drtitle').textContent = k + ' ' + (st ? st[1] : 'Step');
+  document.getElementById('drbody').innerHTML = stepBody(k);
+  document.getElementById('drbody').scrollTop = 0;
+  document.getElementById('drawer').classList.remove('hide');
+  paintTabs();
+  if(TAB === 'workflow') openTab('workflow');
+}
+function paintTabs(){
+  var shut = document.body.classList.contains('pclosed');
+  /* Now that the bar sits above all three columns it can hold the assistant
+     toggle permanently, at the left end, which is the side the assistant opens
+     on. It is a toggle rather than a tab, so a hairline separates it. */
+  document.getElementById('tabs').innerHTML =
+    '<button class="v5tab chat'+(shut?'':' on')+'" onclick="toggleChat()" title="'
+      + (shut?'Show the assistant':'Hide the assistant')+'">'
+      + '<i class="ti ti-sparkles"></i><span class="lb">Assistant</span></button>'
+    + '<span class="v5tdiv"></span>'
+    + '<div class="v5tabgrp">' + TABS.map(function(t){
+    var badge = t[0]==='workflow' ? wfBadge() : t[3];
+    return '<button class="v5tab'+(TAB===t[0]?' on':'')+'" onclick="openTab(\''+t[0]+'\')">'
+      + '<i class="ti '+t[1]+'"></i><span class="lb">'+t[2]+'</span>'+(badge?'<b>'+badge+'</b>':'')+'</button>';
+  }).join('') + '</div>'
+  + '<div class="v5drgrp">' + DRAWERS.map(function(d){
+      var bg = drBadge(d[0], d[3]);
+      return '<button class="v5tab dr'+(DR===d[0]?' on':'')+'" onclick="openDrawer(\''+d[0]+'\')">'
+        + '<i class="ti '+d[1]+'"></i><span class="lb">'+d[2]+'</span>'+(bg?'<b>'+bg+'</b>':'')+'</button>';
+    }).join('') + '</div>';
+}
+function openTab(k){
+  TAB = k;
+  paintTabs();
+  var el = document.getElementById('pbody');
+  var framed = (k === 'home' || k === 'doc' || k === 'workflow');
+  el.parentNode.classList.toggle('framed', framed);
+  el.innerHTML = framed ? frameWrap(k, VIEWS[k]()) : VIEWS[k]();
+  el.parentNode.scrollTop = 0;
+  fitThumb();
+}
+/* One chrome bar per framed tab, then the ground, then the sheet. */
+function frameWrap(k, inner){
+  var bare = (k === 'workflow' && WFVIEW === 'canvas');
+  var hd = k === 'home'
+    ? frameHd('ti-home','var(--graybg)','#766B62','Home',
+              '<span class="n">'+doneCount()+' of 16 steps</span>')
+    : k === 'doc'
+    ? frameHd('ti-file-text','var(--bluebg)','var(--blued)','Document',
+              '<button class="v5out" onclick="viewOutput()">'
+              + '<i class="ti ti-file-type-pdf"></i>View output (PDF)</button>')
+    : frameHd('ti-route','var(--tealbg,#E2F3EC)','#12684C','Workflow',
+              '<span class="n">'+wfBadge()+'</span>'+vtHtml());
+  var cls = bare ? ' bare' : (k === 'workflow' ? ' list' : (k === 'home' ? ' home' : ''));
+  return '<div class="v5card">' + hd
+    + '<div class="v5cbody'+cls+'">'
+      + (bare ? inner : '<div class="v5cin">' + inner + '</div>')
+    + '</div></div>';
+}
+function frameHd(icon, bg, fg, name, meta){
+  return '<div class="v5frh"><span class="dltile" style="background:'+bg+';color:'+fg+'">'
+    + '<i class="ti '+icon+'"></i></span><span class="dlonm">'+name+'</span>'
+    + (meta || '') + '</div>';
+}
+/* The document miniature is a real 900px page shrunk down, so the shrink has
+   to answer to the column it lands in: the panel changes width every time the
+   assistant or a drawer opens. */
+function fitThumb(){
+  var w = document.querySelector('#pbody .dlthumb'), pg = document.querySelector('#pbody .dlpage');
+  if(!w || !pg) return;
+  pg.style.transform = 'scale(' + Math.min(0.5, (w.clientWidth - 30) / 900) + ')';
+}
+if(window.ResizeObserver) new ResizeObserver(fitThumb).observe(document.getElementById('panel'));
+window.addEventListener('resize', fitThumb);
+/* Sources are not a drawer any more; they live on the home page. */
+function goSources(){
+  if(TAB !== 'home') openTab('home');
+  var g = document.getElementById('g-sources');
+  if(g) g.scrollIntoView({behavior:'smooth', block:'center'});
+}
+/* the chip still opens the provenance of its own field, inside the panel */
+function openProv(k){
+  var f = FIELDS[k];
+  var read = f.cf[0]==='ai' ? 'Kick-off recording, transcript 14 Jul' : 'Upper Dee land management plan, 2 Jul';
+  document.getElementById('pbody').innerHTML =
+    '<button class="v5back" onclick="openTab(\'doc\')"><i class="ti ti-arrow-left"></i> Back to the document</button>'
+    + '<div style="margin-bottom:14px"><span class="v5cf '+f.cf[0]+'">'+f.cf[1]+'</span></div>'
+    + '<dl class="v5dl"><dt>Field</dt><dd>'+f.l+'</dd></dl>'
+    + '<dl class="v5dl"><dt>Written by</dt><dd>'+f.by+'</dd></dl>'
+    + '<dl class="v5dl"><dt>Read from</dt><dd>'+read+'</dd></dl>'
+    + '<dl class="v5dl"><dt>Last change</dt><dd>Wednesday 09:05, Caitlin Ciceri</dd></dl>'
+    + '<p class="v5txt" style="margin-top:16px;font-size:14px;color:var(--ink2)">'
+      + (f.cf[0]==='ai'
+          ? 'Nobody has confirmed this wording. It carries into the summary as written, so it is worth a minute with the client first.'
+          : 'Confirmed in writing, so downstream chapters can rely on it.')
+    + '</p>';
+  document.getElementById('pbody').scrollTop = 0;
+}
+function toggleChat(){
+  var opening = document.body.classList.contains('pclosed');
+  document.body.classList.toggle('pclosed');
+  if(opening) closeDrawer();   /* one side panel at a time */
+  paintTabs();
+}
+function openDrawer(k){
+  if(DR === k) return closeDrawer();
+  DR = k;
+  document.body.classList.add('pclosed');   /* the assistant steps aside */
+  var d = DRAWERS.filter(function(x){return x[0]===k;})[0];
+  STEPSEL = null;
+  document.getElementById('dricon').className = 'v5dri hide';
+  document.getElementById('drtitle').textContent = d[2];
+  document.getElementById('drbody').innerHTML = DVIEWS[k]();
+  document.getElementById('drbody').scrollTop = 0;
+  document.getElementById('drawer').classList.remove('hide');
+  paintTabs();
+}
+function closeDrawer(){
+  var wasStep = DR === 'step';
+  DR = null; STEPSEL = null;
+  document.getElementById('drawer').classList.add('hide');
+  paintTabs();
+  /* repaint the step list so the highlight goes with the drawer */
+  if(wasStep && TAB === 'workflow') openTab('workflow');
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDrawer(); });
+
+/* Paste arrives as plain text, so a copy out of Notion or Word does not drag
+   its own styling into the document. */
+/* gyMenu handles 'go:' itself; anything else is a toast, so the reset action
+   is intercepted here rather than by changing the shared menu. */
+(function(){
+  var orig = window.gyMenu;
+  if(!orig) return;
+  window.gyMenu = function(el, items){
+    return orig(el, (items || []).map(function(it){
+      if(it && it[2] === 'run:reset') return [it[0], it[1], 'Reset, use the button below'];
+      return it;
+    }));
+  };
+})();
+document.addEventListener('paste', function(e){
+  var t = e.target && e.target.closest ? e.target.closest('[contenteditable]') : null;
+  if(!t) return;
+  e.preventDefault();
+  var txt = (e.clipboardData || window.clipboardData).getData('text');
+  document.execCommand('insertText', false, txt);
+});
+/* A field stops looking empty the moment it is not. */
+document.addEventListener('input', function(e){
+  var el = e.target && e.target.closest ? e.target.closest('.v5inp, .v5tbl td') : null;
+  if(!el) return;
+  var has = el.textContent.replace(/\u00a0/g,' ').trim().length > 0;
+  if(el.classList.contains('v5inp')){
+    if(el.hasAttribute('data-ph')) el.classList.toggle('empty', !has);
+    var f = el.closest('.v5f');
+    var chip = f && f.querySelector('.v5cf.none');
+    if(chip) chip.style.display = has ? 'none' : '';
+  } else {
+    el.classList.toggle('mt', !has);
+  }
+});
+/* The assistant's width is the reader's call, within limits that keep both
+   columns usable. Remembered per browser. */
+var CHAT_MIN = 320, CHAT_MAX = 680;
+(function(){
+  var w = 0;
+  try{ w = parseInt(localStorage.getItem('gyChatW') || '', 10) || 0; }catch(e){}
+  if(w) document.body.style.setProperty('--chatw', Math.max(CHAT_MIN, Math.min(CHAT_MAX, w)) + 'px');
+  var grip = document.getElementById('chatgrip'), chat = document.querySelector('.v5chat');
+  if(!grip || !chat) return;
+  grip.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    var x0 = e.clientX, w0 = chat.getBoundingClientRect().width;
+    document.body.classList.add('dragging');
+    grip.setPointerCapture(e.pointerId);
+    function move(ev){
+      var room = document.querySelector('.v5row').getBoundingClientRect().width - 420;
+      var next = Math.max(CHAT_MIN, Math.min(Math.min(CHAT_MAX, room), w0 + (ev.clientX - x0)));
+      document.body.style.setProperty('--chatw', Math.round(next) + 'px');
+    }
+    function up(ev){
+      grip.removeEventListener('pointermove', move);
+      grip.removeEventListener('pointerup', up);
+      document.body.classList.remove('dragging');
+      try{ localStorage.setItem('gyChatW',
+        String(Math.round(chat.getBoundingClientRect().width))); }catch(e){}
+      fitThumb();
+    }
+    grip.addEventListener('pointermove', move);
+    grip.addEventListener('pointerup', up);
+  });
+  grip.addEventListener('dblclick', function(){
+    document.body.style.removeProperty('--chatw');
+    try{ localStorage.removeItem('gyChatW'); }catch(e){}
+    fitThumb();
+  });
+})();
+
+/* The path is there, just folded. One click unfolds it and the chip steps
+   aside; it refolds on the next visit. */
+function crExpand(){
+  document.getElementById('crtrail').classList.add('on');
+  document.getElementById('crmore').classList.add('hide');
+}
+/* The rail starts folded on this page. gy-nav.js already handles the layout
+   through body.navhid, so this only chooses the default and remembers it
+   under a key of its own, leaving every other page's preference alone. */
+(function(){
+  var pref = null;
+  try{ pref = localStorage.getItem('gyDelNav'); }catch(e){}
+  var hide = pref !== 'open';
+  document.body.classList.toggle('navhid', hide);
+  var b = document.getElementById('expandBtn');
+  if(b) b.style.display = hide ? 'flex' : 'none';
+  window.toggleNav = function(){
+    var hid = document.body.classList.toggle('navhid');
+    var btn = document.getElementById('expandBtn');
+    if(btn) btn.style.display = hid ? 'flex' : 'none';
+    try{ localStorage.setItem('gyDelNav', hid ? 'hidden' : 'open'); }catch(e){}
+    fitThumb();
+  };
+})();
+
+openTab(TAB);
+paintChat();
+</script>
+</body>
+</html>

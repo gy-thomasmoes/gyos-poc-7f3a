@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design system · Great Yellow OS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+
+<style>
+/* ── the reference page's own chrome. Everything inside a demo frame is the
+      real component, rendered by the real shared file, never a copy. ── */
+.dsnav{position:sticky;top:61px;z-index:5;background:var(--bg);padding:14px 0 12px;margin-bottom:8px;
+  border-bottom:1px solid var(--line);display:flex;gap:7px;flex-wrap:wrap}
+.dsnav a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;padding:5px 12px}
+.dsnav a:hover{border-color:var(--ink3);color:var(--ink)}
+
+.dsect{margin:44px 0 0}
+.dsect>h2{font-family:var(--serif);font-weight:500;font-size:23px;letter-spacing:-.01em;
+  padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+
+.comp{border:1px solid var(--line);border-radius:16px;background:var(--card);margin-top:18px;overflow:hidden}
+.comp>h3{font-size:15.5px;font-weight:600;letter-spacing:-.01em;padding:15px 20px 0;display:flex;align-items:baseline;gap:10px}
+.comp>h3 code{font-size:12.5px;font-weight:500;color:var(--ink2);background:var(--graybg);
+  border-radius:6px;padding:2px 8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.comp>p.lead{font-size:14px;color:var(--ink2);line-height:1.5;padding:8px 20px 0;max-width:72ch}
+.demo{margin:16px 20px 0;padding:22px 20px;border:1px solid var(--line);border-radius:13px;background:var(--bg);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.demo.col{flex-direction:column;align-items:stretch;justify-content:flex-start}
+.demo.plain{background:var(--card)}
+.demo .dsphead{width:100%;margin:0;padding-bottom:13px;border-bottom:1px solid var(--line)}
+.demo .dsphead .h1{font-family:var(--serif);font-weight:500;letter-spacing:-.015em}
+pre.code{margin:14px 20px 0;padding:13px 15px;background:#1A0C12;color:#F1EDE4;border-radius:11px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;
+  overflow:auto;white-space:pre}
+pre.code .k{color:#F9DD5A}
+pre.code .s{color:#9FD9B4}
+pre.code .c{color:#8A7F76}
+
+.spec{padding:16px 20px 20px}
+.spec table{width:100%;border-collapse:collapse;font-size:13.5px}
+.spec th,.spec td{text-align:left;vertical-align:top;padding:7px 10px 7px 0;border-bottom:1px solid var(--line)}
+.spec th{width:132px;font-weight:600;color:var(--ink2);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+  padding-top:9px;white-space:nowrap}
+.spec td{color:var(--ink);line-height:1.55}
+.spec tr:last-child th,.spec tr:last-child td{border-bottom:none}
+.spec code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;
+  background:var(--graybg);border-radius:5px;padding:1px 6px}
+.spec ul{margin:0;padding-left:17px}
+.spec li{margin:2px 0}
+.spec .no{color:#9B3B2A}
+
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px;grid-auto-rows:min-content;align-content:start;width:100%}
+.sw{align-self:start}
+.sw{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.sw .chip{display:block;height:54px;border:none;border-radius:0;cursor:default}
+.sw .m{padding:9px 11px 11px}
+.sw b{display:block;font-size:13px;font-weight:600}
+.sw span{display:block;font-size:11.5px;color:var(--ink3);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:2px}
+
+.typerow{display:flex;align-items:baseline;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
+.typerow:last-child{border-bottom:none}
+.typerow .tm{font-size:11.5px;color:var(--ink3);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  width:250px;flex:none}
+
+.zrow{display:flex;align-items:center;gap:14px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.zrow:last-child{border-bottom:none}
+.zrow b{width:64px;flex:none;font-variant-numeric:tabular-nums;font-size:13px}
+.zrow span{color:var(--ink2)}
+
+.rules{border:1px solid var(--line);border-radius:16px;background:var(--card);margin-top:18px;padding:6px 20px 14px}
+.rule{padding:13px 0;border-bottom:1px solid var(--line)}
+.rule:last-child{border-bottom:none}
+.rule b{display:block;font-size:14.5px;font-weight:600;margin-bottom:3px}
+.rule p{font-size:13.5px;color:var(--ink2);line-height:1.55;max-width:80ch}
+
+/* bits the demos need that live in a page, not in a shared file */
+.espill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:7px;background:var(--esc);color:#fff;white-space:nowrap}
+.uchip{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:#FBF1DC;color:var(--amberd);white-space:nowrap}
+.fit{display:inline-flex;align-items:center;font-size:11.5px;font-weight:500;border-radius:999px;padding:3px 9px}
+.fit.ex{background:var(--greenbg);color:var(--greend)}
+.fit.pa{background:var(--amberbg);color:var(--amberd)}
+.fit.su{background:var(--bluebg);color:var(--blued)}
+.chipx{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);
+  background:var(--graybg);border-radius:999px;padding:4px 12px}
+.dtbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);width:100%}
+.dhd,.drow{display:grid;grid-template-columns:minmax(150px,2fr) 1fr 1fr 96px;align-items:center;gap:14px;padding:13px 20px}
+.dhd{background:var(--graybg);border-bottom:1px solid var(--line);font-size:11.5px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.drow{border-bottom:1px solid var(--line);cursor:pointer}
+.drow:last-child{border-bottom:none}
+.drow:hover{background:#FBF8EF}
+.drow .nm{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.drow .mut{color:var(--ink3);font-size:14px}
+.seldemo .dhd,.seldemo .drow{grid-template-columns:22px minmax(150px,2fr) 1fr 1fr}
+.seldemo .drow{cursor:default}
+.emptybox{border:1px dashed var(--line2);border-radius:14px;padding:30px 20px;text-align:center;color:var(--ink3);font-size:14px;width:100%}
+.sq{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--esbg);color:var(--esc);font-size:17px;flex:none}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"none"};</script>
+<script src="gy-nav.js?v=668c831e"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
+<script src="gy-inventory.js?v=358d8962"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='home.html'">Great Yellow</span>
+    <span class="sep">&rsaquo;</span><span class="cr cur">Design system</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Design system</div>
+    <div class="acts" id="abar"></div>
+  </div>
+
+  <nav class="dsnav">
+    <a href="#colour">Colour</a>
+    <a href="#type">Typography</a>
+    <a href="#layout">Layout</a>
+    <a href="#layers">Layers</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#actionbar">Action bar</a>
+    <a href="#filters">Filters</a>
+    <a href="#menu">Menu</a>
+    <a href="#select">Select</a>
+    <a href="#seg">Segmented</a>
+    <a href="#tooltip">Tooltip</a>
+    <a href="#chip">Chip</a>
+    <a href="#toast">Toast</a>
+    <a href="#table">Table</a>
+    <a href="#checkbox">Checkbox</a>
+    <a href="#selection">Selection</a>
+    <a href="#pills">Pills</a>
+    <a href="#drawer">Drawer</a>
+    <a href="#empty">Empty states</a>
+    <a href="#rules">Rules</a>
+  </nav>
+
+<!-- ══ FOUNDATIONS ══════════════════════════════════════════════════ -->
+<section class="dsect" id="colour">
+  <h2>Colour</h2>
+
+  <div class="comp">
+    <h3>Surfaces and ink <code>gy-shell.css :root</code></h3>
+    <p class="lead">Warm neutrals. The page is never white: white is reserved for cards and fields so they lift off the background.</p>
+    <div class="demo col">
+      <div class="swatches" id="swSurface"></div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Rule</th><td><code>--bg</code> for the page, <code>--card</code> for anything raised, <code>--graybg</code> for a header row or an inset control.</td></tr>
+      <tr><th>Borders</th><td><code>--line</code> is the default hairline, <code>--line2</code> is a control's own edge. A control hovers to <code>--ink3</code>, never to a brand colour.</td></tr>
+      <tr><th>Ink</th><td><code>--ink</code> for content, <code>--ink2</code> for supporting text and labels, <code>--ink3</code> for placeholders, units and things that are off.</td></tr>
+      <tr><th>Never</th><td class="no">A page-level background other than <code>--bg</code>, and pure #000 or #FFF text.</td></tr>
+    </table></div>
+  </div>
+
+  <div class="comp">
+    <h3>Status colour</h3>
+    <p class="lead">Four meanings only: good, attention, information, and the dark ink used for a primary action or a live state.</p>
+    <div class="demo col"><div class="swatches" id="swStatus"></div></div>
+    <div class="spec"><table>
+      <tr><th>Pairing</th><td>Every status colour ships as a background and a darker text tone (<code>--greenbg</code> with <code>--greend</code>). Text always takes the dark tone, never the raw hue.</td></tr>
+      <tr><th>Green</th><td>Complete, final, in good condition, an exact match.</td></tr>
+      <tr><th>Amber</th><td>Needs attention, partial, unallocated, overdue.</td></tr>
+      <tr><th>Blue</th><td>Informational and links. A substitute match. Never success.</td></tr>
+      <tr><th>Yellow</th><td><code>--yellow</code> is the brand mark, used for the workspace tile and the unallocated card. It is not a status.</td></tr>
+    </table></div>
+  </div>
+
+  <div class="comp">
+    <h3>Ecosystem service tokens <code>GY_ES</code></h3>
+    <p class="lead">One token per service carries a colour, a background and an icon. Colour never carries identity alone, the icon is the second encoding, and the pair is validated for colour-blind separation.</p>
+    <div class="demo col">
+      <div class="swatches" id="swEs"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap" id="esDemo"></div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Definition</th><td><code>GY_ES[key] = {name, short, icon, cls}</code> in <code>gy-nav.js</code>. The class sets <code>--esc</code> (the colour) and <code>--esbg</code> (its background).</td></tr>
+      <tr><th>Parts</th><td><code>.es-tile</code> 34px rounded square, <code>.es-tile.sm</code> 26px, <code>.es-dot</code> 9px square, <code>.es-chip</code> pill with icon and short name, <code>.espill</code> solid caps pill for a dense table.</td></tr>
+      <tr><th>Live</th><td>bng, wcc and soc are in the data. nut and nfm are defined and unused, ready for a fourth and fifth service.</td></tr>
+      <tr><th>Never</th><td class="no">A service drawn in a colour that is not its token, or a service shown as colour with no icon.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="type">
+  <h2>Typography</h2>
+  <div class="comp">
+    <h3>Two families <code>--serif / --sans</code></h3>
+    <p class="lead">Manner sets titles and numbers that matter. Everything you operate is the system sans, so the interface stays quiet and the content speaks.</p>
+    <div class="demo col plain">
+      <div class="typerow"><span class="tm">--serif 30 / 500 / -.015em</span><span class="h1">Inventory list</span></div>
+      <div class="typerow"><span class="tm">--serif 23 / 500</span><span style="font-family:var(--serif);font-weight:500;font-size:23px">Section heading</span></div>
+      <div class="typerow"><span class="tm">--serif 20 / 500 &nbsp;.sect</span><span class="sect" style="margin:0">Block heading</span></div>
+      <div class="typerow"><span class="tm">--sans 15.5 / 600</span><span style="font-size:15.5px;font-weight:600;letter-spacing:-.01em">Row name, card title</span></div>
+      <div class="typerow"><span class="tm">--sans 15 / 400</span><span style="font-size:15px">Body and table cells</span></div>
+      <div class="typerow"><span class="tm">--sans 14 / 500 &nbsp;buttons</span><span style="font-size:14px;font-weight:500">Add inventory</span></div>
+      <div class="typerow"><span class="tm">--sans 13.5 / 600 / .06em caps</span><span style="font-size:13.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)">Section label</span></div>
+      <div class="typerow"><span class="tm">--sans 11.5 / 600 / .06em caps</span><span style="font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)">Table header</span></div>
+      <div class="typerow"><span class="tm">--sans 12.5 / 400</span><span style="font-size:12.5px;color:var(--ink3)">Meta, counts, captions</span></div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Numbers</th><td>Anything that lines up in a column gets <code>font-variant-numeric:tabular-nums</code>: units, areas, money, dates, counts.</td></tr>
+      <tr><th>Case</th><td>Uppercase is only for labels, never for content. Sentence case everywhere else, including buttons.</td></tr>
+      <tr><th>Measure</th><td>Body copy is capped around 72 to 80 characters. A spec table is the exception.</td></tr>
+      <tr><th>Never</th><td class="no">Serif for a control, a third family, or a heading below 13px pretending to be a label.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="layout">
+  <h2>Layout and shape</h2>
+  <div class="comp">
+    <h3>The shell <code>.shell / .snav / .mainc / .wrap</code></h3>
+    <p class="lead">Every page is the same frame: a fixed rail, a sticky topbar carrying breadcrumbs, and one centred column.</p>
+    <div class="spec"><table>
+      <tr><th>Column</th><td><code>.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}</code>, dropping to <code>32px 22px 90px</code> under 900px. Canonical on every shell page, no exceptions.</td></tr>
+      <tr><th>Rail</th><td>264px, resizable by its grip, collapsible, remembered in <code>localStorage</code>. Rendered by <code>gy-nav.js</code> from <code>window.GYNAV</code>, never hand-written per page.</td></tr>
+      <tr><th>Topbar</th><td>61px, sticky, translucent with a blur. Breadcrumbs come from the <code>GY_CRUMB</code> table in <code>gy-nav.js</code>, so altitude is consistent across pages.</td></tr>
+      <tr><th>Page header</th><td><code>.phead</code>: title left, action bar right, one hairline under the pair. Nothing else sits in that row.</td></tr>
+    </table></div>
+  </div>
+
+  <div class="comp">
+    <h3>Radius, spacing and shadow</h3>
+    <div class="demo">
+      <div style="border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px 22px;font-size:13px">16px card</div>
+      <div style="border:1px solid var(--line);border-radius:13px;background:var(--card);padding:16px 20px;font-size:13px">13px inner block</div>
+      <div style="border:1px solid var(--line2);border-radius:10px;background:var(--card);padding:11px 15px;font-size:13px">10px control</div>
+      <div style="border-radius:999px;background:var(--graybg);padding:7px 15px;font-size:13px">999px pill</div>
+      <div style="border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px 22px;font-size:13px;box-shadow:0 16px 44px rgba(31,31,29,.18)">popover shadow</div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Radius</th><td>16px card, 13px block inside a card, 10 to 11px control, 9px menu row, 999px pill or dot.</td></tr>
+      <tr><th>Spacing</th><td>Multiples of 4 from 4 to 24, then 32, 36 and 44 for page rhythm. Card padding is 14 to 20px, section gaps 22 to 46px.</td></tr>
+      <tr><th>Shadow</th><td>Two only: <code>0 1px 2px rgba(26,12,18,.08)</code> for a raised control, <code>0 16px 44px rgba(31,31,29,.18)</code> for anything floating over the page. Cards use a border, not a shadow.</td></tr>
+      <tr><th>Motion</th><td>120ms for colour and opacity, 150ms for a chevron, 240ms <code>cubic-bezier(.2,.7,.3,1)</code> for a drawer. Nothing else animates.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="layers">
+  <h2>Layers</h2>
+  <div class="comp">
+    <h3>The z-index scale</h3>
+    <p class="lead">The topbar is sticky at 1200, so anything that must cover the whole window has to clear it. A new overlay built at a page-level 50 silently slides underneath.</p>
+    <div class="spec" style="padding-top:6px">
+      <div class="zrow"><b>0</b><span>Page content, and the Leaflet map, which is given its own stacking context so its panes stay inside it</span></div>
+      <div class="zrow"><b>1200</b><span>Sticky topbar</span></div>
+      <div class="zrow"><b>1250</b><span>Action menu</span></div>
+      <div class="zrow"><b>1260</b><span>Notifications</span></div>
+      <div class="zrow"><b>1270</b><span>Search modal</span></div>
+      <div class="zrow"><b>1300 / 1301</b><span>Drawer backdrop and drawer</span></div>
+      <div class="zrow"><b>1400</b><span>gyMenu and the Filters popup</span></div>
+      <div class="zrow"><b>1600</b><span>gySel field popup, which must open above a drawer</span></div>
+      <div class="zrow"><b>1800</b><span>Tooltip layer, above everything because it explains everything</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPONENTS ═══════════════════════════════════════════════════ -->
+<section class="dsect" id="buttons">
+  <h2>Buttons</h2>
+  <div class="comp">
+    <h3>Primary, outline, quiet <code>.btn-dark / .btn-out</code></h3>
+    <div class="demo">
+      <button class="btn-dark"><i class="ti ti-plus"></i> Add inventory</button>
+      <button class="btn-out"><i class="ti ti-file-export"></i> Export</button>
+      <button class="btn-out">Actions <i class="ti ti-chevron-down"></i></button>
+      <button class="btn-out" disabled style="opacity:.5;cursor:not-allowed">Disabled</button>
+      <span class="clink" style="color:var(--blued);cursor:pointer;font-size:14.5px">Quiet link action</span>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Variants</th><td><b>Dark</b> is the one thing this page is for, and there is never more than one. <b>Outline</b> is everything else. A <b>link</b> is for an action inside a row or a card that must not compete.</td></tr>
+      <tr><th>Anatomy</th><td>10px radius, 9px by 15px padding, 14px text at weight 500, 7px gap to a 16px icon. Icon leads, label follows, both in sentence case.</td></tr>
+      <tr><th>States</th><td>Hover darkens the dark button to <code>#2C1B22</code> and moves the outline border to <code>--ink3</code>. Focus is the browser ring. Disabled is 50% opacity and not clickable.</td></tr>
+      <tr><th>In the bar</th><td>The action bar uses its own <code>.abtn</code> at the same rhythm. Do not mix <code>.btn-out</code> into a <code>gyBar</code>.</td></tr>
+      <tr><th>Never</th><td class="no">Two dark buttons in one view, a button whose label is a noun with no verb, or an icon-only button without a title.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="actionbar">
+  <h2>Action bar</h2>
+  <div class="comp">
+    <h3>gyBar <code>gyBar(host, cfg)</code></h3>
+    <p class="lead">One bar per page, top right of the header. Both the bar at the top of this page and the one below are live, built by the same call every other page makes.</p>
+    <div class="demo col">
+      <div class="phead dsphead"><div class="h1" style="font-size:22px">Inventory list</div><div class="acts" id="barDemo"></div></div>
+    </div>
+    <pre class="code"><span class="k">gyBar</span>(<span class="s">'abar'</span>, {
+  search:  {placeholder:<span class="s">'Search documents'</span>, oninput:fn},   <span class="c">// or {onclick:fn}</span>
+  filters: [[<span class="s">'Type'</span>, [[<span class="s">'ti-circle-dot'</span>,<span class="s">'All types'</span>,<span class="s">'all'</span>], …], {multi:<span class="k">true</span>}]],
+  buttons: [{icon:<span class="s">'ti-target-arrow'</span>, label:<span class="s">'Find units for buyer'</span>, onclick:fn}],
+  actions: ROWS,                                     <span class="c">// rows for gyMenu</span>
+  primary: {icon:<span class="s">'ti-plus'</span>, label:<span class="s">'Add document'</span>, onclick:fn},
+  onfilter: <span class="k">function</span>(group, value){ … }
+});</pre>
+    <div class="spec"><table>
+      <tr><th>Order</th><td>Fixed and not negotiable: <b>Search, Filters, page buttons, Actions, primary</b>. A page cannot reorder it, which is what keeps twenty pages recognisable.</td></tr>
+      <tr><th>Search</th><td>With a placeholder it inserts its own field under <code>.phead</code>; with <code>onclick</code> it just calls that, for a page whose search is a drawer.</td></tr>
+      <tr><th>Buttons</th><td>Page tools that are neither a filter nor a write action, such as Settings or Find units for buyer.</td></tr>
+      <tr><th>Actions</th><td>Single-shot write operations on this object, opened as a <code>gyMenu</code>. Never a read tool.</td></tr>
+      <tr><th>Primary</th><td>The one dark button. Usually Add.</td></tr>
+      <tr><th>Returns</th><td><code>{filter, pop, clear(), set(group,value)}</code>, so a stat card can drive a filter without poking the DOM.</td></tr>
+      <tr><th>Never</th><td class="no">A second bar, a filter row under the title, or a button that duplicates an Actions row.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="filters">
+  <h2>Filters</h2>
+  <div class="comp">
+    <h3>Filter groups <code>cfg.filters</code></h3>
+    <p class="lead">All page filtering happens in the bar. Open Filters below for the full case: six groups as an accordion, multi-select, in-group search, and four values behind Show all.</p>
+    <div class="demo col">
+      <div class="phead dsphead"><div class="h1" style="font-size:22px">Six facets</div><div class="acts" id="filterDemo"></div></div>
+    </div>
+    <pre class="code">[<span class="s">'Habitat type'</span>, [
+   [<span class="s">'ti-circle-dot'</span>, <span class="s">'Any'</span>, <span class="s">'any'</span>],        <span class="c">// first option is the default AND the "any"</span>
+   [<span class="s">'ti-leaf'</span>, <span class="s">'Lowland meadow'</span>, <span class="s">'Lowland meadow'</span>], …
+ ], {multi:<span class="k">true</span>, search:<span class="k">true</span>, cap:<span class="k">4</span>, open:<span class="k">false</span>}]</pre>
+    <div class="spec"><table>
+      <tr><th>Default</th><td>The first option is both the default and the group's "any". Selecting it clears the rest, and the badge counts groups that are off their first option, so a mis-ordered group shows a false count.</td></tr>
+      <tr><th>Accordion</th><td>Four or more groups collapse to one open at a time, each shut header carrying its state: "Any", the value, or "2 selected". Three or fewer stay open and each header toggles only itself.</td></tr>
+      <tr><th>Long lists</th><td>Over 8 values a group gains a search field and shows its first four behind <b>Show all (N)</b>. Selected values survive both and pin under "any", so a choice never hides. <code>cap:0</code> turns it off.</td></tr>
+      <tr><th>Ordering</th><td>Commonest first, or a semantic rank where one exists (Available, Projected, Reserved, Sold). Alphabetical is the fallback, never the default.</td></tr>
+      <tr><th>Data</th><td>Options are built from the page's data, never typed by hand, so a filter cannot offer a value the page does not hold.</td></tr>
+      <tr><th>Placement</th><td>The popup opens under the Filters button, measured at open time, and slides left only far enough to stay 12px inside the viewport. It is positioned against the window, not the bar, so a bar narrower than the popup cannot push it off screen.</td></tr>
+      <tr><th>Clear</th><td>A <b>Clear all</b> footer appears as soon as anything is off default.</td></tr>
+      <tr><th>Not a filter</th><td>A view switch (Sites vs Parcels) is a segmented control. A sort belongs to the column header. Neither goes in this popup.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="menu">
+  <h2>Menu</h2>
+  <div class="comp">
+    <h3>gyMenu <code>gyMenu(anchor, rows)</code></h3>
+    <p class="lead">The one dropdown menu in the codebase, for page-level bulk operations and row actions.</p>
+    <div class="demo">
+      <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,DEMO_MENU)">Actions <i class="ti ti-chevron-down"></i></button>
+      <button class="btn-out" onclick="event.stopPropagation();gyMenu(this,DEMO_MENU)" title="More"><i class="ti ti-dots"></i></button>
+    </div>
+    <pre class="code">gyMenu(btn, [
+  [<span class="s">'label'</span>, <span class="s">'Bulk'</span>],                                  <span class="c">// section label</span>
+  [<span class="s">'ti-tag'</span>, <span class="s">'Set prices'</span>, <span class="s">'Toast text'</span>],              <span class="c">// toast</span>
+  [<span class="s">'ti-file-export'</span>, <span class="s">'Export'</span>, fn],                     <span class="c">// function</span>
+  <span class="s">'-'</span>,                                                <span class="c">// divider</span>
+  [<span class="s">'ti-history'</span>, <span class="s">'Audit log'</span>, <span class="s">'go:audit-log.html'</span>]      <span class="c">// navigate</span>
+]);</pre>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>Min width 232px, 13px radius, 6px padding, rows 9 by 11px with a 16px leading icon in <code>--ink3</code>. Appended to <code>document.body</code>, because a rail or a card would clip it.</td></tr>
+      <tr><th>Placement</th><td>Anchored under its button, right-aligned when it would overflow, flipped above when there is no room below.</td></tr>
+      <tr><th>Dismiss</th><td>Outside click, Escape, resize, or clicking the same anchor again.</td></tr>
+      <tr><th>Rows</th><td>A third value that is a function runs it, <code>go:</code> navigates, anything else is toast text.</td></tr>
+      <tr><th>Never</th><td class="no">A second dropdown idiom on any page. If a menu is needed, it is this one.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="select">
+  <h2>Select field</h2>
+  <div class="comp">
+    <h3>gySel <code>gy-select.js</code></h3>
+    <p class="lead">The one dropdown field. A native select is never allowed: it cannot be styled, it breaks the warm palette, and it renders differently on every platform.</p>
+    <div class="demo" id="selDemo"></div>
+    <pre class="code"><span class="k">gySel</span>(<span class="s">'q-lpa'</span>, {
+  options: [[<span class="s">'val'</span>,<span class="s">'Label'</span>], …] <span class="c">|| function(){ return […]; }</span>,
+  value: cur, placeholder: <span class="s">'Any LPA'</span>, width: <span class="s">'100%'</span>,
+  onchange: <span class="k">function</span>(v){ … }
+});</pre>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>Button 10px radius, 1px <code>#DED8CA</code> border, 9 by 11px padding, 13.5px label, chevron drawn in CSS. The popup is fixed, min 232px, max 340px tall, scrolling.</td></tr>
+      <tr><th>States</th><td>Placeholder in <code>--ink3</code>, hover and open border <code>#A79E8D</code>, selected row bold with a tick.</td></tr>
+      <tr><th>Options</th><td>A plain list, a <code>[value,label]</code> pair list, or a function evaluated at open time, which is how a field re-reads the data after another field changes it.</td></tr>
+      <tr><th>Labels</th><td>A field that needs explaining gets a <code>.flab</code> label above it with <code>gyInfo</code> beside it. The label is <code>display:flex;align-items:center</code> so the i sits on its centre line.</td></tr>
+      <tr><th>Gotcha</th><td>The popup opens at z-index 1600 so it clears a drawer. Its outside-click handler is one stable listener, unbound at the top of close.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="seg">
+  <h2>Segmented control</h2>
+  <div class="comp">
+    <h3>View switch <code>.seg</code></h3>
+    <p class="lead">Changes what a row is, not which rows show. That distinction is the whole reason it exists beside the filter popup.</p>
+    <div class="demo" id="segDemo">
+      <div class="seg">
+        <button class="on" data-g="a" onclick="segPick(this)">Sites · 7</button>
+        <button data-g="b" onclick="segPick(this)">Parcels · 18</button>
+      </div>
+      <div class="seg">
+        <button class="on" data-g="a" onclick="segPick(this)">All · 9</button>
+        <button data-g="b" onclick="segPick(this)">BNG · 5</button>
+        <button data-g="c" onclick="segPick(this)">WCC · 2</button>
+      </div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>A <code>--graybg</code> track at 11px radius with 3px padding; the selected button is white at 8px radius with the 1px raised shadow and weight 500.</td></tr>
+      <tr><th>Labels</th><td>Carry the count in the label (<code>Sites · 7</code>). A switch that tells you the size of each view earns its line.</td></tr>
+      <tr><th>Placement</th><td>Directly under the page header, left aligned, alone on its line.</td></tr>
+      <tr><th>Never</th><td class="no">Used for filtering, and never more than four options. Beyond that it is a filter group.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="tooltip">
+  <h2>Tooltip</h2>
+  <div class="comp">
+    <h3>gyInfo and the tooltip layer <code>gyInfo(tip) · [data-tip]</code></h3>
+    <p class="lead">Hover either i below. The bubble is painted by one fixed layer on the body, so a drawer or a scrolling table cannot clip it.</p>
+    <div class="demo col plain">
+      <label class="flab" style="display:flex;align-items:center;font-size:12.5px;font-weight:500;color:var(--ink2)">LPA<i class="gyinfo" tabindex="0" data-tip="Local planning authority. A BNG buyer usually has to buy inside the LPA their development sits in, or pay a spatial penalty.">i</i></label>
+      <label class="flab" style="display:flex;align-items:center;font-size:12.5px;font-weight:500;color:var(--ink2)">LNRS<i class="gyinfo" tabindex="0" data-tip="Local Nature Recovery Strategy area. Units inside one carry a strategic significance uplift.">i</i></label>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Trigger</th><td>Any element carrying <code>data-tip</code>, on hover and on keyboard focus. <code>gyInfo(tip)</code> renders the standard 15px i.</td></tr>
+      <tr><th>Placement</th><td>Above the element, flipped below when there is no room, clamped 8px inside the viewport.</td></tr>
+      <tr><th>Dismiss</th><td>Mouseout, blur, scroll, resize, Escape. Only one exists at a time.</td></tr>
+      <tr><th>Content</th><td>A definition or a fact about the data. Never a description of the interface: "Owner is read only here" is filler, "the LPA the development sits in" is a definition.</td></tr>
+      <tr><th>Exceptions</th><td><code>.sav</code> on canvases and <code>.info</code> on the market map paint their own bubbles and are skipped, so nothing shows two.</td></tr>
+      <tr><th>Never</th><td class="no">A <code>::after</code> tooltip inside a scrolling container. It gets clipped, which is exactly the bug this layer replaced.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="chip">
+  <h2>State chip</h2>
+  <div class="comp">
+    <h3>gyChip <code>gyChip(text, tip, state)</code></h3>
+    <p class="lead">Live state beside a page title. This is the one thing allowed next to a heading, because it carries a fact rather than a description.</p>
+    <div class="demo" id="chipDemo"></div>
+    <div class="spec"><table>
+      <tr><th>States</th><td>The dot carries the state: <code>''</code> fresh (green), <code>'warn'</code> (amber), <code>'bad'</code> (red), <code>'idle'</code> (grey). Text stays <code>--ink2</code> in all four.</td></tr>
+      <tr><th>Behaviour</th><td>Focusable, and its tooltip underlines on hover. Sized 13.5px so it reads beside a serif title without competing with it.</td></tr>
+      <tr><th>Content</th><td>A fact about the data: source, last sync, record id, saved or not. Its tooltip may add detail, still factual.</td></tr>
+      <tr><th>Never</th><td class="no">A descriptive subtitle in chip clothing. See the rules below.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="toast">
+  <h2>Toast</h2>
+  <div class="comp">
+    <h3>gyToast <code>gyToast(msg)</code></h3>
+    <p class="lead">The prototype's stand-in for work that is not built, and the confirmation for work that is.</p>
+    <div class="demo">
+      <button class="btn-out" onclick="gyToast('Export: the current view as a spreadsheet')">Fire a toast</button>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>Fixed, bottom centre, 26px up, dark pill, 15px white text, 999px radius, max 80vw, 3.4s.</td></tr>
+      <tr><th>Wiring</th><td>Uses the page's own <code>toast()</code> when it has one, otherwise drives <code>#toast</code> itself. Check <code>typeof toast === 'function'</code>: a page with <code>&lt;div id="toast"&gt;</code> makes <code>window.toast</code> that element.</td></tr>
+      <tr><th>Copy</th><td>Say what would happen, in the same voice as the real thing: "Add to deal: pick the deal, then units and price per line".</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="table">
+  <h2>Table</h2>
+  <div class="comp">
+    <h3>The house table <code>.dtbl / .dhd / .drow</code></h3>
+    <p class="lead">One bordered card, a grey uppercase header, hairline rows, warm hover. Used on Sites, Projects, Documents, Inventory and Deals.</p>
+    <div class="demo col plain">
+      <div class="dtbl">
+        <div class="dhd"><span>Name</span><span>Workflow</span><span>People</span><span>Modified</span></div>
+        <div class="drow"><span class="nm">Customer Demand Mapping</span><span><span class="chipx">Demand Mapping</span></span><span class="mut">Caitlin Ciceri</span><span class="mut">Wed 09:05</span></div>
+        <div class="drow"><span class="nm">Ecosystem Services Valuation</span><span><span class="chipx">ES Valuation</span></span><span class="mut">Harry Fox</span><span class="mut">11 Sep</span></div>
+      </div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>Card 16px radius with <code>overflow:hidden</code>. Header <code>--graybg</code>, 11.5px, weight 600, .06em caps, <code>--ink2</code>. Rows 13 by 20px, divided by <code>--line</code>, hover <code>#FBF8EF</code>.</td></tr>
+      <tr><th>Grid</th><td>Header and row share one <code>grid-template-columns</code>, so they cannot drift. Numbers right aligned with tabular figures.</td></tr>
+      <tr><th>One line</th><td><b>A row is one line.</b> No subtitle under the name, no second line of meta. Extra facts become a column or an inline chip.</td></tr>
+      <tr><th>Sorting</th><td>Column headers sort, with ⇅ idle and ↑ or ↓ when active. Semantic columns sort in their own order, not alphabetically.</td></tr>
+      <tr><th>Grouping</th><td>A label above the card with a count pill, one card per group, as Documents does with Deliverables and Documents.</td></tr>
+      <tr><th>Narrow</th><td>Under about 980px the header hides and rows become a stacked block.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="checkbox">
+  <h2>Checkbox</h2>
+  <div class="comp">
+    <h3>The house checkbox <code>input[type="checkbox"]</code></h3>
+    <p class="lead">Styled on the element itself in <code>gy-nav.js</code>, so every list, filter and toggle matches without a page opting in. The boxes below are plain inputs with nothing added.</p>
+    <div class="demo plain">
+      <label style="display:inline-flex;align-items:center;gap:9px;font-size:14px"><input type="checkbox"> Unchecked</label>
+      <label style="display:inline-flex;align-items:center;gap:9px;font-size:14px"><input type="checkbox" checked> Checked</label>
+      <label style="display:inline-flex;align-items:center;gap:9px;font-size:14px"><input type="checkbox" id="dsIndet"> Indeterminate</label>
+    </div>
+    <pre class="code">&lt;<span class="k">input</span> type=<span class="s">"checkbox"</span>&gt;                    <span class="c">// the whole API</span>
+
+<span class="k">gySelAll</span>(el, total, selected);            <span class="c">// drives the header box's three states</span></pre>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>16px square, 1.5px <code>#B4B2A9</code> edge, 4px radius, white fill. Checked and indeterminate both fill Capital blue <code>#185FA5</code>, the mark in white: a rotated tick, or a 8 by 2px bar.</td></tr>
+      <tr><th>States</th><td>Hover darkens the edge to <code>#6B6A64</code>, focus-visible draws a 2px blue ring 2px out. Fill and edge transition in 120ms, the mark does not.</td></tr>
+      <tr><th>Indeterminate</th><td>A property, not an attribute, so an <code>innerHTML</code> rebuild loses it. Set it after every render with <code>gySelAll</code>, never by hand.</td></tr>
+      <tr><th>Label</th><td>Wrap the input in its <code>&lt;label&gt;</code> with a 9px gap, so the text is part of the hit area. A box alone in a table cell needs no label.</td></tr>
+      <tr><th>Never</th><td class="no">A page-local checkbox style, a div pretending to be a box, or a tick built from an icon font.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="selection">
+  <h2>Selection</h2>
+  <div class="comp">
+    <h3>gySelBar <code>gySelBar(n, actions, clearCall) &middot; gySelAll(el, total, selected)</code></h3>
+    <p class="lead">Tick a row below. The bar appears above the table on the first pick and carries every action that applies to the set.</p>
+    <div class="demo col plain">
+      <div id="selDemoHost" style="width:100%"></div>
+    </div>
+    <pre class="code"><span class="k">var</span> n = Object.keys(sel).filter(<span class="k">function</span>(k){ <span class="k">return</span> sel[k]; }).length;
+host.innerHTML = <span class="k">gySelBar</span>(n, [
+    [<span class="s">'ti-lock'</span>,         <span class="s">'Reserve'</span>,      <span class="s">"bulk('Reserve')"</span>],
+    [<span class="s">'ti-circle-check'</span>, <span class="s">'Mark as sold'</span>, <span class="s">"bulk('Mark as sold')"</span>]
+  ], <span class="s">'clearSel()'</span>) + table;
+<span class="k">gySelAll</span>(document.getElementById(<span class="s">'allChk'</span>), rows.length, n);   <span class="c">// after every render</span></pre>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>Dark blue <code>#14456F</code> card, 12px radius, 12px above the table. A yellow count key, the word selected, then Clear; the actions sit right, outlined in cream and inverting on hover.</td></tr>
+      <tr><th>Actions</th><td><code>[icon, label, onclick expression]</code>, as strings, because the bar is markup rebuilt on every render. Three or four verbs that act on the whole set. Anything that applies to one row stays a row action.</td></tr>
+      <tr><th>Clear</th><td>Sits beside the count as a ghost button, not among the actions: dropping a selection is not one of the things you can do to it.</td></tr>
+      <tr><th>Count</th><td><code>gySelBar(0, ...)</code> returns an empty string, so the bar cannot exist without a selection. Header box is tri-state through <code>gySelAll</code>.</td></tr>
+      <tr><th>Namespace</th><td><code>.gysbar .gysbn .gysbk .gysbbtn .gysbghost</code>, a prefix of its own. <code>gysel*</code> belongs to the select field: the bar first shipped as <code>.gyselbtn</code> and every action button inherited the field trigger's full-width white style.</td></tr>
+      <tr><th>Dark on purpose</th><td>The one dark surface in the content area, so an active selection is never mistaken for chrome. Under 820px it wraps and the actions drop to a second line.</td></tr>
+      <tr><th>Never</th><td class="no">A selection bar that replaces the action bar, or a count shown only in a corner. The bar is the selection's whole interface.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="pills">
+  <h2>Pills, badges and labels</h2>
+  <div class="comp">
+    <h3>The small type</h3>
+    <div class="demo col plain">
+      <div class="demo plain" style="margin:0;padding:0;border:none">
+        <span class="badge avail">Available</span>
+        <span class="badge future">Projected</span>
+        <span class="badge future">Reserved</span>
+        <span class="badge sold">Sold</span>
+        <span class="uchip">Unallocated</span>
+      </div>
+      <div class="demo plain" style="margin:0;padding:0;border:none">
+        <span class="fit ex">Exact</span>
+        <span class="fit pa">Partial</span>
+        <span class="fit su">Substitute</span>
+        <span class="chipx">Line 1 <b style="color:var(--ink);font-weight:600">Any type · at least available now</b></span>
+      </div>
+      <div class="demo plain" style="margin:0;padding:0;border:none" id="pillEs"></div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Badge</th><td>Commercial state of a unit. <code>.avail</code> is solid dark because available is the state that matters; everything else is quiet grey.</td></tr>
+      <tr><th>Fit</th><td>How well a match answers a requirement line: exact green, partial amber, substitute blue.</td></tr>
+      <tr><th>Criteria chip</th><td><code>.chipx</code> restates what a result was filtered by, label in <code>--ink2</code> and value in <code>--ink</code>.</td></tr>
+      <tr><th>ES pill</th><td><code>.espill</code> is the dense solid form for a table; <code>.es-chip</code> is the lighter form for a row or a card.</td></tr>
+      <tr><th>Rule</th><td>A pill is a state or a category, never an action. If it is clickable and does something, it is a button.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="drawer">
+  <h2>Drawer</h2>
+  <div class="comp">
+    <h3>Right-hand drawer <code>.sdrawer / .sdrop</code></h3>
+    <p class="lead">For a task that needs its own form without losing the page behind it. Find units for buyer is the reference implementation.</p>
+    <div class="demo">
+      <button class="btn-out" onclick="demoDrawer(true)"><i class="ti ti-layout-sidebar-right"></i> Open the pattern</button>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>Fixed right, 460px wide and 92vw at most, full height. Own header with a close X, a scrolling body, a sticky footer holding the primary action, a live count and Reset.</td></tr>
+      <tr><th>Motion</th><td><code>translateX(100%)</code> to none over 240ms <code>cubic-bezier(.2,.7,.3,1)</code>, with a dimming backdrop.</td></tr>
+      <tr><th>Layer</th><td>Backdrop 1300, drawer 1301, so both clear the sticky topbar. Fields inside open at 1600.</td></tr>
+      <tr><th>Dismiss</th><td>The X, the backdrop, or Escape. Escape closes the drawer first and the results second, never both at once.</td></tr>
+      <tr><th>Form inside</th><td>Numbered sections that number themselves, a labelled field per question, and a footer count that answers as you build.</td></tr>
+      <tr><th>Naming</th><td>A <b>drawer editor</b> is editable, a <b>drawer previewer</b> is read only. Use the right word in code and in conversation.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="empty">
+  <h2>Empty states</h2>
+  <div class="comp">
+    <h3>Nothing here, and why</h3>
+    <div class="demo col plain">
+      <div class="emptybox">This folder is empty.</div>
+      <div class="emptybox">Nothing matches this filter.</div>
+      <div class="emptybox" style="border-style:dashed;color:var(--ink2)">Nothing in BNG matches this requirement.<br><span style="color:var(--ink3)">Lower the certainty floor or drop the type.</span></div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Rule</th><td>An empty state says which emptiness it is. "This folder is empty" and "Nothing matches this filter" are different facts and must read differently.</td></tr>
+      <tr><th>Second line</th><td>Only when there is a real next move, and then it names the control that would change the answer.</td></tr>
+      <tr><th>Anatomy</th><td>Dashed <code>--line2</code>, 14px radius, 30px padding, centred <code>--ink3</code> at 14px.</td></tr>
+      <tr><th>Never</th><td class="no">An illustration, an exclamation mark, or an apology.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- ══ RULES ════════════════════════════════════════════════════════ -->
+<section class="dsect" id="rules">
+  <h2>Rules that are not components</h2>
+  <div class="rules">
+    <div class="rule"><b>A shared component's styles ship with its JS</b><p><code>gy-nav.js</code> writes its stylesheet into the body, so it beats a page's own head CSS on document order. Never fix a shared component by editing one page's style block: that is how the rail drifted across thirty files.</p></div>
+    <div class="rule"><b>The data lives in the gy-*.js files</b><p><code>gy-todos</code>, <code>gy-projects</code>, <code>gy-sites</code>, <code>gy-calendar</code>, <code>gy-inventory</code>, <code>gy-docs</code>, <code>gy-deals</code> and <code>gy-search</code> own their lists. Pages render from them and never retype a row, which is why two surfaces cannot show different numbers for the same thing.</p></div>
+    <div class="rule"><b>Filtering lives in the action bar</b><p>No chip rows, no segmented filters, no bespoke dropdown. A view switch and a sort are not filters.</p></div>
+    <div class="rule"><b>A row is one line</b><p>No subtitle under a name in any list or table. Extra facts become a column or an inline chip.</p></div>
+    <div class="rule"><b>No subtitle beside a page title, and no instructional filler</b><p>The interface does not explain itself in prose. A state chip and a field tooltip are the sanctioned exceptions, and both carry facts.</p></div>
+    <div class="rule"><b>Never a native select</b><p><code>gySel</code> everywhere, including inside drawers and canvases. Zero native selects prototype-wide.</p></div>
+    <div class="rule"><b>Breadcrumbs come from the crumb table</b><p><code>GY_CRUMB</code> in <code>gy-nav.js</code> owns altitude (Portfolio › workspace › bucket › page). A page never writes its own trail.</p></div>
+    <div class="rule"><b>Write actions scatter onto their object</b><p>There is no Manage hub. Multi-step and document-producing work is a Workflow, a single-shot change across rows is an Actions row, one row at a time is a row action.</p></div>
+    <div class="rule"><b>Anything floating goes in a layer on the body</b><p>Menus, field popups and tooltips are appended to the body and positioned fixed. A popover built inside a scrolling parent gets clipped, every time.</p></div>
+    <div class="rule"><b>One stable outside-click listener</b><p>Every popover binds one named handler, ignores clicks inside itself, and removes the listener unconditionally when it closes. The per-open closure version made every menu and field on a page work exactly once.</p></div>
+  </div>
+</section>
+
+</div>
+</div>
+</div>
+
+<!-- the drawer pattern, shown on demand -->
+<div class="sdrop" id="dsDrop" onclick="demoDrawer(false)"></div>
+<aside class="sdrawer" id="dsDrawer" aria-hidden="true">
+  <div class="sdhead"><b>Drawer</b><i class="ti ti-x x" onclick="demoDrawer(false)" title="Close"></i></div>
+  <div class="sdbody">
+    <div class="fgrp"><div class="shead"><b>1</b>Section</div>
+      <p style="font-size:14px;color:var(--ink2);line-height:1.55">Sections number themselves. A field that needs explaining carries a label and an i. The footer answers as you build.</p>
+    </div>
+    <div class="fgrp" style="margin-top:22px"><div class="shead"><b>2</b>Field</div>
+      <div id="drawerField"></div>
+    </div>
+  </div>
+  <div class="sdfoot">
+    <button class="btn-dark" onclick="gyToast('The primary action sits in the footer, with a live count beside it')">Primary</button>
+    <span class="lcount"><b>4</b> lines match, <b>425</b> units</span>
+    <span class="sclose" onclick="demoDrawer(false)">Reset</span>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<style>
+/* the drawer pattern's own styles, copied from the reference implementation */
+.sdrop{position:fixed;inset:0;background:rgba(26,12,18,.34);z-index:1300;opacity:0;pointer-events:none;transition:opacity .2s}
+.sdrop.on{opacity:1;pointer-events:auto}
+.sdrawer{position:fixed;top:0;right:0;bottom:0;width:460px;max-width:92vw;background:var(--card);
+  border-left:1px solid var(--line);z-index:1301;display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+.sdrawer.on{transform:none}
+.sdhead{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.sdhead b{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:-.01em}
+.sdhead .x{margin-left:auto;font-size:19px;color:var(--ink3);cursor:pointer}
+.sdhead .x:hover{color:var(--ink)}
+.sdbody{flex:1;overflow:auto;padding:20px 22px}
+.sdfoot{display:flex;align-items:center;gap:14px;padding:14px 22px;border-top:1px solid var(--line)}
+.sdfoot .lcount{font-size:13.5px;color:var(--ink2)}
+.sdfoot .sclose{margin-left:auto;font-size:13.5px;color:var(--ink3);cursor:pointer}
+.sdfoot .sclose:hover{color:var(--ink)}
+.shead{display:flex;align-items:baseline;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink2);margin-bottom:11px}
+.shead b{font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums}
+</style>
+
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+/* ── swatches, built from the tokens themselves so the page cannot drift ── */
+function swatch(name, varName){
+  return '<div class="sw"><span class="chip" style="background:var('+varName+')"></span>'
+       + '<div class="m"><b>'+name+'</b><span>'+varName+'</span></div></div>';
+}
+document.getElementById('swSurface').innerHTML =
+  [['Page','--bg'],['Card','--card'],['Inset','--graybg'],['Hairline','--line'],['Control edge','--line2'],
+   ['Ink','--ink'],['Ink 2','--ink2'],['Ink 3','--ink3']].map(function(r){ return swatch(r[0],r[1]); }).join('');
+document.getElementById('swStatus').innerHTML =
+  [['Green','--green'],['Green bg','--greenbg'],['Green ink','--greend'],
+   ['Amber','--amber'],['Amber bg','--amberbg'],['Amber ink','--amberd'],
+   ['Blue','--blue'],['Blue bg','--bluebg'],['Blue ink','--blued'],
+   ['Dark','--dark'],['Yellow','--yellow']].map(function(r){ return swatch(r[0],r[1]); }).join('');
+
+document.getElementById('swEs').innerHTML = Object.keys(GY_ES).map(function(k){
+  var e=GY_ES[k];
+  return '<div class="sw '+e.cls+'"><span class="chip" style="background:var(--esc)"></span>'
+    +'<div class="m"><b>'+e.name+'</b><span>'+e.cls+' · '+e.icon+'</span></div></div>';
+}).join('');
+document.getElementById('esDemo').innerHTML = Object.keys(GY_ES).map(function(k){
+  var e=GY_ES[k];
+  return '<span class="'+e.cls+'" style="display:inline-flex;align-items:center;gap:8px">'
+    +'<span class="sq"><i class="ti '+e.icon+'"></i></span>'
+    +'<span class="es-chip"><i class="ti '+e.icon+'"></i>'+e.short+'</span>'
+    +'<span class="espill">'+e.short+'</span></span>';
+}).join('');
+document.getElementById('pillEs').innerHTML = ['bng','wcc','soc'].map(function(k){
+  return '<span class="'+GY_ES[k].cls+'"><span class="es-chip"><i class="ti '+GY_ES[k].icon+'"></i>'+GY_ES[k].short+'</span></span>';
+}).join('');
+
+/* ── checkbox and selection ── */
+document.getElementById('dsIndet').indeterminate = true;
+
+var SELROWS = [
+  ['Lowland meadow · Sizewell', 'Available', '120 units'],
+  ['Mixed scrub · Blyth', 'Reserved', '84 units'],
+  ['Hedgerow · Deben', 'Available', '36 units']
+];
+var dsSel = {};
+function dsRenderSel(){
+  var n = Object.keys(dsSel).filter(function(k){ return dsSel[k]; }).length;
+  document.getElementById('selDemoHost').innerHTML =
+      gySelBar(n, [
+        ['ti-lock',         'Reserve',      "dsBulk('Reserve')"],
+        ['ti-circle-check', 'Mark as sold', "dsBulk('Mark as sold')"],
+        ['ti-circle-minus', 'Remove',       "dsBulk('Remove')"]
+      ], 'dsClearSel()')
+    + '<div class="dtbl seldemo">'
+    + '<div class="dhd"><span><input type="checkbox" id="dsAllChk" onchange="dsPickAll(this.checked)"></span>'
+      + '<span>Unit</span><span>State</span><span>Volume</span></div>'
+    + SELROWS.map(function(r, i){
+        return '<div class="drow"><span><input type="checkbox" '+(dsSel[i]?'checked':'')
+          + ' onchange="dsPick('+i+',this.checked)"></span>'
+          + '<span class="nm">'+r[0]+'</span><span class="mut">'+r[1]+'</span><span class="mut">'+r[2]+'</span></div>';
+      }).join('')
+    + '</div>';
+  gySelAll(document.getElementById('dsAllChk'), SELROWS.length, n);
+}
+function dsPick(i, on){ dsSel[i] = on; dsRenderSel(); }
+function dsPickAll(on){ SELROWS.forEach(function(r, i){ dsSel[i] = on; }); dsRenderSel(); }
+function dsClearSel(){ dsSel = {}; dsRenderSel(); }
+function dsBulk(what){ gyToast(what + ': applied to the selected lines'); dsClearSel(); }
+dsRenderSel();
+
+/* ── chips ── */
+document.getElementById('chipDemo').innerHTML =
+    gyChip('Synced 09:05', 'Read from gy-inventory.js at page load', '')
+  + gyChip('Not saved', 'This requirement exists in the browser only', 'warn')
+  + gyChip('Sync failed', 'The last read from the CRM returned an error', 'bad')
+  + gyChip('Draft', 'No workflow has run against it yet', 'idle');
+
+/* ── the live menu ── */
+var DEMO_MENU = [
+  ['label','Bulk'],
+  ['ti-tag','Set prices','Set prices on the selected lines'],
+  ['ti-adjustments','Set sales restrictions','Restrict who these lines can be sold to'],
+  '-',
+  ['ti-file-export','Export','Export the current view as a spreadsheet'],
+  ['ti-history','Audit log', function(){ gyToast('go: audit-log.html'); }]
+];
+
+/* ── select fields ── */
+document.getElementById('selDemo').innerHTML =
+    gySel('ds-1',{options:['Lowland meadow','Mixed scrub','Broadleaved woodland','Hedgerow'],
+                  value:'Mixed scrub', width:'220px', onchange:function(v){ gyToast('Picked '+v); }})
+  + gySel('ds-2',{options:['Any LPA','West Oxfordshire DC','Cotswold DC'], placeholder:'Any LPA',
+                  width:'200px', onchange:function(v){ gyToast('Picked '+v); }})
+  + gySel('ds-3',{options:function(){ return GY_INV_API.programmes(); }, placeholder:'Every programme',
+                  width:'200px', onchange:function(v){ gyToast('Scoped to '+v); }});
+
+/* ── segmented ── */
+function segPick(b){
+  [].forEach.call(b.parentNode.children, function(x){ x.classList.remove('on'); });
+  b.classList.add('on');
+}
+
+/* ── drawer ── */
+function demoDrawer(on){
+  document.getElementById('dsDrawer').classList.toggle('on', on);
+  document.getElementById('dsDrawer').setAttribute('aria-hidden', on?'false':'true');
+  document.getElementById('dsDrop').classList.toggle('on', on);
+  if(on && !document.getElementById('drawerField').innerHTML){
+    document.getElementById('drawerField').innerHTML =
+      '<label class="flab" style="display:flex;align-items:center;font-size:12.5px;font-weight:500;color:var(--ink2);margin:0 0 6px 2px">'
+      +'Habitat type'+gyInfo('A field inside a drawer opens its popup above the drawer, at z-index 1600.')+'</label>'
+      + gySel('ds-drawer',{options:['Lowland meadow','Mixed scrub','Hedgerow'], placeholder:'Any habitat', width:'100%'});
+  }
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') demoDrawer(false); });
+
+/* Six facets, the case the accordion and the cap exist for. Shared by this
+   page's own bar and by the demo inside the Filters section. */
+var SIX_FACETS = [
+  ['Availability',[['ti-circle-dot','Any','any'],['ti-circle-check','Available','available'],
+                   ['ti-clock','Projected','projected'],['ti-bookmark','Reserved','reserved'],['ti-tag','Sold','sold']],{multi:true}],
+  ['Habitat type',[['ti-circle-dot','Any','any']].concat(
+      ['Lowland meadow','Lowland calcareous grassland','Mixed scrub','Broadleaved woodland','Cover crops',
+       'Hedgerow','Watercourse','Modified grassland','Floodplain grazing marsh','Reedbeds','Traditional orchards',
+       'Heathland','Lowland dry acid grassland'].map(function(t){ return ['ti-leaf',t,t]; })),{multi:true}],
+  ['Broad habitat',[['ti-circle-dot','Any','any'],['ti-map-2','Grassland','g'],['ti-trees','Woodland','w'],
+                    ['ti-plant','Cropland','c'],['ti-ripple','Watercourse','r']],{multi:true}],
+  ['Distinctiveness',[['ti-circle-dot','Any','any'],['ti-star','High','h'],['ti-star-half','Medium','m'],['ti-star-off','Low','l']],{multi:true}],
+  ['Condition',[['ti-circle-dot','Any','any'],['ti-heart-rate-monitor','Good','g'],['ti-activity','Moderate','m'],['ti-alert-triangle','Poor','p']],{multi:true}],
+  ['Site',[['ti-circle-dot','Any','any'],['ti-map-pin','Wychwood Edge Farm','a'],['ti-map-pin','Bruern Estate','b'],['ti-map-pin','Coldron Mill','c']],{multi:true}]
+];
+
+/* the bar in the Action bar section: every slot filled, so the fixed order shows */
+gyBar('barDemo', {
+  search:  {placeholder:'Search inventory', oninput:function(){}},
+  filters: [SIX_FACETS[0], SIX_FACETS[3]],
+  buttons: [{icon:'ti-settings', label:'Settings', onclick:'Settings: columns, defaults and who can edit'}],
+  actions: DEMO_MENU,
+  primary: {icon:'ti-plus', label:'Add inventory', onclick:'Add inventory: bulk upload, or one line at a time'},
+  onfilter: function(g,v){ gyToast(g+': '+(v && v.length ? v.join(', ') : 'any')); }
+});
+
+/* the bar in the Filters section: filters only, all six groups */
+gyBar('filterDemo', {
+  filters: SIX_FACETS,
+  onfilter: function(g,v){ gyToast(g+': '+(v && v.length ? v.join(', ') : 'any')); }
+});
+
+/* ── this page's own action bar, built by the real gyBar ── */
+gyBar('abar', {
+  search:  {placeholder:'Search this page', oninput:function(v){
+              var q=(v||'').toLowerCase();
+              [].forEach.call(document.querySelectorAll('.comp'), function(c){
+                c.style.display = !q || c.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+              });
+            }},
+  filters: SIX_FACETS,
+  onfilter: function(g,v){ gyToast(g+': '+(v && v.length ? v.join(', ') : 'any')); },
+  buttons: [{icon:'ti-code', label:'Source', onclick:function(){ gyToast('Every component here is rendered by gy-nav.js and gy-select.js, not copied'); }}],
+  actions: DEMO_MENU,
+  primary: {icon:'ti-plus', label:'Add component', onclick:'A new component is added to the shared file first, then documented here'}
+});
+</script>
+</body>
+</html>

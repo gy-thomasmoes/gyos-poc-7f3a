@@ -13,7 +13,6 @@
 <style>
 .wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
 @media(max-width:900px){.wrap{padding:32px 22px 90px}}
-.phead{align-items:baseline}
 
 .rband{display:flex;gap:14px;align-items:flex-start;background:var(--amberbg);border:1px solid #EBD9AE;
        border-radius:14px;padding:14px 18px;margin:0 0 22px}
@@ -38,10 +37,6 @@
 .card .org{font-size:14px;color:var(--ink2);margin-bottom:14px}
 .card .note{font-size:14px;color:var(--ink2);line-height:1.5}
 
-.selbar{display:flex;align-items:center;gap:12px;background:var(--graybg);border:1px solid var(--line);
-        border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:14px}
-.selbar .sn{font-weight:600}
-.selbar .sp{flex:1}
 .dtbl td.chk,.dtbl th.chk{width:40px;padding-right:0}
 .dtbl td.num,.dtbl th.num{text-align:right;font-variant-numeric:tabular-nums}
 .dtbl tr.flag td{background:#FDF6EE}
@@ -97,7 +92,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"pf-deals","scope":"portfolio"};</script>
-<script src="gy-nav.js?v=35621c30"></script>
+<script src="gy-nav.js?v=668c831e"></script>
 <script src="gy-projects.js?v=493e46ca"></script>
 <script src="gy-inventory.js?v=358d8962"></script>
 <script src="gy-deals.js?v=bf5a5f28"></script>
@@ -241,13 +236,12 @@ function unitsBlock(){
     return;
   }
   var n = Object.keys(sel).filter(function(k){ return sel[k]; }).length;
-  var bar = n ? '<div class="selbar"><span class="sn">'+n+' selected</span>'
-      + '<span class="sp"></span>'
-      + '<button class="btn-out" onclick="bulk(\'Reserve\')">Reserve</button> '
-      + '<button class="btn-out" onclick="bulk(\'Unreserve\')">Unreserve</button> '
-      + '<button class="btn-out" onclick="bulk(\'Mark as sold\')">Mark as sold</button> '
-      + '<button class="btn-out" onclick="bulk(\'Remove from deal\')">Remove</button> '
-      + '<button class="btn-out" onclick="clearSel()">Deselect</button></div>' : '';
+  var bar = gySelBar(n, [
+      ['ti-lock',          'Reserve',      "bulk('Reserve')"],
+      ['ti-lock-open',     'Unreserve',    "bulk('Unreserve')"],
+      ['ti-circle-check',  'Mark as sold', "bulk('Mark as sold')"],
+      ['ti-circle-minus',  'Remove',       "bulk('Remove from deal')"]
+    ], 'clearSel()');
 
   var rows = deal.alloc.map(function(a, i){
     var r = invRow(a);
@@ -271,7 +265,7 @@ function unitsBlock(){
 
   host.innerHTML = bar
     + '<div class="tblwrap"><table class="dtbl">'
-    + '<thead><tr><th class="chk"><input type="checkbox" onchange="pickAll(this.checked)"></th>'
+    + '<thead><tr><th class="chk"><input type="checkbox" id="allChk" onchange="pickAll(this.checked)"></th>'
     + '<th>Service</th><th>Programme</th><th>Type or vintage</th><th>Condition</th><th>State</th>'
     + '<th class="num">Units</th><th class="num">Area</th><th class="num">Price</th>'
     + '<th class="num">Total</th><th></th></tr></thead>'
@@ -279,6 +273,7 @@ function unitsBlock(){
     + '<tfoot><tr><td colspan="6">Total</td><td class="num">'+deal.units+'</td><td></td><td></td>'
     + '<td class="num">'+money(deal.value)+'</td><td></td></tr></tfoot>'
     + '</table></div>';
+  gySelAll(document.getElementById('allChk'), deal.alloc.length, n);
 }
 function pick(i, on){ sel[i] = on; unitsBlock(); }
 function pickAll(on){ deal.alloc.forEach(function(a,i){ sel[i] = on; }); unitsBlock(); }

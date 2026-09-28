@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Workflows · Great Yellow</title>
+<title>Deliverables · Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,7 +130,6 @@ select.cin{cursor:pointer}
 .rmenu-item.danger{color:#B7472A}
 .rmenu-item.danger:hover{background:#F7E7DE}
 /* Simple version: Workflow · Programme · Status · Champion · Department · Result */
-body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 0.85fr 1.1fr 0.9fr}
 .prog{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink2);min-width:0}
 .prog .ti{font-size:16px;color:var(--teal)}
 .prog span.pnm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -170,6 +169,39 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
 .phead{display:flex;align-items:flex-start;gap:14px;padding-bottom:15px;margin-bottom:20px;border-bottom:1px solid var(--line)}
 .phead .acts{margin-left:auto;display:flex;gap:10px}
 .h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
+.state{font-size:14.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.setup{display:flex;align-items:center;gap:6px;min-width:0}
+.pg{display:flex;align-items:center;gap:9px;min-width:0}
+.pgtrk{flex:none;width:56px;height:6px;border-radius:999px;background:#EFEDE6;overflow:hidden}
+.pgfill{display:block;height:100%;border-radius:999px;background:var(--green)}
+.pgn{font-size:13.5px;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.setup .st{white-space:nowrap}
+.outs{display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
+.outs .osep{color:var(--ink3)}
+.omore{font-size:13.5px;color:var(--ink3);cursor:default}
+/* view switch: List or Board. A view is not a filter, so it sits beside the
+   action bar rather than inside it. Geometry copied from gy-shell.css .seg */
+.seg{display:inline-flex;background:var(--graybg);border-radius:11px;padding:3px;gap:2px;flex:none}
+.seg button{border:none;background:transparent;padding:7px 15px;border-radius:8px;font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(26,12,18,.08)}
+/* The board is a horizontal scroller, not a grid: columns keep a real width
+   and the board scrolls rather than squeezing them. */
+.kb{display:flex;gap:14px;margin-top:18px;overflow-x:auto;overflow-y:hidden;
+    padding-bottom:10px;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+.kb::-webkit-scrollbar{height:10px}
+.kb::-webkit-scrollbar-track{background:transparent}
+.kb::-webkit-scrollbar-thumb{background:#DEDCD4;border-radius:999px;border:3px solid var(--bg)}
+.kb::-webkit-scrollbar-thumb:hover{background:#CFCDC5}
+.kbdot{width:8px;height:8px;border-radius:50%;flex:none}
+@media(max-width:900px){.kb{grid-template-columns:1fr}}
+.kbcol{flex:0 0 320px;scroll-snap-align:start;background:rgba(255,255,255,.5);border:1px solid var(--line);border-radius:16px;padding:12px;min-height:220px}
+.kbhd{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);padding:2px 5px 12px}
+.kbcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:10px;cursor:pointer;box-shadow:0 1px 2px rgba(31,31,29,.04);transition:border-color .12s,box-shadow .12s}
+.kbcard:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
+.kbcard:last-child{margin-bottom:0}
+.kbnm{font-weight:600;font-size:15px;letter-spacing:-.01em;line-height:1.3}
+.kbmeta{display:flex;align-items:center;gap:9px;margin-top:10px;flex-wrap:wrap}
+.kbempty{font-size:14px;color:var(--ink3);padding:12px 5px;line-height:1.5}
 .wfhide{display:none!important}
 .gseat{display:block;width:100%;margin-bottom:12px}
 </style>
@@ -178,9 +210,9 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=35621c30"></script>
+<script src="gy-nav.js?v=668c831e"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
-<script src="gy-docs.js?v=eb6965dc"></script>
+<script src="gy-docs.js?v=d728275a"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -188,199 +220,126 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
   <div class="crumbs">
     <span class="cr" onclick="location.href='portfolio-overview.html'">Great Yellow</span>
     <span class="sep">&rsaquo;</span><span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span>
-    <span class="sep">&rsaquo;</span><span class="cr cur">Workflows</span>
+    <span class="sep">&rsaquo;</span><span class="cr cur">Deliverables</span>
   </div>
 </div>
 
 <div class="wrap">
   <div class="phead">
-    <div class="h1">Workflows</div>
-    <div class="acts" id="abar"></div>
+    <div class="h1">Deliverables</div>
+    <div class="acts">
+      <div class="seg" id="viewSeg">
+        <button class="on" id="vList" onclick="setView('list')">List</button>
+        <button id="vBoard" onclick="setView('board')">Board</button>
+      </div>
+      <div id="abar"></div>
+    </div>
   </div>
 
   <div class="favstrip" id="favStrip"></div>
-  <div class="gytbl" style="--cols:minmax(0,2.4fr) 1fr 1.2fr 1fr;margin-top:18px">
-  <div class="gyhd">
-    <span>Workflow</span>
-    <span class="prog basiconly"><i class="ti ti-topology-star-3"></i> Programme</span>
-    <span><i class="ti ti-chart-arcs"></i> Status</span>
-    <span><i class="ti ti-user"></i> Champion</span>
-    <span><i class="ti ti-checklist"></i> Deliverable</span>
-  </div>
 
-  <div class="gyrow click basiconly" onclick="location.href='upper-dee-deliverable-page.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-mountain"></i></div>
-      <div class="nm">Upper Dee: Customer Demand Mapping</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
-    <div><span class="st" style="background:var(--greenbg);color:var(--greend)"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
-  </div>
-
-  <div class="gygrp">Live <span class="count">1</span></div>
-  <div class="gyrow click" id="dmRow" onclick="location.href='demand-mapping-canvas-prototype.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div>
-      <div class="nm">Customer Demand Mapping</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Evenlode</div>
-    <div><span class="st" style="background:var(--greenbg);color:var(--greend)"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span></div>
-    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='demand-mapping-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='demand-mapping-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
-  </div>
-
-  <div class="advonly">
-  <div class="gygrp">Draft <span class="count">4</span></div>
-
-  <div class="gyrow click" onclick="location.href='customer-demand-mapping-v2-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div>
-      <div class="nm">Customer Demand Mapping v2</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Programme-wide</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
-    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='customer-demand-mapping-v2-canvas.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='customer-demand-mapping-v2-canvas.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
-  </div>
-
-  <div class="gyrow click" onclick="location.href='investor-qa-log-canvas-prototype.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-messages"></i></div>
-      <div class="nm">Investor Q&A Log</div>
-    </div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">KI</span>Kishen</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='investor-qa-log-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
-  </div>
-
-  <div class="gyrow click" onclick="location.href='tender-to-bid-canvas-prototype.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-file-search"></i></div>
-      <div class="nm">Tender to Bid</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Portfolio-wide</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
-    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">AR</span>Archie</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='tender-to-bid-canvas-prototype.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='tender-to-bid-canvas-prototype.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
-  </div>
-
-  <div class="gyrow click" onclick="location.href='lead-demand-mapping-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-map-search"></i></div>
-      <div class="nm">Lead Demand mapping</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Programme-wide</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>
-    <div class="who"><span class="av" style="background:#FBE4EC;color:#8A2A4E">IZ</span>Izzie</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href='lead-demand-mapping-canvas.html#contents'">Deliverable</span><span class="clink" onclick="event.stopPropagation();location.href='lead-demand-mapping-canvas.html?mode=edit'"><i class="ti ti-pencil" style="font-size:13px"></i> Edit</span></div>
-  </div>
-
+  <div id="listWrap" style="--cols:minmax(0,2.5fr) 1.1fr .75fr .85fr 1.1fr;margin-top:18px">
+  <div class="gylegend"><span>Deliverable</span><span>Setup</span><span>Owner</span><span>State</span><span>Outputs</span></div>
+  <div class="gystack">
+  <div class="gytbl">
+  <div class="gygrp" id="delGrp">Deliverables <span class="count">1</span></div>
   <div id="draftDocs"></div>
+  </div>
+  </div>
+  </div>
 
-  <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accDesign')"><i class="ti ti-chevron-down accarr"></i> In design <span class="count">3</span></div>
+  <div class="kb wfhide" id="kbWrap"></div>
+
+  <div class="advonly" id="foldedWrap" style="--cols:minmax(0,2.5fr) 1.1fr .75fr .85fr 1.1fr">
+  <div class="group acc closed" style="margin-top:22px" onclick="toggleAcc(this,'accDesign')"><i class="ti ti-chevron-down accarr"></i> Blueprints in design <span class="count">2</span></div>
   <div class="accbody closed" id="accDesign">
-
-  <div class="gyrow dim" onclick="toast('Market Readiness Assessment is not in this prototype yet. Demand Mapping is the pilot; each Workflow that follows gets cheaper.')">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-gauge"></i></div>
-      <div class="nm">Market Readiness Assessment</div>
-    </div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)">In design</span></div>
-    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">?</span>Trade lead</div>    <div class="mut">·</div>
+  <div class="gytbl">
+  <div class="gyrow click" data-type="blueprint" data-state="design" onclick="location.href='tender-to-bid-canvas-prototype.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-file-search"></i></div><div class="nm">Tender to Bid</div></div>
+    <div class="setup"><span class="st" style="background:var(--amberbg);color:var(--amberd)">1 to configure</span><span data-tip="No to-dos defined yet" class="gyinfo" tabindex="0" style="margin-left:6px">i</span></div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">AR</span>Archie</div>
+    <div class="state">In design</div>
+    <div class="mut">none yet</div>
   </div>
-
-  <div class="gyrow dim" onclick="toast('Financial Model is not in this prototype yet. It will start from Demand Mapping data in the Platform, not from guesses.')">
-    <div class="name">
-      <div class="tile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-chart-line"></i></div>
-      <div class="nm">Financial Model</div>
-    </div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)">In design</span></div>
-    <div class="who"><span class="av" style="background:var(--bluebg);color:var(--blued)">JO</span>Josh</div>    <div class="mut">·</div>
-  </div>
-
-  <div class="gyrow dim" onclick="toast('Commercial Strategy is not in this prototype yet. Downstream of Demand Mapping: it consumes the map as its starting input.')">
-    <div class="name">
-      <div class="tile" style="background:var(--graybg);color:var(--grayd)"><i class="ti ti-compass"></i></div>
-      <div class="nm">Commercial Strategy</div>
-    </div>
-    <div><span class="st" style="background:var(--graybg);color:var(--grayd)">Backlog</span></div>
-    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">?</span>TBD</div>    <div class="mut">·</div>
+  <div class="gyrow click" data-type="blueprint" data-state="design" onclick="location.href='lead-demand-mapping-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-map-search"></i></div><div class="nm">Lead Demand mapping</div></div>
+    <div><span class="st" style="background:var(--greenbg);color:var(--greend)">Ready</span></div>
+    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">IZ</span>Izzie</div>
+    <div class="state">In design</div>
+    <div class="mut">none yet</div>
   </div>
   </div>
-  <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accArch')"><i class="ti ti-chevron-down accarr"></i> Archive <span class="count">7</span></div>
+  </div>
+  <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accArch')"><i class="ti ti-chevron-down accarr"></i> Archive <span class="count">9</span></div>
   <div class="accbody closed" id="accArch">
-  <div class="gyrow click basiconly arch" onclick="location.href='lead-supply-demand-mapping-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-user"></i></div>
-      <div class="nm">Lead Customer Demand Mapping</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Spains Hall Estate</div>
-    <div><span class="st" style="background:var(--greenbg);color:var(--greend)"><span style="width:7px;height:7px;border-radius:50%;background:var(--green)"></span>Live</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a48a14ed56a81b3bcbbc8d35e1f59a9','_blank','noopener')">Deliverable</span></div>
+  <div class="gytbl">
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='upper-dee-deliverable-page.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-mountain"></i></div><div class="nm">Upper Dee: Customer Demand Mapping</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
   </div>
-
-
-  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-simple-drawer-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-list-check"></i></div>
-      <div class="nm">Upper Dee: simple drawer (experiment)</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='customer-demand-mapping-v2-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div><div class="nm">Customer Demand Mapping v2</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
   </div>
-
-  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-canvas-list-sidebar.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right-expand"></i></div>
-      <div class="nm">Upper Dee: canvas + list sidebar (experiment)</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='lead-supply-demand-mapping-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-user"></i></div><div class="nm">Lead Customer Demand Mapping</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
   </div>
-
-  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-flow-list-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right"></i></div>
-      <div class="nm">Upper Dee: flow + list sidebar (experiment)</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='upper-dee-simple-drawer-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-list-check"></i></div><div class="nm">Upper Dee: simple drawer</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
   </div>
-
-  <div class="gyrow click basiconly arch" onclick="location.href='upper-dee-simple-views-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-2"></i></div>
-      <div class="nm">Upper Dee: simple views (experiment)</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='upper-dee-canvas-list-sidebar.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right-expand"></i></div><div class="nm">Upper Dee: canvas and list sidebar</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
   </div>
-
-  <div class="gyrow click arch" onclick="location.href='upper-dee-executor-steps-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-adjustments"></i></div>
-      <div class="nm">Upper Dee: step executors (experiment)</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Upper Dee</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>
-    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3a68a14ed56a81fb96aee33dfd1d1cf7','_blank','noopener')">Deliverable</span></div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='upper-dee-flow-list-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-sidebar-right"></i></div><div class="nm">Upper Dee: flow and list sidebar</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
   </div>
-
-  <div class="gyrow click arch" onclick="location.href='demand-mapping-text-view-canvas.html'">
-    <div class="name">
-      <div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-align-left"></i></div>
-      <div class="nm">Customer S&amp;D mapping: text view (experiment)</div>
-    </div>
-    <div class="prog basiconly"><i class="ti ti-topology-star-3"></i> Evenlode</div>
-    <div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:#EF9F27"></span>Experiment</span></div>
-    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CT</span>Caitlin</div>
-    <div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();window.open('https://app.notion.com/p/3b18a14ed56a8131ab1ac43928d15fcf','_blank','noopener')">Deliverable</span></div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='upper-dee-simple-views-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-layout-2"></i></div><div class="nm">Upper Dee: simple views</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
+  </div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='upper-dee-executor-steps-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-adjustments"></i></div><div class="nm">Upper Dee: step executors</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
+  </div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='demand-mapping-text-view-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-align-left"></i></div><div class="nm">Customer S&amp;D mapping: text view</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">CC</span>Caitlin</div>
+    <div class="state">Experiment</div>
+    <div class="mut">&middot;</div>
+  </div>
   </div>
   </div>
   </div>
 </div>
-
 </div>
 </div>
 
@@ -405,7 +364,7 @@ body.gybasic .thead,body.gybasic .row{grid-template-columns:minmax(0,2fr) 1.1fr 
       <div class="cms-panel" id="cTeamPanel">
         <label class="cms-opt"><input type="checkbox" value="Caitlin"> Caitlin</label>
         <label class="cms-opt"><input type="checkbox" value="Harry"> Harry</label>
-        <label class="cms-opt"><input type="checkbox" value="Katia"> Katia</label>
+        <label class="cms-opt"><input type="checkbox" value="Catia"> Catia</label>
         <label class="cms-opt"><input type="checkbox" value="Emily"> Emily</label>
         <label class="cms-opt"><input type="checkbox" value="Josh"> Josh</label>
         <label class="cms-opt"><input type="checkbox" value="Izzie"> Izzie</label>
@@ -441,23 +400,28 @@ document.addEventListener('click',function(e){
   var p=document.getElementById('cTeamPanel');
   if(p&&!(e.target.closest&&(e.target.closest('#cTeamPanel')||e.target.closest('#cTeamField'))))p.classList.remove('open');
 });
-var CANVAS_FOR={'Lead Customer Demand Mapping':'lead-supply-demand-mapping-canvas.html','Customer Demand Mapping':'demand-mapping-canvas-prototype.html','Investor Q&A Log':'investor-qa-log-canvas-prototype.html','Lead Demand mapping':'lead-demand-mapping-canvas.html','Customer Demand Mapping v2':'customer-demand-mapping-v2-canvas.html'};
+var CANVAS_FOR={'Lead Customer Demand Mapping':'lead-supply-demand-mapping-canvas.html','Customer Demand Mapping':'deliverable-sketch-v5.html','Investor Q&A Log':'investor-qa-log-canvas-prototype.html','Lead Demand mapping':'lead-demand-mapping-canvas.html','Customer Demand Mapping v2':'customer-demand-mapping-v2-canvas.html'};
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/'/g,'&#39;');}
+function runLabel(d){
+  var r=d.run||{}, n=(r.done||[]).length;
+  if(!n) return r.state==='running' ? 'Running &middot; 0 of 16' : 'Not started';
+  if(n>=16) return 'Complete';
+  return 'Running &middot; '+n+' of 16';
+}
 function deliverableRow(d){
   var target=CANVAS_FOR[d.w]||'lead-supply-demand-mapping-canvas.html';
-  var prog=(d.f&&d.f.indexOf('New project')<0)?d.f:'New project';
   var initials=(d.champ||'').trim().slice(0,2).toUpperCase();
-  return '<div class="gyrow click created" data-id="'+(d.id||'')+'" onclick="location.href=\''+target+'?deliverable='+encodeURIComponent(d.id||'')+'\'">'
+  return '<div class="gyrow click created" data-id="'+(d.id||'')+'" data-type="deliverable" data-state="notstarted" onclick="location.href=\''+target+'?deliverable='+encodeURIComponent(d.id||'')+'\'">'
     +'<div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-user"></i></div><div class="nm">'+esc(d.n)+'</div></div>'
-    +'<div class="prog basiconly"><i class="ti ti-topology-star-3"></i> '+esc(prog)+'</div>'
-    +'<div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>'
+    +'<div><span class="st" style="background:var(--greenbg);color:var(--greend)">Ready</span></div>'
     +'<div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">'+esc(initials)+'</span>'+esc(d.champ)+'</div>'
-    +'<div style="display:flex;gap:10px;align-items:center"><span class="clink" onclick="event.stopPropagation();window.open(\'https://app.notion.com/p/3b18a14ed56a8131ab1ac43928d15fcf\',\'_blank\',\'noopener\')">Deliverable</span><button class="rowmenu" onclick="event.stopPropagation();deliverableMenu(event,\''+(d.id||'')+'\')" aria-label="More"><i class="ti ti-dots"></i></button></div>'
+    +'<div class="state">'+runLabel(d)+'</div>'
+    +'<div class="outs"><span class="mut">none yet</span><button class="rowmenu" onclick="event.stopPropagation();deliverableMenu(event,\''+(d.id||'')+'\')" aria-label="More"><i class="ti ti-dots"></i></button></div>'
     +'</div>';
 }
 function getDeliverables(){var arr=[];try{arr=JSON.parse(localStorage.getItem('gyDeliverables')||'[]');}catch(e){}var ch=false;arr.forEach(function(d,i){if(!d.id){d.id='d'+Date.now()+'_'+i;ch=true;}});if(ch){try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}}return arr;}
 function renderDeliverables(){
-  var head=document.querySelector('.wrap .thead'); if(!head)return;
+  var head=document.querySelector('#delGrp'); if(!head)return;
   var arr=getDeliverables(); if(!arr.length)return;
   head.insertAdjacentHTML('afterend', arr.map(deliverableRow).join(''));
 }
@@ -467,13 +431,14 @@ function createDeliverable(){
          w:document.getElementById('cWorkflow').value,
          f:document.getElementById('cFolder').value,
          champ:document.getElementById('cChampion').value,
-         team:teamSelected()};
+         team:teamSelected(),
+         run:{state:'idle',done:[]}};
   var arr=getDeliverables(); arr.unshift(d);
   try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}
-  var head=document.querySelector('.wrap .thead');
-  if(head)head.insertAdjacentHTML('afterend', deliverableRow(d));
   closeCreate();
-  toast('Created "'+d.n+'" from the '+d.w+' blueprint · saved to the list');
+  /* Straight into the empty deliverable, which is what creating one is for. */
+  var target=CANVAS_FOR[d.w]||'lead-supply-demand-mapping-canvas.html';
+  location.href=target+'?deliverable='+encodeURIComponent(d.id);
 }
 function deliverableMenu(e,id){
   e.stopPropagation();
@@ -488,7 +453,7 @@ function closeRowMenu(){var m=document.getElementById('rmenu');if(m)m.classList.
 function deleteDeliverable(id){
   var arr=getDeliverables().filter(function(x){return x.id!==id;});
   try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}
-  var el=document.querySelector('.row.created[data-id="'+id+'"]'); if(el)el.remove();
+  var el=document.querySelector('.gyrow.created[data-id="'+id+'"]'); if(el)el.remove();
   closeRowMenu();
   toast('Deliverable deleted');
 }
@@ -502,7 +467,11 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeCreate
   if(!basic)return;
   const manual="demand-mapping-canvas-prototype.html";
   const dm=document.getElementById('dmRow');
-  document.querySelectorAll('.wrap .group, .wrap .row').forEach(el=>{ if(el!==dm && !el.classList.contains('basiconly') && !el.classList.contains('created')) el.style.display='none'; });
+  document.querySelectorAll('.wrap .group, .wrap .gyrow').forEach(el=>{ if(el!==dm && !el.classList.contains('basiconly') && !el.classList.contains('created')) el.style.display='none'; });
+  document.querySelectorAll('.wrap .gytbl').forEach(c=>{
+    const any=[].slice.call(c.querySelectorAll('.gyrow')).some(r=>r.style.display!=='none');
+    if(!any) c.style.display='none';
+  });
   if(dm){
     dm.setAttribute('onclick',"location.href='"+manual+"'");
     dm.querySelectorAll('.clink').forEach(c=>{
@@ -603,6 +572,9 @@ var WF_PAL = {
   gray :['var(--graybg)','var(--grayd)']
 };
 var WF_SHAPE = {
+  'document.html':
+    [['ti-forms','teal'],['ti-calendar-event','amber'],['ti-mail','blue'],['ti-search','teal'],['ti-file-check','green'],
+     ['ti-database','blue'],['ti-chart-dots','amber'],['ti-refresh','green']],
   'demand-mapping-canvas-prototype.html':
     [['ti-forms','teal'],['ti-calendar-event','amber'],['ti-mail','blue'],['ti-search','teal'],['ti-file-check','green'],
      ['ti-database','blue'],['ti-chart-dots','amber'],['ti-refresh','green']],
@@ -621,7 +593,7 @@ var WF_SHAPE = {
 };
 var WF_SHAPE_DEFAULT = [['ti-player-play','teal'],['ti-filter','gray'],['ti-search','blue'],['ti-chart-dots','amber'],['ti-file-check','green'],
                         ['ti-database','gray'],['ti-refresh','green']];
-var WF_FAV_DEFAULT = ['demand-mapping-canvas-prototype.html','tender-to-bid-canvas-prototype.html'];
+var WF_FAV_DEFAULT = ['document.html','tender-to-bid-canvas-prototype.html'];
 
 function wfFavs(){
   try{ var v=JSON.parse(localStorage.getItem('gyWfFavs')||'null'); if(v) return v; }catch(e){}
@@ -647,11 +619,11 @@ function wfNodes(key){
 function wfRenderFavs(){
   var strip = document.getElementById('favStrip'); if(!strip) return;
   var favs = wfFavs(), cards = [];
-  [].slice.call(document.querySelectorAll('.row.click')).forEach(function(row){
+  [].slice.call(document.querySelectorAll('.gyrow.click')).forEach(function(row){
     var key = wfKey(row);
     if(!key || favs.indexOf(key) < 0) return;
     var nm = (row.querySelector('.nm')||{}).textContent || 'Workflow';
-    var st = (row.querySelector('.st')||{}).textContent || '';
+    var st = (row.querySelector('.state')||{}).textContent || '';
     cards.push('<div class="favcard" onclick="location.href=\''+key+'\'">'
       +'<div class="wfthumb">'+wfNodes(key)+'</div>'
       +'<div class="favmeta"><span class="favnm">'+nm.trim()+'</span><span class="favst">'+st.trim()+'</span></div>'
@@ -678,10 +650,10 @@ function wfPaintStars(){
   });
 }
 function wfInitStars(){
-  [].slice.call(document.querySelectorAll('.row.click')).forEach(function(row){
+  [].slice.call(document.querySelectorAll('.gyrow.click')).forEach(function(row){
     var key = wfKey(row); if(!key) return;
     if(row.querySelector('.favstar')) return;
-    var cell = row.lastElementChild; if(!cell) return;
+    var cell = row.querySelector('.outs') || row.lastElementChild; if(!cell) return;
     var st = document.createElement('span');
     st.className = 'favstar'; st.setAttribute('data-key', key);
     st.setAttribute('title','Add to favourites');
@@ -692,31 +664,66 @@ function wfInitStars(){
 }
 document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRenderFavs(); });
 
-/* Every deliverable whose workflow has not been run yet shows here as a Draft.
+/* Every deliverable whose workflow has not been run yet shows here, not started.
    One source with Documents, so the two pages can never disagree. */
+function barCell(done, steps){
+  done = done||0; steps = steps||0;
+  if(!steps) return '<div class="mut">&middot;</div>';
+  var pct = Math.round(done/steps*100);
+  return '<div class="state pg"><span class="pgtrk"><span class="pgfill" style="width:'+pct+'%"></span></span>'
+    +'<span class="pgn">'+done+'/'+steps+'</span></div>';
+}
+function setupCell(eq){
+  if(!Array.isArray(eq)) return '<div class="mut">&middot;</div>';
+  if(!eq.length) return '<div><span class="st" style="background:var(--greenbg);color:var(--greend)">Ready</span></div>';
+  return '<div class="setup"><span class="st" style="background:var(--amberbg);color:var(--amberd)">'+eq.length+' to configure</span>'
+    +'<span class="gyinfo" tabindex="0" data-tip="No '+eq.join(', no ')+' yet" style="margin-left:6px">i</span></div>';
+}
+function ownerCell(by){
+  if(!by) return '<div class="mut">&middot;</div>';
+  var p=String(by).trim().split(/\s+/), ini=(p[0]||' ')[0]+((p[1]||' ')[0]||'');
+  return '<div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">'+ini.toUpperCase()+'</span>'+p[0]+'</div>';
+}
 (function(){
   function paint(){
     if(!window.GYD) return;
     var el=document.getElementById('draftDocs'); if(!el) return;
-    var rows=GYD.drafts();
+    var rows=GYD.deliverables();
     el.innerHTML = rows.map(function(x){
       var d=GYD.dept(x.dept);
       var es=x.es?(window.GY_ES||{})[x.es]:null;
       var name=String(x.name).replace(/&amp;/g,'and').replace(/'/g,'');
-      return '<div class="gyrow click" onclick="toast(\''+name+' is not built out in this prototype yet\')">'
+      var done=x.done||0, steps=x.steps||0;
+      var state = done===0 ? 'notstarted' : (done>=steps ? 'complete' : 'progress');
+      var go = x.href ? "location.href='"+x.href+"'"
+                      : "toast('"+name+" is not built out in this prototype yet')";
+      var outs = '<div class="mut">none yet</div>';
+      if(x.out && x.out.length){
+        var first=x.out[0];
+        var act = first[1] ? "location.href='"+first[1]+"'"
+                           : "toast('"+first[0]+" is not built out in this prototype yet')";
+        outs = '<div class="outs"><span class="clink" onclick="event.stopPropagation();'+act+'">'+first[0]+'</span>'
+             + (x.out.length>1 ? '<span class="omore" tabindex="0" data-tip="'+x.out.slice(1).map(function(o){return o[0];}).join(', ')+'">+'+(x.out.length-1)+'</span>' : '')
+             + '</div>';
+      }
+      return '<div class="gyrow click"'+(x.id==='sdm'?' id="dmRow"':'')
+        +' data-type="deliverable" data-state="'+state+'" data-dept="'+(x.dept||'')+'" onclick="'+go+'">'
         +'<div class="name">'
           +'<div class="tile" style="background:'+d.bg+';color:'+d.fg+'"><i class="ti ti-topology-star-3"></i></div>'
-          +'<div class="nm">'+x.wf
+          +'<div class="nm">'+x.name
             +(es?' <span class="es-chip '+es.cls+'" style="font-weight:400;font-size:12px;margin-left:7px"><i class="ti '+es.icon+'"></i>'+es.short+'</span>':'')
           +'</div></div>'
-        +'<div class="prog basiconly"><i class="ti ti-topology-star-3"></i> '+d.name+'</div>'
-        +'<div><span class="st" style="background:var(--amberbg);color:var(--amberd)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Draft</span></div>'
-        +'<div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">'+x.steps+'</span>steps</div>'
-        +'<div style="display:flex;gap:12px"><span class="clink" onclick="event.stopPropagation();location.href=\'documents-overview.html\'">Deliverable</span></div>'
+        +setupCell(x.eq)
+        +ownerCell(x.by)
+        +barCell(done, steps)
+        +outs
       +'</div>';
     }).join('');
-    var g=document.querySelector('.advonly .group');
-    if(g){ var c=g.querySelector('.count'); if(c) c.textContent = 4 + rows.length; }
+    var c=document.querySelector('#delGrp .count');
+    if(c) c.textContent = rows.length;
+    if(window.wfInitStars){ wfInitStars(); wfRenderFavs(); }
+    var v='list'; try{ v=localStorage.getItem('gyDelView')||'list'; }catch(e){}
+    if(v==='board') setView('board'); else if(kbIsOpen()) kbBuild();
   }
   window.addEventListener('DOMContentLoaded',paint);
   if(document.readyState!=='loading')paint();
@@ -726,48 +733,103 @@ document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRende
 /* The list is static markup, so search and filters work on the rows in place.
    A hidden row keeps its own display rules, so the basic/advanced modes and
    the accordions still behave. */
-var WFQ='', WFSTATUS='all', WFPROG='all';
-function wfText(el, sel){ var n=el.querySelector(sel); return n ? n.textContent.trim().toLowerCase() : ''; }
+var WFQ='', WFTYPE='all', WFSTATE='all';
 function wfApply(){
   var q=WFQ.toLowerCase();
-  document.querySelectorAll('.wrap .row').forEach(function(r){
-    var name=wfText(r,'.nm'), prog=wfText(r,'.prog'), st=wfText(r,'.st');
-    if(!prog && r.classList.contains('arch')) st='archive';
-    var ok = (!q || name.indexOf(q)>=0 || prog.indexOf(q)>=0)
-          && (WFSTATUS==='all' || st.indexOf(WFSTATUS)>=0 || (WFSTATUS==='archive' && r.classList.contains('arch')))
-          && (WFPROG==='all'   || prog.indexOf(WFPROG)>=0);
+  var live=(q!=='' || WFTYPE!=='all' || WFSTATE!=='all');
+  document.querySelectorAll('.wrap .gyrow').forEach(function(r){
+    var n=r.querySelector('.nm'), name=n?n.textContent.trim().toLowerCase():'';
+    var ok = (!q || name.indexOf(q)>=0)
+          && (WFTYPE==='all'  || (r.dataset.type||'')===WFTYPE)
+          && (WFSTATE==='all' || (r.dataset.state||'')===WFSTATE);
     r.classList.toggle('wfhide', !ok);
   });
-  /* a group header goes when everything under it has gone */
-  document.querySelectorAll('.wrap .group').forEach(function(g){
-    var any=false, n=g.nextElementSibling;
-    while(n && !n.classList.contains('group')){
-      if(n.classList.contains('row') && !n.classList.contains('wfhide')) any=true;
-      n=n.nextElementSibling;
-    }
-    g.classList.toggle('wfhide', !any && (WFQ!=='' || WFSTATUS!=='all' || WFPROG!=='all'));
+  /* a card goes when every row under it has gone */
+  document.querySelectorAll('.wrap .gytbl').forEach(function(c){
+    var any=[].slice.call(c.querySelectorAll('.gyrow')).some(function(r){return !r.classList.contains('wfhide');});
+    c.classList.toggle('wfhide', !any);
+  });
+  /* while a filter is on, the folded groups open so matches are not hidden twice */
+  if(kbIsOpen()) kbBuild();
+  document.querySelectorAll('.wrap .group.acc').forEach(function(g){
+    var body=g.nextElementSibling;
+    var any=body?[].slice.call(body.querySelectorAll('.gyrow')).some(function(r){return !r.classList.contains('wfhide');}):false;
+    g.classList.toggle('wfhide', live && !any);
+    g.classList.toggle('closed', !live);
+    if(body) body.classList.toggle('closed', !live);
   });
 }
 
+/* ── Board view ───────────────────────────────────────────────────────────
+   Built from the rows that are on the page, so it follows gy-docs, the search
+   and the filters rather than keeping a second copy of the data. Deliverables
+   only: blueprints and archive are not programme work in flight. */
+var KB_DEPTS = ['prog','nature','capital','trade'];
+
+function kbBuild(){
+  var host = document.getElementById('kbWrap'); if(!host) return;
+  var rows = [].slice.call(document.querySelectorAll('.wrap .gyrow'))
+    .filter(function(r){ return (r.dataset.type||'')==='deliverable' && !r.classList.contains('wfhide'); });
+  host.innerHTML = KB_DEPTS.map(function(k){
+    var d = (window.GYD ? GYD.dept(k) : {name:k, bg:'var(--graybg)', fg:'var(--grayd)'});
+    var mine = rows.filter(function(r){ return (r.dataset.dept||'')===k; });
+    var cards = mine.map(function(r){
+      var nmEl = r.querySelector('.nm');
+      var nm  = nmEl ? nmEl.innerHTML : '';
+      var st  = r.querySelector('.st');
+      var inf = r.querySelector('.gyinfo');
+      var who = r.querySelector('.who');
+      var pg  = r.querySelector('.pg');
+      var go  = (r.getAttribute('onclick')||'').replace(/"/g,'&quot;');
+      return '<div class="kbcard" onclick="'+go+'">'
+        +'<div class="kbnm">'+nm+'</div>'
+        +'<div class="kbmeta">'
+          +(st?st.outerHTML:'')
+          +(inf?inf.outerHTML:'')
+          +(who?who.outerHTML:'')
+        +'</div>'
+        +(pg?'<div class="pg" style="margin-top:11px">'+pg.innerHTML+'</div>':'')
+      +'</div>';
+    }).join('');
+    return '<div class="kbcol">'
+      +'<div class="kbhd"><span class="kbdot" style="background:'+d.fg+'"></span>'+d.name
+        +'<span class="count">'+mine.length+'</span></div>'
+      +(cards || '<div class="kbempty">Nothing here yet.</div>')
+    +'</div>';
+  }).join('');
+}
+
+function setView(v){
+  var board = (v==='board');
+  document.getElementById('listWrap').classList.toggle('wfhide', board);
+  document.getElementById('foldedWrap').classList.toggle('wfhide', board);
+  document.getElementById('kbWrap').classList.toggle('wfhide', !board);
+  document.getElementById('vList').classList.toggle('on', !board);
+  document.getElementById('vBoard').classList.toggle('on', board);
+  if(board) kbBuild();
+  try{ localStorage.setItem('gyDelView', v); }catch(e){}
+}
+function kbIsOpen(){ var k=document.getElementById('kbWrap'); return k && !k.classList.contains('wfhide'); }
+
 gyBar('abar', {
-  search:  {placeholder:'Search workflows', oninput:function(v){ WFQ=v; wfApply(); }},
+  search:  {placeholder:'Search deliverables', oninput:function(v){ WFQ=v; wfApply(); }},
   filters: [
-    ['Status',[['ti-circle-dot','Any status','all'],['ti-player-play','Live','live'],['ti-pencil','Draft','draft'],
-               ['ti-ruler-measure','In design','design'],['ti-archive','Archive','archive']]],
-    ['Programme',[['ti-circle-dot','All programmes','all'],['ti-topology-star-3','Evenlode','evenlode'],
-                  ['ti-topology-star-3','Upper Dee','upper dee'],['ti-topology-star-3','Spains Hall','spains'],
-                  ['ti-topology-star-3','Boothby','boothby']]]
+    ['Type',[['ti-circle-dot','Any type','all'],['ti-checklist','Deliverables','deliverable'],
+             ['ti-ruler-measure','Blueprints','blueprint'],['ti-archive','Archive','archive']]],
+    ['State',[['ti-circle-dot','Any state','all'],['ti-player-play','In progress','progress'],
+              ['ti-pencil','Not started','notstarted'],['ti-circle-check','Complete','complete'],
+              ['ti-ruler-measure','In design','design']]]
   ],
   onfilter: function(group, value){
-    if(group==='Status') WFSTATUS=value; else WFPROG=value;
+    if(group==='Type') WFTYPE=value; else WFSTATE=value;
     wfApply();
   },
   actions: [['label','Bulk'],
-            ['ti-copy','Duplicate workflow','Duplicate the selected workflow into this programme'],
-            ['ti-archive','Archive workflow','Archive removes it from the list without deleting the runs'],
+            ['ti-copy','Duplicate deliverable','Duplicate the selected deliverable into this programme'],
+            ['ti-archive','Archive deliverable','Archive removes it from the list without deleting the runs'],
             '-',
-            ['ti-file-import','Import workflow','Import a workflow definition from another programme'],
-            ['ti-file-export','Export workflow','Export the definition as JSON'],
+            ['ti-file-import','Import blueprint','Import a blueprint from another programme'],
+            ['ti-file-export','Export blueprint','Export the definition as JSON'],
             ['ti-history','Audit log','go:audit-log.html']],
   primary: {icon:'ti-plus', label:'Create new Deliverable', onclick:function(){ openCreate(); }}
 });
