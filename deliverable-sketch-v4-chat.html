@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Upper Dee: Customer Demand Mapping &middot; Great Yellow</title>
-<!-- sketch 5: the document and the workflow become framed panels hovering on a tinted ground -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
 <link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
@@ -34,7 +33,7 @@
 
 /* ── the thread, which is now the page ──────────────────────────────────── */
 .v5chat{position:relative;width:var(--chatw,400px);flex:none;min-width:0;display:flex;
-  flex-direction:column;background:transparent}
+  flex-direction:column;background:var(--bg);border-right:1px solid var(--line)}
 body.pclosed .v5chat{display:none}
 @media(max-width:1100px){.v5chat{width:min(var(--chatw,400px),360px)}}
 /* Drag the edge to trade width between the assistant and the document. The
@@ -44,9 +43,18 @@ body.pclosed .v5chat{display:none}
   background:transparent;transition:background .12s}
 .v5grip:hover:after,body.dragging .v5grip:after{background:var(--line2)}
 body.dragging{cursor:col-resize;user-select:none}
-.v5log{flex:1;overflow:auto;padding:28px 22px 6px}
+.v5log{flex:1;overflow:auto;padding:22px 22px 6px}
 .v5in{max-width:none}
 
+.v5chead{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 12px 11px 22px;border-bottom:1px solid var(--line)}
+.v5on{flex:1;min-width:0;display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5on .ti{font-size:17px;color:var(--blued)}
+.v5cx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.v5cx:hover{background:var(--graybg);color:var(--ink)}
+.v5on .ti{font-size:15px}
+.v5on b{font-weight:500;color:var(--ink2)}
 
 .v5turn{margin-bottom:30px}
 .v5you{background:#F6EFE2;border-radius:16px 16px 5px 16px;padding:12px 15px;font-size:15px;line-height:1.5;
@@ -129,15 +137,13 @@ body.dragging{cursor:col-resize;user-select:none}
   cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
 
 /* ── the docked panel, tabs across the top ──────────────────────────────── */
-.v5panel{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:transparent}
-/* The assistant, the document and the drawer all stand on the same ground.
-   Nothing is a column with a fill of its own; the only object is the card. */
-.v5row{background:var(--bg)}
+.v5panel{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:var(--card)}
 /* A quiet pair of icons in the panel's top corner: the same sixteen steps as
    a list, or as the canvas they live on. It floats in the body's top padding
    so it stays put while the list scrolls under it. */
-.v5vt{flex:none;display:flex;gap:2px;background:var(--card);border:1px solid var(--line);
-  border-radius:10px;padding:2px;margin-left:12px}
+.v5vt{position:absolute;top:13px;right:16px;z-index:5;display:flex;gap:2px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px;box-shadow:0 1px 4px rgba(31,31,29,.05)}
+.v5vt.hide{display:none}
 .v5vb{width:29px;height:26px;border:none;background:none;border-radius:8px;color:var(--ink3);
   cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .12s,color .12s}
 .v5vb:hover{background:var(--graybg);color:var(--ink2)}
@@ -167,7 +173,7 @@ body.dragging{cursor:col-resize;user-select:none}
    assistant closes when they do, because the page holds one side panel at a
    time and the middle should never be squeezed from both ends at once. */
 .v5dr{width:360px;flex:none;display:flex;flex-direction:column;min-width:0;
-  background:transparent}
+  background:var(--bg);border-left:1px solid var(--line)}
 .v5dr.hide{display:none}
 .v5drh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;
   padding:11px 12px 11px 18px;border-bottom:1px solid var(--line)}
@@ -183,35 +189,6 @@ body.dragging{cursor:col-resize;user-select:none}
 .v5tab.dr.on{background:var(--graybg);color:var(--ink);font-weight:600}
 .v5body{flex:1;overflow:auto;padding:46px 40px 110px}
 .v5bin{max-width:780px;margin:0 auto}
-
-/* ── the framed tabs ──────────────────────────────────────────────────────
-   The document and the workflow are one component each: a chrome bar naming
-   what you are looking at, and the page under it, in a single card hovering
-   on the shared ground. No frame around the frame. */
-.v5body.framed{padding:16px;overflow:hidden;display:flex;min-height:0}
-.v5body.framed #pbody{max-width:none;margin:0;flex:1;display:flex;min-width:0}
-.v5card{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--card);
-  border-radius:16px;overflow:hidden;
-  box-shadow:0 2px 16px rgba(26,12,18,.07),0 1px 3px rgba(26,12,18,.05)}
-.v5frh{flex:none;display:flex;align-items:center;gap:11px;min-height:56px;padding:12px 16px;
-  border-bottom:1px solid var(--line)}
-.v5frh .dlonm{flex:1 1 auto;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.v5frh .n{margin-left:auto;font-size:12.5px;color:var(--ink3);flex:none;white-space:nowrap}
-.v5out{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:7px;border:none;
-  border-radius:999px;padding:8px 15px 8px 13px;background:var(--dark);color:#fff;font-family:inherit;
-  font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
-.v5out:hover{background:#31202A}
-.v5out .ti{font-size:16px;color:var(--yellow)}
-.v5cbody{flex:1;min-height:0;overflow:auto;padding:42px 40px 70px}
-.v5cin{max-width:780px;margin:0 auto}
-.v5cbody.list{padding:24px 26px 34px}
-.v5cbody.list .v5cin{max-width:860px}
-/* Home holds its own blocks, so it gets room rather than a reading measure. */
-.v5cbody.home{padding:32px 32px 60px}
-.v5cbody.home .v5cin{max-width:1060px}
-/* the canvas carries its own ground, so it fills the card edge to edge */
-.v5cbody.bare{padding:0;overflow:hidden;display:flex}
 
 /* the document, living inside the panel */
 .v5dt{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
@@ -498,7 +475,7 @@ body.dragging{cursor:col-resize;user-select:none}
 /* workflow tab */
 .v5wfc{display:flex;align-items:baseline;gap:10px;margin:22px 0 8px;font-size:12px;font-weight:600;
   letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
-.v5wfc:first-child{margin-top:0}
+.v5wfc:first-child{margin-top:14px}
 .v5wfc{padding:0 10px}
 
 /* ── the step detail: what it is for, the tasks inside it, what it leaves ── */
@@ -531,6 +508,8 @@ body.dragging{cursor:col-resize;user-select:none}
    ?embed=1 and drops its own sidebar, top bar and collapse control, which is
    what that flag exists for, so the page arrives as the world plus its own
    floating pills and side panel. The panel goes full-bleed to receive it. */
+.v5body.bleed{padding:0;overflow:hidden}
+.v5body.bleed #pbody{max-width:none;margin:0;height:100%}
 .v5cvf{display:block;width:100%;height:100%;border:none;background:#FBFAF5}
 .v5wfc span{margin-left:auto;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400;color:var(--ink3)}
 /* A step is an object you can open, so the row behaves like one. */
@@ -606,6 +585,10 @@ body.dragging{cursor:col-resize;user-select:none}
 
   <div class="v5chat">
     <div class="v5grip" id="chatgrip" title="Drag to resize"></div>
+    <div class="v5chead">
+      <div class="v5on"><i class="ti ti-sparkles"></i>AI Assistant</div>
+      <button class="v5cx" onclick="toggleChat()" title="Hide the assistant"><i class="ti ti-layout-sidebar"></i></button>
+    </div>
     <div class="v5log">
       <div class="v5in" id="chatin">
 
@@ -670,6 +653,7 @@ body.dragging{cursor:col-resize;user-select:none}
   </div>
 
   <div class="v5panel" id="panel">
+    <div class="v5vt hide" id="viewtog"></div>
     <div class="v5body"><div class="v5bin" id="pbody"></div></div>
   </div>
 
@@ -1242,11 +1226,11 @@ var VIEWS = {
         + (meta || '') + '</div>';
     };
 
-    var h = '<div class="v5dt" style="border:none;padding-bottom:0;margin-bottom:18px">'
+    var h = '<div class="v5dt" style="border:none;padding-bottom:0;margin-bottom:20px">'
       + DTITLE + '</div>';
 
     /* the workflow bar: what is running, then how far each chapter has got */
-    h += '<div class="dlobj dlpb" onclick="openTab(\'workflow\')">'
+    h += '<div class="dlobj dlpb" onclick="openTab(\'workflow\')" data-tip="Open the workflow">'
       + (function(){
           var n = nextStep();
           if(DEMO && RUNSTATE === 'idle'){
@@ -1368,7 +1352,6 @@ var VIEWS = {
       return '<div class="v5ch"><span class="v5chn">'+n+'</span><span class="v5cht">'+t+'</span>'+gyInfo(tip)+'</div>';
     };
     var h = '<div class="v5dt" contenteditable="true" spellcheck="false">'+DTITLE+'</div>';
-    /* the sheet is the page now, so the first chapter needs no extra lift */
 
     h += '<section class="v5sec">'
       + head(1,'Project context',
@@ -1517,92 +1500,6 @@ var WF = [
     {k:'4.5',t:'Gather learnings'}]}
 ];
 
-/* ── the output ────────────────────────────────────────────────────────────
-   The PDF is built from the document view itself rather than from a second
-   copy of the content, so the two can never drift. What changes on paper is
-   the dressing: the form boxes become prose, the editing affordances go, and
-   the deliverable gets a branded cover. The browser's own print-to-PDF does
-   the rest, which keeps it working offline with no libraries. */
-var PDF_CSS =
-  '@page{size:A4;margin:17mm 15mm 20mm}'
-+ 'html,body{margin:0;background:#fff}'
-/* on paper @page owns the margins; on screen it needs its own, in case the
-   print dialog is dismissed and the page is simply read */
-+ '@media screen{body{max-width:940px;margin:0 auto;padding:30px 38px 70px}}'
-+ 'body{font-family:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;color:#1F1F1D;font-size:11pt;line-height:1.55}'
-+ '.pdcov{display:flex;align-items:flex-start;gap:14px;padding-bottom:20px;border-bottom:2px solid #1A0C12;margin-bottom:6px}'
-+ '.pdmark{width:40px;height:40px;border-radius:11px;background:#F9DD5A;color:#1A0C12;flex:none;'
-+   'display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;letter-spacing:-.02em}'
-+ '.pdco{flex:1;min-width:0}'
-+ '.pdco b{display:block;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6B6A64}'
-+ '.pdco span{display:block;font-size:11pt;color:#6B6A64;margin-top:5px}'
-/* the document, reset for paper */
-+ '.v5dt{font-family:"Manner","Spectral",Georgia,serif;font-size:26pt;font-weight:500;letter-spacing:-.02em;'
-+   'line-height:1.12;border:none;padding:22px 0 0;margin:0 0 26px}'
-+ '.v5sec{margin-top:26px;break-inside:auto}'
-+ '.v5ch{display:flex;align-items:center;gap:9px;margin:0 0 14px;break-after:avoid}'
-+ '.v5chn{width:22px;height:22px;border-radius:6px;background:#1A0C12;color:#F9DD5A;flex:none;'
-+   'display:flex;align-items:center;justify-content:center;font-size:10pt;font-weight:600}'
-+ '.v5cht{font-family:"Manner","Spectral",Georgia,serif;font-size:15pt;font-weight:500}'
-+ '.v5f{margin:0 0 16px;break-inside:avoid}'
-+ '.v5flab{display:flex;align-items:center;gap:8px;margin-bottom:4px}'
-+ '.v5fl{font-size:8.5pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6B6A64}'
-+ '.v5inp{border:none;border-radius:0;padding:0;background:none;font-size:11pt;line-height:1.55;color:#1F1F1D}'
-+ '.v5inp.empty{color:#9C9A92;font-style:italic}'
-+ '.v5inp.empty:before{content:attr(data-ph)}'
-+ '.v5inp.parked{color:#6B6A64}'
-+ '.v5cf{font-size:7.5pt;font-weight:600;letter-spacing:.06em;text-transform:uppercase;'
-+   'padding:2px 7px;border-radius:99px;background:#FAEEDA;color:#854F0B}'
-+ '.v5sh{font-size:11pt;font-weight:600;margin:18px 0 7px;break-after:avoid}'
-+ '.v5tw{overflow:visible;border:none;border-radius:0}'
-+ '.v5tbl,.v5tbl.wide{width:100%;min-width:0;border-collapse:collapse;font-size:8.5pt;line-height:1.4;break-inside:auto}'
-+ '.v5tbl th{text-align:left;font-size:7pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;'
-+   'color:#6B6A64;padding:6px 8px 6px 0;border-bottom:1.2px solid #1A0C12;vertical-align:bottom}'
-+ '.v5tbl td{padding:6px 8px 6px 0;border-bottom:.5px solid #E3E1DB;vertical-align:top;color:#33272C;min-width:0}'
-+ '.v5tbl td.k{font-weight:600;color:#1F1F1D}'
-+ '.v5tbl td.mt{background:none}'
-+ '.v5tbl tr{break-inside:avoid}'
-+ '.v5note{font-size:9pt;color:#6B6A64;margin-top:7px;font-style:italic}'
-+ '.v5call{display:flex;gap:9px;border:none;border-left:2.5px solid #E3E1DB;border-radius:0;'
-+   'padding:2px 0 2px 12px;margin-top:14px;font-size:9.5pt;line-height:1.5;color:#6B6A64;break-inside:avoid}'
-+ '.v5call ul{margin:4px 0 0;padding-left:15px}'
-+ '.v5win{background:#FEFAE6;border:1px solid #F1E3A6;border-radius:8px;padding:16px 18px;break-inside:avoid}'
-+ '.v5win p{font-size:11pt;line-height:1.55}'
-+ '.v5win ul{margin:10px 0 0;padding-left:16px;font-size:10pt}'
-+ '.v5win li{margin:5px 0}'
-+ '.v5win .gate{margin-top:12px;padding-top:10px;border-top:1px solid #F1E3A6;font-size:10pt}'
-+ '.v5dot,.gyinfo,.v5skel{display:none!important}'
-+ '.pdfoot{margin-top:26px;padding-top:10px;border-top:.5px solid #E3E1DB;font-size:8pt;color:#9C9A92}';
-
-function viewOutput(){
-  var base = location.href.replace(/[^\/]*$/, '');
-  var when = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-  var who  = DEMO ? (DEMO.champ || 'Unassigned') : 'Caitlin Ciceri';
-  var body = VIEWS.doc()
-    .replace(/ contenteditable="true"/g, '')
-    .replace(/ spellcheck="false"/g, '')
-    .replace(/onclick="[^"]*"/g, '');
-  var html = '<!DOCTYPE html><html><head><meta charset="utf-8">'
-    + '<title>' + DTITLE + '</title>'
-    + '<link rel="stylesheet" href="' + base + 'gy-manner-font.css">'
-    + '<style>' + PDF_CSS + '</style></head><body>'
-    + '<div class="pdcov"><span class="pdmark">GY</span><span class="pdco">'
-      + '<b>Great Yellow</b>'
-      + '<span>' + (DEMO ? (DEMO.w || 'Customer Demand Mapping') : 'Customer Demand Mapping')
-      + ' &middot; ' + who + ' &middot; ' + when + '</span></span></div>'
-    + body
-    + '<div class="pdfoot">Great Yellow &middot; ' + DTITLE + ' &middot; ' + when
-      + ' &middot; ' + doneCount() + ' of 16 workflow steps complete</div>'
-    + '</body></html>';
-  var w = window.open('', '_blank');
-  if(!w){ gyToast('The browser blocked the output window'); return; }
-  w.document.open(); w.document.write(html); w.document.close();
-  /* give the webfont a moment, then hand it to the browser's print-to-PDF */
-  var go = function(){ try{ w.focus(); w.print(); }catch(e){} };
-  if(w.document.fonts && w.document.fonts.ready) w.document.fonts.ready.then(function(){ setTimeout(go, 120); });
-  else setTimeout(go, 600);
-}
-
 /* the drawer views are the same builders; VIEWS holds every panel body and
    the two groups just read different keys out of it. */
 var DVIEWS = VIEWS;
@@ -1714,11 +1611,13 @@ var CANVAS_SRC = 'customer-demand-mapping-v2-canvas.html?embed=1&bare=1';
 var WFVIEW = 'list';
 try{ if(localStorage.getItem('gyWfView') === 'canvas') WFVIEW = 'canvas'; }catch(e){}
 var VT = [['list','ti-list','List'],['canvas','ti-hierarchy-2','Canvas']];
-function vtHtml(){
-  return '<span class="v5vt">' + VT.map(function(v){
+function paintViewTog(){
+  var el = document.getElementById('viewtog');
+  el.classList.toggle('hide', TAB !== 'workflow');
+  el.innerHTML = VT.map(function(v){
     return '<button class="v5vb'+(WFVIEW===v[0]?' on':'')+'" data-tip="'+v[2]+' view"'
       + ' onclick="setWfView(\''+v[0]+'\')"><i class="ti '+v[1]+'"></i></button>';
-  }).join('') + '</span>';
+  }).join('');
 }
 function setWfView(v){
   if(WFVIEW === v) return;
@@ -1773,34 +1672,12 @@ function openTab(k){
   TAB = k;
   paintTabs();
   var el = document.getElementById('pbody');
-  var framed = (k === 'home' || k === 'doc' || k === 'workflow');
-  el.parentNode.classList.toggle('framed', framed);
-  el.innerHTML = framed ? frameWrap(k, VIEWS[k]()) : VIEWS[k]();
+  el.classList.toggle('wide', k === 'home');
+  el.parentNode.classList.toggle('bleed', k === 'workflow' && WFVIEW === 'canvas');
+  el.innerHTML = VIEWS[k]();
   el.parentNode.scrollTop = 0;
   fitThumb();
-}
-/* One chrome bar per framed tab, then the ground, then the sheet. */
-function frameWrap(k, inner){
-  var bare = (k === 'workflow' && WFVIEW === 'canvas');
-  var hd = k === 'home'
-    ? frameHd('ti-home','var(--graybg)','#766B62','Home',
-              '<span class="n">'+doneCount()+' of 16 steps</span>')
-    : k === 'doc'
-    ? frameHd('ti-file-text','var(--bluebg)','var(--blued)','Document',
-              '<button class="v5out" onclick="viewOutput()">'
-              + '<i class="ti ti-file-type-pdf"></i>View output (PDF)</button>')
-    : frameHd('ti-route','var(--tealbg,#E2F3EC)','#12684C','Workflow',
-              '<span class="n">'+wfBadge()+'</span>'+vtHtml());
-  var cls = bare ? ' bare' : (k === 'workflow' ? ' list' : (k === 'home' ? ' home' : ''));
-  return '<div class="v5card">' + hd
-    + '<div class="v5cbody'+cls+'">'
-      + (bare ? inner : '<div class="v5cin">' + inner + '</div>')
-    + '</div></div>';
-}
-function frameHd(icon, bg, fg, name, meta){
-  return '<div class="v5frh"><span class="dltile" style="background:'+bg+';color:'+fg+'">'
-    + '<i class="ti '+icon+'"></i></span><span class="dlonm">'+name+'</span>'
-    + (meta || '') + '</div>';
+  paintViewTog();
 }
 /* The document miniature is a real 900px page shrunk down, so the shrink has
    to answer to the column it lands in: the panel changes width every time the

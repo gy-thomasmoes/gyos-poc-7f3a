@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Demand Mapping &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+/* every selector here is prefixed dl, so nothing reaches the shell */
+
+/* ── face pile, in the header because who is on it is a header fact ── */
+.dlpile{display:flex;align-items:center}
+.dlav{width:30px;height:30px;border-radius:50%;color:#fff;font-size:11.5px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none;box-shadow:0 0 0 2px var(--bg)}
+.dlpile .dlav{margin-left:-8px;cursor:default}
+.dlpile .dlav:first-child{margin-left:0}
+.dlpile .dlav.add{background:#fff;color:var(--ink3);border:1px dashed var(--line2);box-shadow:0 0 0 2px var(--bg);cursor:pointer}
+.dlpile .dlav.add:hover{color:var(--ink);border-color:var(--ink3)}
+.dlpmenu{width:34px;height:34px;flex:none;border:none;background:transparent;border-radius:9px;
+  color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px}
+.dlpmenu:hover{background:var(--graybg);color:var(--ink)}
+
+/* ── progress, the one big reading on the page ── */
+.dlpb{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:19px 22px 17px;margin-bottom:20px}
+.dlpbt{display:flex;align-items:flex-end;gap:16px;margin-bottom:15px}
+.dlpbn{font-family:var(--serif);font-size:28px;font-weight:500;letter-spacing:-.02em;line-height:1;white-space:nowrap}
+.dlpbn small{font-family:var(--sans);font-size:15px;font-weight:400;color:var(--ink2);margin-left:8px;letter-spacing:0}
+.dlpbr{margin-left:auto;text-align:right;min-width:0}
+.dlpbr .k{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--amberd);margin-bottom:3px}
+.dlpbr .v{font-size:14.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlpbr .w{font-size:13px;color:var(--ink2);margin-top:3px;display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.dlpbr .w .dlav{width:20px;height:20px;font-size:9px;box-shadow:none}
+.dlseg{display:flex;gap:7px}
+.dlsg{flex-basis:0;min-width:0}
+.dlsgb{height:11px;border-radius:999px;background:#EFEDE4;overflow:hidden;display:flex}
+.dlsgb i{display:block;height:100%}
+.dlsgb i.done{background:var(--greend)}
+.dlsgb i.cur{background:var(--yellow)}
+.dlsgl{display:flex;align-items:baseline;gap:6px;margin-top:9px;font-size:12.5px;color:var(--ink2);min-width:0}
+.dlsgl .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlsgl .c{color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
+.dlsg.off .dlsgl{color:var(--ink3)}
+
+/* ── the two objects the deliverable really is ── */
+.dlhero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:980px){.dlhero{grid-template-columns:minmax(0,1fr)}}
+.dlcol{display:flex;flex-direction:column;gap:18px}
+
+.dlobj{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.dlobj:hover{border-color:var(--line2);box-shadow:0 4px 16px rgba(31,31,29,.08)}
+.dlohd{display:flex;align-items:center;gap:11px;padding:13px 15px}
+.dltile{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.dltile .ti{font-size:17px}
+.dlonm{flex:1;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlkeb{width:28px;height:28px;flex:none;border:none;background:transparent;border-radius:8px;
+  color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.dlkeb:hover{background:var(--graybg);color:var(--ink)}
+.dloft{display:flex;align-items:center;gap:10px;padding:12px 15px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.dloft .r{margin-left:auto;color:var(--ink);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.dloft .r .ti{font-size:15px}
+
+/* the document, as a small true miniature of the editor page */
+.dlthumb{position:relative;height:414px;overflow:hidden;background:#F1EDE0;padding:16px 0 0;
+  display:flex;justify-content:center;align-items:flex-start;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dlpage{width:900px;flex:none;background:#fff;border-radius:4px 4px 0 0;padding:50px 64px;
+  box-shadow:0 3px 14px rgba(26,12,18,.12);transform:scale(.5);transform-origin:top center;
+  font-family:var(--serif);color:var(--ink);text-align:left}
+.dlthumb:after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(rgba(241,237,224,0),#F1EDE0)}
+.dlpage h1{font-size:38px;font-weight:500;letter-spacing:-.02em;margin-bottom:10px}
+.dlpage .by{font-family:var(--sans);font-size:15px;color:var(--ink3);margin-bottom:34px}
+.dlpage h2{font-size:25px;font-weight:500;letter-spacing:-.015em;margin:30px 0 12px}
+.dlpage h2:first-of-type{margin-top:0}
+.dlpage p{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:13px}
+.dlpage ul{margin:0 0 13px 22px}
+.dlpage li{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:7px}
+.dlpage table{width:100%;border-collapse:collapse;margin:0 0 15px;font-family:var(--sans);font-size:15.5px}
+.dlpage th{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1.5px solid var(--line2);padding:7px 10px 7px 0}
+.dlpage td{border-bottom:1px solid var(--line);padding:7px 10px 7px 0;color:#33272C}
+.dlpage .blank{font-family:var(--sans);font-size:15.5px;color:var(--ink3);font-style:italic}
+.dlpage .em{background:#FEF6D8;padding:1px 3px;border-radius:3px}
+
+/* the workflow, as a viewport onto the real canvas: one line of nodes that
+   runs off both edges, parked on the step you are actually on */
+.dlwf{position:relative;height:182px;overflow:hidden;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background-color:#FBFAF5;background-image:radial-gradient(circle,#E0DED6 1px,transparent 1px);background-size:13px 13px}
+.dlstrip{position:absolute;top:50%;transform:translateY(-50%);display:flex;align-items:center}
+.dlwn{width:104px;flex:none;background:#fff;border:1px solid var(--line);border-radius:11px;
+  padding:8px 9px 9px;box-shadow:0 1px 3px rgba(31,31,29,.06)}
+.dlwn .h{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.dlwn .ic{width:21px;height:21px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlwn .ic .ti{font-size:12px}
+.dlwn .n{font-size:9.5px;color:var(--ink3);font-variant-numeric:tabular-nums;margin-left:auto}
+.dlwn .t{font-size:11px;line-height:1.3;color:var(--ink);height:43px;overflow:hidden}
+.dlwn.pend{background:#FCFBF7;border-color:#EAE6DA}
+.dlwn.pend .ic{background:#F1EFE8;color:#C6C1B4}
+.dlwn.pend .t{color:var(--ink3)}
+.dlwn.cur{box-shadow:0 0 0 2.5px var(--yellow),0 3px 10px rgba(31,31,29,.10)}
+.dlwl{width:17px;height:2px;border-radius:1px;background:#D8D2C4;flex:none}
+.dlwl.pend{background:#EAE6DC}
+.dlwph{position:absolute;top:18px;font-size:10px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+
+/* to-dos */
+.dlcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px 17px;min-width:0}
+.dlcard h3{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);
+  display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.dlcard h3 .ti{font-size:15px;color:var(--ink3)}
+.dlcard h3 .n{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:12.5px;color:var(--ink3)}
+.dlcard h3 .n.warn{color:var(--amberd)}
+.dltd{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dltd:first-of-type{border-top:none}
+.dltd .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dltd .d{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap}
+.dltd .d.warn{color:var(--amberd)}
+.dltd .dlav{width:21px;height:21px;font-size:9.5px;box-shadow:none}
+.dlmore{border:none;background:transparent;color:var(--ink2);font-family:inherit;font-size:13px;
+  cursor:pointer;padding:9px 0 0;display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);width:100%;margin-top:2px}
+.dlmore:hover{color:var(--ink)}
+
+/* ── related objects: the verb is the relationship, the noun is the type,
+      and each object is a tile whose width its own content decides ── */
+.dlsh{display:flex;align-items:baseline;gap:12px;margin:38px 0 4px}
+.dlsh h2{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:-.01em}
+.dlsh .r{margin-left:auto;font-size:13.5px;color:var(--ink2)}
+.dlg{margin-top:26px}
+.dlghd{display:flex;align-items:baseline;gap:11px;margin-bottom:12px}
+.dlghd .v{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);flex:none}
+.dlghd .t{font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:-.01em}
+.dlghd .n{font-size:13px;color:var(--ink3)}
+.dlghd .n.warn{color:var(--amberd)}
+.dlghd .a{margin-left:auto;border:none;background:transparent;color:var(--ink2);font-family:inherit;
+  font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0}
+.dlghd .a:hover{color:var(--ink)}
+.dlgw{display:flex;flex-wrap:wrap;gap:12px}
+.dlt{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:13px 20px 13px 14px;cursor:pointer;max-width:100%;
+  transition:border-color .12s,box-shadow .12s}
+.dlt:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.07)}
+.dlt .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlt .ic .ti{font-size:18px}
+.dlt .b{min-width:0;display:flex;flex-direction:column}
+.dlt .nm{display:block;font-size:14.5px;font-weight:500;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlt .st{display:block;font-size:12.5px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlt .st.warn{color:var(--amberd)}
+.dlt .st.ok{color:var(--greend)}
+.dlt.miss{border-style:dashed;background:transparent}
+.dlt.miss .nm{color:var(--ink2)}
+.dlsub{width:100%;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink3);margin:8px 0 -2px}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"deliverables","arts":"demand"};</script>
+<script src="gy-nav.js?v=ca057c36"></script>
+<script src="gy-versions.js?v=616c6474"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='deliverables-landing.html'">Deliverables</span><span class="sep">&rsaquo;</span>
+    <span class="cr cur">Customer Demand Mapping</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Customer Demand Mapping</div>
+    <span id="stchip"></span>
+    <div class="acts">
+      <div class="dlpile" id="pile"></div>
+      <button class="dlpmenu" onclick="gyMenu(this,[
+        ['ti-pencil','Edit document','go:document.html?mode=deliverable'],
+        ['ti-share-3','Open canvas','Canvas, not in this sketch'],
+        ['ti-sparkles','Ask Kwame','Assistant, not in this sketch'],
+        '-',
+        ['ti-download','Export','Export, not in this sketch'],
+        ['ti-archive','Archive','Archive, not in this sketch']])">&#8942;</button>
+    </div>
+  </div>
+
+  <div class="dlpb" id="prog"></div>
+
+  <div class="dlhero">
+    <div id="docobj"></div>
+    <div class="dlcol">
+      <div id="wfobj"></div>
+      <div class="dlcard" id="todos"></div>
+    </div>
+  </div>
+
+  <div class="dlsh"><h2>What it runs on</h2><span class="r" id="relr"></span></div>
+  <div id="rel"></div>
+</div>
+</div>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+/* ── v3 ────────────────────────────────────────────────────────────────────
+   A Deliverable is two objects you can actually see, plus the objects it is
+   wired to. So the page leads with a real preview of each: the document as a
+   miniature of its editor page, the workflow as a viewport onto its canvas,
+   parked on the step you are on. The team is a face pile in the header, the
+   progress is one big reading, and everything else is a related OBJECT named
+   by the relationship it has to this deliverable. */
+
+var TEAM = [
+  ['Caitlin Ciceri','CC','#1D9E75','Champion'],
+  ['Harry Fox','HF','#EF9F27','Analysis'],
+  ['Izzie Bell','IB','#7F77DD','Trade input'],
+  ['Emily Norton','EN','#378ADD','Review']
+];
+function av(p,cls){
+  return '<span class="dlav '+(cls||'')+'" style="background:'+p[2]+'" title="'+p[0]+', '+p[3]+'">'+p[1]+'</span>';
+}
+function avName(n){
+  for(var i=0;i<TEAM.length;i++) if(TEAM[i][0]===n) return av(TEAM[i]);
+  return av([n,'?','#9C9A92','']);
+}
+
+/* the four chapters, and the 16 steps behind them */
+var CHAPTERS = [
+  {n:'1. Project context', short:'Project context', steps:3, done:3},
+  {n:'2. Demand',          short:'Demand',          steps:6, done:3, cur:1},
+  {n:'3. Supply',          short:'Supply',          steps:2, done:2},
+  {n:'4. Summary',         short:'Summary',         steps:5, done:0}
+];
+
+/* the workflow, as the canvas holds it. ph marks where a chapter starts.
+   [num, title, icon, palette, state] */
+var PAL = {
+  teal :['var(--tealbg,#E2F3EC)','#12684C'], amber:['var(--amberbg)','var(--amberd)'],
+  blue :['var(--bluebg)','var(--blued)'],    green:['var(--greenbg)','var(--greend)'],
+  gray :['var(--graybg)','#766B62']
+};
+var STEPS = [
+  ['1.1','Kick-off meeting','ti-calendar-event','amber','done'],
+  ['1.2','Discovery request','ti-mail','blue','done'],
+  ['1.3','Information complete?','ti-git-branch','gray','done'],
+  ['2.1','GPAP Analysis','ti-search','teal','done'],
+  ['2.2','Abstraction licences','ti-droplet','blue','done'],
+  ['2.3','Public funding scan','ti-database','blue','done'],
+  ['2.4','Beneficiary map and Buyer list','ti-map-2','teal','cur'],
+  ['2.5','Check with Trade','ti-users','amber','pend'],
+  ['2.6','Information complete?','ti-git-branch','gray','pend'],
+  ['3.1','Research Ecosystem Services','ti-book','amber','done'],
+  ['3.2','Information complete?','ti-git-branch','gray','done'],
+  ['4.1','Create summary','ti-file-text','green','pend'],
+  ['4.2','Generate PDF','ti-file-check','green','pend'],
+  ['4.3','Share with customer','ti-send','blue','pend'],
+  ['4.4','Send to Data platform','ti-database','blue','pend'],
+  ['4.5','Gather learnings','ti-refresh','green','pend']
+];
+var NODE_W = 104, GAP = 17, PITCH = NODE_W + GAP;
+
+function wfStrip(){
+  var curIdx = 0;
+  var html = STEPS.map(function(s,i){
+    if(s[4]==='cur') curIdx = i;
+    var p = PAL[s[3]] || PAL.gray, pend = s[4]==='pend';
+    var ic = pend ? '' : ' style="background:'+p[0]+';color:'+p[1]+'"';
+    return (i ? '<span class="dlwl'+(pend?' pend':'')+'"></span>' : '')
+      + '<div class="dlwn '+s[4]+'">'
+        + '<div class="h"><span class="ic"'+ic+'><i class="ti '+s[2]+'"></i></span>'
+          + '<span class="n">'+s[0]+'</span></div>'
+        + '<div class="t">'+s[1]+'</div></div>';
+  }).join('');
+  /* park the viewport on the current step */
+  var centre = curIdx * PITCH + NODE_W/2;
+  return '<div class="dlstrip" style="left:calc(50% - '+centre+'px)">'+html+'</div>';
+}
+
+/* the document, written out as the editor would render it */
+var PAGE =
+  '<h1>Demand map, Evenlode</h1>'
++ '<div class="by">Caitlin Ciceri &middot; Demand Mapping &middot; Last written Wednesday 09:05</div>'
+
++ '<h2>1. Project context</h2>'
++ '<p>Evenlode covers 187.8 hectares across 18 parcels, 15 of them in hand and 3 let on '
++ 'farm business tenancies expiring in 2028. Seven sites are already mapped, nine projects '
++ 'sit against them.</p>'
++ '<p>An SFI agreement runs to 2027 and constrains what can be stacked on the improved '
++ 'grassland, which rules out two of the candidate services before they are scored.</p>'
+
++ '<h2>2. Demand</h2>'
++ '<p>Local demand is strongest for biodiversity net gain. Fourteen major applications sit '
++ 'inside the catchment, of which nine name off site units in their planning statements.</p>'
++ '<ul>'
++ '<li>GPAP register, 14 major applications, 9 naming off site units</li>'
++ '<li>Two water companies hold abstraction licences expiring in 2028</li>'
++ '<li>No public funding route currently open for soil carbon here</li>'
++ '</ul>'
++ '<p>The beneficiary map is <span class="em">being drawn now</span>, and the qualified buyer '
++ 'list follows from it. Trade has not yet sense-checked either.</p>'
++ '<p>Four buyer sectors carry a strong signal in this catchment. House builders and '
++ 'strategic land promoters account for most of the near term volume, water utilities for '
++ 'most of the long term value.</p>'
+
++ '<h2>3. Supply</h2>'
++ '<p>Six ecosystem services were scored against the rule books. BNG and woodland carbon '
++ 'rank first and second on both price and time to first issuance.</p>'
++ '<table><tr><th>Service</th><th>Rank</th><th>First issuance</th></tr>'
++ '<tr><td>Biodiversity net gain</td><td>1</td><td>Q2 2027</td></tr>'
++ '<tr><td>Woodland carbon</td><td>2</td><td>Q4 2027</td></tr>'
++ '<tr><td>Nutrient neutrality</td><td>3</td><td>2028</td></tr>'
++ '<tr><td>Soil carbon</td><td>Parked</td><td>Unknown</td></tr></table>'
++ '<p>Soil carbon is parked until the peat depth survey lands from the contractor. Nutrient '
++ 'neutrality depends on the catchment permitting position, which the Environment Agency has '
++ 'not confirmed for the upper reaches.</p>'
+
++ '<h2>4. Summary</h2>'
++ '<p class="blank">Nothing written yet. The verdict is assembled from the three chapters '
++ 'above once Trade has signed off the buyer list.</p>';
+
+var TODOS = [
+  ['Beneficiary map and Buyer list','Caitlin Ciceri','Today','warn'],
+  ['Check with Trade','Emily Norton','Tomorrow',''],
+  ['Check: Information complete?','Caitlin Ciceri','21 Sep',''],
+  ['Create summary','Caitlin Ciceri','24 Sep','']
+];
+
+/* related objects. One group per relationship, each object a tile. */
+var REL = [
+  {verb:'Takes in', type:'Documents', n:'3 of 4 received', warn:true,
+   all:['All documents','documents-overview.html'], bg:'var(--bluebg)', fg:'var(--blued)', rows:[
+    ['ti-file-type-pdf','estate_management_plan.pdf','Questionnaire &middot; 2 July','ok',0],
+    ['ti-file-type-pdf','sfi_agreement_2024.pdf','Questionnaire &middot; 3 July','ok',0],
+    ['ti-file-type-pdf','tenure_map.pdf','Email reply &middot; Wednesday','ok',0],
+    ['ti-file-spreadsheet','peat_depth_survey.xlsx','Outstanding from the contractor','warn',1]
+  ]},
+  {verb:'Reads from', type:'Sources', n:'1 stale', warn:true,
+   all:['All sources','automations.html'], bg:'var(--graybg)', fg:'#766B62', rows:[
+    ['ti-database','GPAP register','Synced Wednesday 06:00','ok',0],
+    ['ti-database','EA abstraction licences','Synced Wednesday 06:00','ok',0],
+    ['ti-database','Public funding register','Last synced 5 September','warn',0],
+    ['ti-book','ES rule books','Hive Mind Library &middot; live','ok',0]
+  ]},
+  {verb:'Runs on', type:'Tools', n:'3 connected', warn:false,
+   all:['All tools','automations.html'], bg:'var(--tealbg,#E2F3EC)', fg:'#12684C', rows:[
+    ['ti-map-2','Market Map','Kwame runs two steps here','',0],
+    ['ti-checkup-list','Questionnaire editor','Sends the intake pack','',0],
+    ['ti-database','GY Data platform','Receives the buyer rows','',0]
+  ]},
+  {verb:'Produces', type:'Outputs', n:'0 of 2 produced', warn:true,
+   all:['All outputs','inventory-overview.html'], bg:'var(--greenbg)', fg:'var(--greend)', rows:[
+    ['ti-file-download','Mapping PDF','Produced at step 4.2','warn',1],
+    ['ti-table','Buyer rows','Sent to the data platform at 4.4','warn',1]
+  ], sub:{label:'And blocks', rows:[
+    ['ti-topology-star-3','Commercial Strategy','Cannot start until this is final','',1]
+  ]}}
+];
+
+function render(){
+  document.getElementById('stchip').innerHTML =
+    gyChip('In progress','Started 2 July 2026, target 24 September');
+
+  document.getElementById('pile').innerHTML =
+    TEAM.map(function(p){ return av(p); }).join('')
+    + '<span class="dlav add" title="Add someone" onclick="gyToast(\'Add a person, not in this sketch\')">'
+    + '<i class="ti ti-plus" style="font-size:14px"></i></span>';
+
+  /* progress */
+  var tot=0, done=0;
+  CHAPTERS.forEach(function(c){ tot+=c.steps; done+=c.done; });
+  document.getElementById('prog').innerHTML =
+    '<div class="dlpbt"><div class="dlpbn">'+done+' of '+tot
+      + '<small>steps done</small></div>'
+    + '<div class="dlpbr"><div class="k">Now on</div>'
+      + '<div class="v">2.4 Beneficiary map and Buyer list</div>'
+      + '<div class="w">'+avName('Caitlin Ciceri')+'Caitlin Ciceri, due today</div></div></div>'
+    + '<div class="dlseg">'
+      + CHAPTERS.map(function(c){
+          var d = c.done/c.steps*100, k = (c.cur||0)/c.steps*100;
+          return '<div class="dlsg'+(c.done?'':' off')+'" style="flex-grow:'+c.steps+'">'
+            + '<div class="dlsgb"><i class="done" style="width:'+d+'%"></i>'
+              + (k?'<i class="cur" style="width:'+k+'%"></i>':'')+'</div>'
+            + '<div class="dlsgl"><span class="nm">'+c.short+'</span>'
+              + '<span class="c">'+c.done+'/'+c.steps+'</span></div></div>';
+        }).join('')
+    + '</div>';
+
+  /* the document */
+  document.getElementById('docobj').innerHTML =
+    '<div class="dlobj" onclick="location.href=\'document.html?mode=deliverable\'">'
+    + '<div class="dlohd">'
+      + '<span class="dltile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-file-text"></i></span>'
+      + '<span class="dlonm">Document</span>'
+      + '<button class="dlkeb" onclick="event.stopPropagation();gyMenu(this,['
+        + '[\'ti-pencil\',\'Edit document\',\'go:document.html?mode=deliverable\'],'
+        + '[\'ti-download\',\'Export as PDF\',\'Export, not in this sketch\'],'
+        + '[\'ti-history\',\'Version history\',\'History, not in this sketch\']])">&#8942;</button>'
+    + '</div>'
+    + '<div class="dlthumb"><div class="dlpage">'+PAGE+'</div></div>'
+    + '<div class="dloft">Demand map, Evenlode &middot; 8 of 14 sections'
+      + '<span class="r">Open editor<i class="ti ti-arrow-right"></i></span></div>'
+    + '</div>';
+
+  /* the workflow */
+  document.getElementById('wfobj').innerHTML =
+    '<div class="dlobj" onclick="gyToast(\'Workflow canvas, not in this sketch\')">'
+    + '<div class="dlohd">'
+      + '<span class="dltile" style="background:var(--tealbg,#E2F3EC);color:#12684C"><i class="ti ti-route"></i></span>'
+      + '<span class="dlonm">Workflow</span>'
+      + '<button class="dlkeb" onclick="event.stopPropagation();gyMenu(this,['
+        + '[\'ti-share-3\',\'Open canvas\',\'Canvas, not in this sketch\'],'
+        + '[\'ti-file-search\',\'Open the blueprint\',\'Blueprint, not in this sketch\'],'
+        + '[\'ti-player-skip-forward\',\'Advance the step\',\'Advance, not in this sketch\']])">&#8942;</button>'
+    + '</div>'
+    + '<div class="dlwf">'+wfStrip()+'</div>'
+    + '<div class="dloft">Demand Mapping &middot; 16 steps'
+      + '<span class="r">Open canvas<i class="ti ti-arrow-right"></i></span></div>'
+    + '</div>';
+
+  /* to-dos */
+  document.getElementById('todos').innerHTML =
+    '<h3><i class="ti ti-checkbox"></i>To-dos<span class="n warn">4 open, 1 overdue</span></h3>'
+    + TODOS.map(function(t){
+        return '<div class="dltd"><input type="checkbox">'+avName(t[1])
+          + '<div class="t">'+t[0]+'</div><div class="d '+t[3]+'">'+t[2]+'</div></div>';
+      }).join('')
+    + '<button class="dlmore" onclick="location.href=\'todos.html\'">'
+      + '<i class="ti ti-arrow-right"></i>All to-dos on this deliverable</button>';
+
+  /* related objects */
+  function tile(r,c){
+    return '<div class="dlt'+(r[4]?' miss':'')+'" onclick="gyToast(\''+r[1].replace(/'/g,'')+', its own page\')">'
+      + '<span class="ic" style="background:'+c.bg+';color:'+c.fg+'"><i class="ti '+r[0]+'"></i></span>'
+      + '<span class="b"><span class="nm">'+r[1]+'</span>'
+        + '<span class="st '+(r[3]||'')+'">'+r[2]+'</span></span></div>';
+  }
+  document.getElementById('relr').textContent = '14 objects, 3 need attention';
+  document.getElementById('rel').innerHTML = REL.map(function(c){
+    return '<div class="dlg">'
+      + '<div class="dlghd"><span class="v">'+c.verb+'</span>'
+        + '<span class="t">'+c.type+'</span>'
+        + '<span class="n'+(c.warn?' warn':'')+'">'+c.n+'</span>'
+        + '<button class="a" onclick="location.href=\''+c.all[1]+'\'">'
+          + c.all[0]+'<i class="ti ti-arrow-right"></i></button></div>'
+      + '<div class="dlgw">'
+        + c.rows.map(function(r){ return tile(r,c); }).join('')
+        + (c.sub ? '<div class="dlsub">'+c.sub.label+'</div>'
+            + c.sub.rows.map(function(r){ return tile(r,c); }).join('') : '')
+      + '</div></div>';
+  }).join('');
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Demand Mapping &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+/* v4 — every selector prefixed v4, so nothing reaches the shell.
+   Direction of travel from Thomas's two wireframe sketches, Sep 2026. */
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+.v4head{display:flex;align-items:center;gap:14px;padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--line)}
+.v4step{display:inline-flex;align-items:center;gap:8px;background:var(--graybg);border-radius:999px;
+  padding:6px 14px;font-size:14px;color:var(--ink2);white-space:nowrap}
+.v4step i.d{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none}
+.v4pile{display:flex;align-items:center;margin-left:auto}
+.v4av{width:30px;height:30px;border-radius:50%;color:#fff;font-size:11px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none;box-shadow:0 0 0 2px var(--bg)}
+.v4pile .v4av{margin-left:-9px}
+.v4pile .v4av:first-child{margin-left:0}
+.v4av.add{background:#fff;color:var(--ink3);border:1px dashed var(--line2);cursor:pointer}
+.v4av.add:hover{color:var(--ink);border-color:var(--ink3)}
+
+/* ── workflow band: one bar per chapter, width by step count ─────────────── */
+.v4wf{display:flex;align-items:flex-end;gap:20px;margin-bottom:26px}
+.v4wfl{font-size:15px;font-weight:600;letter-spacing:-.01em;flex:none;padding-bottom:2px}
+.v4segs{display:flex;gap:10px;flex:1;min-width:0}
+.v4sg{flex-basis:0;min-width:0;cursor:pointer}
+.v4sgn{font-size:13.5px;color:var(--ink2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v4sg.cur .v4sgn{color:var(--ink);font-weight:600}
+.v4sg.off .v4sgn{color:var(--ink3)}
+.v4sgb{height:7px;border-radius:999px;background:#EFEDE4;overflow:hidden;display:flex}
+.v4sgb i{display:block;height:100%}
+.v4sgb i.done{background:var(--greend)}
+.v4sgb i.cur{background:var(--yellow)}
+.v4wfr{flex:none;display:flex;align-items:center;gap:7px;font-size:14px;color:var(--ink2);
+  background:none;border:none;font-family:inherit;cursor:pointer;padding:0 0 1px}
+.v4wfr:hover{color:var(--ink)}
+
+/* ── the three-column band ──────────────────────────────────────────────── */
+.v4band{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.6fr) minmax(0,.78fr);
+  gap:16px;align-items:start;margin-bottom:38px}
+@media(max-width:1020px){.v4band{grid-template-columns:minmax(0,1fr)}}
+.v4card{background:var(--card);border:1px solid var(--line);border-radius:18px;min-width:0}
+.v4chd{display:flex;align-items:center;gap:11px;padding:14px 16px}
+.v4tile{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.v4tile .ti{font-size:17px}
+.v4ct{flex:1;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+.v4keb{width:28px;height:28px;flex:none;border:none;background:transparent;border-radius:8px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.v4keb:hover{background:var(--graybg);color:var(--ink)}
+.v4cft{display:flex;align-items:center;gap:10px;padding:13px 16px;border-top:1px solid var(--line);
+  font-size:14px;color:var(--ink2)}
+.v4cft .go{margin-left:auto;color:var(--blued);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.v4cft .go:hover{text-decoration:underline}
+
+/* the document, shown for real rather than described */
+.v4well{position:relative;background:#F7F4EC;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:18px 18px 0;max-height:430px;overflow:hidden}
+.v4well:after{content:'';position:absolute;left:0;right:0;bottom:0;height:88px;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(247,244,236,0),#F7F4EC)}
+.v4page{background:#fff;border:1px solid var(--line);border-radius:6px;padding:26px 30px 40px;
+  box-shadow:0 1px 3px rgba(31,31,29,.05)}
+.v4ptitle{font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:-.015em;line-height:1.15}
+.v4pby{font-size:11.5px;color:var(--ink3);margin-top:7px;padding-bottom:13px;border-bottom:1px solid var(--line)}
+.v4ph{font-family:var(--serif);font-size:15.5px;font-weight:500;margin:17px 0 7px}
+.v4pp{font-size:12.5px;line-height:1.65;color:#3B3832;margin-bottom:8px}
+.v4pul{margin:0 0 9px;padding-left:17px}
+.v4pul li{font-size:12.5px;line-height:1.7;color:#3B3832}
+.v4mark{background:#FBF0C9;padding:1px 4px;border-radius:3px}
+.v4pfade{opacity:.4}
+.v4pnot{font-size:12.5px;line-height:1.65;color:var(--ink3);font-style:italic}
+
+/* assistant and to-dos: the two side panels */
+.v4side{padding:14px 16px 16px}
+.v4sq{font-size:13.5px;line-height:1.55;color:var(--ink2);background:var(--graybg);border-radius:12px;
+  padding:11px 13px;margin-bottom:11px}
+.v4sq b{color:var(--ink);font-weight:600}
+.v4ask{display:flex;align-items:center;gap:9px;width:100%;border:1px solid var(--line2);background:#fff;
+  border-radius:11px;padding:9px 12px;font-family:inherit;font-size:14px;color:var(--ink3);cursor:pointer;text-align:left}
+.v4ask:hover{border-color:var(--ink3);color:var(--ink2)}
+.v4td{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.45}
+.v4td:first-child{border-top:none;padding-top:2px}
+.v4box{width:15px;height:15px;border-radius:4px;border:1.5px solid #B4B2A9;flex:none;margin-top:1px;background:#fff}
+.v4box.on{background:#185FA5;border-color:#185FA5;position:relative}
+.v4box.on:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v4td.done span{color:var(--ink3);text-decoration:line-through}
+.v4tdw{font-size:12px;color:var(--ink3);margin-top:2px}
+
+/* ── everything it runs on ──────────────────────────────────────────────── */
+.v4rh{text-align:center;font-size:16px;font-weight:600;letter-spacing:-.01em;margin-bottom:18px}
+.v4rel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+@media(max-width:900px){.v4rel{grid-template-columns:minmax(0,1fr)}}
+.v4rc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 17px 7px;min-width:0}
+.v4rhd{display:flex;align-items:center;gap:9px;padding-bottom:12px;font-size:11.5px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.v4rhd .ti{font-size:15px;color:var(--ink3)}
+.v4rhd .rd{margin-left:auto;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400;color:var(--ink2)}
+.v4rhd .rd.warn{color:var(--amberd)}
+.v4rr{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);min-width:0}
+.v4rr .ti{font-size:16px;color:var(--ink3);flex:none}
+.v4rn{flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v4rs{flex:none;font-size:13px;color:var(--ink3);white-space:nowrap}
+.v4rs.warn{color:var(--amberd)}
+.v4rs.ok{color:var(--greend)}
+.v4rs b{font-weight:500;color:var(--ink2)}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"deliverables","arts":"demand"};</script>
+<script src="gy-nav.js?v=ca057c36"></script>
+<script src="gy-versions.js?v=616c6474"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Portfolio</span><span class="sep">&rsaquo;</span>
+    <span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span><span class="sep">&rsaquo;</span>
+    <span class="cr" onclick="location.href='deliverables-landing.html'">Deliverables</span><span class="sep">&rsaquo;</span>
+    <span class="cr cur">Customer Demand Mapping</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="v4head">
+    <div class="h1">Customer Demand Mapping</div>
+    <span class="v4step"><i class="d"></i>Step 2.4 of 16</span>
+    <div class="v4pile" id="pile"></div>
+    <button class="btn-dark" onclick="location.href='deliverable-sketch-v4-doc.html'"><i class="ti ti-file-text"></i> Output</button>
+  </div>
+
+  <div class="v4wf">
+    <div class="v4wfl">Workflow</div>
+    <div class="v4segs" id="segs"></div>
+    <button class="v4wfr" onclick="gyToast('The full 16-step canvas opens from here')">8 of 16 steps <i class="ti ti-chevron-down"></i></button>
+  </div>
+
+  <div class="v4band">
+
+    <div class="v4card">
+      <div class="v4chd">
+        <div class="v4tile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-sparkles"></i></div>
+        <div class="v4ct">Assistant</div>
+      </div>
+      <div class="v4side">
+        <div class="v4sq">The beneficiary map is the last thing holding up <b>2.4</b>. I can draft it from the GPAP register and the abstraction licences.</div>
+        <button class="v4ask" onclick="gyToast('The assistant is not wired up in this sketch')">
+          <i class="ti ti-message-circle"></i> Ask a question
+        </button>
+      </div>
+    </div>
+
+    <div class="v4card">
+      <div class="v4chd">
+        <div class="v4tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-file-text"></i></div>
+        <div class="v4ct">Document</div>
+        <button class="v4keb" onclick="gyMenu(this,[
+          ['ti-pencil','Edit document','go:deliverable-sketch-v4-doc.html'],
+          ['ti-history','Version history','Version history, not in this sketch'],
+          ['ti-download','Export PDF','Export, not in this sketch']])">&#8942;</button>
+      </div>
+      <div class="v4well">
+        <div class="v4page">
+          <div class="v4ptitle">Demand map, Evenlode</div>
+          <div class="v4pby">Caitlin Ciceri &middot; Demand Mapping &middot; Last written Wednesday 09:05</div>
+
+          <div class="v4ph">1. Project context</div>
+          <p class="v4pp">Evenlode covers 187.8 hectares across 18 parcels, 15 of them in hand and 3 let on farm business tenancies expiring in 2027. Seven sites are already mapped, nine projects sit against them.</p>
+          <p class="v4pp">An SFI agreement runs to 2027 and constrains what can be stacked on the improved grassland, which rules out two of the candidate services before they are scored.</p>
+
+          <div class="v4ph">2. Demand</div>
+          <p class="v4pp">Local demand is strongest for biodiversity net gain. Fourteen major applications sit inside the catchment, of which nine name off site units in their planning statements.</p>
+          <ul class="v4pul">
+            <li>GPAP register, 14 major applications, 9 naming off site units</li>
+            <li>Two water companies hold abstraction licences expiring in 2028</li>
+            <li>No public funding route currently open for soil carbon here</li>
+          </ul>
+          <p class="v4pp">The beneficiary map is <span class="v4mark">being drawn now</span>, and the qualified buyer list follows from it. Trade has not yet sense-checked either.</p>
+          <p class="v4pp">Soil carbon is parked until the peat depth survey lands from the contractor. Nutrient neutrality depends on the catchment permitting position, which the Environment Agency has not confirmed for the upper reaches.</p>
+
+          <div class="v4ph v4pfade">4. Summary</div>
+          <p class="v4pnot v4pfade">Nothing written yet. The verdict is assembled from the three chapters above once Trade has signed off the buyer list.</p>
+        </div>
+      </div>
+      <div class="v4cft">
+        Draft &middot; 8 of 14 sections written
+        <span class="go" onclick="location.href='deliverable-sketch-v4-doc.html'">Open editor <i class="ti ti-arrow-right"></i></span>
+      </div>
+    </div>
+
+    <div class="v4card">
+      <div class="v4chd">
+        <div class="v4tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-checklist"></i></div>
+        <div class="v4ct">To-dos</div>
+      </div>
+      <div class="v4side" id="todos"></div>
+      <div class="v4cft"><span class="go" onclick="location.href='todos.html'">View all 16 <i class="ti ti-arrow-right"></i></span></div>
+    </div>
+
+  </div>
+
+  <div class="v4rh">Everything it runs on</div>
+  <div class="v4rel" id="rel"></div>
+
+</div>
+</div>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+/* ── v4 ────────────────────────────────────────────────────────────────────
+   Two sketches, one page. The workflow is a band rather than a card, because
+   it is a reading not an object. The document is shown for real in the middle
+   because it is the thing people came for. The assistant and the to-dos flank
+   it because they act ON it. Everything the deliverable is wired to sits
+   underneath, grouped by what kind of wire it is. */
+
+var TEAM = [
+  ['CC','Caitlin Ciceri','#1F6B4A'],
+  ['HF','Harry Fox','#EF9F27'],
+  ['IB','Izzie Bell','#7C6BD6'],
+  ['EN','Emily Norton','#3B82F6'],
+  ['KW','Kwame','#15806B']
+];
+document.getElementById('pile').innerHTML =
+  TEAM.map(function(p){ return '<span class="v4av" style="background:'+p[2]+'" data-tip="'+p[1]+'" tabindex="0">'+p[0]+'</span>'; }).join('')
+  + '<span class="v4av add" data-tip="Add someone" tabindex="0" onclick="gyToast(\'Adding people is not in this sketch\')">+</span>';
+
+/* One segment per chapter, width proportional to its step count, so the bar
+   tells you how much work each chapter is as well as how far it has got. */
+var CH = [
+  {n:'1. Project context', steps:3, done:3},
+  {n:'2. Demand',          steps:6, done:3, cur:true},
+  {n:'3. Supply',          steps:2, done:2},
+  {n:'4. Summary',         steps:5, done:0}
+];
+document.getElementById('segs').innerHTML = CH.map(function(c){
+  var donePct = c.done / c.steps * 100;
+  var curPct  = c.cur ? (1 / c.steps * 100) : 0;
+  return '<div class="v4sg'+(c.cur?' cur':'')+(c.done===0&&!c.cur?' off':'')+'" style="flex-grow:'+c.steps+'"'
+    + ' data-tip="'+c.done+' of '+c.steps+' steps done" tabindex="0"'
+    + ' onclick="gyToast(\''+c.n.replace(/'/g,'')+' &middot; '+c.done+' of '+c.steps+' steps\')">'
+    + '<div class="v4sgn">'+c.n+'</div>'
+    + '<div class="v4sgb">'
+      + (donePct?'<i class="done" style="width:'+donePct+'%"></i>':'')
+      + (curPct ?'<i class="cur"  style="width:'+curPct +'%"></i>':'')
+    + '</div></div>';
+}).join('');
+
+var TODO = [
+  ['Beneficiary map and buyer list','Caitlin &middot; due Friday',false],
+  ['Trade sense-check on the buyer list','Izzie &middot; blocked by 2.4',false],
+  ['Abstraction licences in catchment','Harry &middot; done Wed',true]
+];
+document.getElementById('todos').innerHTML = TODO.map(function(t){
+  return '<div class="v4td'+(t[2]?' done':'')+'"><span class="v4box'+(t[2]?' on':'')+'"></span>'
+    + '<div><span>'+t[0]+'</span><div class="v4tdw">'+t[1]+'</div></div></div>';
+}).join('');
+
+/* Three kinds of wire: what it takes in, what it reads, what it runs on. */
+var REL = [
+  ['ti-inbox','Inputs','3 of 4 received','',[
+    ['ti-file-type-pdf','estate_management_plan.pdf','Questionnaire &middot; 2 Jul',''],
+    ['ti-file-type-pdf','sfi_agreement_2024.pdf','Questionnaire &middot; 3 Jul',''],
+    ['ti-file-type-pdf','tenure_map.pdf','Email reply &middot; Wed',''],
+    ['ti-file-description','peat_depth_survey.pdf','Contractor &middot; Outstanding','warn']
+  ]],
+  ['ti-database','Sources','1 stale','warn',[
+    ['ti-database','GPAP register','Synced &middot; Wed 06:00',''],
+    ['ti-database','EA abstraction licences','Synced &middot; Wed 06:00',''],
+    ['ti-database','Public funding register','Stale &middot; 5 Sep','warn'],
+    ['ti-book','ES rule books','Library &middot; Live','ok']
+  ]],
+  ['ti-tool','Tools','4 connected','',[
+    ['ti-map-2','Market Map','Kwame',''],
+    ['ti-clipboard-list','Questionnaire editor','',''],
+    ['ti-file-text','Demand map document','',''],
+    ['ti-database','GY Data platform','','']
+  ]]
+];
+document.getElementById('rel').innerHTML = REL.map(function(g){
+  return '<div class="v4rc">'
+    + '<div class="v4rhd"><i class="ti '+g[0]+'"></i>'+g[1]
+      + '<span class="rd'+(g[3]?' '+g[3]:'')+'">'+g[2]+'</span></div>'
+    + g[4].map(function(r){
+        return '<div class="v4rr"><i class="ti '+r[0]+'"></i>'
+          + '<span class="v4rn">'+r[1]+'</span>'
+          + (r[2]?'<span class="v4rs'+(r[3]?' '+r[3]:'')+'">'+r[2]+'</span>':'')
+        + '</div>';
+      }).join('')
+  + '</div>';
+}).join('');
+</script>
+</body>
+</html>

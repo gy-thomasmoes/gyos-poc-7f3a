@@ -81,6 +81,10 @@ var ART = {
     + P.diag(132,214,72,72) + P.bars(220,214,50,3,9,18) + P.dots(36,336,6,9,10); }
 };
 
+/* the primitives and the tone helpers are shared with the persona covers */
+window.gyEsPrims = P;
+window.gyEsEsc = esc;
+
 window.gyEsCover = function(d, idx, href){
   var art = (ART[d.id] || ART.carbon)();
   var jc = window.gyEsJacketCol(d.col);

@@ -112,6 +112,9 @@ function injectCSS(){
   document.head.appendChild(st);
 }
 
+/* the press CSS is shared with the persona pages */
+window.gyPressCSS = injectCSS;
+
 /* ─────────────── the shelf, one panel per book ─────────────── */
 window.gyPressShelf = function(mountId){
   injectCSS();

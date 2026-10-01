@@ -678,7 +678,7 @@ window.gyCartoTiles = function(style){
         +'<div class="gy-pkhead">Admin</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Settings: workspace configuration\')"><i class="ti ti-settings"></i>Settings</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Members and access: Clerk plus Google Workspace\')"><i class="ti ti-users"></i>Members and access</div>'
-        +'<div class="gy-pk" onclick="gyToast(\'Data sources and connections: managed connectors, API pulls, file volumes\')"><i class="ti ti-plug"></i>Data sources</div>'
+        +'<div class="gy-pk" onclick="location.href=\'settings-integrations.html\'"><i class="ti ti-plug"></i>Integrations</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Governance: Unity Catalog lineage, access, audit, discovery\')"><i class="ti ti-shield-check"></i>Governance</div>'
         +'<div class="gy-pkdiv"></div>'
         +'<div class="gy-pk" onclick="gyToast(\'Invite people to the workspace\')"><i class="ti ti-user-plus"></i>Invite people</div>'
@@ -866,6 +866,7 @@ window.gyCartoTiles = function(style){
     ['Go to','ti-activity','Activity','Page','go:activity-overview.html'],
     ['Go to','ti-map-2','Market Map (Kwame)','Page','go:market-map-kwame.html'],
     ['Go to','ti-books','Hive Mind Library','Page','go:hive-mind-library.html'],
+    ['Go to','ti-plug','Integrations','Settings','go:settings-integrations.html'],
 
     ['Switch workspace','ti-building-bank','Portfolio','Workspace','go:portfolio-overview.html'],
     ['Switch workspace','ti-topology-star-3','Evenlode','Workspace','go:programme-overview.html'],
@@ -1090,6 +1091,7 @@ window.gyCartoTiles = function(style){
   var GY_CRUMB = {
     'home.html':                        {alt:'none'},
     'design-system.html':               {alt:'none'},
+    'settings-integrations.html':       {alt:'none', trail:['Settings']},
     'todos.html':                       {alt:'none'},
     'hive-mind-library.html':           {alt:'none'},
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind Library','Rule books']},

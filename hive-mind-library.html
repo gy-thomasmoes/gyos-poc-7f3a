@@ -142,7 +142,7 @@ body.navhid .snav{display:none}
 <body>
 
 <script>window.GYNAV={active:'library',arts:null};</script>
-<script src="gy-nav.js?v=668c831e"></script>
+<script src="gy-nav.js?v=ca057c36"></script>
 
 <div class="mainc">
   <div class="row1">
@@ -158,6 +158,9 @@ body.navhid .snav{display:none}
     <div class="sectitle" style="margin-top:4px">Ecosystem service rule books</div>
     <div class="books" id="books"></div>
 
+    <div class="sectitle" id="personas">Buyer personas</div>
+    <div class="books" id="personaBooks"></div>
+
     <div class="sectitle">Deliverables <small>the workflows that read from, and write back to, the Library</small></div>
     <div id="dels"></div>
 
@@ -167,7 +170,9 @@ body.navhid .snav{display:none}
 <div class="drawer" id="drawer"></div>
 <div class="toast" id="toast"></div>
 
-<script src="gy-es-covers.js?v=7e3b75a1"></script>
+<script src="gy-es-covers.js?v=fd915dc9"></script>
+<script src="gy-personas.js?v=2f13de21"></script>
+<script src="gy-persona-covers.js?v=37895c2e"></script>
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200)}
 
@@ -266,6 +271,14 @@ function renderBooks(){
     <div class="bname">${e.name}</div>
   </div>`).join('');
 }
+/* buyer personas, the demand side of the rule books, from gy-personas.js */
+function renderPersonas(){
+  document.getElementById('personaBooks').innerHTML=(window.GY_PERSONAS||[]).map((p,i)=>`
+  <div class="bookcv" onclick="location.href='persona.html?p=${p.id}'">
+    ${gyPersonaCover(p,i)}
+    <div class="bname">${p.name}</div>
+  </div>`).join('');
+}
 function openES(id){
   if(id==='carbon'){location.href='carbon-rule-book.html';return;}
   location.href='es-rule-book.html?es='+id;return;
@@ -319,6 +332,7 @@ document.getElementById('dels').innerHTML=DELS.map((d,i)=>`
  </div>`).join('');
 
 renderBooks();
+renderPersonas();
 (function(){var p=new URLSearchParams(location.search).get('es');if(p&&p!=='carbon'&&ESDATA.find(x=>x.id===p))openES(p);})();
 </script>
 </body>

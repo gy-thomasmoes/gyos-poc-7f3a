@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Demand Mapping &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<style>
+/* v4 document view — every selector prefixed v4.
+   The document is the page. Provenance and confidence sit under every field,
+   because on this deliverable the question is never only "what does it say"
+   but "who said it, and how much should I trust it yet". */
+
+.v4stage{display:flex;align-items:flex-start;justify-content:center;
+  padding:26px 112px 90px 32px;transition:padding-right .16s ease}
+body.dopen .v4stage{padding-right:472px}
+@media(max-width:900px){.v4stage{padding-right:32px}}
+.v4sheet{flex:1;min-width:0;max-width:880px;background:var(--card);border:1px solid var(--line);
+  border-radius:20px;padding:54px 62px 70px;box-shadow:0 1px 3px rgba(31,31,29,.04)}
+@media(max-width:900px){.v4sheet{padding:34px 24px 46px}}
+
+.v4title{font-family:var(--serif);font-size:42px;font-weight:500;letter-spacing:-.025em;line-height:1.05;
+  padding-bottom:22px;border-bottom:1px solid var(--line)}
+
+.v4ch{display:flex;align-items:center;gap:14px;margin:38px 0 16px}
+.v4chn{width:32px;height:32px;border-radius:9px;background:var(--dark);color:var(--yellow);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
+.v4cht{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-.015em}
+
+.v4about{display:flex;gap:13px;background:var(--graybg);border-radius:14px;padding:16px 18px;margin-bottom:26px}
+.v4about .ti{font-size:17px;color:var(--ink3);flex:none;margin-top:1px}
+.v4about p{font-size:15px;line-height:1.6;color:var(--ink2)}
+
+.v4fl{font-size:12.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:24px 0 9px}
+.v4body{font-size:17.5px;line-height:1.62;color:var(--ink)}
+.v4body + .v4body{margin-top:10px}
+
+/* the line that says where this came from, and how much to trust it */
+.v4pv{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:14px;color:var(--ink3)}
+.v4pv b{font-weight:400;color:var(--ink2)}
+.v4cf{font-size:13px;font-weight:500;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.v4cf.ai{background:var(--bluebg);color:var(--blued)}
+.v4cf.ok{background:var(--greenbg);color:var(--greend)}
+.v4cf.none{background:var(--amberbg);color:var(--amberd);font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.v4cf.click{cursor:pointer}
+.v4cf.click:hover{filter:brightness(.97)}
+
+/* an unwritten field says so, and shows the shape of what is missing */
+.v4skel{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.v4skel i{display:block;height:11px;border-radius:999px;background:#EFEDE4}
+.v4draft{display:inline-flex;align-items:center;gap:7px;margin-top:13px;background:none;border:1px dashed var(--line2);
+  border-radius:10px;padding:7px 13px;font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer}
+.v4draft:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* ── the panel rail, collapsed to its spines ────────────────────────────── */
+.v4tile{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.v4tile .ti{font-size:17px}
+.v4asm{position:fixed;top:61px;right:0;bottom:0;display:flex;align-items:stretch;z-index:900}
+@media(max-width:900px){.v4asm{display:none}}
+.v4rail{width:80px;flex:none;background:var(--card);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;gap:16px;padding:20px 8px}
+.v4rb{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:12px 4px;border-radius:12px;cursor:pointer;transition:background .12s}
+.v4rb:hover{background:var(--graybg)}
+.v4rb .ti{font-size:21px;color:var(--ink2);transition:color .12s}
+.v4rb span{font-size:11px;color:var(--ink2);text-align:center;line-height:1.25;transition:color .12s}
+.v4rb b{position:absolute;top:2px;right:6px;min-width:16px;height:16px;border-radius:999px;
+  background:var(--amberbg);color:var(--amberd);border:1.5px solid var(--card);
+  font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ── the drawer the rail opens, docked beside the sheet ─────────────────── */
+.v4dr{width:360px;flex:none;display:flex;flex-direction:column;min-width:0;
+  background:var(--card);border-left:1px solid var(--line)}
+.v4dr.hide{display:none}
+.v4drh{display:flex;align-items:center;gap:11px;padding:15px 14px 15px 18px;border-bottom:1px solid var(--line);flex:none}
+.v4drt{flex:1;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+.v4drx{width:30px;height:30px;flex:none;border:none;background:transparent;border-radius:8px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+.v4drx:hover{background:var(--graybg);color:var(--ink)}
+.v4drb{flex:1;padding:15px 18px 26px;overflow:auto;font-size:14px;line-height:1.55}
+.v4rb.on{background:var(--graybg)}
+.v4rb.on .ti,.v4rb.on span{color:var(--ink)}
+
+/* things the drawers are built from */
+.v4msg{background:var(--graybg);border-radius:12px;padding:11px 13px;color:var(--ink2);margin-bottom:11px}
+.v4msg b{color:var(--ink);font-weight:600}
+.v4in{display:flex;align-items:center;gap:9px;width:100%;border:1px solid var(--line2);background:#fff;
+  border-radius:11px;padding:9px 12px;font-family:inherit;font-size:14px;color:var(--ink3);cursor:pointer;text-align:left}
+.v4in:hover{border-color:var(--ink3);color:var(--ink2)}
+.v4item{padding:13px 0;border-top:1px solid var(--line)}
+.v4item:first-child{border-top:none;padding-top:0}
+.v4who{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.v4who .v4av{width:22px;height:22px;font-size:9.5px;box-shadow:none}
+.v4who b{font-size:13.5px;font-weight:600}
+.v4who span{font-size:12.5px;color:var(--ink3);margin-left:auto}
+.v4on{font-size:12.5px;color:var(--ink3);margin-bottom:5px}
+.v4tdr{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid var(--line);line-height:1.45}
+.v4tdr:first-child{border-top:none;padding-top:0}
+.v4tdw{font-size:12.5px;color:var(--ink3);margin-top:2px}
+.v4srow{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line);min-width:0}
+.v4srow:first-child{border-top:none;padding-top:0}
+.v4srow .ti{font-size:16px;color:var(--ink3);flex:none}
+.v4srow .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v4srow .s{flex:none;font-size:13px;color:var(--ink3);white-space:nowrap}
+.v4srow .s.warn{color:var(--amberd)}
+.v4srow .s.ok{color:var(--greend)}
+.v4dl{display:flex;gap:12px;padding:9px 0;font-size:13.5px}
+.v4dl dt{flex:none;width:86px;color:var(--ink3)}
+.v4dl dd{flex:1;min-width:0;color:var(--ink)}
+
+/* header */
+.v4head{display:flex;align-items:center;gap:12px;padding:0 0 2px}
+.v4pile{display:flex;align-items:center;margin-left:auto}
+.v4av{width:30px;height:30px;border-radius:50%;color:#fff;font-size:11px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none;box-shadow:0 0 0 2px var(--bg)}
+.v4pile .v4av{margin-left:-9px}
+.v4pile .v4av:first-child{margin-left:0}
+.v4keb{width:34px;height:34px;flex:none;border:none;background:transparent;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px}
+.v4keb:hover{background:var(--graybg);color:var(--ink)}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"deliverables","arts":"demand"};</script>
+<script src="gy-nav.js?v=ca057c36"></script>
+<script src="gy-versions.js?v=616c6474"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='portfolio-overview.html'">Portfolio</span><span class="sep">&rsaquo;</span>
+    <span class="cr" onclick="location.href='programme-overview.html'">Evenlode</span><span class="sep">&rsaquo;</span>
+    <span class="cr" onclick="location.href='deliverables-landing.html'">Deliverables</span><span class="sep">&rsaquo;</span>
+    <span class="cr" onclick="location.href='deliverable-sketch-v4.html'">Customer Demand Mapping</span><span class="sep">&rsaquo;</span>
+    <span class="cr cur">Demand map</span>
+  </div>
+  <div class="spacer"></div>
+  <div class="v4pile" id="pile"></div>
+  <button class="btn-out" onclick="gyToast('Sharing is not wired up in this sketch')"><i class="ti ti-users"></i> Share</button>
+  <button class="v4keb" onclick="gyMenu(this,[
+    ['ti-arrow-left','Back to deliverable','go:deliverable-sketch-v4.html'],
+    ['ti-history','Version history','Version history, not in this sketch'],
+    ['ti-download','Export PDF','Export, not in this sketch']])">&#8942;</button>
+</div>
+
+<div class="wrap" style="max-width:none;padding:0">
+<div class="v4stage">
+
+  <div class="v4sheet">
+    <div class="v4title">Customer Demand Mapping</div>
+
+    <div class="v4ch"><span class="v4chn">1</span><span class="v4cht">Project context</span></div>
+    <div class="v4about">
+      <i class="ti ti-info-circle"></i>
+      <p>The project's essentials from onboarding: objective, site, planned interventions, target outcomes and constraints. It sets the scene; nothing is analysed here.</p>
+    </div>
+    <div id="ch1"></div>
+
+    <div class="v4ch"><span class="v4chn">2</span><span class="v4cht">Demand</span></div>
+    <div class="v4about">
+      <i class="ti ti-info-circle"></i>
+      <p>Worked per market, then split by buyer type. The beneficiary map runs first and the qualified buyer list follows from it.</p>
+    </div>
+    <div id="ch2"></div>
+  </div>
+
+</div>
+
+<div class="v4asm">
+  <div class="v4dr hide" id="drawer">
+    <div class="v4drh">
+      <div class="v4tile" id="drtile"></div>
+      <div class="v4drt" id="drtitle"></div>
+      <button class="v4drx" onclick="closeDrawer()" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="v4drb" id="drbody"></div>
+  </div>
+  <div class="v4rail" id="rail"></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+/* ── v4 document ───────────────────────────────────────────────────────────
+   Every field carries two facts beyond its text: which step wrote it, and how
+   far it has been stood up. A field the assistant drafted is not the same
+   object as one the client confirmed, and the page should never let you
+   mistake one for the other. An unwritten field keeps its place in the
+   document rather than vanishing, so the shape of what is missing is legible. */
+
+var TEAM = [
+  ['CC','Caitlin Ciceri','#1F6B4A'],
+  ['HF','Harry Fox','#EF9F27'],
+  ['IB','Izzie Bell','#7C6BD6'],
+  ['EN','Emily Norton','#3B82F6'],
+  ['KW','Kwame','#15806B']
+];
+document.getElementById('pile').innerHTML =
+  TEAM.map(function(p){ return '<span class="v4av" style="background:'+p[2]+'" data-tip="'+p[1]+'" tabindex="0">'+p[0]+'</span>'; }).join('');
+
+/* text: written, with a source step and a confidence
+   empty: not written yet, with the step that will write it */
+var CH1 = [
+  {l:'Objective',
+   t:['Durable income alongside continued farming, lower flood risk downstream, and a habitat legacy the family can point to.'],
+   by:'Kick-off meeting', cf:['ai',"Assistant's reading &middot; please check"]},
+
+  {l:'Site description and current land use',
+   t:['187.8 ha across 18 parcels in the Evenlode valley, west Oxfordshire, held across seven farms and estates. Two tenancies expire in 2027.'],
+   by:'Discovery information request', cf:['ok','Confirmed by client']},
+
+  {l:'Planned interventions', empty:true, by:'Discovery information request', lines:[92,64]},
+
+  {l:'Target habitats and outcomes', empty:true, by:'Discovery information request', lines:[78,86,41]},
+
+  {l:'Constraints and dependencies',
+   t:['An SFI agreement runs to 2027 and constrains what can be stacked on the improved grassland. The peat depth survey is still with the contractor, so soil carbon cannot be scored.'],
+   by:'Kick-off meeting', cf:['ai',"Assistant's reading &middot; please check"]}
+];
+
+var CH2 = [
+  {l:'Beneficiary map',
+   t:['Fourteen major applications sit inside the catchment, nine of which name off site units in their planning statements. Two water companies hold abstraction licences expiring in 2028.'],
+   by:'GPAP analysis', cf:['ok','Read from the register']},
+
+  {l:'Qualified buyer list', empty:true, by:'Step 2.4, running now', lines:[88,70,95,52], live:true},
+
+  {l:'Trade sense-check', empty:true, by:'Step 2.5, blocked by 2.4', lines:[66,44]}
+];
+
+var FIELDS = {};
+function field(f, key){
+  FIELDS[key] = f;
+  var h = '<div class="v4fl">'+f.l
+    + (f.empty ? '<span class="v4cf none">Not written yet</span>' : '')
+    + '</div>';
+  if(f.empty){
+    h += '<div class="v4skel">'+f.lines.map(function(w){ return '<i style="width:'+w+'%"></i>'; }).join('')+'</div>'
+      + '<div class="v4pv">Will be written by <b>'+f.by+'</b></div>'
+      + (f.live
+          ? '<button class="v4draft" onclick="gyToast(\'Drafting is not wired up in this sketch\')"><i class="ti ti-sparkles"></i> Draft from the beneficiary map</button>'
+          : '');
+  } else {
+    h += f.t.map(function(p){ return '<p class="v4body">'+p+'</p>'; }).join('')
+      + '<div class="v4pv">Written by <b>'+f.by+'</b>'
+      + '<span class="v4cf '+f.cf[0]+' click" onclick="openProv(\''+key+'\')">'+f.cf[1]+'</span>'
+      + '</div>';
+  }
+  return h;
+}
+document.getElementById('ch1').innerHTML = CH1.map(function(f,i){ return field(f,'a'+i); }).join('');
+document.getElementById('ch2').innerHTML = CH2.map(function(f,i){ return field(f,'b'+i); }).join('');
+
+/* The rail is five collapsed panels. Clicking one docks it beside the sheet
+   rather than covering the document, because every one of these panels is
+   read against the text, not instead of it. Clicking the open one closes it. */
+var PANELS = {
+  assistant: {ic:'ti-sparkles', t:'Assistant', bg:'bluebg', fg:'blued', body:
+    '<div class="v4msg">The beneficiary map is the last thing holding up <b>step 2.4</b>. '
+    + 'I can draft it from the GPAP register and the abstraction licences, and leave the buyer list for Izzie to sense-check.</div>'
+    + '<div class="v4msg">Two fields in chapter 1 are still my reading of the kick-off notes rather than anything the client confirmed. '
+    + 'Worth putting them in front of them before the verdict.</div>'
+    + '<button class="v4in" onclick="gyToast(\'The assistant is not wired up in this sketch\')">'
+    + '<i class="ti ti-message-circle"></i> Ask about this document</button>'},
+
+  comments: {ic:'ti-message-circle', t:'Comments', bg:'amberbg', fg:'amberd', body:
+    [['IB','Izzie Bell','#7C6BD6','Yesterday','on Qualified buyer list',
+      'Hold off on the water companies until I have checked what they did at Ock and Thame. Their appetite changed in the spring.'],
+     ['HF','Harry Fox','#EF9F27','Wed 11:20','on Site description and current land use',
+      'Tenancies are 2027 not 2028. I have the agreements if you want to check.'],
+     ['CC','Caitlin Ciceri','#1F6B4A','Wed 09:12','on Objective',
+      'Pulled this from the kick-off recording, so it needs the family to confirm the wording before it goes near the summary.']
+    ].map(function(c){
+      return '<div class="v4item">'
+        + '<div class="v4who"><span class="v4av" style="background:'+c[2]+'">'+c[0]+'</span>'
+          + '<b>'+c[1]+'</b><span>'+c[3]+'</span></div>'
+        + '<div class="v4on">'+c[4]+'</div>'+c[5]+'</div>';
+    }).join('')},
+
+  todos: {ic:'ti-checklist', t:'To-dos', bg:'greenbg', fg:'greend', body:
+    [['Beneficiary map and buyer list','Caitlin &middot; due Friday &middot; step 2.4',false],
+     ['Trade sense-check on the buyer list','Izzie &middot; blocked by 2.4',false],
+     ['Abstraction licences in catchment','Harry &middot; done Wed',true]
+    ].map(function(td){
+      return '<div class="v4tdr"><span class="v4box'+(td[2]?' on':'')+'"></span>'
+        + '<div><span'+(td[2]?' style="color:var(--ink3);text-decoration:line-through"':'')+'>'+td[0]+'</span>'
+        + '<div class="v4tdw">'+td[1]+'</div></div></div>';
+    }).join('')},
+
+  history: {ic:'ti-history', t:'History', bg:'graybg', fg:'grayd', body:
+    [['Wed 09:05','Caitlin','wrote Constraints and dependencies'],
+     ['Wed 06:00','Automation','synced the GPAP register and the abstraction licences'],
+     ['Tue 16:40','Assistant','drafted Objective from the kick-off recording'],
+     ['Tue 15:02','Caitlin','confirmed Site description with the client'],
+     ['2 Jul','Questionnaire','received estate_management_plan.pdf']
+    ].map(function(h){
+      return '<div class="v4item"><div class="v4who"><b>'+h[1]+'</b><span>'+h[0]+'</span></div>'+h[2]+'</div>';
+    }).join('')},
+
+  sources: {ic:'ti-link', t:'Sources', bg:'tealbg', fg:'teald', body:
+    [['ti-database','GPAP register','Synced &middot; Wed 06:00',''],
+     ['ti-database','EA abstraction licences','Synced &middot; Wed 06:00',''],
+     ['ti-database','Public funding register','Stale &middot; 5 Sep','warn'],
+     ['ti-book','ES rule books','Library &middot; Live','ok'],
+     ['ti-file-type-pdf','estate_management_plan.pdf','Input &middot; 2 Jul','']
+    ].map(function(s){
+      return '<div class="v4srow"><i class="ti '+s[0]+'"></i><span class="n">'+s[1]+'</span>'
+        + '<span class="s'+(s[3]?' '+s[3]:'')+'">'+s[2]+'</span></div>';
+    }).join('')}
+};
+
+var RAIL = [
+  ['ti-sparkles','Assistant','','assistant'],
+  ['ti-message-circle','Comments','3','comments'],
+  ['ti-checklist','To-dos','2','todos'],
+  ['ti-history','History','','history'],
+  ['ti-link','Sources','','sources']
+];
+document.getElementById('rail').innerHTML = RAIL.map(function(r){
+  return '<div class="v4rb" id="rb-'+r[3]+'" onclick="openDrawer(\''+r[3]+'\')">'
+    + (r[2] ? '<b>'+r[2]+'</b>' : '')
+    + '<i class="ti '+r[0]+'"></i><span>'+r[1]+'</span></div>';
+}).join('');
+
+var OPEN = null;
+function paintRail(){
+  RAIL.forEach(function(r){
+    var el = document.getElementById('rb-'+r[3]);
+    if(el) el.classList.toggle('on', OPEN===r[3]);
+  });
+}
+function showDrawer(key, tile, title, body){
+  document.getElementById('drtile').className = 'v4tile';
+  document.getElementById('drtile').style.background = 'var(--'+tile[1]+')';
+  document.getElementById('drtile').style.color = 'var(--'+tile[2]+')';
+  document.getElementById('drtile').innerHTML = '<i class="ti '+tile[0]+'"></i>';
+  document.getElementById('drtitle').textContent = title;
+  document.getElementById('drbody').innerHTML = body;
+  document.getElementById('drbody').scrollTop = 0;
+  document.getElementById('drawer').classList.remove('hide');
+  document.body.classList.add('dopen');
+  OPEN = key; paintRail();
+}
+function openDrawer(k){
+  if(OPEN===k) return closeDrawer();
+  var p = PANELS[k]; if(!p) return;
+  showDrawer(k, [p.ic,p.bg,p.fg], p.t, p.body);
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.add('hide');
+  document.body.classList.remove('dopen');
+  OPEN = null; paintRail();
+}
+/* A confidence chip opens the provenance of that one field. This is the page's
+   own idea turned into a panel: the chip says how far the field has been stood
+   up, the drawer says exactly how it got there. */
+function openProv(key){
+  var f = FIELDS[key]; if(!f) return;
+  var chip = f.cf ? '<span class="v4cf '+f.cf[0]+'">'+f.cf[1]+'</span>' : '';
+  var read = f.cf && f.cf[0]==='ai'
+    ? 'Kick-off recording, transcript 14 Jul'
+    : 'Discovery information request, reply of 3 Jul';
+  var body = '<div style="margin-bottom:14px">'+chip+'</div>'
+    + '<dl class="v4dl"><dt>Field</dt><dd>'+f.l+'</dd></dl>'
+    + '<dl class="v4dl"><dt>Written by</dt><dd>'+f.by+'</dd></dl>'
+    + '<dl class="v4dl"><dt>Read from</dt><dd>'+read+'</dd></dl>'
+    + '<dl class="v4dl"><dt>Last change</dt><dd>Wednesday 09:05, Caitlin Ciceri</dd></dl>'
+    + '<div class="v4msg" style="margin-top:16px">'
+      + (f.cf && f.cf[0]==='ai'
+          ? 'Nobody has confirmed this wording. It carries into the summary as written, so it is worth a minute with the client first.'
+          : 'Confirmed by the client in writing, so downstream chapters can rely on it.')
+    + '</div>'
+    + '<button class="v4in" onclick="gyToast(\'Confirming is not wired up in this sketch\')">'
+      + '<i class="ti ti-check"></i> Mark as confirmed</button>';
+  showDrawer('prov', ['ti-route','graybg','grayd'], 'Provenance', body);
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDrawer(); });
+</script>
+</body>
+</html>

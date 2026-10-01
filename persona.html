@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Great Yellow Press &middot; Great Yellow</title>
+<title>Buyer persona · Great Yellow Press</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,19 +21,28 @@
   <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <div class="crumbs">
     <span class="cr" onclick="location.href='hive-mind-library.html'">Hive Mind Library</span><span class="sep">&rsaquo;</span>
-    <span class="cr" onclick="location.href='hive-mind-library.html'">Rule books</span><span class="sep">&rsaquo;</span>
-    <span class="cr cur">Great Yellow Press</span>
+    <span class="cr" onclick="location.href='hive-mind-library.html#personas'">Buyer personas</span><span class="sep">&rsaquo;</span>
+    <span class="cr cur" id="crName">Persona</span>
   </div>
 </div>
 
-<div id="shelfmount"></div>
+<div id="personamount"></div>
 </div>
 </div>
 
 <script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
-<script src="gy-rulebooks.js?v=3f7491ab"></script>
+<script src="gy-personas.js?v=2f13de21"></script>
 <script src="gy-es-covers.js?v=fd915dc9"></script>
+<script src="gy-persona-covers.js?v=37895c2e"></script>
 <script src="gy-es-press.js?v=3ba30ad1"></script>
-<script>gyPressShelf('shelfmount');</script>
+<script src="gy-persona-press.js?v=e01aeafb"></script>
+<script>
+(function(){
+  var id=(new URLSearchParams(location.search)).get('p')||'c1';
+  var d=(window.GY_PERSONAS||[]).filter(function(x){return x.id===id;})[0];
+  if(d){ document.getElementById('crName').textContent=d.name; document.title=d.name+' · Great Yellow Press'; }
+  gyPersonaPage(id,'personamount');
+})();
+</script>
 </body>
 </html>
