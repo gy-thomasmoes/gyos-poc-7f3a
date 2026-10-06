@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rule book · Hive Mind Library</title>
+<title>Rule book · Hive Mind</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -144,13 +144,13 @@ body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10p
 <body>
 
 <script>window.GYNAV={"active":"library"};</script>
-<script src="gy-nav.js?v=ca057c36"></script>
+<script src="gy-nav.js?v=d794329b"></script>
 
 <div class="mainc">
 <div class="row1">
   <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <i class="ti ti-books" style="font-size:20px;color:var(--ink2)"></i>
-  <span class="crumb" onclick="location.href='hive-mind-library.html'">Hive Mind Library</span><span class="sep">›</span>
+  <span class="crumb" onclick="location.href='hive-mind-library.html'">Hive Mind</span><span class="sep">›</span>
   <span class="crumb" onclick="location.href='hive-mind-library.html'">Ecosystem Services</span><span class="sep">›</span>
   <span class="esdd" id="esdd" onclick="toggleEsdd(event)"><span class="title" id="esTitle">Rule book</span><i class="ti ti-chevron-down" style="font-size:15px;color:var(--ink3)"></i>
     <div class="esmenu" id="esmenu"></div>
@@ -173,7 +173,7 @@ body.navhid.navpeek .snav{display:flex;position:fixed;left:0;top:10px;bottom:10p
 <script>
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3800);}
 
-// ── ecosystem service catalogue (shared with the Hive Mind Library) ──
+// ── ecosystem service catalogue (shared with the Hive Mind) ──
 const RCOL={g:'#639922',o:'#EF9F27',r:'#D64545'}, RLAB={g:'Active',o:'Emerging',r:'Nascent'};
 const CATDEF={
  Operational:'Operational Readiness: evaluates the extent to which the market is active, investable, and equipped with infrastructure to support deals (e.g., registries, legal frameworks, project pipeline).',
@@ -259,7 +259,7 @@ CURRENT=E.id;
 
 // ── breadcrumb dropdown ──
 document.getElementById('esTitle').textContent=E.name;
-document.title=E.name+' · Rule book · Hive Mind Library';
+document.title=E.name+' · Rule book · Hive Mind';
 document.getElementById('esmenu').innerHTML=ESDATA.map(e=>`<div class="em-item${e.id===CURRENT?' on':''}" onclick="esGo('${e.id}',event)"><span class="emj">${e.em}</span>${e.name}${e.id===CURRENT?'<i class="ti ti-check ck"></i>':''}</div>`).join('');
 function toggleEsdd(ev){ev.stopPropagation();document.getElementById('esmenu').classList.toggle('open');}
 function esGo(id,ev){ev.stopPropagation();if(id===CURRENT){document.getElementById('esmenu').classList.remove('open');return;}location.href='es-rule-book.html?es='+id;}

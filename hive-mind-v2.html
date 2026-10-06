@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hive Mind · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+/* Hive Mind v2 (4 Oct 2026). The Hive Mind as the Knowledge part of the GYOS
+   harness: what GY builds and owns, loaded by every agent. Agents read it
+   first, people own and review it. Eight shelves, a review queue for
+   curation (owner, date, status per item), and a clear line between what the
+   Hive Mind owns and what it only reads from connected systems. */
+:root{
+  --pri:#2F6FDB; --prid:#2459B5;
+  --ok:#3F6B2A; --okbg:#E7F0DC;
+  --bad:#A3342B; --badbg:#FBE6E3;
+  --sb:#185FA5; --sbbg:#E6F1FB;
+  --adv:#628147; --advbg:#EAF1DE; --cap:#215274; --capbg:#E3ECF3; --trd:#B75A40; --trdbg:#F7E7DE; --prg:#333333; --prgbg:#ECEAE4;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:30px 32px 100px}
+@media(max-width:900px){.wrap{padding:26px 22px 90px}}
+.phead{align-items:center;margin-bottom:0;border-bottom:none;padding-bottom:0}
+.phead .h1{display:flex;align-items:center;gap:14px}
+.phead .abar{margin-left:auto}
+
+/* tabs: views of one object, not filters */
+.tabs{display:flex;gap:26px;border-bottom:1px solid var(--line);margin:18px 0 28px}
+.tab{background:none;border:none;font:inherit;font-size:15px;color:var(--ink2);padding:10px 0 12px;cursor:pointer;position:relative;display:inline-flex;align-items:center;gap:7px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);font-weight:500}
+.tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink);border-radius:2px}
+.tab .tc{font-size:12px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--graybg);color:var(--ink2);font-variant-numeric:tabular-nums}
+.tab .tc.need{background:var(--amberbg);color:var(--amberd)}
+.view{display:none}
+.view.on{display:block}
+
+.blk+.blk{margin-top:44px}
+.sh{display:flex;align-items:baseline;gap:10px;margin-bottom:13px;padding:0 2px}
+.sh h2{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:-.01em}
+.sh .n{font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.sh .act{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.sh .act:hover{color:var(--ink)}
+.sbtn{font-size:13px;font-weight:500;padding:5px 11px;border-radius:9px;border:1px solid var(--line2);background:var(--card);color:var(--ink2);cursor:pointer;font-family:inherit;white-space:nowrap}
+.sbtn:hover{color:var(--ink);border-color:var(--ink3)}
+.sbtn.blue{background:var(--pri);border-color:var(--pri);color:#fff}
+.sbtn.blue:hover{background:var(--prid);border-color:var(--prid)}
+
+/* ask */
+.ask{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 6px 6px 14px}
+.ask:focus-within{border-color:var(--line2)}
+.ask>.ti{font-size:18px;color:var(--ink3)}
+.ask input{flex:1;border:none;outline:none;background:transparent;font:inherit;font-size:15.5px;color:var(--ink);padding:8px 4px}
+.ask input::placeholder{color:var(--ink3)}
+.ask .go{width:34px;height:34px;border-radius:999px;border:none;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px}
+.ask .go:hover{background:var(--prid)}
+.sugg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sugg span{font-size:13px;color:var(--ink2);border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 11px;cursor:pointer}
+.sugg span:hover{border-color:var(--line2);color:var(--ink)}
+.ans{display:none;margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.ans.on{display:block}
+.ans .aq{font-size:13px;color:var(--ink3)}
+.ans .at{font-size:15.5px;line-height:1.6;margin-top:6px}
+.ans .conf{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;padding:3px 10px;border-radius:999px;margin-top:12px}
+.ans .srcs{margin-top:14px;border-top:1px solid var(--line)}
+.src{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
+.src:last-child{border-bottom:none}
+.src .sn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.src .sd{font-size:12.5px;color:var(--ink3);width:60px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.src:hover .sn{color:var(--blued)}
+
+/* status pills */
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:3px 9px;border-radius:999px;white-space:nowrap;flex:none}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st.ok{background:var(--okbg);color:var(--ok)}
+.st.draft{background:var(--graybg);color:#5F5850}
+.st.bad{background:var(--badbg);color:var(--bad)}
+.st.sand{background:var(--sbbg);color:var(--sb)}
+.st.live{background:var(--okbg);color:var(--ok)}
+.st.plan{background:transparent;color:var(--ink3);border:1px dashed var(--line2)}
+
+/* avatars */
+.av{width:24px;height:24px;border-radius:999px;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none;background:#EFEBE1;color:#5F5850}
+.av.me{background:#E6F1FB;color:#185FA5}
+.av.none{background:transparent;border:1px dashed var(--line2);color:var(--ink3)}
+.who{display:inline-flex;align-items:center;gap:8px;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who.none{color:var(--ink3)}
+
+/* review accordion */
+.acc{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.it+.it{border-top:1px solid var(--line)}
+.ih{display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;min-height:52px}
+.ih:hover{background:#FBF8EF}
+.ih .ic{font-size:18px;flex:none;width:20px;text-align:center;color:var(--kc)}
+.ih .t{flex:1;min-width:0;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ih .k{font-size:12.5px;color:var(--ink3);flex:none;width:96px}
+.ih .w{font-size:12.5px;color:var(--ink3);flex:none;width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.ih .w.need{color:var(--amberd);font-weight:600}
+.ih .chev{font-size:15px;color:var(--ink3);transition:transform .15s;flex:none}
+.it.open .chev{transform:rotate(90deg)}
+.it.open{background:var(--currow)}
+.it.open .ih:hover{background:transparent}
+.ib2{display:none;padding:0 18px 18px 50px}
+.it.open .ib2{display:block}
+.ib2 p{font-size:14.5px;line-height:1.55;color:var(--ink2);max-width:680px}
+.facts{display:flex;gap:20px;font-size:13.5px;color:var(--ink2);flex-wrap:wrap;margin-top:10px}
+.facts b{font-weight:500;color:var(--ink)}
+.iact{display:flex;align-items:center;gap:10px;margin-top:14px}
+.empty{padding:28px 18px;text-align:center;color:var(--ink3);font-size:14px}
+.k-promote{--kc:#3F6B2A}.k-stale{--kc:#A3342B}.k-clash{--kc:#6A4FA3}.k-ask{--kc:#185FA5}.k-owner{--kc:#766B62}
+
+/* shelves */
+.shelves{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:980px){.shelves{grid-template-columns:repeat(2,1fr)}}
+.shf{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;cursor:pointer;transition:border-color .12s}
+.shf:hover{border-color:var(--line2)}
+.shf .top{display:flex;align-items:center;gap:10px}
+.shf .si{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--sbg);color:var(--sc);flex:none}
+.shf b{font-size:15px;font-weight:500;flex:1}
+.shf .cnt{font-family:var(--serif);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.hbar{display:flex;gap:2px;height:6px;border-radius:999px;overflow:hidden;background:#EFEDE6;margin-top:14px}
+.hbar span{display:block;height:100%}
+.hbar .h1{background:#7FA35E}.hbar .h2{background:#D9D3C3}.hbar .h3{background:#D07A6F}
+.hlab{display:flex;gap:12px;font-size:12px;color:var(--ink3);margin-top:7px;font-variant-numeric:tabular-nums}
+.hlab .bad{color:var(--bad)}
+.shf.sand{background:transparent;border-style:dashed}
+
+/* tables (gytbl from gy-nav.js) */
+.gytbl .gyrow{display:grid;grid-template-columns:var(--cols);align-items:center;gap:14px}
+.gytbl .gyhd{display:grid;grid-template-columns:var(--cols);gap:14px;padding:11px 20px}
+.nmc{display:flex;align-items:center;gap:11px;min-width:0}
+.nmc .nm{font-weight:500;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mut{font-size:13.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.num{font-size:13.5px;color:var(--ink2);font-variant-numeric:tabular-nums;text-align:right}
+.gyhd .num{font-size:inherit;color:inherit}
+.aface{width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;background:var(--fc);flex:none}
+.aface.es-bng,.aface.es-wcc,.aface.es-soc,.aface.es-nut,.aface.es-nfm{background:var(--esc)}
+.dep{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:3px 9px;border-radius:999px;background:var(--dbg);color:var(--dc);white-space:nowrap}
+.d-adv{--dc:var(--adv);--dbg:var(--advbg)}.d-cap{--dc:var(--cap);--dbg:var(--capbg)}.d-trd{--dc:var(--trd);--dbg:var(--trdbg)}.d-prg{--dc:var(--prg);--dbg:var(--prgbg)}
+.shtag{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink2);white-space:nowrap}
+.shtag .ti{font-size:15px;color:var(--sc)}
+
+/* covers, small */
+.covers{display:grid;grid-template-columns:repeat(9,1fr);gap:16px}
+@media(max-width:980px){.covers{grid-template-columns:repeat(5,1fr)}}
+.cv{cursor:pointer}
+.cv .escover{width:100%;display:block;border-radius:2px;box-shadow:0 1px 2px rgba(31,31,29,.10),0 6px 16px rgba(31,31,29,.14);transition:transform .16s}
+.cv:hover .escover{transform:translateY(-3px)}
+.cv span{display:block;font-size:12.5px;line-height:1.3;margin-top:9px;color:var(--ink2)}
+.covtwo{display:grid;grid-template-columns:8fr 9fr;gap:40px}
+.covtwo .covers.c8{grid-template-columns:repeat(4,1fr)}
+.covtwo .covers.c9{grid-template-columns:repeat(5,1fr)}
+@media(max-width:980px){.covtwo{grid-template-columns:1fr}}
+
+/* reads from */
+.reads{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:980px){.reads{grid-template-columns:repeat(2,1fr)}}
+.rd{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--card);cursor:pointer}
+.rd:hover{border-color:var(--line2)}
+.rd .ti{font-size:20px;color:var(--ink2)}
+.rd b{display:block;font-size:14.5px;font-weight:500;margin-top:10px}
+.rd span{display:block;font-size:13px;color:var(--ink3);margin-top:2px}
+
+/* log */
+.log{border-left:1px solid var(--line);margin-left:8px;padding-left:20px}
+.le{display:flex;align-items:baseline;gap:12px;padding:8px 0;font-size:14.5px;line-height:1.45;color:var(--ink2)}
+.le .lt{font-size:12.5px;color:var(--ink3);width:44px;flex:none;font-variant-numeric:tabular-nums}
+.le .lx{flex:1;min-width:0}
+.le .lx b{font-weight:500;color:var(--ink)}
+
+/* review tab groups */
+.rgrp+.rgrp{margin-top:30px}
+.rrow{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line);background:var(--card)}
+.rrow:first-child{border-top:none}
+.rrow .ic{font-size:17px;color:var(--kc);width:20px;text-align:center;flex:none}
+.rrow .t{flex:1;min-width:0;font-size:14.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.rrow .t:hover{color:var(--blued)}
+.rbox{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+
+/* rules */
+.val{font-size:13.5px;font-weight:500;color:var(--ink)}
+
+/* drawer previewer */
+.bov{position:fixed;inset:0;background:rgba(26,12,18,.12);z-index:1300;opacity:0;pointer-events:none;transition:opacity .12s}
+.bov.open{opacity:1;pointer-events:auto}
+.bdr{position:fixed;top:0;right:0;height:100vh;width:min(460px,100vw);background:var(--card);border-left:1px solid var(--line);z-index:1301;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1);display:flex;flex-direction:column;box-shadow:0 16px 44px rgba(31,31,29,.18)}
+.bdr.open{transform:none}
+.bdh{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.bdh h3{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:-.01em;flex:1;line-height:1.2}
+.bdh .x{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none}
+.bdh .x:hover{background:var(--graybg);color:var(--ink)}
+.bdb{flex:1;overflow:auto;padding:4px 22px 30px}
+.bl{font-size:13px;font-weight:600;color:var(--ink3);margin:22px 0 4px}
+.bf{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.bl+.bf{border-top:none}
+.bf>span:first-child{color:var(--ink3)}
+.bf b{font-weight:500;text-align:right}
+.bp{font-size:14.5px;line-height:1.6;color:var(--ink)}
+.bm{display:flex;gap:10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line);font-size:14px;color:var(--ink2)}
+.bl+.bm{border-top:none}
+.bm .bw{color:var(--ink3);font-size:12.5px;width:48px;flex:none;font-variant-numeric:tabular-nums}
+.bact{display:flex;gap:10px;padding:16px 22px;border-top:1px solid var(--line)}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:14.5px;padding:9px 18px;border-radius:999px;z-index:1800;display:none;max-width:80vw}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"library","arts":null};</script>
+<script src="gy-nav.js?v=d794329b"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs"><span class="cr cur">Hive Mind</span></div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Hive Mind <span id="hchip"></span></div>
+    <div id="abar"></div>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-v="overview">Overview</button>
+    <button class="tab" data-v="review">Review <span class="tc need" id="tcRev"></span></button>
+    <button class="tab" data-v="library">Library <span class="tc" id="tcLib"></span></button>
+    <button class="tab" data-v="rules">Rules</button>
+  </nav>
+
+  <!-- ── Overview ── -->
+  <section class="view on" id="v-overview">
+    <div class="blk">
+      <form class="ask" onsubmit="ask(event)">
+        <i class="ti ti-sparkles"></i>
+        <input id="askIn" type="text" placeholder="Ask the Hive Mind" autocomplete="off">
+        <button class="go" type="submit" title="Ask"><i class="ti ti-arrow-up"></i></button>
+      </form>
+      <div class="sugg" id="sugg"></div>
+      <div class="ans" id="ans"></div>
+    </div>
+
+    <div class="blk">
+      <div class="sh"><h2>Needs review</h2><span class="n" id="revN"></span><span class="act" onclick="showTab('review')">All reviews</span></div>
+      <div class="acc" id="acc"></div>
+    </div>
+
+    <div class="blk">
+      <div class="sh"><h2>Shelves</h2><span class="act" onclick="showTab('library')">Library</span></div>
+      <div class="shelves" id="shelves"></div>
+    </div>
+
+    <div class="blk">
+      <div class="sh"><h2>Agents</h2><span class="n" id="agN"></span><span class="act" onclick="openShelf('agents')">All agent definitions</span></div>
+      <div id="agents"></div>
+    </div>
+
+    <div class="blk">
+      <div class="sh"><h2>Blueprints</h2><span class="n" id="bpN"></span><span class="act" onclick="openShelf('blueprints')">All blueprints</span></div>
+      <div id="blueprints"></div>
+    </div>
+
+    <div class="blk covtwo">
+      <div>
+        <div class="sh"><h2>Rule books</h2><span class="n">8</span></div>
+        <div class="covers c8" id="books"></div>
+      </div>
+      <div>
+        <div class="sh"><h2>Buyer personas</h2><span class="n" id="perN"></span></div>
+        <div class="covers c9" id="personas"></div>
+      </div>
+    </div>
+
+    <div class="blk">
+      <div class="sh"><h2>Reads from</h2><span class="act" onclick="location.href='settings-connectors.html'">Connectors</span></div>
+      <div class="reads" id="reads"></div>
+    </div>
+
+    <div class="blk">
+      <div class="sh"><h2>Write-backs</h2><span class="act" onclick="location.href='audit-log.html'">Audit log</span></div>
+      <div class="log" id="log"></div>
+    </div>
+  </section>
+
+  <!-- ── Review ── -->
+  <section class="view" id="v-review"><div id="reviewGroups"></div></section>
+
+  <!-- ── Library ── -->
+  <section class="view" id="v-library">
+    <div class="gylegend gyhd" style="background:none;padding:0 21px 10px;--cols:minmax(0,2.4fr) 1.1fr 1.3fr 1fr 70px 70px">
+      <span>Name</span><span>Shelf</span><span>Owner</span><span>Status</span><span class="num">Used by</span><span class="num">Checked</span>
+    </div>
+    <div class="gytbl" id="lib" style="--cols:minmax(0,2.4fr) 1.1fr 1.3fr 1fr 70px 70px"></div>
+  </section>
+
+  <!-- ── Rules ── -->
+  <section class="view" id="v-rules">
+    <div class="blk">
+      <div class="sh"><h2>What it owns, what it reads</h2></div>
+      <div class="gytbl" id="truth" style="--cols:minmax(0,1.4fr) 1.3fr 1.6fr"></div>
+    </div>
+    <div class="blk">
+      <div class="sh"><h2>House rules</h2></div>
+      <div class="gytbl" id="hrules" style="--cols:minmax(0,1.6fr) 1.4fr 1fr"></div>
+    </div>
+  </section>
+</div>
+</div>
+</div>
+
+<div class="bov" id="bov" onclick="closeItem()"></div>
+<aside class="bdr" id="bdr" aria-label="Item"></aside>
+<div class="toast" id="toast"></div>
+
+<script src="gy-es-covers.js?v=1fe57ced"></script>
+<script src="gy-personas.js?v=2f13de21"></script>
+<script src="gy-persona-covers.js?v=37895c2e"></script>
+<script src="gy-versions.js?v=2400190b"></script>
+<script>
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},3000)}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+
+/* ── people ── */
+var PEOPLE={
+ CC:'Caitlin Ciceri', EM:'Emily', AL:'Alex', SO:'Solene', JF:'Josh Fettes', AS:'Asha', HF:'Harry Forman',
+ CR:'Charlie Regent', CT:'Cat', MI:'Millie', EH:'Ed Hewitt', TO:'Toon'
+};
+var ME='CC';
+function who(k){
+  if(!k) return '<span class="who none"><span class="av none">?</span>No owner</span>';
+  if(k==='TBC') return '<span class="who none"><span class="av none">?</span>Capital lead TBC</span>';
+  return '<span class="who"><span class="av'+(k===ME?' me':'')+'">'+k+'</span>'+(k===ME?'You':PEOPLE[k])+'</span>';
+}
+
+/* ── shelves ── counts are the whole shelf, the library lists a sample */
+var SHELVES=[
+ {k:'agents',     n:'Agents',     i:'ti-robot',        c:'#6A4FA3', bg:'#ECE6F7', h:[2,4,1]},
+ {k:'blueprints', n:'Blueprints', i:'ti-route',        c:'#8A6A2A', bg:'#F3ECDC', h:[2,4,0]},
+ {k:'expertise',  n:'Expertise',  i:'ti-bulb',         c:'#3F6B2A', bg:'#E7F0DC', h:[37,7,4]},
+ {k:'skills',     n:'Skills',     i:'ti-tool',         c:'#1D7A6E', bg:'#DFF1EC', h:[15,6,0]},
+ {k:'lessons',    n:'Lessons',    i:'ti-repeat',       c:'#B5628F', bg:'#F8E8F0', h:[12,5,0]},
+ {k:'evals',      n:'Evals',      i:'ti-checklist',    c:'#185FA5', bg:'#E6F1FB', h:[7,5,0]},
+ {k:'context',    n:'Context',    i:'ti-users-group',  c:'#215274', bg:'#E3ECF3', h:[16,2,1]},
+ {k:'sandbox',    n:'Sandbox',    i:'ti-flask',        c:'#766B62', bg:'#F3EFE1', h:[0,5,0], sand:true}
+];
+function shelf(k){return SHELVES.filter(function(s){return s.k===k})[0]}
+
+/* ── items ── st: ok | draft | bad ; tier only for expertise */
+var ITEMS=[
+ {id:'wcc-price',  n:'WCC price band',                       s:'expertise', o:'SO', st:'bad',   u:3, d:'12 Jun', tier:'Gold', src:'Trade deals, intermediary quotes', about:'WCC units trade roughly £25 to £50 below Wilder Carbon. High-quality UK credits sell at £75 to £125 per tonne.', by:['Woodland Carbon agent','Customer Demand Mapping','Financial Model']},
+ {id:'wcc-pack',   n:'Carbon price evidence pack',           s:'expertise', o:'SO', st:'ok',    u:3, d:'2 Sep',  tier:'Gold', src:'GY Trade, World Bank, Forest Research', about:'The evidence behind every carbon price GY quotes, by code and vintage.', by:['Woodland Carbon agent','Customer Demand Mapping','Investor Q&A Log']},
+ {id:'wcc-curve',  n:'WCC carbon curve method',              s:'expertise', o:'JF', st:'ok',    u:2, d:'29 Sep', tier:'Gold', src:'Databricks, fact_wcc_project_carbon_curve', about:'How a planting plan becomes a carbon curve. The numbers live in Databricks; this item holds the method and its judgement calls.', by:['Woodland Carbon agent','Financial Model']},
+ {id:'vv-cost',    n:'Validation and verification cost model',s:'expertise', o:'AS', st:'ok',    u:2, d:'18 Sep', tier:'Silver', src:'Verifier quotes 2025 to 2026', about:'Expected V&V cost per project size band, used to test whether a woodland project pays back.', by:['Woodland Carbon agent','Financial Model']},
+ {id:'bng-price',  n:'BNG unit price evidence',              s:'expertise', o:'EM', st:'draft', u:3, d:'1 Oct',  tier:'Silver', src:'Gaia, Spains Hall quotes', about:'Average unit price from the Gaia dataset, with live quotes as they arrive. A new quote disagrees with the rule book.', by:['BNG agent','Customer Demand Mapping','Tender to Bid']},
+ {id:'bng-stat',   n:'BNG statutory credits policy',         s:'expertise', o:'EM', st:'ok',    u:2, d:'9 Sep',  tier:'Gold', src:'DEFRA guidance', about:'When statutory credits apply and how they price against market units.', by:['BNG agent','Tender to Bid']},
+ {id:'stack',      n:'Stacking and double counting rules',   s:'expertise', o:'JF', st:'draft', u:5, d:'24 Sep', tier:'Silver', src:'Code rules, GY legal view', about:'Which ecosystem services can be sold from the same land, and in what order. Every ES agent checks against it.', by:['All ES agents','Customer Demand Mapping']},
+ {id:'peat-cat',   n:'Peatland condition categories',        s:'expertise', o:null, st:'draft', u:1, d:'3 Aug',  tier:'Bronze', src:'Peatland Code', about:'Condition categories and their emission factors. No owner yet, so the agent answers at low confidence.', by:['Peatland Carbon agent']},
+ {id:'nut-price',  n:'Nutrient credit pricing by catchment', s:'expertise', o:'TBC',st:'bad',   u:2, d:'4 May',  tier:'Silver', src:'Natural England, Norfolk Council', about:'Price per credit by catchment. Out of date since the P&I Bill consultation.', by:['Nutrient agent','Customer Demand Mapping']},
+ {id:'wcc-qbank',  n:'Woodland carbon question bank',        s:'expertise', o:'SO', st:'draft', u:1, d:'3 Oct',  tier:'Silver', src:'Expert interviews', about:'The questions the agent asks a landowner, in order, and why each matters.', by:['Woodland Carbon agent']},
+ {id:'ag-dm',      n:'Demand Mapping agent',                 s:'agents',    o:'EM', st:'draft', u:1, d:'1 Oct',  src:'Agents folder', about:'Coordinator. Runs GY\u2019s demand mapping process, calls the ES agents and tools, and routes the document for review.', by:['Customer Demand Mapping']},
+ {id:'ag-wcc',     n:'Woodland Carbon agent definition v0.1',s:'agents',    o:'SO', st:'draft', u:3, d:'3 Oct',  src:'Agents folder', about:'The holistic source of truth for woodland carbon. Rule books are only an input. Reads numbers from Databricks, never copies them.', by:['Customer Demand Mapping','Financial Model','Blended Finance Plan']},
+ {id:'ag-inv',     n:'Inventory agent',                      s:'agents',    o:'CR', st:'ok',    u:1, d:'3 Oct',  src:'Agents folder', about:'Steward of the ledger. Proposes grade changes and reconciliations; people approve.', by:['Inventory']},
+ {id:'bp-dm',      n:'Customer Demand Mapping',              s:'blueprints',o:'EM', st:'ok',    u:5, d:'26 Sep', src:'Blueprint schema', about:'Steps, gates, tools allowed and the done-when for a demand map. Five live runs.', by:['Upper Dee','Evenlode','Denton Reserve']},
+ {id:'bp-iqa',     n:'Investor Q&A Log',                     s:'blueprints',o:'TBC',st:'draft', u:3, d:'2 Oct',  src:'Blueprint schema', about:'Canonical answers to investor questions, reused across raises.', by:['Evenlode']},
+ {id:'sk-card',    n:'Fill an ES Card',                      s:'skills',    o:'CT', st:'ok',    u:6, d:'30 Sep', src:'Skills library', about:'Fills one Ecosystem Service Card with confidence and a source per field. Flags gaps, never guesses.', by:['All ES agents']},
+ {id:'sk-q',       n:'Extract questionnaire from client docs',s:'skills',   o:'CT', st:'ok',    u:2, d:'22 Sep', src:'Skills library', about:'Reads what the client sent and lists what is still missing.', by:['Demand Mapping agent','Tender to Bid']},
+ {id:'sk-desk',    n:'Desk research',                        s:'skills',    o:'HF', st:'ok',    u:4, d:'15 Sep', src:'Skills library', about:'Searches public sources on a site and its market, with links kept.', by:['Demand Mapping agent','All ES agents']},
+ {id:'sk-buyer',   n:'Match buyers to supply',               s:'skills',    o:'AL', st:'draft', u:2, d:'28 Sep', src:'Skills library', about:'Reads the shared buyer database and ranks buyers for a project. Buyers stay in the database.', by:['Demand Mapping agent','Inventory']},
+ {id:'ls-vint',    n:'Buyers ask vintage year before price', s:'lessons',   o:'CC', st:'draft', u:0, d:'Today',  src:'Upper Dee and Evenlode runs', about:'Seen in two runs. Proposed for step 2.4 of the Customer Demand Mapping blueprint.', by:[]},
+ {id:'ls-survey',  n:'Hedgerow survey windows close in March',s:'lessons',  o:'EM', st:'ok',    u:2, d:'11 Sep', src:'Denton Reserve run', about:'Plan baseline surveys before March or lose a season.', by:['BNG agent','Customer Demand Mapping']},
+ {id:'ls-peat',    n:'Peat depth data is usually missing',   s:'lessons',   o:'CC', st:'ok',    u:1, d:'20 Sep', src:'Upper Dee run', about:'Ask for peat depth surveys at kick-off, not at the ES Card step.', by:['Peatland Carbon agent']},
+ {id:'ev-clash',   n:'Rule book contradiction checks',       s:'evals',     o:'CT', st:'ok',    u:6, d:'2 Oct',  src:'Eval set, 42 cases', about:'Checks every agent answer against the rule books and flags contradictions before a person sees it.', by:['All ES agents']},
+ {id:'ev-conf',    n:'ES Card confidence labels',            s:'evals',     o:'CT', st:'draft', u:6, d:'3 Oct',  src:'Eval set, 18 cases', about:'Cat\u2019s hand-filled cards from the five live runs, used as the baseline.', by:['All ES agents']},
+ {id:'ev-dm',      n:'Demand map review cases',              s:'evals',     o:'EM', st:'draft', u:1, d:'29 Sep', src:'Eval set, 9 cases', about:'What a lead checks before a demand map goes to a client.', by:['Demand Mapping agent']},
+ {id:'cx-pc',      n:'Buyer personas, carbon',               s:'context',   o:'MI', st:'ok',    u:4, d:'29 Sep', src:'Notion', about:'Six carbon buyer personas, from mature buyers to land-dependent buyers.', by:['Woodland Carbon agent','Demand Mapping agent']},
+ {id:'cx-pb',      n:'Buyer personas, BNG',                  s:'context',   o:'MI', st:'ok',    u:3, d:'29 Sep', src:'Notion', about:'Ecology firms, planning firms, promoters and housebuilders.', by:['BNG agent','Tender to Bid']},
+ {id:'cx-sector',  n:'Sector profiles',                      s:'context',   o:'AL', st:'bad',   u:2, d:'19 Jun', src:'Trade research', about:'Water, infrastructure, retail and finance, with their drivers to buy.', by:['Demand Mapping agent','Tender to Bid']},
+ {id:'cx-mp',      n:'Masterplan v2',                        s:'context',   o:'EH', st:'ok',    u:0, d:'29 Apr', src:'Notion', about:'Why GY exists, how it works, the roadmap.', by:[]},
+ {id:'sb-mr',      n:'Market Readiness',                     s:'sandbox',   o:'AL', st:'draft', u:0, d:'30 Sep', src:'Blueprint draft, 0 runs', about:'The NatWest report as a recurring deliverable. Promoted after three successful runs.', by:[]},
+ {id:'sb-tb',      n:'Tender to Bid',                        s:'sandbox',   o:'AL', st:'draft', u:0, d:'27 Sep', src:'Blueprint draft, 1 run', about:'Turns a tender into a bid with a go or no-go.', by:[]}
+];
+function item(id){return ITEMS.filter(function(x){return x.id===id})[0]}
+var STL={ok:'Checked',draft:'Draft',bad:'Out of date'};
+function stPill(st){return '<span class="st '+st+'">'+STL[st]+'</span>'}
+
+/* ── review queue ── */
+var REVIEW=[
+ {id:'r1', k:'promote', i:'ti-arrow-big-up-lines', kn:'Promote', o:'CC', w:'Today', ref:'ls-vint',
+  t:'Buyers ask vintage year before price',
+  p:'The Demand Mapping agent saw this in the Upper Dee and Evenlode runs. Promote it into step 2.4 of the Customer Demand Mapping blueprint.',
+  f:[['Seen in','2 runs'],['Goes to','Customer Demand Mapping, step 2.4'],['Proposed by','Demand Mapping agent']],
+  a:[['Promote','blue','Promoted into Customer Demand Mapping, step 2.4'],['Dismiss','','Dismissed. The lesson stays in Lessons as a draft']]},
+ {id:'r2', k:'stale', i:'ti-clock-exclamation', kn:'Out of date', o:'SO', w:'3d', ref:'wcc-price',
+  t:'WCC price band',
+  p:'Last checked 12 Jun, past the 90-day interval. The Woodland Carbon agent answers price questions at low confidence until it is checked.',
+  f:[['Used by','3 agents and blueprints'],['Last checked','12 Jun'],['Interval','90 days']],
+  a:[['Mark checked','blue','Marked checked. Agents answer at full confidence again'],['Edit','','Opening the item']]},
+ {id:'r3', k:'clash', i:'ti-arrows-diff', kn:'Contradiction', o:'EM', w:'1d', ref:'bng-price',
+  t:'BNG unit price: rule book vs new quote',
+  p:'The BNG rule book average is £37,968 per unit. A Spains Hall quote logged on 1 Oct puts comparable units at £42,000.',
+  f:[['Rule book','£37,968'],['New evidence','£42,000'],['Found by','Rule book contradiction checks']],
+  a:[['Use new evidence','blue','BNG unit price evidence updated. Rule book flagged for its next refresh'],['Keep rule book','','Kept the rule book value. The quote is logged as an outlier']]},
+ {id:'r4', k:'ask', i:'ti-message-question', kn:'Questions', o:'SO', w:'Mon', ref:'ag-wcc',
+  t:'Woodland Carbon agent has 3 questions this week',
+  p:'Is the 2029 PIU vintage still sellable at forward prices? Should V&V costs include the 5-year re-verification? Is the Wilder premium holding for small sites?',
+  f:[['Batched','Weekly, Monday'],['Waiting','Low-confidence answers in use']],
+  a:[['Answer','blue','Opening the questions'],['Hand to backup','','Sent to the backup manager']]},
+ {id:'r5', k:'promote', i:'ti-arrow-big-up-lines', kn:'Promote', o:'CT', w:'2d', ref:'bp-iqa',
+  t:'Investor Q&A Log: 3 successful runs',
+  p:'The blueprint met its done-when in three sandbox runs. Promote it from Sandbox into the Hive Mind.',
+  f:[['Runs','3 of 3 successful'],['Owner after promotion','Capital lead TBC']],
+  a:[['Promote','blue','Investor Q&A Log promoted into Blueprints'],['Not yet','','Stays in Sandbox']]},
+ {id:'r6', k:'owner', i:'ti-user-question', kn:'No owner', o:'EH', w:'5d', ref:'peat-cat',
+  t:'Peatland Carbon agent has no manager',
+  p:'Six knowledge items have no owner, so nothing on peat can be marked checked. Nothing enters the Hive Mind without a named owner.',
+  f:[['Items without owner','6'],['Blocks','Peatland Carbon agent']],
+  a:[['Assign manager','blue','Pick a manager for the Peatland Carbon agent'],['Later','','Reminder set for next week']]}
+];
+
+/* ── agents ── */
+var AGENTS=[
+ {n:'Demand Mapping',  type:'Coordinator', o:'EM', items:24, st:'draft', i:'ti-target-arrow', c:'#8A6A2A', ref:'ag-dm'},
+ {n:'Woodland Carbon', type:'Ecosystem service', o:'SO', items:31, st:'draft', es:'wcc', ref:'ag-wcc'},
+ {n:'BNG',             type:'Ecosystem service', o:'EM', items:18, st:'plan', es:'bng'},
+ {n:'Peatland Carbon', type:'Ecosystem service', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat'},
+ {n:'Nutrient',        type:'Ecosystem service', o:'TBC',items:9,  st:'plan', es:'nut'},
+ {n:'Flood',           type:'Ecosystem service', o:null, items:4,  st:'plan', es:'nfm'},
+ {n:'Inventory',       type:'Steward', o:'CR', items:11, st:'live', i:'ti-stack-2', c:'#4E5D8C', ref:'ag-inv'}
+];
+var AST={live:['live','Live'],draft:['draft','Draft'],plan:['plan','Planned']};
+
+/* ── blueprints ── */
+var BPS=[
+ {n:'Customer Demand Mapping', d:'adv', dn:'Advisory', ph:'Discover', o:'EM', runs:5, st:'live', go:'deliverable-sketch-v8.html'},
+ {n:'Investor Q&A Log',        d:'cap', dn:'Capital',  ph:'Build',    o:'TBC',runs:3, st:'sand', go:'investor-qa-log-canvas-prototype.html'},
+ {n:'Tender to Bid',           d:'trd', dn:'Trade',    ph:'Plan',     o:'AL', runs:1, st:'sand', go:'tender-to-bid-canvas-prototype.html'},
+ {n:'Blended Finance Plan',    d:'adv', dn:'Advisory', ph:'Plan',     o:'EM', runs:0, st:'draft'},
+ {n:'Financial Model',         d:'cap', dn:'Capital',  ph:'Plan',     o:'TBC',runs:0, st:'draft'},
+ {n:'Market Readiness',        d:'trd', dn:'Trade',    ph:'Discover', o:'AL', runs:0, st:'draft'}
+];
+var BST={live:['live','Live'],sand:['sand','Sandbox'],draft:['draft','Draft']};
+
+/* ── rule books (covers need id, name, type, col) ── */
+var BOOKS=[
+ {id:'carbon',n:'Carbon',col:'#C67F16',type:'Compliance + voluntary'},
+ {id:'bng',n:'Biodiversity Net Gain',col:'#1E8A63',type:'Compliance'},
+ {id:'volbio',n:'Voluntary Biodiversity',col:'#7C9861',type:'Voluntary'},
+ {id:'nn',n:'Nutrient Neutrality',col:'#1F6FB2',type:'Compliance'},
+ {id:'nfm',n:'Natural Flood Management',col:'#B5628F',type:'Voluntary'},
+ {id:'wq',n:'Water Quality',col:'#3D7FA8',type:'Voluntary'},
+ {id:'rm',n:'Replenish',col:'#5595BC',type:'Voluntary'},
+ {id:'scr',n:'Supply Chain Resilience',col:'#B75A40',type:'Bespoke'}
+];
+
+var READS=[
+ {i:'ti-database',      n:'Databricks',     s:'Numbers and curves'},
+ {i:'ti-address-book',  n:'HubSpot',        s:'Deals and buyers'},
+ {i:'ti-stack-2',       n:'Inventory',      s:'Units and ledger'},
+ {i:'ti-brand-notion',  n:'Notion',         s:'Trackers and notes'},
+ {i:'ti-file-text',     n:'GYOS records',   s:'ES Cards and runs'}
+];
+
+var LOG=[
+ ['09:12','<b>Upper Dee demand map</b> saved 3 lessons, 1 proposed for promotion'],
+ ['Yest.','<b>Solene</b> checked Carbon price evidence pack'],
+ ['Yest.','<b>Woodland Carbon agent</b> flagged WCC price band out of date'],
+ ['Thu','<b>Cat</b> added 42 cases to Rule book contradiction checks'],
+ ['Wed','<b>Investor Q&A Log</b> met its done-when for the third time']
+];
+
+/* ── header, chip, action bar ── */
+function totals(){
+  var t=0,ok=0; SHELVES.forEach(function(s){ if(s.sand) return; t+=s.h[0]+s.h[1]+s.h[2]; ok+=s.h[0]; });
+  return {t:t, pc:Math.round(ok/t*100)};
+}
+function paintChip(){
+  var x=totals(), out=SHELVES.reduce(function(a,s){return a+s.h[2]},0);
+  document.getElementById('hchip').innerHTML=gyChip(x.t+' items · '+x.pc+'% checked',
+    out+' out of date · last write-back today 09:12 from the Upper Dee demand map', out?'stale':'');
+}
+var ADD=[
+ ['ti-robot','Agent definition','New agent definition from the template'],
+ ['ti-route','Blueprint','New blueprint, starts in Sandbox'],
+ ['ti-bulb','Knowledge item','New knowledge item, needs an owner'],
+ ['ti-tool','Skill','New skill'],
+ ['ti-checklist','Eval set','New eval set'],
+ ['ti-repeat','Lesson','New lesson']
+];
+var BAR=gyBar('abar',{
+  search:{placeholder:'Search the Hive Mind', oninput:function(v){Q=v.toLowerCase(); if(v) showTab('library'); renderLib();}},
+  filters:[
+    ['Shelf',[['ti-circle-dot','All shelves','all']].concat(SHELVES.map(function(s){return [s.i,s.n,s.k]}))],
+    ['Status',[['ti-circle-dot','Any status','all'],['ti-circle-check','Checked','ok'],['ti-pencil','Draft','draft'],['ti-clock-exclamation','Out of date','bad']]],
+    ['Owner',[['ti-circle-dot','Anyone','all'],['ti-user','You','CC'],['ti-user-question','No owner','none']]]
+  ],
+  actions:[
+    ['ti-folder','Open Agents folder','The Agents folder sits next to the prototype in Great Yellow - AI'],
+    ['ti-file-export','Export checked items as skills','Exports every checked item as Agent Skills files'],
+    '-',
+    ['ti-history','Audit log','go:audit-log.html']
+  ],
+  primary:{icon:'ti-plus', label:'Add', onclick:function(b){ gyMenu(b, ADD); }},
+  onfilter:function(){ showTab('library'); renderLib(); }
+});
+var Q='';
+
+/* ── tabs ── */
+function showTab(v){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on', t.getAttribute('data-v')===v)});
+  document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('on', s.id==='v-'+v)});
+}
+document.getElementById('tabs').addEventListener('click',function(e){var t=e.target.closest('.tab'); if(t) showTab(t.getAttribute('data-v'));});
+function openShelf(k){ BAR.set('Shelf',k); showTab('library'); renderLib(); }
+
+/* ── ask ── scripted answers with provenance */
+var SUGG=['What does a WCC unit sell for?','Average BNG unit price','Who buys peatland carbon?'];
+document.getElementById('sugg').innerHTML=SUGG.map(function(s){return '<span onclick="askQ(\''+s.replace(/'/g,"\\'")+'\')">'+s+'</span>'}).join('');
+function ask(e){ e.preventDefault(); var v=document.getElementById('askIn').value.trim(); if(v) askQ(v); }
+function askQ(q){
+  document.getElementById('askIn').value=q;
+  var l=q.toLowerCase(), a;
+  if(/wcc|woodland|carbon unit|carbon price|sell for/.test(l)) a={
+    t:'WCC units trade roughly £25 to £50 below Wilder Carbon. High-quality UK credits sell at £75 to £125 per tonne, and buyers pay more for removals with co-benefits.',
+    c:['bad','Medium confidence: the price band is out of date'], s:['wcc-pack','wcc-price','cx-pc'], ag:'Woodland Carbon agent'};
+  else if(/bng|biodiversity/.test(l)) a={
+    t:'The average BNG unit sells for about £37,968, based on 107 priced projects on Gaia. A new Spains Hall quote at £42,000 is waiting for review.',
+    c:['draft','Medium confidence: an open contradiction'], s:['bng-price','bng-stat','cx-pb'], ag:'BNG agent'};
+  else if(/peat/.test(l)) a={
+    t:'The Hive Mind has nothing checked on peatland carbon buyers yet. The Peatland Carbon agent has no manager, so the gap is logged for whoever takes it on.',
+    c:['bad','Low confidence: no owner'], s:['peat-cat','ls-peat'], ag:'Peatland Carbon agent', gap:true};
+  else a={
+    t:'Nothing in the Hive Mind answers this yet. Log it as a gap and it becomes a to-do for the right owner.',
+    c:['bad','No answer'], s:[], gap:true};
+  var box=document.getElementById('ans');
+  box.innerHTML='<div class="aq">'+esc(q)+(a.ag?' · answered by '+a.ag:'')+'</div>'
+    +'<div class="at">'+a.t+'</div>'
+    +'<span class="conf st '+a.c[0]+'">'+a.c[1]+'</span>'
+    +(a.s.length?'<div class="srcs">'+a.s.map(function(id){var x=item(id);
+        return '<div class="src" onclick="openItem(\''+id+'\')"><span class="sn">'+x.n+'</span>'+who(x.o)+stPill(x.st)+'<span class="sd">'+x.d+'</span></div>';}).join('')+'</div>':'')
+    +(a.gap?'<div class="iact"><button class="sbtn" onclick="toast(\'Gap logged as a to-do for the owner\')">Log as gap</button></div>':'');
+  box.classList.add('on');
+}
+
+/* ── review ── */
+var OPEN='r1';
+function reviewHtml(r){
+  return '<div class="it k-'+r.k+(OPEN===r.id?' open':'')+'" data-id="'+r.id+'">'
+    +'<div class="ih" onclick="toggleRev(\''+r.id+'\')"><i class="ti '+r.i+' ic"></i><span class="t">'+r.t+'</span>'
+    +'<span class="k">'+r.kn+'</span>'+who(r.o)+'<span class="w'+(r.o===ME?' need':'')+'">'+r.w+'</span><i class="ti ti-chevron-right chev"></i></div>'
+    +'<div class="ib2"><p>'+r.p+'</p>'
+    +'<div class="facts">'+r.f.map(function(f){return '<span>'+f[0]+' <b>'+f[1]+'</b></span>'}).join('')+'</div>'
+    +'<div class="iact">'+r.a.map(function(b,i){return '<button class="sbtn'+(b[1]?' '+b[1]:'')+'" onclick="resolve(\''+r.id+'\','+i+')">'+b[0]+'</button>'}).join('')
+    +'<button class="sbtn" onclick="openItem(\''+r.ref+'\')">Open item</button></div></div></div>';
+}
+function toggleRev(id){ OPEN = OPEN===id ? null : id; renderReview(); }
+function resolve(id, i){
+  var r=REVIEW.filter(function(x){return x.id===id})[0]; if(!r) return;
+  var b=r.a[i];
+  if(b[0]==='Edit'||b[0]==='Answer'||b[0]==='Assign manager'){ openItem(r.ref); return; }
+  REVIEW=REVIEW.filter(function(x){return x.id!==id});
+  if(i===0){
+    var x=item(r.ref);
+    if(r.k==='stale'||r.k==='clash'){ x.st='ok'; x.d='Today'; var s=shelf(x.s); if(r.k==='stale'){s.h[2]--;s.h[0]++;} else {s.h[1]--;s.h[0]++;} }
+    if(r.k==='promote'&&r.ref==='ls-vint'){ x.st='ok'; x.d='Today'; var s2=shelf('lessons'); s2.h[1]--; s2.h[0]++; }
+    if(r.k==='promote'&&r.ref==='bp-iqa'){ x.st='ok'; var b2=BPS[1]; b2.st='live'; var s3=shelf('blueprints'); s3.h[1]--; s3.h[0]++; }
+  }
+  LOG.unshift(['Now','<b>'+(PEOPLE[ME].split(' ')[0])+'</b>: '+b[2].charAt(0).toLowerCase()+b[2].slice(1)]);
+  if(OPEN===id) OPEN = REVIEW.length ? REVIEW[0].id : null;
+  toast(b[2]); renderAll();
+}
+function renderReview(){
+  var mine=REVIEW.filter(function(r){return r.o===ME}).length;
+  document.getElementById('revN').textContent=REVIEW.length+(mine?' · '+mine+' for you':'');
+  document.getElementById('tcRev').textContent=REVIEW.length;
+  document.getElementById('tcRev').style.display=REVIEW.length?'':'none';
+  var top=REVIEW.slice().sort(function(a,b){return (b.o===ME)-(a.o===ME)}).slice(0,4);
+  document.getElementById('acc').innerHTML = top.length ? top.map(reviewHtml).join('') : '<div class="empty">Nothing waiting for review</div>';
+  var G=[['promote','To promote'],['clash','Contradictions'],['stale','Out of date'],['ask','Questions from agents'],['owner','Without an owner']];
+  document.getElementById('reviewGroups').innerHTML = REVIEW.length ? G.map(function(g){
+    var rows=REVIEW.filter(function(r){return r.k===g[0]}); if(!rows.length) return '';
+    return '<div class="rgrp"><div class="sh"><h2>'+g[1]+'</h2><span class="n">'+rows.length+'</span></div><div class="rbox">'
+      +rows.map(function(r){return '<div class="rrow k-'+r.k+'"><i class="ti '+r.i+' ic"></i><span class="t" onclick="openItem(\''+r.ref+'\')">'+r.t+'</span>'+who(r.o)
+        +r.a.map(function(b,i){return '<button class="sbtn'+(i===0&&r.o===ME?' blue':'')+'" onclick="resolve(\''+r.id+'\','+i+')">'+b[0]+'</button>'}).join('')+'</div>'}).join('')
+      +'</div></div>';
+  }).join('') : '<div class="rbox"><div class="empty">Nothing waiting for review</div></div>';
+}
+
+/* ── shelves ── */
+function renderShelves(){
+  document.getElementById('shelves').innerHTML=SHELVES.map(function(s){
+    var t=s.h[0]+s.h[1]+s.h[2]||1;
+    return '<div class="shf'+(s.sand?' sand':'')+'" onclick="openShelf(\''+s.k+'\')" style="--sc:'+s.c+';--sbg:'+s.bg+'">'
+      +'<div class="top"><span class="si"><i class="ti '+s.i+'"></i></span><b>'+s.n+'</b><span class="cnt">'+(s.h[0]+s.h[1]+s.h[2])+'</span></div>'
+      +'<div class="hbar"><span class="h1" style="width:'+(s.h[0]/t*100)+'%"></span><span class="h2" style="width:'+(s.h[1]/t*100)+'%"></span><span class="h3" style="width:'+(s.h[2]/t*100)+'%"></span></div>'
+      +'<div class="hlab"><span>'+s.h[0]+' checked</span><span>'+s.h[1]+' draft</span>'+(s.h[2]?'<span class="bad">'+s.h[2]+' out of date</span>':'')+'</div></div>';
+  }).join('');
+}
+
+/* ── agents and blueprints ── */
+function renderAgents(){
+  document.getElementById('agN').textContent=AGENTS.length;
+  var cols='minmax(0,1.6fr) 1.2fr 1.4fr 80px 90px';
+  document.getElementById('agents').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
+    +'<div class="gyhd"><span>Agent</span><span>Kind</span><span>Manager</span><span class="num">Items</span><span>Status</span></div>'
+    +AGENTS.map(function(a,i){
+      var e=a.es&&window.GY_ES&&GY_ES[a.es];
+      var face=e?'<span class="aface '+e.cls+'"><i class="ti '+e.icon+'"></i></span>':'<span class="aface" style="--fc:'+a.c+'"><i class="ti '+a.i+'"></i></span>';
+      var s=AST[a.st];
+      return '<div class="gyrow" style="cursor:pointer" onclick="'+(a.ref?'openItem(\''+a.ref+'\')':'toast(\''+a.n+' agent: definition not written yet\')')+'">'
+        +'<span class="nmc">'+face+'<span class="nm">'+a.n+'</span></span><span class="mut">'+a.type+'</span>'+who(a.o)
+        +'<span class="num">'+a.items+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
+    }).join('')+'</div>';
+}
+function renderBps(){
+  document.getElementById('bpN').textContent=BPS.length;
+  var cols='minmax(0,1.8fr) 1fr 0.9fr 1.4fr 60px 90px';
+  document.getElementById('blueprints').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
+    +'<div class="gyhd"><span>Blueprint</span><span>Department</span><span>Phase</span><span>Owner</span><span class="num">Runs</span><span>Status</span></div>'
+    +BPS.map(function(b){
+      var s=BST[b.st];
+      return '<div class="gyrow" style="cursor:pointer" onclick="'+(b.go?'location.href=\''+b.go+'\'':'toast(\''+b.n+' is not in this prototype yet\')')+'">'
+        +'<span class="nmc"><span class="nm">'+b.n+'</span></span><span><span class="dep d-'+b.d+'">'+b.dn+'</span></span><span class="mut">'+b.ph+'</span>'+who(b.o)
+        +'<span class="num">'+b.runs+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
+    }).join('')+'</div>';
+}
+
+/* ── covers ── */
+function renderCovers(){
+  document.getElementById('books').innerHTML=BOOKS.map(function(b,i){
+    return '<div class="cv" onclick="location.href=\'es-press.html?es='+b.id+'\'">'+gyEsCover({id:b.id,name:b.n,type:b.type,col:b.col},i)+'<span>'+b.n+'</span></div>';
+  }).join('');
+  var P=window.GY_PERSONAS||[];
+  document.getElementById('perN').textContent=P.length;
+  document.getElementById('personas').innerHTML=P.map(function(p,i){
+    return '<div class="cv" onclick="location.href=\'persona.html?p='+p.id+'\'">'+gyPersonaCover(p,i)+'<span>'+(p.short||p.name)+'</span></div>';
+  }).join('');
+}
+
+/* ── reads from, log ── */
+function renderReads(){
+  document.getElementById('reads').innerHTML=READS.map(function(r){
+    return '<div class="rd" onclick="location.href=\'settings-connectors.html\'"><i class="ti '+r.i+'"></i><b>'+r.n+'</b><span>'+r.s+'</span></div>';
+  }).join('');
+}
+function renderLog(){
+  document.getElementById('log').innerHTML=LOG.slice(0,6).map(function(l){return '<div class="le"><span class="lt">'+l[0]+'</span><span class="lx">'+l[1]+'</span></div>'}).join('');
+}
+
+/* ── library ── */
+function renderLib(){
+  var F=BAR?BAR.filter:{};
+  var rows=ITEMS.filter(function(x){
+    if(F.Shelf&&F.Shelf!=='all'&&x.s!==F.Shelf) return false;
+    if(F.Status&&F.Status!=='all'&&x.st!==F.Status) return false;
+    if(F.Owner==='CC'&&x.o!=='CC') return false;
+    if(F.Owner==='none'&&x.o) return false;
+    if(Q&&(x.n+' '+x.about+' '+(PEOPLE[x.o]||'')).toLowerCase().indexOf(Q)<0) return false;
+    return true;
+  });
+  document.getElementById('tcLib').textContent=ITEMS.length;
+  document.getElementById('lib').innerHTML = rows.length ? rows.map(function(x){
+    var s=shelf(x.s);
+    return '<div class="gyrow" style="cursor:pointer" onclick="openItem(\''+x.id+'\')"><span class="nmc"><span class="nm">'+x.n+'</span></span>'
+      +'<span class="shtag" style="--sc:'+s.c+'"><i class="ti '+s.i+'"></i>'+s.n+'</span>'+who(x.o)
+      +'<span>'+stPill(x.st)+'</span><span class="num">'+x.u+'</span><span class="num">'+x.d+'</span></div>';
+  }).join('') : '<div class="gyempty empty">No items match</div>';
+}
+
+/* ── rules ── */
+function renderRules(){
+  var T=[['Meaning and judgement','Hive Mind','Owns, versions, reviews'],['Method and blueprints','Hive Mind','Owns, promotes from Sandbox'],
+    ['Numbers and calculations','Databricks','Reads, proposes corrections'],['Deals and buyers','HubSpot, Notion trackers','Reads'],
+    ['Units and ledger','Inventory','Reads'],['ES Cards and deliverable runs','GYOS records','Learns from, writes lessons back']];
+  document.getElementById('truth').innerHTML='<div class="gyhd"><span>What</span><span>Lives in</span><span>Hive Mind</span></div>'
+    +T.map(function(r){return '<div class="gyrow"><span class="nm" style="font-weight:500">'+r[0]+'</span><span class="mut">'+r[1]+'</span><span class="mut">'+r[2]+'</span></div>'}).join('');
+  var H=[['Every item has an owner','Required','EH'],['Status','Draft, Checked, Out of date','CT'],['Review interval, expertise','90 days','CT'],
+    ['Review interval, context','180 days','CT'],['Lesson becomes knowledge','Seen in 2 runs','CT'],['Promote from Sandbox','3 runs that meet done-when','CT'],
+    ['Deliverable done','Only after lessons are saved back','EM'],['Questions to managers','Batched weekly, Monday','CT'],['While a manager is away','Answer at low confidence, never block','CT']];
+  document.getElementById('hrules').innerHTML='<div class="gyhd"><span>Rule</span><span>Setting</span><span>Owner</span></div>'
+    +H.map(function(r){return '<div class="gyrow" style="cursor:pointer" onclick="toast(\'Changing a house rule needs '+PEOPLE[r[2]]+'\u2019s approval\')"><span class="nm" style="font-weight:500">'+r[0]+'</span><span class="val">'+r[1]+'</span>'+who(r[2])+'</div>'}).join('');
+}
+
+/* ── drawer previewer ── */
+function openItem(id){
+  var x=item(id); if(!x) return;
+  var s=shelf(x.s);
+  var rv=REVIEW.filter(function(r){return r.ref===id})[0];
+  document.getElementById('bdr').innerHTML='<div class="bdh"><span class="si" style="width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:'+s.bg+';color:'+s.c+';flex:none"><i class="ti '+s.i+'"></i></span><h3>'+x.n+'</h3><button class="x" onclick="closeItem()" aria-label="Close"><i class="ti ti-x"></i></button></div>'
+    +'<div class="bdb"><div class="bl">About</div><div class="bp">'+x.about+'</div>'
+    +'<div class="bl">Provenance</div>'
+    +'<div class="bf"><span>Owner</span>'+who(x.o)+'</div>'
+    +'<div class="bf"><span>Status</span>'+stPill(x.st)+'</div>'
+    +'<div class="bf"><span>Last checked</span><b>'+x.d+'</b></div>'
+    +(x.tier?'<div class="bf"><span>Evidence tier</span><b>'+x.tier+'</b></div>':'')
+    +'<div class="bf"><span>Source</span><b>'+x.src+'</b></div>'
+    +'<div class="bf"><span>Shelf</span><b>'+s.n+'</b></div>'
+    +(x.by.length?'<div class="bl">Used by</div>'+x.by.map(function(b){return '<div class="bm"><span class="bw"><i class="ti ti-arrow-right"></i></span><span>'+b+'</span></div>'}).join(''):'')
+    +(rv?'<div class="bl">Waiting</div><div class="bm"><span class="bw">'+rv.w+'</span><span>'+rv.t+'</span></div>':'')
+    +'</div>'
+    +'<div class="bact"><button class="sbtn" onclick="mark(\''+id+'\',\'ok\')">Mark checked</button><button class="sbtn" onclick="mark(\''+id+'\',\'bad\')">Flag out of date</button><button class="sbtn" onclick="toast(\'Version history: not in this prototype yet\')">History</button></div>';
+  document.getElementById('bdr').classList.add('open');
+  document.getElementById('bov').classList.add('open');
+}
+function closeItem(){document.getElementById('bdr').classList.remove('open');document.getElementById('bov').classList.remove('open')}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeItem()});
+function mark(id, st){
+  var x=item(id); if(!x.o||x.o==='TBC'){ toast('Needs an owner before it can change status'); return; }
+  if(x.st===st){ toast('Already '+STL[st].toLowerCase()); return; }
+  var s=shelf(x.s), m={ok:0,draft:1,bad:2};
+  s.h[m[x.st]]--; s.h[m[st]]++; x.st=st; if(st==='ok') x.d='Today';
+  LOG.unshift(['Now','<b>'+PEOPLE[ME].split(' ')[0]+'</b> marked '+x.n+' '+STL[st].toLowerCase()]);
+  toast(x.n+': '+STL[st].toLowerCase()); renderAll(); openItem(id);
+}
+
+function renderAll(){ paintChip(); renderReview(); renderShelves(); renderAgents(); renderBps(); renderReads(); renderLog(); renderLib(); }
+renderAll(); renderCovers(); renderRules();
+</script>
+</body>
+</html>

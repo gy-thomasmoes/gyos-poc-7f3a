@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Demand Mapping &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+/* every selector here is prefixed dl, so nothing reaches the shell */
+.dlgrid{display:grid;grid-template-columns:1fr 318px;gap:24px;align-items:start}
+@media(max-width:980px){.dlgrid{grid-template-columns:1fr}}
+
+/* ── the document, as the object the page is about ── */
+.dlpaper{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden}
+.dlpt{padding:26px 30px 20px;border-bottom:1px solid var(--line)}
+.dlpt h2{font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:-.015em;margin-bottom:8px}
+.dlpt .m{font-size:13.5px;color:var(--ink2);display:flex;align-items:center;gap:7px}
+.dlpt .m .ti{font-size:15px;color:var(--ink3)}
+.dlbar{height:5px;border-radius:999px;background:var(--graybg);overflow:hidden;margin-top:16px;display:flex}
+.dlbar i{display:block;height:100%}
+.dlbar i.done{background:var(--greend)}
+.dlbar i.part{background:var(--yellow)}
+
+.dlch{border-bottom:1px solid var(--line)}
+.dlch:last-child{border-bottom:none}
+.dlchh{display:flex;align-items:center;gap:12px;padding:14px 30px;cursor:pointer}
+.dlchh:hover{background:#FBF8EF}
+.dlchn{font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:-.01em;flex:1;min-width:0}
+.dlch.empty .dlchn{color:var(--ink3)}
+.dlchs{font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.dlchs.ok{color:var(--greend)}
+.dlchs.warn{color:var(--amberd)}
+.dlcar{font-size:15px;color:var(--ink3);transition:transform .15s}
+.dlch.open .dlcar{transform:rotate(90deg)}
+
+.dlsecs{display:none;padding:0 30px 16px 30px}
+.dlch.open .dlsecs{display:block}
+/* one line of what the chapter actually says, so this reads as a document */
+.dlsum{padding:0 30px 15px 53px;font-family:var(--serif);font-size:15px;line-height:1.5;color:var(--ink2);margin-top:-6px}
+.dlch.empty .dlsum{color:var(--ink3)}
+.dlsec{display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.dlsec:first-child{border-top:none}
+.dltick{width:16px;height:16px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:10px}
+.dltick.done{background:var(--greend);color:#fff}
+.dltick.cur{background:var(--yellow);color:var(--ink)}
+.dltick.pend{border:1.5px solid var(--line2)}
+.dlsec .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlsec.pend .t{color:var(--ink3)}
+.dlsrc{font-size:12px;color:var(--ink3);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.dlsrc .ti{font-size:13px}
+.dlwrite{border:1px solid var(--line2);background:#fff;color:var(--ink2);border-radius:8px;padding:4px 9px;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.dlwrite:hover{border-color:#12684C;color:#12684C;background:#F4FBF8}
+.dlwrite .ti{font-size:13px}
+
+/* ── the rail: the machinery, in the order you need it ── */
+.dlrail{display:flex;flex-direction:column;gap:14px}
+.dlcard{min-width:0;border:1px solid var(--line);border-radius:16px;background:#fff;padding:15px 17px}
+.dlsh{display:flex;align-items:baseline;gap:12px;margin:32px 0 12px}
+.dlsh h2{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:-.01em}
+.dlprov{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media(max-width:980px){.dlprov{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dlcard h3{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.dlcard h3 .ti{font-size:15px;color:var(--ink3)}
+.dlcard h3 .n{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:12.5px;color:var(--ink3)}
+.dlcard h3 .n.warn{color:var(--amberd)}
+.dlitem{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dlcard .dlitem:first-of-type{border-top:none}
+.dlitem .ti{font-size:15px;color:var(--ink3);flex:none}
+.dlitem .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlitem .s{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap}
+.dlitem .s.warn{color:var(--amberd)}
+.dlitem .s.ok{color:var(--greend)}
+.dlmore{border:none;background:transparent;color:var(--ink2);font-family:inherit;font-size:13px;cursor:pointer;padding:8px 0 0;display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);width:100%;margin-top:2px}
+.dlmore:hover{color:var(--ink)}
+
+.dlav{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.dlavs{display:flex}
+.dlavs .dlav{margin-left:-6px;box-shadow:0 0 0 2px #fff}
+.dlavs .dlav:first-child{margin-left:0}
+
+/* the current step, called out above the workflow list */
+.dlnow{background:#FEFBEF;border:1px solid #F0E4B4;border-radius:12px;padding:11px 13px;margin-bottom:11px}
+.dlnow .k{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-bottom:4px}
+.dlnow .v{font-size:14px;line-height:1.35}
+.dlnow .w{font-size:12.5px;color:var(--ink2);margin-top:6px;display:flex;align-items:center;gap:6px}
+
+/* ── the assistant, at the top of the rail because it acts on everything ── */
+.dlai{border:1px solid #BEDCD0;border-radius:16px;background:#F4FBF8;padding:15px 17px}
+.dlai h3{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#12684C;display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.dlai h3 .ti{font-size:16px}
+.dlsug{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-top:1px solid #DDEDE5;font-size:13.5px;cursor:pointer;line-height:1.4}
+.dlai .dlsug:first-of-type{border-top:none}
+.dlsug:hover b{text-decoration:underline}
+.dlsug .ti{font-size:15px;color:#12684C;margin-top:2px;flex:none}
+.dlsug b{display:block;font-weight:500}
+.dlsug i.s{display:block;font-style:normal;font-size:12px;color:var(--ink2);margin-top:2px}
+.dlfield{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #CFE4DA;border-radius:10px;padding:9px 11px;color:var(--ink3);font-size:13.5px;margin-top:11px;cursor:pointer}
+.dlfield:hover{border-color:#12684C}
+.dlfield .ti{font-size:15px;color:#12684C}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"deliverables","arts":"demand"};</script>
+<script src="gy-nav.js?v=d794329b"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='deliverables-landing.html'">Deliverables</span><span class="sep">&rsaquo;</span>
+    <span class="cr cur">Customer Demand Mapping</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Customer Demand Mapping</div>
+    <span id="stchip"></span>
+    <div class="acts">
+      <button class="btn-out" onclick="gyToast('Workflow canvas, not in this sketch')"><i class="ti ti-route"></i>Workflow</button>
+      <button class="btn-dark" onclick="location.href='document.html?mode=deliverable'"><i class="ti ti-pencil"></i>Edit document</button>
+    </div>
+  </div>
+
+  <div class="dlgrid">
+    <div class="dlpaper" id="paper"></div>
+    <div class="dlrail" id="rail"></div>
+  </div>
+
+  <div class="dlsh"><h2>What it runs on</h2></div>
+  <div class="dlprov" id="prov"></div>
+</div>
+</div>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+/* ── the same deliverable, with the document as the spine ─────────────────
+   The document is what the deliverable IS, so it holds the page. Workflow,
+   to-dos, team, inputs, sources, tools and output sit in the rail, each as
+   one reading plus what is behind it. The assistant sits above them all,
+   because it is the one thing that acts on every other part. */
+var DLV = {
+  name:'Customer Demand Mapping', prog:'Evenlode', wf:'Demand Mapping',
+  champion:'Caitlin Ciceri', doc:'Demand map, Evenlode', upd:'Wednesday 09:05'
+};
+var PEOPLE = {
+  'Caitlin Ciceri':{ini:'CC',c:'#1D9E75',role:'Champion'},
+  'Harry Fox'     :{ini:'HF',c:'#EF9F27',role:'Analysis'},
+  'Izzie Bell'    :{ini:'IB',c:'#7F77DD',role:'Trade input'},
+  'Emily Norton'  :{ini:'EN',c:'#378ADD',role:'Review'}
+};
+/* by: what produced the section. step: the workflow step behind it. */
+var CHAPTERS = [
+ {n:'1. Project context', st:'Complete', cls:'ok', open:true,
+  sum:'Evenlode is 1,840 ha across 18 parcels, 15 in hand and 3 tenanted, with an SFI agreement running to 2027 that constrains what can be stacked.',
+  secs:[
+  {t:'Scope and boundary',    s:'done', by:'Caitlin Ciceri', step:'1.1'},
+  {t:'Landholding and tenure',s:'done', by:'Questionnaire',  step:'1.2'},
+  {t:'Existing agreements',   s:'done', by:'Questionnaire',  step:'1.2'}
+ ]},
+ {n:'2. Demand', st:'3 of 6 sections', cls:'warn', open:true,
+  sum:'Local demand is strongest for BNG, with 14 major applications inside the catchment and two water companies holding abstraction licences that expire in 2028.',
+  secs:[
+  {t:'Local demand signal, GPAP',    s:'done', by:'Kwame',  step:'2.1'},
+  {t:'Water demand and licences',    s:'done', by:'Kwame',  step:'2.2'},
+  {t:'Public funding routes',        s:'done', by:'Data platform', step:'2.3'},
+  {t:'Beneficiary map',              s:'cur',  by:'Kwame',  step:'2.4'},
+  {t:'Qualified buyer list',         s:'pend', by:'',       step:'2.4'},
+  {t:'Trade sense-check',            s:'pend', by:'',       step:'2.5'}
+ ]},
+ {n:'3. Supply', st:'Complete', cls:'ok', open:true,
+  sum:'Six ecosystem services were scored. BNG and woodland carbon rank first and second, soil carbon is parked until the peat depth survey lands.',
+  secs:[
+  {t:'Candidate ecosystem services', s:'done', by:'Kwame', step:'3.1'},
+  {t:'Ranked shortlist',             s:'done', by:'Kwame', step:'3.1'}
+ ]},
+ {n:'4. Summary', st:'Empty', cls:'', open:true,
+  sum:'Nothing written yet. The verdict is assembled from the three chapters above once Trade has signed off the buyer list.',
+  secs:[
+  {t:'Verdict',                s:'pend', by:'', step:'4.1'},
+  {t:'Recommended next steps', s:'pend', by:'', step:'4.1'},
+  {t:'Learnings for the next run', s:'pend', by:'', step:'4.5'}
+ ]}
+];
+
+var TODOS = [
+  ['Beneficiary map and Buyer list','Caitlin Ciceri','Today','warn'],
+  ['Check with Trade','Emily Norton','Tomorrow',''],
+  ['Check: Information complete?','Caitlin Ciceri','21 Sep',''],
+  ['Create summary','Caitlin Ciceri','24 Sep','']
+];
+var INPUTS = [
+  ['ti-file-type-pdf','estate_management_plan.pdf','Received','ok'],
+  ['ti-file-type-pdf','sfi_agreement_2024.pdf','Received','ok'],
+  ['ti-file-type-pdf','tenure_map.pdf','Received','ok'],
+  ['ti-file-spreadsheet','peat_depth_survey.xlsx','Outstanding','warn']
+];
+var SOURCES = [
+  ['ti-database','GPAP register','Wed 06:00','ok'],
+  ['ti-database','EA abstraction licences','Wed 06:00','ok'],
+  ['ti-database','Public funding register','5 Sep','warn'],
+  ['ti-book','ES rule books','Live','ok']
+];
+var TOOLS = [
+  ['ti-map-2','Market Map',''],
+  ['ti-checkup-list','Questionnaire editor',''],
+  ['ti-database','GY Data platform','']
+];
+var OUT = [
+  ['ti-file-download','Mapping PDF','Not produced','warn'],
+  ['ti-table','Buyer rows to the data platform','Not produced','warn']
+];
+var SUGS = [
+  ['ti-list-search','Draft the buyer list','Uses the GPAP and licence scans already in chapter 2'],
+  ['ti-file-text','Write the chapter 4 summary','Once Trade has signed off chapter 2'],
+  ['ti-mail','Chase the peat depth survey','The one input still outstanding'],
+  ['ti-search','Find where this contradicts the ES rule book','Across all four chapters']
+];
+
+function av(n){var p=PEOPLE[n]||{ini:'KW',c:'#12684C'};
+  return '<span class="dlav" style="background:'+p.c+'">'+p.ini+'</span>';}
+function tick(s){
+  return s==='done' ? '<span class="dltick done"><i class="ti ti-check"></i></span>'
+       : s==='cur'  ? '<span class="dltick cur"><i class="ti ti-player-play"></i></span>'
+       : '<span class="dltick pend"></span>';
+}
+
+function paper(){
+  var tot=0,done=0,cur=0;
+  CHAPTERS.forEach(function(c){c.secs.forEach(function(s){tot++;if(s.s==='done')done++;if(s.s==='cur')cur++;});});
+
+  document.getElementById('stchip').innerHTML =
+    gyChip(done+' of '+tot+' sections','Written by people and by Kwame, across four chapters');
+
+  document.getElementById('paper').innerHTML =
+    '<div class="dlpt"><h2>'+DLV.doc+'</h2>'
+    + '<div class="m"><i class="ti ti-user"></i>'+DLV.champion
+      + '<span style="color:var(--ink3)">&middot;</span>'+DLV.wf
+      + '<span style="color:var(--ink3)">&middot;</span>Last written '+DLV.upd+'</div>'
+    + '<div class="dlbar"><i class="done" style="width:'+(done/tot*100)+'%"></i>'
+      + '<i class="part" style="width:'+(cur/tot*100)+'%"></i></div></div>'
+    + CHAPTERS.map(function(c,i){
+        return '<div class="dlch'+(c.open?' open':'')+(c.cls===''?' empty':'')+'" id="ch'+i+'">'
+          + '<div class="dlchh" onclick="chTog('+i+')">'
+            + '<i class="ti ti-chevron-right dlcar"></i>'
+            + '<div class="dlchn">'+c.n+'</div>'
+            + '<div class="dlchs '+c.cls+'">'+c.st+'</div></div>'
+          + (c.sum ? '<div class="dlsum">'+c.sum+'</div>' : '')
+          + '<div class="dlsecs">'+c.secs.map(sec).join('')+'</div></div>';
+      }).join('');
+}
+function sec(s){
+  return '<div class="dlsec'+(s.s==='pend'?' pend':'')+'">'+tick(s.s)
+    + '<div class="t">'+s.t+'</div>'
+    + (s.by ? '<div class="dlsrc">'+(s.by==='Kwame'
+        ? '<i class="ti ti-sparkles" style="color:#12684C"></i>Kwame'
+        : (PEOPLE[s.by] ? av(s.by)+s.by.split(' ')[0] : '<i class="ti ti-database"></i>'+s.by))+'</div>'
+      : '<button class="dlwrite" onclick="gyToast(\'Kwame would draft: '+s.t+'\')"><i class="ti ti-sparkles"></i>Draft</button>')
+    + '<div class="dlsrc" style="width:26px;justify-content:flex-end">'+s.step+'</div></div>';
+}
+
+function rail(){
+  var open = TODOS.length;
+  document.getElementById('rail').innerHTML =
+
+  /* the assistant first: it is the one part that touches all the others */
+    '<div class="dlai"><h3><i class="ti ti-sparkles"></i>Kwame</h3>'
+    + SUGS.map(function(s){
+        return '<div class="dlsug" onclick="gyToast(\'Kwame would run: '+s[1]+'\')">'
+          + '<i class="ti '+s[0]+'"></i><span><b>'+s[1]+'</b><i class="s">'+s[2]+'</i></span></div>';
+      }).join('')
+    + '<div class="dlfield" onclick="gyToast(\'Assistant field, not in this sketch\')">'
+      + '<i class="ti ti-message"></i>Ask about this deliverable</div></div>'
+
+  + '<div class="dlcard"><h3><i class="ti ti-route"></i>Workflow<span class="n">8 of 16</span></h3>'
+    + '<div class="dlnow"><div class="k">Now on</div>'
+      + '<div class="v">2.4 Beneficiary map and Buyer list</div>'
+      + '<div class="w">'+av('Caitlin Ciceri')+'Caitlin Ciceri, due today</div></div>'
+    + item('ti-check','Project context','3 steps','ok')
+    + item('ti-player-play','Demand','3 of 6 steps','warn')
+    + item('ti-check','Supply','2 steps','ok')
+    + item('ti-circle','Summary','5 steps','')
+    + '<button class="dlmore" onclick="gyToast(\'Workflow canvas, not in this sketch\')"><i class="ti ti-arrow-right"></i>Open the workflow</button></div>'
+
+  + '<div class="dlcard"><h3><i class="ti ti-checkbox"></i>To-dos<span class="n warn">'+open+' open, 1 overdue</span></h3>'
+    + TODOS.map(function(t){
+        return '<div class="dlitem"><input type="checkbox">'+av(t[1])
+          + '<div class="t">'+t[0]+'</div><div class="s '+t[3]+'">'+t[2]+'</div></div>';
+      }).join('')+'</div>'
+
+  + '<div class="dlcard"><h3><i class="ti ti-users"></i>Team<span class="n">4</span></h3>'
+    + Object.keys(PEOPLE).map(function(n){
+        return '<div class="dlitem">'+av(n)+'<div class="t">'+n+'</div>'
+          + '<div class="s">'+PEOPLE[n].role+'</div></div>';
+      }).join('')+'</div>';
+
+  /* provenance and product sit below the document, not in the rail: they are
+     what you check once, not what you act on every day */
+  document.getElementById('prov').innerHTML =
+    '<div class="dlcard"><h3><i class="ti ti-inbox"></i>Inputs<span class="n warn">3 of 4</span></h3>'
+    + INPUTS.map(function(i){return item(i[0],i[1],i[2],i[3]);}).join('')+'</div>'
+
+  + '<div class="dlcard"><h3><i class="ti ti-database"></i>Sources<span class="n warn">1 stale</span></h3>'
+    + SOURCES.map(function(i){return item(i[0],i[1],i[2],i[3]);}).join('')+'</div>'
+
+  + '<div class="dlcard"><h3><i class="ti ti-tool"></i>Tools<span class="n">3</span></h3>'
+    + TOOLS.map(function(i){return item(i[0],i[1],i[2],'');}).join('')+'</div>'
+
+  + '<div class="dlcard"><h3><i class="ti ti-package"></i>Output<span class="n">Not produced</span></h3>'
+    + OUT.map(function(i){return item(i[0],i[1],i[2],i[3]);}).join('')+'</div>';
+}
+function item(ic,t,s,cls){
+  return '<div class="dlitem"><i class="ti '+ic+'"></i><div class="t">'+t+'</div>'
+    + '<div class="s '+(cls||'')+'">'+s+'</div></div>';
+}
+function chTog(i){ document.getElementById('ch'+i).classList.toggle('open'); }
+
+paper(); rail();
+</script>
+</body>
+</html>

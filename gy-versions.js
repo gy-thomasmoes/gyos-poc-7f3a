@@ -13,9 +13,31 @@
       ['deliverable-sketch-v4-chat.html', 'v4 chat'],
       ['deliverable-sketch-v5.html',      'v5'],
       ['deliverable-sketch-v6.html',      'v6'],
-      ['deliverable-sketch-v7.html',      'v7']
+      ['deliverable-sketch-v7.html',      'v7'],
+      ['deliverable-sketch-v8.html',      'v8']
+    ]},
+    { name: 'Home', pages: [
+      ['home.html',    'v1'],
+      ['home-v2.html', 'v2']
+    ]},
+    { name: 'Hive Mind', pages: [
+      ['hive-mind-library.html', 'v1'],
+      ['hive-mind-v2.html',      'v2']
+    ]},
+    { name: 'Inventory', pages: [
+      ['inventory-overview.html',    'v1'],
+      ['inventory-overview-v2.html', 'v2']
     ]}
   ];
+
+  /* The newest page of a set, so other pages can always link to the latest
+     sketch: gyLatestSketch('Deliverable'). The last entry in SETS wins. */
+  window.gyLatestSketch = function(name){
+    for(var i = 0; i < SETS.length; i++) if(SETS[i].name === name){
+      var pg = SETS[i].pages; return pg[pg.length-1][0];
+    }
+    return null;
+  };
 
   var here = (location.pathname.split('/').pop() || '').toLowerCase();
   var set = null, idx = -1;

@@ -7,7 +7,7 @@
 <!-- sketch 7: three columns, the rail, the conversation with the queue folded in, and the document floating -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
 <style>
 /* ── v7: three columns. The rail on the left, the conversation in the middle,
    the document floating on the right. Same model as v6: the queue is still
@@ -593,26 +593,22 @@ body.nodoc .v7doc{display:none}
   cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px}
 .v5keb:hover{background:var(--graybg);color:var(--ink)}
 .v5keb.on{background:var(--graybg);color:var(--ink)}
+/* topbar matches every other page: 61px, so the Share button is compact */
+.topbar{height:61px}
+.topbar .btn-out{padding-top:6px;padding-bottom:6px}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active":"deliverables","arts":"demand"};</script>
-<script src="gy-nav.js?v=ca057c36"></script>
-<script src="gy-versions.js?v=616c6474"></script>
+<script src="gy-nav.js?v=d794329b"></script>
+<script src="gy-versions.js?v=2400190b"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Show the sidebar"><i class="ti ti-layout-sidebar"></i></button>
   <div class="crumbs">
-    <button class="crmore" id="crmore" onclick="crExpand()"
-      data-tip="Portfolio &rsaquo; Upper Dee &rsaquo; Deliverables"><span class="sl">/</span><span class="el">&hellip;</span><span class="sl">/</span></button>
-    <span class="crtrail" id="crtrail">
-      <span class="cr" onclick="location.href='portfolio-overview.html'">Portfolio</span><span class="sep">&rsaquo;</span>
-      <span class="cr" onclick="location.href='programme-overview.html'">Upper Dee</span><span class="sep">&rsaquo;</span>
-      <span class="cr" onclick="location.href='deliverables-landing.html'">Deliverables</span><span class="sep">&rsaquo;</span>
-    </span>
     <span class="cr cur">Customer Demand Mapping</span>
   </div>
   <div class="spacer"></div>

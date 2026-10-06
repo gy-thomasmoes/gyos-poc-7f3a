@@ -7,6 +7,8 @@
   --amber:#EF9F27; --amberbg:#FBF1DC; --amberd:#8A5A10;
   --blue:#3B82F6; --bluebg:#E6F1FB; --blued:#185FA5;
   --teal:#1D9E75; --graybg:#F3EFE1; --dark:#1A0C12; --yellow:#F9DD5A;
+  /* current: where the work is right now. Ink, because amber is reserved for 'you are needed' */
+  --cur:#1A0C12; --curbg:#ECE8DD; --curd:#1A0C12; --currow:#F7F5EF;
   --serif:'Manner','Spectral',Georgia,serif;
   --sans:-apple-system,system-ui,Inter,"Segoe UI",sans-serif;
   /* BNG green scale / WCC yellow-orange scale for pipeline cards + bars */

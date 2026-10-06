@@ -106,7 +106,7 @@
 <body>
 
 <script>window.GYNAV={"active":"upper-dee-mapping","arts":null};</script>
-<script src="gy-nav.js?v=ca057c36"></script>
+<script src="gy-nav.js?v=d794329b"></script>
 <script src="gy-canvas.js?v=c1cac010"></script>
 <script src="gy-canvas-engine.js?v=05550288"></script>
 
@@ -248,7 +248,7 @@ const ARTEFACTS=[
   <div class="mrow"><span class="pmuted">Subject</span><span>Mapping the demand for {{project}}</span></div>
   <div style="margin-top:8px">Hi {{first_name}}, lovely speaking today. To map what {{project}} can sell and who would buy it, we need a few things from you. This link does most of the work, and anything you upload we read for you.</div>
   <span class="mbtn">Open your questionnaire</span></div>`},
- {id:'rulebooks',ic:'ti-book',name:'Library · ES rule books',node:'Desktop research',nid:'desktop',ex:true,desc:'One page per ecosystem service: static About, a nine-category readiness score, a sizing method, and a fast-moving Market dynamics half. Scored and sized per the GY methodology, seeded from the NatWest Markets Report. Open the Hive Mind Library in the sidebar to browse them.',
+ {id:'rulebooks',ic:'ti-book',name:'Library · ES rule books',node:'Desktop research',nid:'desktop',ex:true,desc:'One page per ecosystem service: static About, a nine-category readiness score, a sizing method, and a fast-moving Market dynamics half. Scored and sized per the GY methodology, seeded from the NatWest Markets Report. Open the Hive Mind in the sidebar to browse them.',
   prev:`<div class="paper"><h5>🌱 Carbon · rule book</h5>
   <div class="mrow"><span class="pmuted">About</span><span>static · definition + monetisation</span></div>
   <div class="mrow"><span class="pmuted">Readiness</span><span>9 categories · GY methodology</span></div>
@@ -386,7 +386,7 @@ const NODES=[
 {id:'rulebooks',x:966,y:136,w:180,t:T.human,title:'Pull market context',
  d:{sub:'From the ES rule books'},r:{who:'Caitlin',st:''},
  form:{owner:'Caitlin',exec:'Human-led',what:'Add market context to each candidate from the ES rule books.',
-  needs:[['Map candidate services','Candidate market list'],['Hive Mind Library','ES rule books']],produces:['Supply table (chapter 2)'],
+  needs:[['Map candidate services','Candidate market list'],['Hive Mind','ES rule books']],produces:['Supply table (chapter 2)'],
   done:'After this: each candidate market carries readiness, sizing and dynamics from the rule books.',
   steps:['Caitlin opens the matching ES rule book per market','Caitlin pulls readiness, indicative sizing and market dynamics','Caitlin names the anchor market'],arts:[],guard:''}},
 
@@ -597,7 +597,7 @@ const ALIST=[
  {id:'qemail',ch:1,name:'Email · Project context',sub:'from Client email module',ic:'ti-mail',bg:'#1D9E75',fg:'#fff'},
  {id:'precall',ch:1,name:'Assistant · Pre-call brief',sub:'AI assistant · golden example',ic:'ti-sparkles',bg:'#EF9F27',fg:'#412402'},
  {id:'gapsum',ch:1,name:'Assistant · Gap summary',sub:'AI assistant · golden example',ic:'ti-message',bg:'#EF9F27',fg:'#412402'},
- {id:'rulebooks',ch:2,name:'Library · ES rule books',sub:'Hive Mind Library',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
+ {id:'rulebooks',ch:2,name:'Library · ES rule books',sub:'Hive Mind',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
  {id:'registries',ch:2,name:'Shelf · Supply registries',sub:'connections from Settings',ic:'ti-database',bg:'#215274',fg:'#fff'},
  {id:'reg_bng',ch:2,name:'Registry · DEFRA BNG register',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
  {id:'reg_gaia',ch:2,name:'Registry · Gaia',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
@@ -618,7 +618,7 @@ const TOOLMETA={
  qemail:{mod:'Client email module',mv:'v2',state:'newer'},
  precall:{mod:'Brief assistant module',mv:'v1',state:'drift'},
  gapsum:{mod:'Chaser assistant module',mv:'v1',state:'ok'},
- rulebooks:{mod:'Hive Mind Library shelf',mv:'v1',state:'ok'},
+ rulebooks:{mod:'Hive Mind shelf',mv:'v1',state:'ok'},
  registries:{mod:'Registry connections',mv:'v1',state:'ok'},
  evidence:{mod:null},
  scoring:{mod:'Scoring engine',mv:'v3',state:'ok'},
@@ -662,7 +662,7 @@ function openArtefactsL(){
     `<div class="pl">${ACH[c]}</div>`+ALIST.filter(a=>a.ch===c).map(row).join('')).join('');
   d.innerHTML=dhead('ti-template','var(--graybg)','var(--grayd)','Tools','')
   +`<div class="sbody">`+groups
-  +`<div class="tadd" style="margin-top:20px" onclick="toast('Opens the Hive Mind Library: pick a module, get a fork, name your instance')"><i class="ti ti-plus"></i><span><b>Add a tool</b></span><i class="ti ti-chevron-right chvw"></i></div>
+  +`<div class="tadd" style="margin-top:20px" onclick="toast('Opens the Hive Mind: pick a module, get a fork, name your instance')"><i class="ti ti-plus"></i><span><b>Add a tool</b></span><i class="ti ti-chevron-right chvw"></i></div>
   </div>`;
   if(typeof MANUAL!=='undefined'&&MANUAL)d.innerHTML=mScrub(d.innerHTML);
   d.style.display='block';
@@ -1676,7 +1676,7 @@ var MSCRUB=[
  [/the GY buyer database/g,'our buyer list'],
  [/GY buyer database/g,'buyer list'],
  [/buyer database/g,'buyer list'],
- [/Hive Mind Library/g,'reference library'],
+ [/Hive Mind/g,'reference library'],
  [/extracted by the team, /g,''],
  [/pre-filled from the shared folder/g,'filled in from what we already know'],
  [/via API/g,'by hand']
@@ -1714,7 +1714,7 @@ function applyManualLens(){
       f.what=mScrub(f.what); f.done=mScrub(f.done); f.guard=mScrub(f.guard);
       if(Array.isArray(f.arts)) f.arts=f.arts.filter(function(a){return !DATA_ARTS[a];});
       if(Array.isArray(f.produces)) f.produces=f.produces.map(mScrub);
-      if(Array.isArray(f.needs)) f.needs=f.needs.filter(function(x){return !/reference library|Hive Mind Library/.test(x[0]);}).map(function(x){return [mScrub(x[0]),mScrub(x[1])];});
+      if(Array.isArray(f.needs)) f.needs=f.needs.filter(function(x){return !/reference library|Hive Mind/.test(x[0]);}).map(function(x){return [mScrub(x[0]),mScrub(x[1])];});
     }
   });
   var byId=function(id){return NODES.find(function(x){return x.id===id;});};

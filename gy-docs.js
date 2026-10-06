@@ -2,7 +2,7 @@
    Documents are browsed as a folder tree: department at the top level, topic
    folders beneath it. Department is still a field on every item, so the old
    filters keep working; the folder path is the field the browser reads.
-   Anything identical across programmes lives in the Hive Mind Library and is
+   Anything identical across programmes lives in the Hive Mind and is
    deliberately absent here. Anything about the whole portfolio lives in
    Portfolio Records. */
 (function(){

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home v2 · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+/* Home v2 (4 Oct 2026, merges the v2, v3 and v4 sketches). v3's daily brief, opened up into an overview of
+   everything a person can do: a full-bleed landscape, a Start row, Needs
+   you as an accordion with one open item, colour by kind and by role, and
+   the person's agents as a row of story circles that open a chat. */
+:root{
+  --pri:#2F6FDB; --prid:#2459B5; --pribg:#E8F0FC;
+  /* kinds of ask, glyph colours only */
+  --k-step:#4E7A2E; --k-mail:#2F6FDB; --k-send:#6A4FA3; --k-msg:#1D7A6E; --k-inbox:#4E5D8C; --k-draft:#B5628F;
+  /* roles, avatar pairs */
+  --r-land:#4E6B2F; --r-landbg:#E6EFD9;
+  --r-buy:#1F6FB2;  --r-buybg:#E4EFF8;
+  --r-cli:#6A4FA3;  --r-clibg:#ECE6F7;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:30px 32px 100px}
+.blk+.blk,.grid section+section{margin-top:40px}
+.sh{display:flex;align-items:baseline;gap:10px;margin-bottom:13px;padding:0 2px}
+.sh h2{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:-.01em}
+.sh .n{font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.sh .act{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.sh .act:hover{color:var(--ink)}
+.lnk{font-size:14px;color:var(--blued);cursor:pointer}
+.lnk:hover{text-decoration:underline}
+.btn-pri{background:var(--pri);color:#fff;border:none;border-radius:10px;padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn-pri:hover{background:var(--prid)}
+.sbtn{font-size:13px;font-weight:500;padding:5px 11px;border-radius:9px;border:1px solid var(--line2);background:var(--card);color:var(--ink2);cursor:pointer;font-family:inherit}
+.sbtn:hover{color:var(--ink);border-color:var(--ink3)}
+
+/* hero: full bleed, no border */
+.hero{position:relative;background:url(gy-hero-coast.png) center 42%/cover}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(252,250,244,.86) 0%,rgba(252,250,244,.42) 40%,rgba(252,250,244,0) 66%)}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(rgba(252,250,244,0),var(--bg))}
+.hin{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:64px 32px 46px}
+.hello{font-family:var(--serif);font-weight:500;font-size:clamp(32px,3.4vw,42px);line-height:1.05;letter-spacing:-.02em}
+.ask{display:flex;align-items:center;gap:6px;margin-top:22px;max-width:640px;background:var(--card);border:1px solid rgba(222,216,202,.9);border-radius:16px;padding:6px 6px 6px 8px;box-shadow:0 1px 2px rgba(26,12,18,.08)}
+.ask:focus-within{border-color:var(--line2)}
+.ask input{flex:1;border:none;outline:none;background:transparent;font:inherit;font-size:15.5px;color:var(--ink);padding:8px 4px}
+.ask input::placeholder{color:var(--ink3)}
+.ib{width:34px;height:34px;border-radius:10px;border:none;background:transparent;color:var(--ink2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex:none}
+.ib:hover{background:var(--graybg);color:var(--ink)}
+.ask .go{background:var(--pri);color:#fff;border-radius:999px}
+.ask .go:hover{background:var(--prid);color:#fff}
+
+/* start: everything you can do from here */
+.start{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 14px 14px;cursor:pointer;transition:border-color .12s}
+.st:hover{border-color:var(--line2)}
+.st .si{width:36px;height:36px;display:flex;align-items:center;justify-content:flex-start;font-size:34px;line-height:1;color:var(--sc)}
+.st b{display:block;font-size:14.5px;font-weight:500;margin-top:12px;line-height:1.3}
+.st .sn{font-size:12.5px;color:var(--ink3);margin-top:3px;font-variant-numeric:tabular-nums}
+@media(max-width:980px){.start{grid-template-columns:repeat(3,1fr)}}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr;gap:36px}.wrap{padding:26px 22px 90px}.hin{padding:48px 22px 40px}}
+
+/* needs you: accordion, one item open */
+.acc{background:var(--card);border:2px solid var(--pri);border-radius:16px;overflow:hidden}
+.it+.it{border-top:1px solid var(--line)}
+.ih{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;min-height:52px}
+.ih:hover{background:#FBF8EF}
+.ih .ic{font-size:18px;flex:none;width:20px;text-align:center;color:var(--kc)}
+.ih .t{flex:1;min-width:0;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ih .t em{font-style:normal;font-weight:400;font-size:13px;color:var(--ink3);margin-left:8px}
+.ih .w{font-size:12.5px;color:var(--ink3);flex:none;font-variant-numeric:tabular-nums}
+.ih .w.need{color:var(--amberd);font-weight:500}
+.ih .chev{font-size:15px;color:var(--ink3);transition:transform .15s;flex:none}
+.it.open .chev{transform:rotate(90deg)}
+.it.open{background:var(--currow)}
+.it.open .ih:hover{background:transparent}
+.ib2{display:none;padding:0 18px 18px 50px}
+.it.open .ib2{display:block}
+.facts{display:flex;gap:18px;font-size:13.5px;color:var(--ink2);flex-wrap:wrap}
+.facts b{font-weight:500;color:var(--ink)}
+.iact{display:flex;align-items:center;gap:14px;margin-top:14px}
+.subl{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.sr{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:14.5px}
+.sr+.sr{border-top:1px solid var(--line)}
+.sr .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.sr .t em{font-style:normal;font-weight:400;font-size:13px;color:var(--ink3);margin-left:8px}
+.sr .w{font-size:12.5px;color:var(--ink3);flex:none;min-width:40px;text-align:right}
+.sr.gone{display:none}
+.es-chip{font-size:11.5px!important;padding:2px 8px!important;flex:none}
+.es-chip .ti{font-size:12px}
+
+/* since yesterday */
+.log{border-left:1px solid var(--line);margin-left:8px;padding-left:20px}
+.le{display:flex;align-items:baseline;gap:12px;padding:8px 0;font-size:14.5px;line-height:1.45;color:var(--ink2)}
+.le .lt{font-size:12.5px;color:var(--ink3);width:44px;flex:none;font-variant-numeric:tabular-nums}
+.le .lx{flex:1;min-width:0}
+.le .lx b{font-weight:500;color:var(--ink)}
+.le .es-chip{margin-left:8px;vertical-align:1px}
+.le .who{font-size:12.5px;color:var(--ink3);flex:none}
+.state{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--curbg);color:var(--curd);margin-left:6px}
+.lday{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:14px 0 2px}
+.lday:first-child{margin-top:0}
+
+/* side */
+.side{position:sticky;top:26px}
+.ag{display:flex;gap:12px;padding:11px 2px;border-top:1px solid var(--line);cursor:pointer;align-items:baseline}
+.ag:first-child{border-top:none}
+.ag .at{font-size:12.5px;color:var(--ink3);width:42px;flex:none;font-variant-numeric:tabular-nums}
+.ag .an{flex:1;min-width:0;font-size:14.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag .ab{font-size:13px;color:var(--blued);flex:none}
+.ag .ab.pend{color:var(--amberd)}
+.pp{display:flex;align-items:center;gap:10px;padding:10px 2px;border-top:1px solid var(--line);cursor:pointer}
+.pp:first-child{border-top:none}
+.av{width:28px;height:28px;border-radius:999px;font-size:10.5px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none;background:var(--abg);color:var(--ac)}
+.pp .pn{flex:1;min-width:0;font-size:14.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pp .pw{font-size:12.5px;color:var(--ink3);flex:none;font-variant-numeric:tabular-nums}
+.pp .pw.need{color:var(--amberd);font-weight:500}
+.pp:hover .pn{color:var(--blued)}
+.land{--ac:var(--r-land);--abg:var(--r-landbg)}
+.buy{--ac:var(--r-buy);--abg:var(--r-buybg)}
+.cli{--ac:var(--r-cli);--abg:var(--r-clibg)}
+
+/* agents: story circles */
+.agents{margin-top:52px;padding-top:30px;border-top:1px solid var(--line)}
+.stories{display:flex;gap:22px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.sto{display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;flex:none;width:84px;text-decoration:none;color:inherit}
+.ring{width:72px;height:72px;border-radius:999px}
+.ring .face{width:100%;height:100%;border-radius:999px;background:var(--fc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;transition:transform .12s}
+.ring .face.es-bng,.ring .face.es-wcc,.ring .face.es-soc,.ring .face.es-nut,.ring .face.es-nfm{background:var(--esc)}
+.sto:hover .face{transform:scale(1.04)}
+.sto span{font-size:13px;font-weight:500;text-align:center;line-height:1.25}
+.sto.add .ring{border:1.5px dashed var(--line2)}
+.sto.add .face{background:transparent;color:var(--ink3);font-size:24px}
+.sto.add span{color:var(--ink3)}
+
+/* brief drawer previewer */
+.bov{position:fixed;inset:0;background:rgba(26,12,18,.12);z-index:1300;opacity:0;pointer-events:none;transition:opacity .12s}
+.bov.open{opacity:1;pointer-events:auto}
+.bdr{position:fixed;top:0;right:0;height:100vh;width:min(440px,100vw);background:var(--card);border-left:1px solid var(--line);z-index:1301;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1);display:flex;flex-direction:column;box-shadow:0 16px 44px rgba(31,31,29,.18)}
+.bdr.open{transform:none}
+.bdh{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.bdh h3{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:-.01em;flex:1}
+.bdh .x{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink3);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.bdh .x:hover{background:var(--graybg);color:var(--ink)}
+.bdb{flex:1;overflow:auto;padding:4px 22px 30px}
+.bl{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:22px 0 4px}
+.bf{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.bl+.bf{border-top:none}
+.bf span{color:var(--ink3)}
+.bf b{font-weight:500;text-align:right}
+.bm{display:flex;gap:10px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.bl+.bm{border-top:none}
+.bm .bw{color:var(--ink3);font-size:12.5px;width:48px;flex:none;font-variant-numeric:tabular-nums}
+.bm .bt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bsrc{font-size:12.5px;color:var(--ink3);margin-top:24px;padding-top:14px;border-top:1px solid var(--line);display:flex;align-items:center;gap:6px}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:14.5px;padding:9px 18px;border-radius:999px;z-index:1800;display:none;max-width:80vw}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"home","arts":"demand"};</script>
+<script src="gy-nav.js?v=d794329b"></script>
+<script src="gy-calendar.js?v=b1dfa958"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse" id="expandBtn" style="display:none" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <i class="ti ti-home"></i>
+  <span class="title">Home</span>
+</div>
+
+<header class="hero">
+  <div class="hin">
+    <h1 class="hello">Good morning, Caitlin</h1>
+    <form class="ask" onsubmit="askGo(event)">
+      <button class="ib" type="button" title="Attach" onclick="toast('Attach a file or a link')"><i class="ti ti-plus"></i></button>
+      <input id="askIn" type="text" placeholder="Ask GYOS" autocomplete="off">
+      <button class="ib" type="button" title="Dictate" onclick="toast('Listening')"><i class="ti ti-microphone"></i></button>
+      <button class="ib go" type="submit" title="Ask"><i class="ti ti-arrow-up"></i></button>
+    </form>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="blk">
+    <div class="sh"><h2>Start</h2></div>
+    <div class="start" id="start"></div>
+  </section>
+
+  <div class="grid blk">
+    <main>
+      <section>
+        <div class="sh"><h2>Needs you</h2><span class="n" id="needN"></span><span class="act" onclick="location.href='todos.html'">All to-dos</span></div>
+        <div class="acc" id="acc"></div>
+      </section>
+
+      <section class="blk">
+        <div class="sh"><h2>Since yesterday</h2><span class="n" id="runN"></span><span class="act" onclick="location.href='activity-overview.html'">Activity</span></div>
+        <div class="log" id="log"></div>
+      </section>
+    </main>
+
+    <aside class="side">
+      <section>
+        <div class="sh"><h2>Today</h2><span class="act" onclick="location.href='meeting-notes.html'">Meeting notes</span></div>
+        <div id="today"></div>
+      </section>
+      <section class="blk">
+        <div class="sh"><h2>People</h2><span class="act" onclick="toast('All contacts: not in this prototype yet')">All</span></div>
+        <div id="people"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="agents">
+    <div class="sh"><h2>Your agents</h2><span class="act" onclick="location.href='hive-mind-v2.html'">Hive Mind</span></div>
+    <div class="stories" id="stories"></div>
+  </section>
+</div>
+</div>
+</div>
+
+<div class="bov" id="bov" onclick="closeBrief()"></div>
+<aside class="bdr" id="bdr" aria-hidden="true">
+  <div class="bdh"><h3 id="bdT"></h3><button class="x" onclick="closeBrief()" title="Close"><i class="ti ti-x"></i></button></div>
+  <div class="bdb" id="bdB"></div>
+</aside>
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(function(){t.style.display='none';},3200);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+function ev(e){if(e)e.stopPropagation();}
+function askGo(e){e.preventDefault();var v=document.getElementById('askIn').value.trim();if(v)toast('GYOS is looking into: '+v);document.getElementById('askIn').value='';}
+function esChip(k){var e=window.GY_ES&&GY_ES[k];return e?'<span class="es-chip '+e.cls+'"><i class="ti '+e.icon+'"></i>'+e.short+'</span>':'';}
+
+/* ── Start ── the things a person can begin from Home. Each goes to where
+   that work lives; the count is what is already open there. */
+var START=[
+ {i:'ti-checkup-list', t:'Start a deliverable', n:'4 open',     c:'#4E7A2E', bg:'#E8F1DE', go:"location.href='deliverables-landing.html'"},
+ {i:'ti-stack-2',      t:'Add inventory',       n:'2,140 units',c:'#1D7A6E', bg:'#DDF1EE', go:"location.href='inventory-overview.html'"},
+ {i:'ti-briefcase',    t:'Log a deal',          n:'4 open',     c:'#2F6FDB', bg:'#E8F0FC', go:"location.href='deals.html'"},
+ {i:'ti-notes',        t:'Write a meeting note',n:'2 owed',     c:'#B5628F', bg:'#F8E8F0', go:"location.href='meeting-notes.html'"},
+ {i:'ti-upload',       t:'Add a document',      n:'38 filed',   c:'#6A4FA3', bg:'#ECE6F7', go:"location.href='documents-overview.html'"},
+ {i:'ti-books',        t:'Browse the library',  n:'12 blueprints',c:'#8A6A2A',bg:'#F5ECD9', go:"location.href='hive-mind-v2.html'"}
+];
+document.getElementById('start').innerHTML=START.map(function(s){
+  return '<div class="st" style="--sc:'+s.c+';--sbg:'+s.bg+'" onclick="'+s.go+'"><span class="si"><i class="ti '+s.i+'"></i></span><b>'+s.t+'</b><div class="sn">'+s.n+'</div></div>';
+}).join('');
+
+/* ── Needs you ── an accordion. One item is open at a time, so the page
+   only ever shows one blue button. The step you are on opens first. */
+var SIGNALS=[
+ {t:'Boundary map from Kingham Hill Trust', to:'Baseline', w:'08:12'},
+ {t:'Units enquiry from Thames Water',       to:'Demand',   w:'Yest.', es:'nut'},
+ {t:'Heads of terms from James Ruggles',     to:'Legal',    w:'Thu'}
+];
+var DRAFTS=[
+ {t:'Follow-up to James Ruggles',      w:'11 Sep'},
+ {t:'Units quote for Thames Water',    w:'Yest.', es:'nut'},
+ {t:'Reply to Kingham Hill Trust',     w:'Today'}
+];
+var ITEMS=[
+ {id:'step', ic:'ti-route', k:'--k-step', t:'Map beneficiaries and buyers', note:'Evenlode · 2.4', w:'Now',
+  facts:[['Supply','scored'],['Buyers named','0 of 3'],['Next','Trade check-in, 11:00']],
+  pri:['Open the step',"toast('Opens step 2.4')"], sec:['Open the deliverable',"location.href='document.html?mode=deliverable'"]},
+ {id:'kht', ic:'ti-mail-forward', k:'--k-mail', t:'Reply to Kingham Hill Trust', note:'Evenlode', w:'6 days', need:true,
+  facts:[['Topic','Grazing agreement'],['Blocks','East parcels'],['Draft','Ready']],
+  pri:['Review the reply',"toast('Opens the draft in Gmail')"], sec:['Open brief',"openBrief('kht')"]},
+ {id:'send', ic:'ti-send', k:'--k-send', t:'Client send needs your tap', note:'Spains Hall', w:'2 days', need:true,
+  facts:[['What','Baseline evidence pack'],['To','Spains Hall Estate'],['Prepared by','AI Assistant']],
+  pri:['Approve and send',"toast('Sent to Spains Hall Estate')"], sec:['Preview',"toast('Spains Hall is not in this prototype yet')"]},
+ {id:'emily', ic:'ti-message', k:'--k-msg', t:'Emily asked you to name the buyers', note:'Evenlode', w:'2h',
+  facts:[['From','Emily'],['Step','2.4'],['Shortlist','7 candidates']],
+  pri:['Reply to Emily',"toast('Opens the thread with Emily')"], sec:['Open shortlist',"location.href='document.html?mode=deliverable'"]},
+ {id:'file', ic:'ti-inbox', k:'--k-inbox', t:'File 3 emails', note:'Evenlode', w:'', list:'sig',
+  pri:['File all',"fileAll()"]},
+ {id:'drafts', ic:'ti-pencil', k:'--k-draft', t:'Send 3 drafts', note:'Evenlode', w:'', list:'dr',
+  pri:['Review in Gmail',"toast('Opens your drafts in Gmail')"]}
+];
+var openId='step';
+function subList(kind){
+  var L=kind==='sig'?SIGNALS:DRAFTS;
+  return '<div class="subl">'+L.map(function(x,i){
+    var b=kind==='sig'
+      ? '<button class="sbtn" onclick="sigFile('+i+',event)">File</button><button class="sbtn" onclick="ev(event);toast(\'Pick a programme and deliverable\')">Move</button>'
+      : '<button class="sbtn" onclick="drSend('+i+',event)">Send</button>';
+    return '<div class="sr" id="'+kind+i+'"><span class="t">'+x.t+(x.to?'<em>'+x.to+'</em>':'')+'</span>'+esChip(x.es)+b+'<span class="w">'+x.w+'</span></div>';
+  }).join('')+'</div>';
+}
+function renderAcc(){
+  document.getElementById('acc').innerHTML=ITEMS.filter(function(x){return !x.done;}).map(function(x){
+    var body='';
+    if(x.facts) body+='<div class="facts">'+x.facts.map(function(f){return '<span>'+f[0]+' <b>'+f[1]+'</b></span>';}).join('')+'</div>';
+    if(x.list) body+=subList(x.list);
+    body+='<div class="iact"><button class="btn-pri" onclick="ev(event);'+x.pri[1]+'">'+x.pri[0]+'</button>'
+      +(x.sec?'<span class="lnk" onclick="ev(event);'+x.sec[1]+'">'+x.sec[0]+'</span>':'')+'</div>';
+    return '<div class="it'+(x.id===openId?' open':'')+'" style="--kc:var('+x.k+')">'
+      +'<div class="ih" onclick="openItem(\''+x.id+'\')"><i class="ti '+x.ic+' ic"></i>'
+      +'<span class="t">'+x.t+'<em>'+x.note+'</em></span>'
+      +(x.w?'<span class="w'+(x.need?' need':'')+'">'+x.w+'</span>':'')
+      +'<i class="ti ti-chevron-right chev"></i></div>'
+      +'<div class="ib2">'+body+'</div></div>';
+  }).join('');
+  document.getElementById('needN').textContent=ITEMS.filter(function(x){return !x.done;}).length;
+}
+function openItem(id){openId=(openId===id?'':id);renderAcc();}
+var left={sig:SIGNALS.length,dr:DRAFTS.length};
+function item(id){return ITEMS.filter(function(x){return x.id===id;})[0];}
+function sigFile(i,e){ev(e);SIGNALS[i].gone=true;document.getElementById('sig'+i).classList.add('gone');left.sig--;toast('Filed to Evenlode · '+SIGNALS[i].to);
+  var it=item('file');it.t='File '+left.sig+' email'+(left.sig===1?'':'s');if(!left.sig){it.done=true;openId='';}renderAcc();restoreGone();}
+function drSend(i,e){ev(e);DRAFTS[i].gone=true;left.dr--;toast('Sent from your inbox');
+  var it=item('drafts');it.t='Send '+left.dr+' draft'+(left.dr===1?'':'s');if(!left.dr){it.done=true;openId='';}renderAcc();restoreGone();}
+function restoreGone(){SIGNALS.forEach(function(x,i){if(x.gone){var r=document.getElementById('sig'+i);if(r)r.classList.add('gone');}});
+  DRAFTS.forEach(function(x,i){if(x.gone){var r=document.getElementById('dr'+i);if(r)r.classList.add('gone');}});}
+function fileAll(){SIGNALS.forEach(function(x){x.gone=true;});left.sig=0;item('file').done=true;openId='';toast('Filed 3 emails to Evenlode');renderAcc();}
+renderAcc();
+
+/* ── Since yesterday ── what the agents did. A record: no buttons. */
+var LOG=[
+ {day:'Today'},
+ {t:'08:40', x:'Logged <b>Thames Water</b> as demand on Evenlode', who:'Demand Mapping', es:'nut'},
+ {t:'08:12', x:'Matched a boundary map from <b>Kingham Hill Trust</b> to Baseline', who:'Inbox'},
+ {t:'07:55', x:'<b>Inventory sync</b>, 9 of 11 sources', who:'Automated', run:true},
+ {day:'Yesterday'},
+ {t:'18:20', x:'Drafted a follow-up to <b>James Ruggles</b>', who:'Inbox'},
+ {t:'16:05', x:'Filed 4 emails to <b>Evenlode</b>', who:'Inbox'},
+ {t:'15:30', x:'<b>Desktop research</b> on Spains Hall, 6 of 16 steps', who:'Research', run:true},
+ {t:'11:10', x:'Updated <b>Beneficiary map</b>, 8 of 16 rows', who:'BNG', run:true, es:'bng'}
+];
+(function(){
+  var runs=0;
+  document.getElementById('log').innerHTML=LOG.map(function(l){
+    if(l.day) return '<div class="lday">'+l.day+'</div>';
+    if(l.run) runs++;
+    return '<div class="le"><span class="lt">'+l.t+'</span><span class="lx">'+l.x+esChip(l.es)+(l.run?'<span class="state">Running</span>':'')+'</span><span class="who">'+l.who+'</span></div>';
+  }).join('');
+  document.getElementById('runN').textContent=runs+' running';
+})();
+
+/* ── Today ── from gy-calendar.js */
+(function(){
+  if(!window.GY_CAL_API) return;
+  document.getElementById('today').innerHTML=GY_CAL_API.forToday().map(function(m){
+    var b = m.note ? '<span class="ab">Note</span>'
+          : m.state==='pending' ? '<span class="ab pend">Write note</span>'
+          : '<span class="ab">Brief</span>';
+    return '<div class="ag" onclick="openBrief(\''+m.id+'\')"><span class="at">'+m.at+'</span><span class="an">'+m.title+'</span>'+b+'</div>';
+  }).join('');
+})();
+
+/* ── People ── avatar colour is the role: landowner, buyer, client.
+   Amber on the time when they are waiting on you. */
+var PEOPLE=[
+ {id:'kht', n:'Kingham Hill Trust', i:'KH', r:'land', w:'6 days', need:true},
+ {id:'tw',  n:'Thames Water',       i:'TW', r:'buy',  w:'1 day',  need:true},
+ {id:'jr',  n:'James Ruggles',      i:'JR', r:'cli',  w:'Thu'},
+ {id:'mg',  n:'Millie Gray',        i:'MG', r:'cli',  w:'11 Sep'},
+ {id:'she', n:'Spains Hall Estate', i:'SH', r:'land', w:'7 wks'}
+];
+var ROLE={land:'Landowner',buy:'Buyer',cli:'Client'};
+document.getElementById('people').innerHTML=PEOPLE.map(function(p){
+  return '<div class="pp" onclick="openBrief(\''+p.id+'\')"><span class="av '+p.r+'" title="'+ROLE[p.r]+'">'+p.i+'</span><span class="pn">'+p.n+'</span><span class="pw'+(p.need?' need':'')+'">'+p.w+'</span></div>';
+}).join('');
+
+/* ── Your agents ── full-colour circles with a white icon. An ecosystem
+   service agent takes its service token from GY_ES (icon and colour), so it
+   matches every other place that service appears. */
+var AGENTS=[
+ {n:'Demand Mapping', i:'ti-target-arrow', c:'#8A6A2A'},
+ {n:'BNG',            es:'bng'},
+ {n:'Nutrient',       es:'nut'},
+ {n:'Carbon',         es:'wcc'},
+ {n:'Inbox',          i:'ti-mail',         c:'#4E5D8C'},
+ {n:'Requirements',   i:'ti-list-check',   c:'#6A4FA3'},
+ {n:'Research',       i:'ti-world-search', c:'#1D7A6E'}
+];
+document.getElementById('stories').innerHTML=AGENTS.map(function(g){
+  var e=g.es&&window.GY_ES&&GY_ES[g.es];
+  var face=e ? '<div class="face '+e.cls+'"><i class="ti '+e.icon+'"></i></div>'
+             : '<div class="face" style="--fc:'+g.c+'"><i class="ti '+g.i+'"></i></div>';
+  return '<div class="sto" onclick="toast(\''+g.n+' agent: chat not in this prototype yet\')"><div class="ring">'+face+'</div><span>'+g.n+'</span></div>';
+}).join('')+'<div class="sto add" onclick="location.href=\'hive-mind-v2.html\'"><div class="ring"><div class="face"><i class="ti ti-plus"></i></div></div><span>Add agent</span></div>';
+
+/* ── Brief ── drawer previewer, read-only. */
+var BRIEFS={
+ 'm-james':{t:'Client call · James Ruggles',
+   facts:[['Programme','Evenlode'],['Phase','Plan'],['Deliverable','Customer Demand Mapping'],['Step','2.4 Beneficiary map & Buyer list'],['Last contact','Thu, heads of terms']],
+   mails:[['Thu','Heads of terms, revised'],['11 Sep','Re: buyer shortlist'],['2 Sep','Site access for survey']],
+   open:['Confirm three named buyers','Agree survey dates']},
+ 'm-trade':{t:'Trade check-in',
+   facts:[['Programme','Evenlode'],['Phase','Plan'],['Step','2.5 Check with Trade'],['With','Emily']],
+   mails:[['Yest.','Units enquiry, Thames Water'],['9 Sep','Nutrient offtake terms']],
+   open:['Is Thames Water a buyer or a beneficiary','Price range for nutrient units']},
+ 'm-standup':{t:'Evenlode standup',
+   facts:[['Programme','Evenlode'],['Phase','Plan'],['With','Emily, Harry']],
+   mails:[['08:12','Boundary map, Kingham Hill Trust']],
+   open:['3 emails to file','3 drafts to send']},
+ 'kht':{t:'Kingham Hill Trust',
+   facts:[['Role','Landowner'],['Programme','Evenlode'],['Waiting on you','6 days'],['Last met','3 Sep, site visit']],
+   mails:[['08:12','Boundary map, east parcels'],['27 Sep','Grazing agreement questions'],['3 Sep','Visit follow-up']],
+   open:['Grazing agreement blocks the east parcels','Boundary map to confirm against Baseline']},
+ 'tw':{t:'Thames Water',
+   facts:[['Role','Buyer'],['Programme','Evenlode'],['Service','Nutrient credits'],['Waiting on you','1 day']],
+   mails:[['Yest.','Units enquiry, Evenlode catchment']],
+   open:['Quote drafted, ready to send']},
+ 'jr':{t:'James Ruggles',
+   facts:[['Role','Client'],['Programme','Evenlode'],['Next','Today 14:00']],
+   mails:[['Thu','Heads of terms, revised'],['11 Sep','Re: buyer shortlist']],
+   open:['Confirm three named buyers']},
+ 'mg':{t:'Millie Gray',
+   facts:[['Role','Client'],['Programme','Evenlode'],['Last contact','11 Sep']],
+   mails:[['11 Sep','Re: buyer shortlist']], open:[]},
+ 'she':{t:'Spains Hall Estate',
+   facts:[['Role','Landowner'],['Programme','Spains Hall'],['Last contact','7 weeks ago']],
+   mails:[['14 Aug','Baseline survey dates']],
+   open:['Baseline sign-off overdue']}
+};
+function openBrief(id){
+  var b=BRIEFS[id]; if(!b){toast('No brief for this one yet');return;}
+  document.getElementById('bdT').textContent=b.t;
+  var h='<div class="bl">Context</div>'+b.facts.map(function(f){return '<div class="bf"><span>'+f[0]+'</span><b>'+f[1]+'</b></div>';}).join('');
+  h+='<div class="bl">Recent emails</div>'+b.mails.map(function(m){return '<div class="bm"><span class="bw">'+m[0]+'</span><span class="bt">'+m[1]+'</span></div>';}).join('');
+  if(b.open.length) h+='<div class="bl">Open points</div>'+b.open.map(function(o){return '<div class="bm"><span class="bt">'+o+'</span></div>';}).join('');
+  h+='<div class="bsrc"><i class="ti ti-plug-connected"></i> Labelled threads and known contacts only</div>';
+  document.getElementById('bdB').innerHTML=h;
+  document.getElementById('bov').classList.add('open');
+  document.getElementById('bdr').classList.add('open');
+}
+function closeBrief(){document.getElementById('bov').classList.remove('open');document.getElementById('bdr').classList.remove('open');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeBrief();});
+</script>
+<script src="gy-versions.js?v=2400190b"></script>
+</body>
+</html>

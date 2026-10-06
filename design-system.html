@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=c2eda4c9">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
 
 <style>
 /* ── the reference page's own chrome. Everything inside a demo frame is the
@@ -102,13 +102,15 @@ pre.code .c{color:#8A7F76}
 .emptybox{border:1px dashed var(--line2);border-radius:14px;padding:30px 20px;text-align:center;color:var(--ink3);font-size:14px;width:100%}
 .sq{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
   background:var(--esbg);color:var(--esc);font-size:17px;flex:none}
+.prh{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:26px 0 0}
+.prh + .rules{margin-top:10px}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active":"none"};</script>
-<script src="gy-nav.js?v=ca057c36"></script>
+<script src="gy-nav.js?v=d794329b"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-inventory.js?v=358d8962"></script>
 
@@ -146,7 +148,9 @@ pre.code .c{color:#8A7F76}
     <a href="#selection">Selection</a>
     <a href="#pills">Pills</a>
     <a href="#drawer">Drawer</a>
+    <a href="#sidebar">Sidebar</a>
     <a href="#empty">Empty states</a>
+    <a href="#principles">Principles</a>
     <a href="#rules">Rules</a>
   </nav>
 
@@ -175,7 +179,8 @@ pre.code .c{color:#8A7F76}
     <div class="spec"><table>
       <tr><th>Pairing</th><td>Every status colour ships as a background and a darker text tone (<code>--greenbg</code> with <code>--greend</code>). Text always takes the dark tone, never the raw hue.</td></tr>
       <tr><th>Green</th><td>Complete, final, in good condition, an exact match.</td></tr>
-      <tr><th>Amber</th><td>Needs attention, partial, unallocated, overdue.</td></tr>
+      <tr><th>Amber</th><td>You are needed: a decision or ask waiting on a person, plus partial, unallocated, overdue. Never the current step.</td></tr>
+      <tr><th>Current</th><td><code>--cur</code>, <code>--curbg</code>, <code>--curd</code>, <code>--currow</code>: where the work is right now (the current step, its Now label, its pip). Ink, not a hue, so it never competes with amber.</td></tr>
       <tr><th>Blue</th><td>Informational and links. A substitute match. Never success.</td></tr>
       <tr><th>Yellow</th><td><code>--yellow</code> is the brand mark, used for the workspace tile and the unallocated card. It is not a status.</td></tr>
     </table></div>
@@ -229,7 +234,7 @@ pre.code .c{color:#8A7F76}
     <p class="lead">Every page is the same frame: a fixed rail, a sticky topbar carrying breadcrumbs, and one centred column.</p>
     <div class="spec"><table>
       <tr><th>Column</th><td><code>.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}</code>, dropping to <code>32px 22px 90px</code> under 900px. Canonical on every shell page, no exceptions.</td></tr>
-      <tr><th>Rail</th><td>264px, resizable by its grip, collapsible, remembered in <code>localStorage</code>. Rendered by <code>gy-nav.js</code> from <code>window.GYNAV</code>, never hand-written per page.</td></tr>
+      <tr><th>Rail</th><td>264px, resizable by its grip, remembered in <code>localStorage</code>. Collapses to a 68px icon rail with a tooltip per icon; the GY tile expands it again (<code>gyRail()</code>, <code>localStorage('gyRail')</code>). A page with <code>GYNAV.rail:true</code> always opens on the rail and leaves the global choice alone; Deliverable pages use it. Rendered by <code>gy-nav.js</code> from <code>window.GYNAV</code>, never hand-written per page.</td></tr>
       <tr><th>Topbar</th><td>61px, sticky, translucent with a blur. Breadcrumbs come from the <code>GY_CRUMB</code> table in <code>gy-nav.js</code>, so altitude is consistent across pages.</td></tr>
       <tr><th>Page header</th><td><code>.phead</code>: title left, action bar right, one hairline under the pair. Nothing else sits in that row.</td></tr>
     </table></div>
@@ -591,6 +596,25 @@ host.innerHTML = <span class="k">gySelBar</span>(n, [
   </div>
 </section>
 
+<section class="dsect" id="sidebar">
+  <h2>Sidebar</h2>
+  <div class="comp">
+    <h3>Collapsed rail <code>body.gyrail / gyRail()</code></h3>
+    <p class="lead">The sidebar folds to a 68px icon rail, never to nothing. Every destination stays one click away and a tooltip names it.</p>
+    <div class="demo">
+      <button class="btn-out" onclick="gyRail()"><i class="ti ti-layout-sidebar"></i> Toggle the rail</button>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Anatomy</th><td>68px wide. Icons centred in 44 by 40px hit areas at 18px. Labels, counts, chevrons and sub-lists hide; a group label becomes a 1px divider. Workspace shows its tile only.</td></tr>
+      <tr><th>Toggle</th><td>One sidebar icon in front of the breadcrumb, for both collapse and expand. Mounted by <code>gy-nav.js</code> on every page with a topbar; pages without one fall back to the icon in the sidebar header.</td></tr>
+      <tr><th>GY tile</th><td>Always the Home button, in both states.</td></tr>
+      <tr><th>Tooltip</th><td>Dark, to the right of the rail, one line. Set by <code>data-rtip</code>, never <code>data-tip</code>, which would fire the shared tooltip layer as well.</td></tr>
+      <tr><th>Memory</th><td><code>localStorage('gyRail')</code> carries the choice across pages.</td></tr>
+      <tr><th>Default on</th><td>A page with <code>GYNAV.rail:true</code> always opens on the rail and leaves the global choice alone. Deliverable pages use it.</td></tr>
+    </table></div>
+  </div>
+</section>
+
 <section class="dsect" id="empty">
   <h2>Empty states</h2>
   <div class="comp">
@@ -610,6 +634,41 @@ host.innerHTML = <span class="k">gySelBar</span>(n, [
 </section>
 
 <!-- ══ RULES ════════════════════════════════════════════════════════ -->
+<section class="dsect" id="principles">
+  <h2>Principles</h2>
+  <p class="lead">What the v8 Deliverable page settled on 3 Oct 2026. The rules below say what never to do; these say what good looks like.</p>
+  <h3 class="prh">Shell and navigation</h3>
+  <div class="rules">
+    <div class="rule"><b>Collapse to a rail, never to nothing</b><p>The sidebar folds to an icon rail so every destination stays one click away. Deliverable pages open on the rail so the work gets the room.</p></div>
+    <div class="rule"><b>One toggle, one home</b><p>The sidebar toggle sits in front of the breadcrumb and handles both directions. The GY logo is always Home.</p></div>
+    <div class="rule"><b>The chrome never moves</b><p>Same 61px topbar, same full breadcrumb, same alignment on every page. A page's own content never stretches it.</p></div>
+  </div>
+  <h3 class="prh">Visual refinement</h3>
+  <div class="rules">
+    <div class="rule"><b>Refine by scaling down</b><p>Smaller badges, tighter rows, medium weight instead of bold. Calm beats loud.</p></div>
+    <div class="rule"><b>Icons stand alone</b><p>No tinted box behind a list or title icon. Drop the box and give the glyph the size instead.</p></div>
+    <div class="rule"><b>One generous padding</b><p>Content sits in one even inset, 60px inside the document card, on every tab.</p></div>
+    <div class="rule"><b>Active by colour, not weight</b><p>Mark the current item with ink and a bar. A change in weight changes width, and a list that rewraps on click jumps.</p></div>
+  </div>
+  <h3 class="prh">Colour carries one meaning</h3>
+  <div class="rules">
+    <div class="rule"><b>Ink means current</b><p>Where the work is right now: the current step, its Now label, its pip. Tokens <code>--cur</code>, <code>--curbg</code>, <code>--currow</code>.</p></div>
+    <div class="rule"><b>Amber means a person is needed</b><p>A decision or an ask waiting on someone. Nothing else uses it.</p></div>
+  </div>
+  <h3 class="prh">Content and states</h3>
+  <div class="rules">
+    <div class="rule"><b>Empty states preview the final shape</b><p>Show the real table, card or box with bars for text. Where the content is not known yet, keep it generic.</p></div>
+    <div class="rule"><b>Say it once</b><p>Cut anything that repeats what the page already says elsewhere.</p></div>
+    <div class="rule"><b>Let the data write the UI</b><p>Counts and roles come from the workflow, not from typed copy, so they stay true when the steps change.</p></div>
+  </div>
+  <h3 class="prh">Settings header</h3>
+  <div class="rules">
+    <div class="rule"><b>Settings is the run's configuration</b><p>Agents, skills, knowledge, connectors, tools, inputs and outputs for this one run of a blueprint.</p></div>
+    <div class="rule"><b>The header sets expectations</b><p>The blueprint leads, then what the run is for, then who does what. Project facts drop to a quiet context line.</p></div>
+    <div class="rule"><b>Less is more</b><p>A summary that restates the page reads as clutter. Leave it out.</p></div>
+  </div>
+</section>
+
 <section class="dsect" id="rules">
   <h2>Rules that are not components</h2>
   <div class="rules">
@@ -689,6 +748,7 @@ document.getElementById('swStatus').innerHTML =
   [['Green','--green'],['Green bg','--greenbg'],['Green ink','--greend'],
    ['Amber','--amber'],['Amber bg','--amberbg'],['Amber ink','--amberd'],
    ['Blue','--blue'],['Blue bg','--bluebg'],['Blue ink','--blued'],
+   ['Current','--cur'],['Current bg','--curbg'],['Current row','--currow'],
    ['Dark','--dark'],['Yellow','--yellow']].map(function(r){ return swatch(r[0],r[1]); }).join('');
 
 document.getElementById('swEs').innerHTML = Object.keys(GY_ES).map(function(k){

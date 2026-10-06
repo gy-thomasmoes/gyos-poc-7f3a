@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connectors · Settings · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+.phead{align-items:center}
+.phead .seg{margin-left:6px}
+
+/* attention band, the same idiom as Deals */
+.rband{display:flex;gap:14px;align-items:center;background:var(--amberbg);border:1px solid #EBD9AE;
+       border-radius:14px;padding:14px 18px;margin:0 0 22px}
+.rband>.ti{font-size:19px;color:var(--amberd)}
+.rband .rt{font-size:14.5px;font-weight:600;color:var(--amberd)}
+.rband .rbtn{margin-left:auto;background:var(--amberd);color:#fff;border:none;border-radius:10px;
+             padding:9px 15px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;
+             display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.rband .rbtn .ti{font-size:17px;color:inherit}
+.rband .rbtn:hover{background:#6F470C}
+
+/* lettermark tile, shared by both views */
+.mark{width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
+      font-size:11.5px;font-weight:700;letter-spacing:.03em;flex:none}
+.mark.avail{background:#fff!important;color:var(--ink3)!important;border:1px dashed #C9C3B4}
+
+/* ── Yours: the house table, one line per connector ── */
+.gytbl{--cols:minmax(220px,1.6fr) 130px 140px 120px 110px}
+.gyrow{padding:12px 20px}
+.who{display:flex;align-items:center;gap:12px;min-width:0}
+.gyrow .nm{font-size:15px}
+.gyrow.avail .nm{font-weight:500;color:var(--ink2)}
+.gyrow .cat,.gyrow .dir{font-size:13.5px;color:var(--ink2);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.gyrow .dir .ti{font-size:15px;color:var(--ink3)}
+.gyrow.avail .cat,.gyrow.avail .dir,.gyrow.avail .mut{color:var(--ink3)}
+.st{font-size:18px;line-height:1;vertical-align:middle}
+.st.on{color:var(--greend)}
+.st.warn{color:var(--amberd)}
+.st.off{color:var(--ink3)}
+.btn-out.sm{padding:6px 13px;font-size:13px;border-radius:8px}
+@media(max-width:860px){.gyrow .cat,.gyrow .dir,.gyrow .last{display:none}}
+
+/* ── Discover: the catalogue, cards per category ── */
+.dsec{margin:0 0 30px}
+.dh{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:0 2px}
+.dh h2{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:-.01em;margin:0}
+.dh .n{font-size:12px;font-weight:600;color:var(--ink2);background:var(--graybg);border-radius:999px;padding:2px 8px;font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
+.card{display:grid;grid-template-columns:48px 1fr 34px;gap:14px;align-items:start;background:#fff;border:1px solid var(--line);
+      border-radius:14px;padding:16px;cursor:pointer}
+.card:hover{border-color:var(--line2);background:#FFFDF7}
+.card .mark{width:48px;height:48px;border-radius:12px;font-size:14px}
+.card .cn{font-size:15.5px;font-weight:600;letter-spacing:-.01em;margin-top:2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card.avail .cn{color:var(--ink2);font-weight:500}
+.card .cd{font-size:13.5px;color:var(--ink2);line-height:1.45;margin-top:3px}
+.card .cv{font-size:12.5px;color:var(--ink3);margin-top:7px}
+.cs{width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.cs.on{background:var(--greenbg);color:var(--greend)}
+.cs.warn{background:var(--amberbg);color:var(--amberd)}
+.cs.off{background:var(--graybg);color:var(--ink3)}
+button.cs{border:1px solid var(--line2);background:#fff;color:var(--ink2);cursor:pointer;font-family:inherit}
+button.cs:hover{border-color:var(--ink3);color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"","scope":"portfolio"};</script>
+<script src="gy-nav.js?v=d794329b"></script>
+<script src="gy-connectors.js?v=abf61329"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr">Settings</span>
+    <span class="sep">›</span><span class="cr cur">Connectors</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Connectors</div>
+    <div class="seg" id="seg">
+      <button data-v="yours" class="on" onclick="setView('yours')">Yours</button>
+      <button data-v="discover" onclick="setView('discover')">Discover</button>
+    </div>
+    <span id="synclab"></span>
+    <div class="acts" id="abar"></div>
+  </div>
+
+  <div id="rband"></div>
+  <div id="body"></div>
+  <div class="showing" id="showing" style="margin-top:12px"></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(function(){t.style.display='none';},3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+var I = window.GY_CONN_API;
+var ALL = I.all();
+var CATS = I.cats, ST = I.status, DIR = I.dir;
+var ICON = {on:'ti-check', warn:'ti-alert-triangle', off:'ti-player-pause', avail:'ti-plus'};
+
+var state = {view:'yours', q:'', f:{'Category':'all','Status':'all','Direction':'all','Object':'all'}};
+
+function go(id){ location.href = 'connector.html?i=' + id; }
+function esc(s){ return String(s).replace(/"/g,'&quot;'); }
+function mark(it){
+  var c = CATS[it.cat];
+  return '<span class="mark'+(it.status==='avail'?' avail':'')+'" style="background:'+c.bg+';color:'+c.fg+'">'+it.mark+'</span>';
+}
+
+/* ── filtering ── */
+function match(it){
+  var f = state.f;
+  if(f.Category !== 'all' && it.cat !== f.Category) return false;
+  if(f.Status !== 'all' && it.status !== f.Status) return false;
+  if(f.Direction !== 'all' && I.dirOf(it) !== f.Direction) return false;
+  if(f.Object !== 'all' && !it.flows.some(function(x){ return x.obj === f.Object; })) return false;
+  if(state.q){
+    var hay = (it.name+' '+it.vendor+' '+CATS[it.cat].name+' '+it.line+' '+it.flows.map(function(x){ return x.what+' '+x.obj; }).join(' ')).toLowerCase();
+    if(hay.indexOf(state.q.toLowerCase()) < 0) return false;
+  }
+  return true;
+}
+var STORD = ['warn','on','off','avail'];
+function bySt(list){ return list.slice().sort(function(a,b){ var x=STORD.indexOf(a.status)-STORD.indexOf(b.status); return x || a.name.localeCompare(b.name); }); }
+
+/* the one filter bar owns every dimension; the band and deep links drive it */
+function setFilter(group, label){
+  if(!bar || !bar.pop) return;
+  var row = [].filter.call(bar.pop.querySelectorAll('.ar[data-g="'+group+'"]'), function(r){
+    return r.textContent.indexOf(label) === 0; })[0];
+  if(row) row.click();
+}
+
+/* ── attention band ── */
+function band(){
+  var el = document.getElementById('rband');
+  var w = ALL.filter(function(i){ return i.status === 'warn'; });
+  if(!w.length){ el.innerHTML = ''; return; }
+  var one = w.length === 1;
+  el.innerHTML = '<div class="rband"><i class="ti ti-alert-triangle"></i>'
+    + '<div class="rt">'+(one ? w[0].name+' needs attention' : w.length+' connectors need attention')+'</div>'
+    + '<button class="rbtn" onclick="'+(one ? 'go(\''+w[0].id+'\')' : 'setFilter(\'Status\',\'Needs attention\')')+'">'
+    + '<i class="ti ti-list-check"></i> Review</button></div>';
+}
+
+/* ── Yours ── */
+function stIcon(it){
+  return '<i class="ti '+ICON[it.status]+' st '+it.status+'" data-tip="'+ST[it.status].label+'"></i>';
+}
+function yoursRow(it){
+  var c = CATS[it.cat], d = DIR[I.dirOf(it)];
+  var status = it.status === 'avail'
+    ? '<span><button class="btn-out sm" onclick="event.stopPropagation();request(\''+it.id+'\')">Connect</button></span>'
+    : '<span>'+stIcon(it)+'</span>';
+  return '<div class="gyrow'+(it.status==='avail'?' avail':'')+'" onclick="go(\''+it.id+'\')">'
+    + '<span class="who">'+mark(it)+'<span class="nm">'+it.name+'</span></span>'
+    + '<span class="cat">'+c.name+'</span>'
+    + '<span class="dir"><i class="ti '+d.icon+'"></i>'+d.label+'</span>'
+    + '<span class="mut last">'+(it.last || '-')+'</span>'
+    + status + '</div>';
+}
+function renderYours(vis){
+  var list = bySt(vis);
+  return '<div class="gytbl"><div class="gyhd"><span>Connector</span><span>Category</span><span>Direction</span><span>Last sync</span><span>Status</span></div>'
+    + (list.length ? list.map(yoursRow).join('') : '<div class="gyempty">No connectors match these filters</div>')
+    + '</div>';
+}
+
+/* ── Discover ── */
+function card(it){
+  var cs = it.status === 'avail'
+    ? '<button class="cs" onclick="event.stopPropagation();request(\''+it.id+'\')" data-tip="Connect"><i class="ti ti-plus"></i></button>'
+    : '<span class="cs '+it.status+'" data-tip="'+ST[it.status].label+'"><i class="ti '+ICON[it.status]+'"></i></span>';
+  return '<div class="card'+(it.status==='avail'?' avail':'')+'" onclick="go(\''+it.id+'\')">'
+    + mark(it)
+    + '<div><div class="cn">'+it.name+'</div><div class="cd">'+it.line+'</div><div class="cv">by '+it.vendor+'</div></div>'
+    + cs + '</div>';
+}
+function renderDiscover(vis){
+  var h = '', n = 0;
+  Object.keys(CATS).forEach(function(cat){
+    var list = bySt(vis.filter(function(i){ return i.cat === cat; }));
+    if(!list.length) return;
+    n += list.length;
+    h += '<section class="dsec"><div class="dh"><h2>'+CATS[cat].name+'</h2><span class="n">'+list.length+'</span></div>'
+      + '<div class="cards">'+list.map(card).join('')+'</div></section>';
+  });
+  if(!n) h = '<div class="gytbl"><div class="gyempty">No connectors match these filters</div></div>';
+  return h;
+}
+
+function render(){
+  var vis = ALL.filter(match);
+  document.getElementById('body').innerHTML = state.view === 'yours' ? renderYours(vis) : renderDiscover(vis);
+  document.getElementById('showing').textContent = 'Showing ' + vis.length + ' of ' + ALL.length + ' connectors';
+  band();
+}
+function setView(v){
+  state.view = v;
+  [].forEach.call(document.querySelectorAll('#seg button'), function(b){ b.classList.toggle('on', b.dataset.v === v); });
+  render();
+}
+
+/* a request never flips state on its own: the data team assigns the owners first */
+function request(id){
+  var it = I.byId(id);
+  gyToast('Connection requested: '+it.name+'. The data team assigns the three owners before anything flows');
+}
+
+/* ── header ── */
+var c0 = I.counts();
+document.getElementById('synclab').innerHTML = gyChip('Synced ' + I.lastSync.split(' ')[0],
+  'Last sync ' + I.lastSync + ' (HubSpot).\n' + c0.on + ' connected, ' + c0.warn + ' needs attention, ' + c0.off + ' paused, ' + c0.avail + ' available.',
+  c0.warn ? 'warn' : '');
+
+var ACTIONS = [
+  ['label','Connectors'],
+  ['ti-refresh','Sync all now','Sync started for every connected system. Results land in the audit log as they arrive'],
+  ['ti-file-export','Export connector register','Export: a CSV of every connector, its flows and its owners'],
+  '-',
+  ['label','Rules'],
+  ['ti-arrows-split','Field mappings','Field mappings: how each system\'s fields land in the GY schema'],
+  ['ti-clock','Sync schedule','Sync schedule: when each connector runs and who is told when it does not'],
+  '-',
+  ['ti-lock','Audit log','go:audit-log.html']
+];
+
+function addMenu(b){
+  var rows = [];
+  Object.keys(CATS).forEach(function(cat){
+    var av_ = I.byCat(cat).filter(function(i){ return i.status === 'avail'; });
+    if(!av_.length) return;
+    rows.push(['label', CATS[cat].name]);
+    av_.forEach(function(i){ rows.push(['ti-plug', i.name, function(){ go(i.id); }]); });
+  });
+  rows.push('-', ['ti-message-plus','Request another system','Request a system that is not in the catalogue yet: the data team scopes it as a bet']);
+  gyMenu(b, rows);
+}
+
+var OBJ_ICON = {Inventory:'ti-packages', Deals:'ti-businessplan', Projects:'ti-folders', Sites:'ti-map-pin', Documents:'ti-file-text', Intelligence:'ti-bulb'};
+var bar = gyBar('abar', {
+  search: {placeholder:'Search connectors', oninput:function(v){ state.q = v; render(); }},
+  filters: [
+    ['Category',  [['ti-circle-dot','All categories','all']].concat(Object.keys(CATS).map(function(k){
+                     return [CATS[k].icon, CATS[k].name, k]; }))],
+    ['Status',    [['ti-circle-dot','All statuses','all'],
+                   ['ti-check','Connected','on'],
+                   ['ti-alert-triangle','Needs attention','warn'],
+                   ['ti-player-pause','Paused','off'],
+                   ['ti-plug','Available','avail']]],
+    ['Direction', [['ti-circle-dot','All directions','all'],
+                   ['ti-arrow-down-left','Into GY OS','in'],
+                   ['ti-arrow-up-right','Out of GY OS','out'],
+                   ['ti-arrows-exchange','Two-way','both']]],
+    ['Object',    [['ti-circle-dot','All objects','all']].concat(I.objects.map(function(o){
+                     return [OBJ_ICON[o], o, o]; }))]
+  ],
+  onfilter: function(g, v){ state.f[g] = v; render(); },
+  actions: ACTIONS,
+  primary: {icon:'ti-plus', label:'Add <i class="ti ti-chevron-down"></i>', onclick:function(b){ addMenu(b); }}
+});
+
+render();
+
+/* deep links: ?v=discover picks the view, ?cat=<cat> preselects the category, ?i=<id> goes to the connector */
+(function(){
+  var q = location.search;
+  var id = (q.match(/[?&]i=([^&]+)/) || [])[1];
+  if(id && I.byId(id)){ location.replace('connector.html?i=' + id); return; }
+  var v = (q.match(/[?&]v=([^&]+)/) || [])[1];
+  if(v === 'discover') setView('discover');
+  var cat = (q.match(/[?&]cat=([^&]+)/) || [])[1];
+  if(cat && CATS[cat]) setFilter('Category', CATS[cat].name);
+})();
+</script>
+</body>
+</html>

@@ -30,7 +30,7 @@ window.gyCartoTiles = function(style){
                    Engine) · Records (Documents, Meeting notes, Activity)
        Programme : Overview · Manage (Inventory [BNG, Carbon], Projects,
                    Sites, Workflows) · Records (as above)
-     Hive Mind Library and the profile are pinned as full-width footer rows.
+     Hive Mind and the profile are pinned as full-width footer rows.
      A subtle dark-mode toggle themes the sidebar. Scope persists via
      localStorage('gyScope'); dark via localStorage('gyDark').
 ──────────────────────────────────────────────────────────────────────── */
@@ -206,8 +206,7 @@ window.gyCartoTiles = function(style){
   var ITEM_GENIE =
     '<div class="sitem" onclick="gyToast(\'Ask the data (Genie): natural-language questions over the data platform, not in this prototype yet\')"><i class="ti ti-sparkles"></i> Ask the data (Genie)</div>';
   var ITEM_WORKFLOWS =
-    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
-    +'<div class="ssub'+delCls+'" id="delSub">'+rows(DELIVERABLES)+artsHtml+'</div>';
+    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables</div>';
   /* Simple version: only the live pilot, Demand Mapping, opened in its manual first version. */
   var DELIVERABLES_BASIC = [
     ['lead-mapping','Lead Customer Demand Mapping',"location.href='lead-supply-demand-mapping-canvas.html'"],
@@ -218,8 +217,7 @@ window.gyCartoTiles = function(style){
   var ITEM_AUTOMATIONS =
     '<div class="sitem'+on('automations')+'"'+(active==='automations'?'':' onclick="location.href=\'automations.html\'"')+'><i class="ti ti-settings-automation"></i> Automations</div>';
   var ITEM_WORKFLOWS_BASIC =
-    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables <i class="ti ti-chevron-down sarr'+delCls+'" id="delArr" onclick="event.stopPropagation();gyTgl(\'delArr\',\'delSub\')"></i></div>'
-    +'<div class="ssub'+delCls+'" id="delSub">'+rows(DELIVERABLES_BASIC)+'</div>';
+    '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables</div>';
 
   /* Basic POC: slimmed first-steps view, with bundle titles above the links.
      Market · Intelligence · Manage, showing Inventory, the two live Intelligence
@@ -655,6 +653,56 @@ window.gyCartoTiles = function(style){
    +'.gychip.idle .gydot{background:#A79E8D}'
    +'html.gyembed body{--nav:0px}';
 
+
+  /* ── Collapsed rail (Oct 2026) ─────────────────────────────────────────
+     The collapse button folds the sidebar to a 68px icon rail, ChatGPT
+     style, instead of hiding it. Labels hide, icons centre, a tooltip names
+     each one on hover, and the GY tile turns into the expand button.
+     Remembered in localStorage('gyRail'). Sub-lists and group labels hide;
+     a group label becomes a thin divider. */
+  var RAIL_CSS =
+    'body.gyrail{--nav:68px!important}'
+   +'body.gyrail .snav{width:68px!important;padding:12px 12px 16px;overflow:visible;z-index:1250}'
+   +'body.gyrail .snavgrip,body.gyrail .ssub,body.gyrail .sarr,body.gyrail .scount,body.gyrail .gy-fend,body.gyrail #gyScName,body.gyrail .gy-switch>i{display:none!important}'
+   +'body.gyrail .sworks{justify-content:center;padding:4px 0 12px}'
+   +'body.gyrail .sworks>b,body.gyrail .sworks>.scollapse:not(.gy-railexp){display:none}'
+   +'.gy-railexp{display:none!important}'
+   +'.sworks .wtile.gy-home{cursor:pointer}'
+   +'.gy-navtgl{width:30px;height:30px;flex:none;border:none;border-radius:8px;background:transparent;color:#6B6A64;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;margin:0 8px 0 -6px}'
+   +'.gy-navtgl:hover{background:#F1EFE8;color:#1F1F1D}'
+   +'.topbar .gy-navtgl .ti,.row1 .gy-navtgl .ti,.gy-navtgl .ti{font-size:18px;color:inherit}'
+   +'html.gyembed .gy-navtgl{display:none!important}'
+   +'body.gy-hastgl .sworks>.scollapse{display:none!important}'
+   +'body.gy-hastgl.gyrail .sworks:hover .wtile{display:flex}'
+   +'body.gy-hastgl .sworks .gy-railexp,body.gy-hastgl.gyrail .sworks:hover .gy-railexp{display:none!important}'
+   +'.gy-navtgl:focus{outline:none}'
+   +'.gy-navtgl:focus-visible{outline:2px solid #185FA5;outline-offset:2px}'
+   +'body.gyrail .sworks .wtile{cursor:pointer}'
+   +'body.gyrail .sworks:hover .wtile{display:none}'
+   +'body.gyrail .sworks:hover .gy-railexp{display:flex!important}'
+   +'body.gyrail .gy-railexp{width:30px;height:30px}'
+   +'body.gyrail .gy-railexp i{font-size:18px}'
+   +'body.gyrail .gy-srow{flex-direction:column;align-items:flex-start;gap:2px;margin:0 0 6px}'
+   +'body.gyrail .gy-search,body.gyrail .gy-notif{flex:none;width:44px;height:40px;padding:0;justify-content:center;border-color:transparent;background:transparent;border-radius:9px;font-size:0}'
+   +'body.gyrail .gy-search{gap:0}body.gyrail .gy-search>span{display:none}'
+   +'body.gyrail .gy-search i,body.gyrail .gy-notif i{font-size:18px;color:#6B6A64}'
+   +'body.gyrail .gy-search:hover,body.gyrail .gy-notif:hover{background:#F3F2EE;border-color:transparent}'
+   +'body.gyrail .snav .sitem{font-size:0;justify-content:center;gap:0;padding:0;height:40px;width:44px}'
+   +'body.gyrail .snav .sitem>.ti{font-size:18px}'
+   +'body.gyrail .gy-grp{font-size:0;padding:0;height:1px;background:#E3E1DB;margin:9px 8px}'
+   +'body.gyrail .gy-switch{border:none;padding:0;width:44px;height:40px;justify-content:center;border-radius:9px;font-size:0}'
+   +'body.gyrail .gy-switch:hover{background:#F3F2EE}'
+   +'body.gyrail .gy-picker{right:auto;width:236px;top:0;left:52px}'
+   +'body.gyrail .gy-scopewrap{overflow-x:hidden;scrollbar-width:none}'
+   +'body.gyrail .gy-scopewrap::-webkit-scrollbar{display:none}'
+   +'body.gyrail .gy-frow{font-size:0;justify-content:center;padding:0;gap:0;height:56px}'
+   +'body.gyrail .gy-usmenu{right:auto;left:12px;width:244px}'
+   +'body.gyrail .gy-wsmenu{left:52px;top:0}'
+   +'body.gydark.gyrail .gy-grp{background:#2E2D31}'
+   +'body.gydark.gyrail .gy-search:hover,body.gydark.gyrail .gy-notif:hover,body.gydark.gyrail .gy-switch:hover{background:#26252A}'
+   +'body.gydark.gyrail .gy-search i,body.gydark.gyrail .gy-notif i{color:#B5B2AB}'
+   +'.gy-railtip{position:fixed;z-index:1800;background:#1F1F1D;color:#fff;font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;font-size:13px;line-height:1.3;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(31,31,29,.22);transform:translateY(-50%);display:none}';
+
   /* keep the rail's to-do count in step with the shared store, on any page
      that loads gy-todos.js */
   function gyTodoCount(){
@@ -667,18 +715,19 @@ window.gyCartoTiles = function(style){
   setTimeout(gyTodoCount, 0);
 
   document.write(
-    '<style>'+CSS+'</style>'
+    '<style>'+CSS+RAIL_CSS+'</style>'
     +'<aside class="snav" id="snav">'
     +'<div class="sworks" style="position:relative">'
-      +'<span class="wtile">GY</span>'
+      +'<span class="wtile gy-home" onclick="gyGoHome()" data-rtip="Home">GY</span>'
       +'<b id="gyWsBtn" onclick="gyWsMenu()" style="cursor:pointer">Great Yellow OS <i class="ti ti-chevron-down"></i></b>'
-      +'<button class="scollapse" onclick="toggleNav()" title="Collapse sidebar"><i class="ti ti-layout-sidebar"></i></button>'
+      +'<button class="scollapse" onclick="gyRail()" title="Collapse sidebar"><i class="ti ti-layout-sidebar"></i></button>'
+      +'<button class="scollapse gy-railexp" onclick="gyRail()" data-rtip="Expand sidebar" aria-label="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>'
       +'<div class="gy-wsmenu" id="gyWsMenu" style="display:none">'
         +'<div class="gy-wstop"><span class="wtile" style="width:26px;height:26px;border-radius:8px;font-size:11px">GY</span><span><span class="gy-wsname">Great Yellow OS</span></span></div>'
         +'<div class="gy-pkhead">Admin</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Settings: workspace configuration\')"><i class="ti ti-settings"></i>Settings</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Members and access: Clerk plus Google Workspace\')"><i class="ti ti-users"></i>Members and access</div>'
-        +'<div class="gy-pk" onclick="location.href=\'settings-integrations.html\'"><i class="ti ti-plug"></i>Integrations</div>'
+        +'<div class="gy-pk" onclick="location.href=\'settings-connectors.html\'"><i class="ti ti-plug"></i>Connectors</div>'
         +'<div class="gy-pk" onclick="gyToast(\'Governance: Unity Catalog lineage, access, audit, discovery\')"><i class="ti ti-shield-check"></i>Governance</div>'
         +'<div class="gy-pkdiv"></div>'
         +'<div class="gy-pk" onclick="gyToast(\'Invite people to the workspace\')"><i class="ti ti-user-plus"></i>Invite people</div>'
@@ -716,7 +765,7 @@ window.gyCartoTiles = function(style){
 
     /* pinned footer - library + profile, full-width rows */
     +'<div class="gy-fdiv" style="margin-top:auto"></div>'
-    +'<div class="gy-frow'+on('library')+'"'+(active==='library'?'':' onclick="location.href=\'hive-mind-library.html\'"')+'><i class="ti ti-books"></i> Hive Mind Library</div>'
+    +'<div class="gy-frow'+on('library')+'"'+(active==='library'?'':' onclick="location.href=\'hive-mind-v2.html\'"')+'><i class="ti ti-books"></i> Hive Mind</div>'
     +'<div class="gy-fdiv"></div>'
     +'<div id="gyUsWrap" style="position:relative;margin-bottom:-16px">'
       +'<div class="gy-frow" id="gyUsBtn" onclick="gyUsMenu()">'
@@ -752,6 +801,77 @@ window.gyCartoTiles = function(style){
     +'<div class="snavgrip" id="snavgrip"></div>'
     +'</aside>'
   );
+
+
+  /* Home: the GY tile always goes Home, in both sidebar states. */
+  window.gyGoHome = function(){
+    if((location.pathname.split('/').pop()||'') !== 'home.html') location.href = 'home.html';
+  };
+  /* Sidebar toggle in front of the breadcrumb (3 Oct 2026). One button for
+     both directions, so the GY tile can stay the Home button. Pages without a
+     topbar keep the sidebar's own toggles as a fallback. */
+  function gyNavTglSync(){
+    var b = document.getElementById('gyNavTgl'); if(!b) return;
+    var t = document.body.classList.contains('gyrail') ? 'Expand sidebar' : 'Collapse sidebar';
+    b.setAttribute('data-tip', t); b.setAttribute('aria-label', t);
+  }
+  function gyNavTglMount(){
+    if(document.getElementById('gyNavTgl')) return;
+    var crumbs = document.querySelector('.topbar .crumbs, .row1 .crumbs');
+    var bar = crumbs ? crumbs.parentNode : (document.querySelector('.topbar') || document.querySelector('.row1'));
+    if(!bar) return;
+    var b = document.createElement('button');
+    b.className = 'gy-navtgl'; b.id = 'gyNavTgl'; b.type = 'button';
+    b.innerHTML = '<i class="ti ti-layout-sidebar"></i>';
+    b.onclick = function(){ gyRail(); };
+    var exp = bar.querySelector(':scope > #expandBtn');
+    var ref = crumbs || (exp ? exp.nextSibling : bar.firstChild);
+    bar.insertBefore(b, ref);
+    document.body.classList.add('gy-hastgl');
+    gyNavTglSync();
+  }
+  if(document.readyState === 'loading') window.addEventListener('DOMContentLoaded', gyNavTglMount);
+  else gyNavTglMount();
+
+  /* Collapsed rail: toggle, restore on load, and the hover tooltip. */
+  window.gyRail = function(){
+    var on = document.body.classList.toggle('gyrail');
+    /* a page that opens on the rail (GYNAV.rail) does not overwrite the global choice */
+    if(!cfg.rail){ try{ localStorage.setItem('gyRail', on?'1':'0'); }catch(e){} }
+    ['gyPicker','gyWsMenu','gyUsMenu','gyModeMenu'].forEach(function(id){ var m=document.getElementById(id); if(m) m.style.display='none'; });
+    gyRailTipHide(); gyNavTglSync();
+    try{ window.dispatchEvent(new Event('resize')); }catch(e){}
+  };
+  /* GYNAV.rail: the page always opens on the collapsed rail (Deliverable pages). */
+  try{ if((cfg.rail || localStorage.getItem('gyRail')==='1') && !document.documentElement.classList.contains('gyembed')) document.body.classList.add('gyrail'); }catch(e){}
+  var gyRailTipEl = null;
+  function gyRailTipHide(){ if(gyRailTipEl) gyRailTipEl.style.display='none'; }
+  function gyRailLabel(el){
+    if(el.getAttribute('data-rtip')) return el.getAttribute('data-rtip');
+    if(el.classList.contains('gy-switch')){ var n=document.getElementById('gyScName'); return n ? 'Workspace: '+n.textContent : 'Workspace'; }
+    if(el.classList.contains('gy-search')) return 'Search';
+    if(el.getAttribute('aria-label')) return el.getAttribute('aria-label');
+    var t = '';
+    [].forEach.call(el.childNodes, function(c){ if(c.nodeType===3) t += c.textContent; });
+    return t.trim();
+  }
+  document.addEventListener('mouseover', function(e){
+    if(!document.body.classList.contains('gyrail')) return;
+    var nav = document.getElementById('snav');
+    var el = e.target.closest && e.target.closest('#snav .sitem, #snav .gy-frow, #snav .gy-search, #snav .gy-notif, #snav .gy-switch, #snav .gy-railexp, #snav .sworks .wtile');
+    if(!el || !nav || el.closest('.gy-picker,.gy-wsmenu,.gy-usmenu,.gy-modemenu')){ gyRailTipHide(); return; }
+    var label = gyRailLabel(el); if(!label){ gyRailTipHide(); return; }
+    if(!gyRailTipEl){ gyRailTipEl = document.createElement('div'); gyRailTipEl.className='gy-railtip'; document.body.appendChild(gyRailTipEl); }
+    var r = el.getBoundingClientRect();
+    gyRailTipEl.textContent = label;
+    gyRailTipEl.style.left = (nav.getBoundingClientRect().right + 8)+'px';
+    gyRailTipEl.style.top = (r.top + r.height/2)+'px';
+    gyRailTipEl.style.display = 'block';
+  });
+  document.addEventListener('mouseout', function(e){
+    if(!e.relatedTarget || !(e.relatedTarget.closest && e.relatedTarget.closest('#snav'))) gyRailTipHide();
+  });
+  document.addEventListener('click', gyRailTipHide, true);
 
   window.gyScope = function(s){
     scope = s;
@@ -865,8 +985,8 @@ window.gyCartoTiles = function(style){
     ['Go to','ti-note','Meeting notes','Page','go:meeting-notes.html'],
     ['Go to','ti-activity','Activity','Page','go:activity-overview.html'],
     ['Go to','ti-map-2','Market Map (Kwame)','Page','go:market-map-kwame.html'],
-    ['Go to','ti-books','Hive Mind Library','Page','go:hive-mind-library.html'],
-    ['Go to','ti-plug','Integrations','Settings','go:settings-integrations.html'],
+    ['Go to','ti-books','Hive Mind','Page','go:hive-mind-v2.html'],
+    ['Go to','ti-plug','Connectors','Settings','go:settings-connectors.html'],
 
     ['Switch workspace','ti-building-bank','Portfolio','Workspace','go:portfolio-overview.html'],
     ['Switch workspace','ti-topology-star-3','Evenlode','Workspace','go:programme-overview.html'],
@@ -1075,13 +1195,14 @@ window.gyCartoTiles = function(style){
      To add a page: one line in GY_CRUMB, keyed by filename. */
   var GY_CRUMB_HREF = {
     'Portfolio':'portfolio-overview.html',
+    'Connectors':'settings-connectors.html',
     'Inventory':'inventory-overview.html',
     'Deals':'deals.html',
     'Deliverables':'deliverables-landing.html',
     'Automations':'automations.html',
     'Documents':'documents-overview.html',
     'Meeting notes':'meeting-notes.html',
-    'Hive Mind Library':'hive-mind-library.html',
+    'Hive Mind':'hive-mind-v2.html',
     'Customer Demand Mapping':'demand-mapping-canvas-prototype.html',
     'Investor Q&A Log':'investor-qa-log-canvas-prototype.html'
   };
@@ -1090,13 +1211,16 @@ window.gyCartoTiles = function(style){
   /* alt: 'portfolio' | 'programme' | 'none'.  trail: buckets under the root. */
   var GY_CRUMB = {
     'home.html':                        {alt:'none'},
+    'home-v2.html':                     {alt:'none'},
     'design-system.html':               {alt:'none'},
-    'settings-integrations.html':       {alt:'none', trail:['Settings']},
+    'settings-connectors.html':         {alt:'none', trail:['Settings']},
+    'connector.html':                   {alt:'none', trail:['Settings','Connectors']},
     'todos.html':                       {alt:'none'},
     'hive-mind-library.html':           {alt:'none'},
-    'es-rule-book.html':                {alt:'none', trail:['Hive Mind Library','Rule books']},
-    'es-rulebook.html':                 {alt:'none', trail:['Hive Mind Library','Rule books']},
-    'carbon-rule-book.html':            {alt:'none', trail:['Hive Mind Library','Rule books']},
+    'hive-mind-v2.html':                {alt:'none'},
+    'es-rule-book.html':                {alt:'none', trail:['Hive Mind','Rule books']},
+    'es-rulebook.html':                 {alt:'none', trail:['Hive Mind','Rule books']},
+    'carbon-rule-book.html':            {alt:'none', trail:['Hive Mind','Rule books']},
 
     'portfolio-overview.html':          {alt:'portfolio'},
     'portfolio-dashboard.html':         {alt:'portfolio'},
@@ -1115,6 +1239,7 @@ window.gyCartoTiles = function(style){
 
     'programme-overview.html':          {alt:'programme'},
     'inventory-overview.html':          {alt:'programme'},
+    'inventory-overview-v2.html':       {alt:'programme'},
     'inventory-programme.html':         {alt:'programme', trail:['Inventory']},
     'inventory-bng-programme.html':     {alt:'programme', trail:['Inventory']},
     'inventory-wcc-programme.html':     {alt:'programme', trail:['Inventory']},
@@ -1126,6 +1251,16 @@ window.gyCartoTiles = function(style){
     'automations.html':                 {alt:'programme'},
     'documents-overview.html':          {alt:'programme'},
     'document.html':                    {alt:'programme', trail:['Documents']},
+    'deliverable-sketch-v3.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v4.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v4-doc.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v4-chat.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v5.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v6.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v7.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v8.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-document.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-workflow.html': {alt:'programme', trail:['Deliverables']},
     'meeting-notes.html':               {alt:'programme'},
     'meeting-notes-landing.html':       {alt:'programme'},
     'meeting-note-kickoff.html':        {alt:'programme', trail:['Meeting notes']},

@@ -103,7 +103,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function pad(n){ return (n<10?'0':'')+n; }
 function extent(d){ var n=0; JSON.stringify(d).replace(/[A-Za-z][A-Za-z'-]+/g,function(){n++;return '';}); return n; }
 
-/* covers come from gy-es-covers.js, shared with the Hive Mind Library */
+/* covers come from gy-es-covers.js, shared with the Hive Mind */
 
 function injectCSS(){
   if(document.getElementById('gypressCSS')) return;

@@ -97,7 +97,7 @@ body.textmode .accact{display:none}
 <body>
 
 <script>window.GYNAV={"active": "demand-textview", "arts": "demand"};</script>
-<script src="gy-nav.js?v=ca057c36"></script>
+<script src="gy-nav.js?v=d794329b"></script>
 <script src="gy-canvas.js?v=c1cac010"></script>
 <script src="gy-canvas-engine.js?v=05550288"></script>
 
@@ -241,7 +241,7 @@ const ARTEFACTS=[
   <div class="mrow"><span class="pmuted">Subject</span><span>Mapping the demand for {{project}}</span></div>
   <div style="margin-top:8px">Hi {{first_name}}, lovely speaking today. To map what {{project}} can sell and who would buy it, we need a few things from you. This link does most of the work, and anything you upload we read for you.</div>
   <span class="mbtn">Open your questionnaire</span></div>`},
- {id:'rulebooks',ic:'ti-book',name:'Library · ES rule books',node:'Desktop research',nid:'desktop',ex:true,desc:'One page per ecosystem service: static About, a nine-category readiness score, a sizing method, and a fast-moving Market dynamics half. Scored and sized per the GY methodology, seeded from the NatWest Markets Report. Open the Hive Mind Library in the sidebar to browse them.',
+ {id:'rulebooks',ic:'ti-book',name:'Library · ES rule books',node:'Desktop research',nid:'desktop',ex:true,desc:'One page per ecosystem service: static About, a nine-category readiness score, a sizing method, and a fast-moving Market dynamics half. Scored and sized per the GY methodology, seeded from the NatWest Markets Report. Open the Hive Mind in the sidebar to browse them.',
   prev:`<div class="paper"><h5>🌱 Carbon · rule book</h5>
   <div class="mrow"><span class="pmuted">About</span><span>static · definition + monetisation</span></div>
   <div class="mrow"><span class="pmuted">Readiness</span><span>9 categories · GY methodology</span></div>
@@ -403,7 +403,7 @@ const NODES=[
 {id:'desktop',x:1236,y:136,w:170,t:T.agent,title:'Desktop research',
  d:{sub:'Registries, APIs and trend reports'},r:{sub:'not started',st:'pending',dim:true},
  form:{owner:'Caitlin',exec:'Agentic AI',what:'Build a cited market snapshot for each ecosystem service.',
-  needs:[['Input complete?','Complete input pack'],['Hive Mind Library','Latest ES rule books + sizing methods']],produces:['Candidate service list','Market evidence pack, cited','Indicative sizing per market','Stale rule book flags'],
+  needs:[['Input complete?','Complete input pack'],['Hive Mind','Latest ES rule books + sizing methods']],produces:['Candidate service list','Market evidence pack, cited','Indicative sizing per market','Stale rule book flags'],
   done:'After this: the project has a candidate service list, and every candidate carries a cited market snapshot with an indicative market size.',
   steps:['AI Assistant derives candidate services from project interventions','AI Assistant pulls hard data from registries','AI Assistant researches market signals in trend reports','AI Assistant sizes each market and compiles cited snapshots'],arts:['rulebooks','registries','evidence'],
   guard:'Bronze soft-data findings always carry source links and are never blended with verified hard data. Estimates the methodology flags as finger-in-the-air are labelled as such.'}},
@@ -672,7 +672,7 @@ function openAboutL(){
     'The facts from onboarding, plus the standard data-needs ask we send the client early. Sets the scene; nothing is analysed here.',
     '<b>Questions</b> · vision, interventions, outcomes, boundary<br><b>Documents</b> · GIS shapefiles, data-room link, baseline surveys<br><b>Client ask</b> · baseline data available now, markets they pursue, who leads the ES valuation')}
   ${chap(2,'Markets and supply',
-    'The products this land can sell. Desktop research compiles cited market snapshots from the Hive Mind Library rule books, registries and APIs; qualitative research ground-truths them with buyer and trade team signals; the shortlist then scores what remains.',
+    'The products this land can sell. Desktop research compiles cited market snapshots from the Hive Mind rule books, registries and APIs; qualitative research ground-truths them with buyer and trade team signals; the shortlist then scores what remains.',
     '<b>Desktop research</b> · rule books, Allied Offsets API, registry pulls, trend scrapes<br><b>Qualitative research</b> · buyer conversations, trade team signals<br><b>Shortlist</b> · 8 nature products, scored and ranked<br><b>Product card</b> · rulebook, eligibility, volume and method, pricing and trend, indicative revenue, competitor supply, funding, confidence and next step')}
   ${chap(3,'Demand',
     'Who would buy: tap the GY buyer database, filter to this catchment, and qualify each candidate. Found through six channels; a light competitor scan sits here too.',
@@ -689,7 +689,7 @@ const ALIST=[
  {id:'qemail',ch:1,name:'Email · Project context',sub:'from Client email module',ic:'ti-mail',bg:'#1D9E75',fg:'#fff'},
  {id:'precall',ch:1,name:'Assistant · Pre-call brief',sub:'AI assistant · golden example',ic:'ti-sparkles',bg:'#EF9F27',fg:'#412402'},
  {id:'gapsum',ch:1,name:'Assistant · Gap summary',sub:'AI assistant · golden example',ic:'ti-message',bg:'#EF9F27',fg:'#412402'},
- {id:'rulebooks',ch:2,name:'Library · ES rule books',sub:'Hive Mind Library',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
+ {id:'rulebooks',ch:2,name:'Library · ES rule books',sub:'Hive Mind',ic:'ti-book',bg:'#7F77DD',fg:'#fff'},
  {id:'registries',ch:2,name:'Shelf · Supply registries',sub:'connections from Settings',ic:'ti-database',bg:'#215274',fg:'#fff'},
  {id:'reg_bng',ch:2,name:'Registry · DEFRA BNG register',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
  {id:'reg_gaia',ch:2,name:'Registry · Gaia',sub:'connection',ic:'ti-database',bg:'#215274',fg:'#fff'},
@@ -710,7 +710,7 @@ const TOOLMETA={
  qemail:{mod:'Client email module',mv:'v2',state:'newer'},
  precall:{mod:'Brief assistant module',mv:'v1',state:'drift'},
  gapsum:{mod:'Chaser assistant module',mv:'v1',state:'ok'},
- rulebooks:{mod:'Hive Mind Library shelf',mv:'v1',state:'ok'},
+ rulebooks:{mod:'Hive Mind shelf',mv:'v1',state:'ok'},
  registries:{mod:'Registry connections',mv:'v1',state:'ok'},
  evidence:{mod:null},
  scoring:{mod:'Scoring engine',mv:'v3',state:'ok'},
@@ -754,7 +754,7 @@ function openArtefactsL(){
     `<div class="pl">${ACH[c]}</div>`+ALIST.filter(a=>a.ch===c).map(row).join('')).join('');
   d.innerHTML=dhead('ti-template','var(--graybg)','var(--grayd)','Tools','')
   +`<div class="sbody">`+groups
-  +`<div class="tadd" style="margin-top:20px" onclick="toast('Opens the Hive Mind Library: pick a module, get a fork, name your instance')"><i class="ti ti-plus"></i><span><b>Add a tool</b></span><i class="ti ti-chevron-right chvw"></i></div>
+  +`<div class="tadd" style="margin-top:20px" onclick="toast('Opens the Hive Mind: pick a module, get a fork, name your instance')"><i class="ti ti-plus"></i><span><b>Add a tool</b></span><i class="ti ti-chevron-right chvw"></i></div>
   </div>`;
   if(typeof MANUAL!=='undefined'&&MANUAL)d.innerHTML=mScrub(d.innerHTML);
   d.style.display='block';
@@ -1731,7 +1731,7 @@ var MSCRUB=[
  [/the GY buyer database/g,'our buyer list'],
  [/GY buyer database/g,'buyer list'],
  [/buyer database/g,'buyer list'],
- [/Hive Mind Library/g,'reference library'],
+ [/Hive Mind/g,'reference library'],
  [/extracted by the team, /g,''],
  [/pre-filled from the shared folder/g,'filled in from what we already know'],
  [/via API/g,'by hand']
@@ -1769,7 +1769,7 @@ function applyManualLens(){
       f.what=mScrub(f.what); f.done=mScrub(f.done); f.guard=mScrub(f.guard);
       if(Array.isArray(f.arts)) f.arts=f.arts.filter(function(a){return !DATA_ARTS[a];});
       if(Array.isArray(f.produces)) f.produces=f.produces.map(mScrub);
-      if(Array.isArray(f.needs)) f.needs=f.needs.filter(function(x){return !/reference library|Hive Mind Library/.test(x[0]);}).map(function(x){return [mScrub(x[0]),mScrub(x[1])];});
+      if(Array.isArray(f.needs)) f.needs=f.needs.filter(function(x){return !/reference library|Hive Mind/.test(x[0]);}).map(function(x){return [mScrub(x[0]),mScrub(x[1])];});
     }
   });
   var byId=function(id){return NODES.find(function(x){return x.id===id;});};

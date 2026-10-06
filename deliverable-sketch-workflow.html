@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Demand Mapping &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+/* every selector here is prefixed dl, so nothing reaches the shell */
+
+/* the nutshell band: eight facts, read in one pass, no prose */
+.dlfacts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;margin-bottom:26px}
+.dlfact{min-width:0;padding:14px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dlfacts .dlfact:nth-child(4n){border-right:none}
+.dlfacts .dlfact:nth-child(n+5){border-bottom:none}
+.dlfact .k{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-bottom:5px}
+.dlfact .v{font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:7px;line-height:1.35}
+.dlfact .v .ti{font-size:16px;color:var(--ink3);flex:none}
+.dlfact .v.warnv{color:var(--amberd)}
+.dlfact .v.warnv .ti{color:var(--amber)}
+.dlfact .v.mutev{color:var(--ink3)}
+.dlfact a.v{cursor:pointer;text-decoration:none}
+.dlfact a.v:hover{text-decoration:underline}
+
+/* section head: a serif line with a reading on the right */
+.dlsh{display:flex;align-items:baseline;gap:12px;margin:30px 0 12px}
+.dlsh h2{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:-.01em}
+.dlsh .r{margin-left:auto;font-size:13.5px;color:var(--ink2)}
+
+/* the spine */
+.dlrow{cursor:pointer}
+.dlrow.cur{background:#FEFBEF;box-shadow:inset 3px 0 0 var(--yellow)}
+.dlstep{display:flex;align-items:center;gap:10px;min-width:0}
+.dlnum{font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink3);width:26px;flex:none}
+.dlname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlrow.off .dlname{color:var(--ink3)}
+.dltick{width:17px;height:17px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px}
+.dltick.done{background:var(--greend);color:#fff}
+.dltick.cur{background:var(--yellow);color:var(--ink)}
+.dltick.pend{border:1.5px solid var(--line2)}
+
+/* who or what runs a step */
+.dlrun{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.dlrun .ti{font-size:14px}
+.dlrun.human{background:var(--graybg);color:var(--ink2)}
+.dlrun.agent{background:var(--tealbg,#E2F3EC);color:#12684C}
+.dlrun.det{background:var(--bluebg);color:var(--blued)}
+.dlrun.data{background:var(--greenbg);color:var(--greend)}
+.dlrun.gate{background:var(--amberbg);color:var(--amberd)}
+
+.dlav{width:23px;height:23px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.dlwho{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);min-width:0}
+.dlwho span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.dlmini{font-size:13px;color:var(--ink3)}
+.dlmini.on{color:var(--amberd)}
+.dlchap{font-size:13px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* the run button that only a machine step offers */
+.dlgo{border:1px solid var(--line2);background:#fff;color:var(--ink);border-radius:8px;padding:5px 10px;font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.dlgo:hover{border-color:#12684C;color:#12684C}
+.dlgo .ti{font-size:14px}
+.dlgo.ghost{border-color:transparent;color:var(--ink3)}
+.dlgo.ghost:hover{border-color:var(--line2);color:var(--ink)}
+
+/* the step drawer, opened from a row */
+.dldet{display:none;padding:2px 20px 18px 56px;border-bottom:1px solid var(--line);background:#FDFCF7}
+.dldet.open{display:block}
+.dldet .g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;padding-top:14px}
+.dldet .k{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.dldet li{list-style:none;font-size:13.5px;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:7px}
+.dldet li .ti{font-size:14px;color:var(--ink3);flex:none}
+.dldet li.mute{color:var(--ink3)}
+.dldet .note{margin-top:14px;font-size:13.5px;color:var(--ink2);display:flex;align-items:center;gap:8px}
+
+/* the three provenance blocks under the spine */
+.dlcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.dlcard{min-width:0;border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px 18px 6px}
+.dlcard h3{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.dlcard h3 .n{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:12.5px;color:var(--ink3)}
+.dlitem{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dlcard .dlitem:first-of-type{border-top:none}
+.dlitem .ti{font-size:16px;color:var(--ink3);flex:none}
+.dlitem .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlitem .s{font-size:12.5px;color:var(--ink3);flex:none;white-space:nowrap}
+.dlitem .s.warn{color:var(--amberd)}
+.dlitem .s.ok{color:var(--greend)}
+
+/* the assistant, docked so it is reachable from any step */
+.dldock{position:fixed;right:26px;bottom:24px;z-index:1400;width:330px}
+.dlask{width:100%;background:#12684C;color:#F4FBF8;border:none;border-radius:14px;padding:13px 16px;font-family:inherit;font-size:14.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:9px;box-shadow:0 8px 22px rgba(18,104,76,.28)}
+.dlask .ti{font-size:18px}
+.dlask .kbd{margin-left:auto;font-size:11.5px;color:rgba(244,251,248,.6)}
+.dlpanel{display:none;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 40px rgba(26,12,18,.16);margin-bottom:10px;overflow:hidden}
+.dlpanel.open{display:block}
+.dlph{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600}
+.dlph .ti{font-size:17px;color:#12684C}
+.dlph button{margin-left:auto;border:none;background:transparent;color:var(--ink3);cursor:pointer;font-size:16px;padding:0;display:flex}
+.dlpk{padding:12px 16px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.dlsug{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;font-size:13.5px;cursor:pointer;line-height:1.4}
+.dlsug:hover{background:#F6F3EA}
+.dlsug .ti{font-size:16px;color:#12684C;margin-top:1px;flex:none}
+.dlsug b{display:block;font-weight:500}
+.dlsug i.s{display:block;font-style:normal;font-size:12.5px;color:var(--ink3);margin-top:2px}
+.dlfield{display:flex;align-items:center;gap:9px;border-top:1px solid var(--line);padding:11px 16px;color:var(--ink3);font-size:13.5px}
+.dlfield .ti{font-size:16px}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"deliverables","arts":"demand"};</script>
+<script src="gy-nav.js?v=d794329b"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr" onclick="location.href='deliverables-landing.html'">Deliverables</span><span class="sep">&rsaquo;</span>
+    <span class="cr cur">Customer Demand Mapping</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="phead">
+    <div class="h1">Customer Demand Mapping</div>
+    <span id="stchip"></span>
+    <div class="acts">
+      <button class="btn-out" onclick="dlOpen()"><i class="ti ti-sparkles"></i>Ask the assistant</button>
+      <button class="btn-out" onclick="gyToast('Workflow canvas, not in this sketch')"><i class="ti ti-share-3"></i>Open canvas</button>
+      <button class="btn-dark" onclick="location.href='document.html?mode=deliverable'"><i class="ti ti-file-text"></i>Open document</button>
+    </div>
+  </div>
+
+  <div class="dlfacts" id="facts"></div>
+
+  <div class="dlsh"><h2>Workflow</h2><span class="r" id="wfr"></span></div>
+  <div class="gystack" id="spine"></div>
+
+  <div class="dlsh"><h2>Everything it runs on</h2></div>
+  <div class="dlcols" id="cols"></div>
+</div>
+</div>
+</div>
+
+<div class="dldock">
+  <div class="dlpanel" id="dlpanel">
+    <div class="dlph"><i class="ti ti-sparkles"></i>Kwame<button onclick="dlClose()"><i class="ti ti-x"></i></button></div>
+    <div class="dlpk">On this deliverable</div>
+    <div id="sugs"></div>
+    <div class="dlfield"><i class="ti ti-message"></i>Ask for something else</div>
+  </div>
+  <button class="dlask" onclick="dlTog()"><i class="ti ti-sparkles"></i>Ask the assistant<span class="kbd">&#8984;K</span></button>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+/* ── the deliverable, as a bundle ──────────────────────────────────────────
+   Eight parts. The workflow is the spine, so input, tool, to-do, team and
+   output all hang off the step that uses them, and nothing is listed twice. */
+var DLV = {
+  name:'Customer Demand Mapping', prog:'Evenlode', wf:'Demand Mapping',
+  champion:'Caitlin Ciceri', started:'2 Jul 2026', target:'24 Sep 2026',
+  doc:'Demand map', docState:'Draft, 2 of 4 chapters',
+  out:[['Mapping PDF','Not produced','warn'],['Buyer rows to the data platform','Not produced','warn']]
+};
+var PEOPLE = {
+  'Caitlin Ciceri':{ini:'CC',c:'#1D9E75',role:'Champion'},
+  'Harry Fox'     :{ini:'HF',c:'#EF9F27',role:'Analysis'},
+  'Izzie Bell'    :{ini:'IB',c:'#7F77DD',role:'Trade input'},
+  'Emily Norton'  :{ini:'EN',c:'#378ADD',role:'Review'},
+  'Kwame'         :{ini:'KW',c:'#12684C',role:'Assistant'}
+};
+var RUN = {
+  human:['ti-user','Person'], agent:['ti-sparkles','Kwame'],
+  det:['ti-bolt','Automatic'], data:['ti-database','Data'], gate:['ti-git-branch','Decision']
+};
+
+/* st: done | cur | pend.  in: what the step consumes.  tool: what it runs on.
+   td: open to-dos.  ch: the chapter it writes into. */
+var PHASES = [
+ {n:'1. Project context', steps:[
+  {id:'1.1',t:'human',title:'Kick-off meeting',st:'done',who:'Caitlin Ciceri',ch:'1. Project context',
+   in:['Client brief'],tool:['Meeting notes'],td:0},
+  {id:'1.2',t:'det',title:'Discovery information request',st:'done',who:'Caitlin Ciceri',ch:'1. Project context',
+   in:['Intake questionnaire'],tool:['Questionnaire editor'],td:0},
+  {id:'1.3',t:'gate',title:'Check: Information complete?',st:'done',who:'Caitlin Ciceri',ch:'1. Project context',
+   in:['estate_management_plan.pdf','sfi_agreement_2024.pdf','tenure_map.pdf'],tool:[],td:0}
+ ]},
+ {n:'2. Demand', steps:[
+  {id:'2.1',t:'agent',title:'GPAP Analysis',st:'done',who:'Harry Fox',ch:'2. Demand',
+   in:['GPAP register'],tool:['Market Map'],td:0},
+  {id:'2.2',t:'agent',title:'Abstraction licences in catchment',st:'done',who:'Harry Fox',ch:'2. Demand',
+   in:['EA licence data'],tool:['Market Map'],td:0},
+  {id:'2.3',t:'data',title:'If Nature Finance: public funding scan',st:'done',who:'Izzie Bell',ch:'2. Demand',
+   in:['Public funding register'],tool:['Data platform'],td:0},
+  {id:'2.4',t:'agent',title:'Beneficiary map and Buyer list',st:'cur',who:'Caitlin Ciceri',ch:'2. Demand',
+   in:['GPAP Analysis','Abstraction licences','tenure_map.pdf'],tool:['Market Map','Buyer register'],td:1,
+   note:'Kwame can draft the buyer list from the two scans, then you qualify it'},
+  {id:'2.5',t:'human',title:'Check with Trade',st:'pend',who:'Emily Norton',ch:'2. Demand',
+   in:['Buyer list'],tool:[],td:1},
+  {id:'2.6',t:'gate',title:'Check: Information complete?',st:'pend',who:'Caitlin Ciceri',ch:'2. Demand',
+   in:['Buyer list','Trade sign-off'],tool:[],td:1}
+ ]},
+ {n:'3. Supply', steps:[
+  {id:'3.1',t:'agent',title:'Research Ecosystem Services',st:'done',who:'Caitlin Ciceri',ch:'3. Supply',
+   in:['ES rule books'],tool:['Hive Mind'],td:0},
+  {id:'3.2',t:'gate',title:'Check: Information complete?',st:'done',who:'Caitlin Ciceri',ch:'3. Supply',
+   in:['ES shortlist'],tool:[],td:0}
+ ]},
+ {n:'4. Summary', steps:[
+  {id:'4.1',t:'agent',title:'Create summary',st:'pend',who:'Caitlin Ciceri',ch:'4. Summary',
+   in:['Chapters 1 to 3'],tool:['Document'],td:1},
+  {id:'4.2',t:'det',title:'Generate PDF with summary',st:'pend',who:'Caitlin Ciceri',ch:'4. Summary',
+   in:['Demand map'],tool:['PDF renderer'],td:0},
+  {id:'4.3',t:'det',title:'Share summary with customer',st:'pend',who:'Caitlin Ciceri',ch:'4. Summary',
+   in:['Mapping PDF'],tool:['Email'],td:0},
+  {id:'4.4',t:'det',title:'Send to Data platform',st:'pend',who:'Caitlin Ciceri',ch:'4. Summary',
+   in:['Buyer rows'],tool:['Data platform'],td:0},
+  {id:'4.5',t:'human',title:'Gather learnings',st:'pend',who:'Izzie Bell',ch:'4. Summary',
+   in:[],tool:['Hive Mind'],td:1}
+ ]}
+];
+
+var INPUTS = [
+  ['ti-file-type-pdf','estate_management_plan.pdf','Questionnaire','ok','2 Jul'],
+  ['ti-file-type-pdf','sfi_agreement_2024.pdf','Questionnaire','ok','3 Jul'],
+  ['ti-file-type-pdf','tenure_map.pdf','Email reply','ok','Wed'],
+  ['ti-file-spreadsheet','peat_depth_survey.xlsx','Contractor','warn','Outstanding']
+];
+var SOURCES = [
+  ['ti-database','GPAP register','Synced','ok','Wed 06:00'],
+  ['ti-database','EA abstraction licences','Synced','ok','Wed 06:00'],
+  ['ti-database','Public funding register','Stale','warn','5 Sep'],
+  ['ti-book','ES rule books','Library','ok','Live']
+];
+var TOOLS = [
+  ['ti-map-2','Market Map','Kwame',''],
+  ['ti-checkup-list','Questionnaire editor','',''],
+  ['ti-file-text','Demand map document','',''],
+  ['ti-database','GY Data platform','','']
+];
+
+var SUGS = [
+  ['ti-list-search','Draft the buyer list','From the GPAP and licence scans, for step 2.4'],
+  ['ti-mail','Chase the peat depth survey','The only input still outstanding'],
+  ['ti-file-text','Write the chapter 2 summary','From what the three demand steps found'],
+  ['ti-alert-triangle','Explain what is blocking step 2.6','Two things, one of them is Trade']
+];
+
+function av(n){var p=PEOPLE[n]||{ini:'?',c:'#9C9A92'};
+  return '<span class="dlav" style="background:'+p.c+'">'+p.ini+'</span>';}
+
+function fmt(){
+  var all=[],done=0,td=0;
+  PHASES.forEach(function(p){p.steps.forEach(function(s){all.push(s);if(s.st==='done')done++;td+=s.td;});});
+  var cur=all.filter(function(s){return s.st==='cur';})[0]||all[0];
+
+  document.getElementById('stchip').innerHTML =
+    gyChip('Step '+cur.id+' of 16','Current step: '+cur.title);
+  document.getElementById('wfr').textContent = done+' of '+all.length+' steps done';
+
+  document.getElementById('facts').innerHTML = [
+    ['Programme','ti-folder',DLV.prog,''],
+    ['Workflow','ti-route',DLV.wf,''],
+    ['Champion','',av(DLV.champion)+DLV.champion,''],
+    ['Now on','ti-player-play',cur.id+' '+cur.title,''],
+    ['Document','ti-file-text',DLV.docState,''],
+    ['To-dos','ti-checkbox',td+' open, 1 overdue',td?'warnv':'mutev'],
+    ['Inputs','ti-inbox','3 of 4 received','warnv'],
+    ['Output','ti-package','Not produced yet','mutev']
+  ].map(function(f){
+    return '<div class="dlfact"><div class="k">'+f[0]+'</div>'
+      + '<div class="v '+f[3]+'">'+(f[1]?'<i class="ti '+f[1]+'"></i>':'')+f[2]+'</div></div>';
+  }).join('');
+
+  var cols = '--cols:1fr 116px 150px 74px 132px 96px';
+  document.getElementById('spine').innerHTML =
+    '<div class="gylegend" style="'+cols+'"><div>Step</div><div>Runs on</div><div>Owner</div>'
+    + '<div>To-do</div><div>Writes into</div><div></div></div>'
+    + PHASES.map(function(p){
+        return '<div class="gytbl" style="'+cols+'">'
+          + '<div class="gygrp">'+p.n+'</div>'
+          + p.steps.map(row).join('')
+          + '</div>';
+      }).join('');
+
+  document.getElementById('cols').innerHTML =
+    card('Inputs','ti-inbox','3 of 4 received', INPUTS.map(function(i){
+      return item(i[0],i[1],i[2]+' &middot; '+i[4],i[3]);
+    }).join(''))
+  + card('Sources','ti-database','1 stale', SOURCES.map(function(i){
+      return item(i[0],i[1],i[2]+' &middot; '+i[4],i[3]);
+    }).join(''))
+  + card('Team','ti-users','4 people', Object.keys(PEOPLE).map(function(n){
+      var p=PEOPLE[n];
+      return '<div class="dlitem">'+av(n)+'<div class="t">'+n+'</div>'
+        + '<div class="s">'+p.role+'</div></div>';
+    }).join(''))
+  + card('Tools','ti-tool','4 connected', TOOLS.map(function(i){
+      return item(i[0],i[1],i[2],'');
+    }).join(''))
+  + card('Output','ti-package','Not produced', DLV.out.map(function(o){
+      return item('ti-file-download',o[0],o[1],o[2]);
+    }).join(''))
+  + card('Document','ti-file-text',DLV.docState,
+      ['1. Project context|Complete|ok','2. Demand|3 of 6 sections|warn',
+       '3. Supply|Complete|ok','4. Summary|Empty|'].map(function(c){
+        var a=c.split('|');
+        return item('ti-bookmark',a[0],a[1],a[2]);
+      }).join(''));
+
+  document.getElementById('sugs').innerHTML = SUGS.map(function(s){
+    return '<div class="dlsug" onclick="gyToast(\'Kwame would run: '+s[1]+'\')">'
+      + '<i class="ti '+s[0]+'"></i><span><b>'+s[1]+'</b><i class="s">'+s[2]+'</i></span></div>';
+  }).join('');
+}
+
+function card(t,ic,n,body){
+  return '<div class="dlcard"><h3><i class="ti '+ic+'"></i>'+t+'<span class="n">'+n+'</span></h3>'+body+'</div>';
+}
+function item(ic,t,s,cls){
+  return '<div class="dlitem"><i class="ti '+ic+'"></i><div class="t">'+t+'</div>'
+    + '<div class="s '+(cls||'')+'">'+s+'</div></div>';
+}
+
+function row(s){
+  var r = RUN[s.t];
+  var tick = s.st==='done' ? '<span class="dltick done"><i class="ti ti-check"></i></span>'
+           : s.st==='cur'  ? '<span class="dltick cur"><i class="ti ti-player-play"></i></span>'
+           : '<span class="dltick pend"></span>';
+  var machine = (s.t==='agent'||s.t==='det');
+  return '<div class="gyrow dlrow'+(s.st==='cur'?' cur':'')+(s.st==='pend'?' off':'')+'" onclick="dlTogRow(\''+s.id+'\')">'
+    + '<div class="dlstep">'+tick+'<span class="dlnum">'+s.id+'</span>'
+      + '<span class="dlname">'+s.title+'</span></div>'
+    + '<div><span class="dlrun '+s.t+'"><i class="ti '+r[0]+'"></i>'+r[1]+'</span></div>'
+    + '<div class="dlwho">'+av(s.who)+'<span>'+s.who+'</span></div>'
+    + '<div class="dlmini'+(s.td?' on':'')+'">'+(s.td?s.td+' open':'&middot;')+'</div>'
+    + '<div class="dlchap">'+s.ch+'</div>'
+    + '<div class="r">'+(machine && s.st!=='done'
+        ? '<button class="dlgo" onclick="event.stopPropagation();gyToast(\'Kwame would run step '+s.id+'\')"><i class="ti ti-sparkles"></i>Run</button>'
+        : '<button class="dlgo ghost" onclick="event.stopPropagation();dlTogRow(\''+s.id+'\')"><i class="ti ti-chevron-down"></i></button>')+'</div>'
+    + '</div>'
+    + '<div class="dldet" id="d'+s.id.replace('.','_')+'">'
+      + '<div class="g">'
+        + col('Takes in', s.in, 'ti-arrow-right')
+        + col('Runs on', s.tool, 'ti-tool')
+        + col('To-dos', s.td ? ['Open, assigned to '+s.who] : [], 'ti-checkbox')
+        + col('Writes into', [s.ch], 'ti-file-text')
+      + '</div>'
+      + (s.note ? '<div class="note"><i class="ti ti-sparkles" style="color:#12684C"></i>'+s.note+'</div>' : '')
+    + '</div>';
+}
+function col(k, list, ic){
+  return '<div><div class="k">'+k+'</div>'
+    + (list && list.length
+        ? list.map(function(x){return '<li><i class="ti '+ic+'"></i>'+x+'</li>';}).join('')
+        : '<li class="mute">None</li>')
+    + '</div>';
+}
+
+function dlTogRow(id){
+  var el = document.getElementById('d'+id.replace('.','_'));
+  if(el) el.classList.toggle('open');
+}
+function dlTog(){ document.getElementById('dlpanel').classList.toggle('open'); }
+function dlOpen(){ document.getElementById('dlpanel').classList.add('open'); }
+function dlClose(){ document.getElementById('dlpanel').classList.remove('open'); }
+document.addEventListener('keydown',function(e){
+  if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); dlTog(); }
+});
+
+fmt();
+</script>
+</body>
+</html>

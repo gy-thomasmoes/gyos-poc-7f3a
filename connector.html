@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connector · Settings · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:36px 32px 100px}
+@media(max-width:900px){.wrap{padding:32px 22px 90px}}
+
+/* ── hero band: back link, mark, name, state ── */
+.hero{background:var(--graybg);border-radius:18px;padding:20px 26px 26px;margin-bottom:30px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink2);text-decoration:none;margin-bottom:18px;cursor:pointer}
+.back:hover{color:var(--ink)}
+.back .ti{font-size:15px}
+.hrow{display:flex;align-items:center;gap:20px}
+.mark{width:72px;height:72px;border-radius:18px;display:inline-flex;align-items:center;justify-content:center;
+      font-size:20px;font-weight:700;letter-spacing:.04em;flex:none}
+.mark.avail{background:#fff!important;color:var(--ink3)!important;border:1.5px dashed #C9C3B4}
+.ht{min-width:0;flex:1}
+.ht .h1{line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hm{font-size:13.5px;color:var(--ink2);margin-top:6px;display:flex;flex-wrap:wrap;gap:0 8px}
+.hm i.sep{font-style:normal;color:var(--ink3)}
+.hr{display:flex;align-items:center;gap:8px;flex:none}
+.stpill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:#fff;border-radius:10px;
+        padding:9px 14px;font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap}
+.stpill .ti{font-size:16px;color:var(--ink3)}
+.stpill.on .ti{color:var(--greend)}
+.stpill.warn{background:var(--amberbg);border-color:#EBD9AE;color:var(--amberd)}
+.stpill.warn .ti{color:var(--amberd)}
+.stpill.off{color:var(--ink2)}
+.dots{border:1px solid transparent;background:transparent;color:var(--ink2);cursor:pointer;font-size:19px;
+      width:36px;height:36px;border-radius:10px;line-height:1;font-family:inherit}
+.dots:hover{background:#fff;color:var(--ink);border-color:var(--line2)}
+@media(max-width:720px){.hrow{flex-wrap:wrap}.hr{width:100%;justify-content:flex-end}}
+
+/* ── body ── */
+.desc{font-size:15.5px;line-height:1.6;color:var(--ink);max-width:760px;margin:0 0 32px}
+.sect2{margin:0 0 32px}
+.sect2 h2{font-family:var(--serif);font-weight:500;font-size:22px;letter-spacing:-.01em;margin:0 0 14px}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.tool{display:inline-flex;align-items:center;gap:7px;background:var(--graybg);border:1px solid var(--graybg);border-radius:8px;
+      padding:7px 11px 7px 9px;font-size:13.5px;color:var(--ink);white-space:nowrap;cursor:default}
+.tool .di{font-size:15px;color:var(--ink3)}
+.tool .di.in{color:var(--blued)}
+.tool .di.out{color:var(--greend)}
+.tool b{font-weight:500;color:var(--ink2);display:inline-flex;align-items:center;gap:4px;padding-left:8px;margin-left:2px;border-left:1px solid var(--line2)}
+.tool b .ti{font-size:13px;color:var(--ink3)}
+.tool.plan{background:#fff;border:1px dashed var(--line2);color:var(--ink2)}
+.callout{display:flex;gap:11px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:13px 16px;
+         margin:22px 0 0;font-size:14px;line-height:1.5;color:var(--ink2);background:#fff}
+.callout>.ti{font-size:18px;flex:none;color:var(--ink3)}
+.callout.warn{background:var(--amberbg);border-color:#EBD9AE;color:var(--amberd)}
+.callout.warn>.ti{color:var(--amberd)}
+.callout .rbtn{margin-left:auto;background:var(--amberd);color:#fff;border:none;border-radius:10px;padding:8px 14px;
+               font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.callout .rbtn .ti{font-size:16px;color:inherit}
+.callout .rbtn:hover{background:#6F470C}
+.run{display:grid;grid-template-columns:130px 18px 1fr;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;max-width:560px}
+.run:last-child{border-bottom:none}
+.run .t{color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.run .ti{font-size:15px}
+.run .ok{color:#578A1D}
+.run .bad{color:#C0392B}
+.run .d{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+hr.div{border:none;border-top:1px solid var(--line);margin:34px 0 30px}
+
+/* ── metadata, two columns ── */
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:26px 40px;max-width:760px}
+@media(max-width:620px){.meta{grid-template-columns:1fr}}
+.meta .k{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.meta .v{font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:24px}
+.meta .v.mut{color:var(--ink3)}
+.meta .v .ti{font-size:15px;color:var(--ink3)}
+.meta .lnk{color:var(--blued);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.meta .lnk .ti{color:inherit;font-size:14px}
+.meta .ic{width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.avs{display:inline-flex}
+.av{width:24px;height:24px;border-radius:50%;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;
+    border:2px solid #fff;margin-left:-6px;flex:none}
+.av:first-child{margin-left:0}
+.map{display:inline-flex;align-items:center;gap:8px}
+.map .bar{width:96px;height:6px;border-radius:999px;background:var(--graybg);overflow:hidden;display:inline-block}
+.map .bar i{display:block;height:100%;background:#578A1D;border-radius:999px}
+.map.warn .bar i{background:#C87F0A}
+</style>
+</head>
+<body>
+<div class="shell">
+<script>window.GYNAV={"active":"","scope":"portfolio"};</script>
+<script src="gy-nav.js?v=d794329b"></script>
+<script src="gy-connectors.js?v=abf61329"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Expand sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr">Settings</span>
+    <span class="sep">›</span><span class="cr" onclick="location.href='settings-connectors.html'">Connectors</span>
+    <span class="sep">›</span><span class="cr cur" id="crumbName">Connector</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="back" onclick="location.href='settings-connectors.html'"><i class="ti ti-arrow-left"></i>Connectors</span>
+    <div class="hrow">
+      <span class="mark" id="hMark"></span>
+      <div class="ht"><div class="h1" id="hName"></div><div class="hm" id="hMeta"></div></div>
+      <div class="hr" id="hRight"></div>
+    </div>
+  </div>
+
+  <p class="desc" id="desc"></p>
+
+  <section class="sect2">
+    <h2>Flows</h2>
+    <div class="tools" id="flows"></div>
+    <div id="callout"></div>
+  </section>
+
+  <section class="sect2" id="runsSec">
+    <h2>Recent runs</h2>
+    <div id="runs"></div>
+  </section>
+
+  <hr class="div">
+  <div class="meta" id="meta"></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(function(){t.style.display='none';},3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+var I = window.GY_CONN_API, CATS = I.cats, ST = I.status, DIR = I.dir, PEOPLE = I.people;
+var OBJ_ICON = {Inventory:'ti-packages', Deals:'ti-businessplan', Projects:'ti-folders', Sites:'ti-map-pin', Documents:'ti-file-text', Intelligence:'ti-bulb'};
+var ICON = {on:'ti-check', warn:'ti-alert-triangle', off:'ti-player-pause'};
+
+var id = (location.search.match(/[?&]i=([^&]+)/) || [])[1];
+var it = id ? I.byId(id) : null;
+if(!it) location.replace('settings-connectors.html');
+
+function esc(s){ return String(s).replace(/"/g,'&quot;'); }
+function av(name, hat){
+  var p = PEOPLE[name]; if(!p) return '';
+  return '<span class="av" style="background:'+p.c+'" data-tip="'+esc(hat+': '+name)+'">'+p.ini+'</span>';
+}
+function $(i){ return document.getElementById(i); }
+
+/* ── state changes stay in the page: the demo data resets on reload ── */
+function syncNow(){
+  gyToast('Sync started: '+it.name+'. Results land in the audit log as they arrive');
+  it.runs.unshift(['Just now', it.status !== 'warn', it.status === 'warn' ? 'Still blocked by 14 unmapped fields' : 'No change']);
+  paint();
+}
+function setStatus(s){
+  it.status = s;
+  gyToast(s === 'off' ? it.name+' paused. Nothing new arrives until it is resumed' : it.name+' resumed');
+  paint();
+}
+function request(){
+  gyToast('Connection requested: '+it.name+'. The data team assigns the three owners before anything flows');
+}
+function retry(){
+  gyToast('Retry queued: '+it.name+'. It will fail again until the 14 fields are mapped');
+  it.runs.unshift(['Just now', false, 'Schema mismatch, 14 fields']);
+  paint();
+}
+function mapFields(){
+  gyToast('Field mapping: '+(it.fields[1]-it.fields[0])+' fields from '+it.name+' have no home in the GY schema yet');
+}
+function openIn(){ gyToast('Opens '+it.name+' in a new tab'); }
+
+/* every action lives here, once; Retry lives in the callout for a connector that needs attention */
+function menu(b){
+  var unmapped = it.fields[1] - it.fields[0];
+  var rows = [];
+  if(it.status === 'on') rows.push(['ti-refresh','Sync now', syncNow]);
+  if((it.status === 'on' || it.status === 'warn') && unmapped) rows.push(['ti-arrows-split','Map fields', mapFields]);
+  if(it.status !== 'avail') rows.push(['ti-external-link','Open in '+it.name, openIn]);
+  if(it.status === 'on' || it.status === 'warn') rows.push(['ti-player-pause','Pause', function(){ setStatus('off'); }]);
+  if(it.status === 'off') rows.push(['ti-player-play','Resume', function(){ setStatus('on'); }]);
+  if(it.status === 'avail') rows.push(['ti-book','How it connects','Opens the '+it.name+' documentation']);
+  rows.push('-', ['ti-lock','Audit log','go:audit-log.html']);
+  gyMenu(b, rows);
+}
+
+function paint(){
+  var c = CATS[it.cat], d = DIR[I.dirOf(it)], st = ST[it.status];
+  var unmapped = it.fields[1] - it.fields[0];
+  var pct = it.fields[1] ? Math.round(100*it.fields[0]/it.fields[1]) : 0;
+  var avail = it.status === 'avail';
+
+  document.title = it.name + ' · Connectors · Great Yellow';
+  $('crumbName').textContent = it.name;
+
+  /* hero */
+  var m = $('hMark');
+  m.className = 'mark' + (avail ? ' avail' : '');
+  m.style.background = c.bg; m.style.color = c.fg;
+  m.textContent = it.mark;
+  $('hName').textContent = it.name;
+  var facts = [];
+  if(it.vendor !== it.name) facts.push(it.vendor);
+  facts.push(c.name, d.label, avail ? 'Not connected' : it.status === 'off' ? 'Paused, last sync '+it.last : 'Last sync '+it.last);
+  $('hMeta').innerHTML = facts.join('<i class="sep">·</i>');
+  $('hRight').innerHTML = (avail
+      ? '<button class="btn-dark" onclick="request()"><i class="ti ti-plug"></i> Connect</button>'
+      : '<span class="stpill '+it.status+'"><i class="ti '+ICON[it.status]+'"></i>'+st.label+'</span>')
+    + '<button class="dots" onclick="menu(this)" title="More">&#8942;</button>';
+
+  /* description */
+  $('desc').textContent = it.note;
+
+  /* flows as chips */
+  $('flows').innerHTML = it.flows.map(function(f){
+    var plan = f.when === 'Planned';
+    return '<span class="tool'+(plan?' plan':'')+'" data-tip="'+esc(DIR[f.dir].label+' · '+f.when+(f.last ? ' · last: '+f.last : ''))+'">'
+      + '<i class="ti '+DIR[f.dir].icon+' di '+f.dir+'"></i>'+f.what
+      + '<b><i class="ti '+OBJ_ICON[f.obj]+'"></i>'+f.obj+'</b></span>';
+  }).join('');
+
+  /* callout: the issue, or the mapping gap, or nothing */
+  var co = '';
+  if(it.status === 'warn' && it.issue){
+    co = '<div class="callout warn"><i class="ti ti-alert-triangle"></i><span>'+it.issue+'</span>'
+       + '<button class="rbtn" onclick="retry()"><i class="ti ti-refresh"></i> Retry</button></div>';
+  } else if(avail){
+    co = '<div class="callout"><i class="ti ti-info-circle"></i><span>Not connected. '+it.fields[1]+' fields to map before the first run.</span></div>';
+  } else if(unmapped){
+    co = '<div class="callout"><i class="ti ti-info-circle"></i><span>'+it.fields[0]+' of '+it.fields[1]+' fields mapped. '+unmapped+' fields from '+it.name+' have no home in the GY schema yet.</span></div>';
+  }
+  $('callout').innerHTML = co;
+
+  /* recent runs */
+  $('runsSec').style.display = it.runs.length ? '' : 'none';
+  $('runs').innerHTML = it.runs.slice(0,5).map(function(r){
+    return '<div class="run"><span class="t">'+r[0]+'</span><i class="ti '+(r[1]?'ti-circle-check ok':'ti-circle-x bad')+'"></i><span class="d">'+r[2]+'</span></div>';
+  }).join('');
+
+  /* metadata */
+  var o = it.owners, hats = [['Data engineer', o.eng], ['Methodology', o.method], ['Presentation', o.ui]].filter(function(h){ return h[1]; });
+  var owners = hats.length
+    ? '<span class="avs">'+hats.map(function(h){ return av(h[1], h[0]); }).join('')+'</span>'+hats.map(function(h){ return h[1]; }).join(', ')
+    : '';
+  function kv(k, v, mut){ return '<div><div class="k">'+k+'</div><div class="v'+(mut?' mut':'')+'">'+v+'</div></div>'; }
+  $('meta').innerHTML =
+      kv('Made by', '<span class="lnk" onclick="gyToast(\'Opens the '+esc(it.vendor)+' site\')">'+it.vendor+'<i class="ti ti-arrow-up-right"></i></span>')
+    + kv('Category', '<span class="ic" style="background:'+c.bg+';color:'+c.fg+'"><i class="ti '+c.icon+'"></i></span>'+c.name)
+    + kv('Direction', '<i class="ti '+d.icon+'"></i>'+d.label)
+    + (owners ? kv('Owners', owners) : kv('Owners', 'Not assigned', true))
+    + kv('Last sync', it.last || 'Never', !it.last)
+    + kv('Next run', it.next || 'Not scheduled', !it.next)
+    + kv('Fields mapped', '<span class="map'+(unmapped && !avail ? ' warn' : '')+'"><span class="bar"><i style="width:'+pct+'%"></i></span>'+it.fields[0]+' of '+it.fields[1]+'</span>')
+    + kv('Added', it.since || 'Not yet', !it.since);
+}
+
+if(it) paint();
+</script>
+</body>
+</html>

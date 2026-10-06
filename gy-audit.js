@@ -7,7 +7,7 @@
      id    immutable entry reference, never reused
      day   grouping label, newest first
      time  24h, Europe/London
-     who   the actor's name, or the integration's name
+     who   the actor's name, or the connector's name
      src   person | sync | agent | system   the channel the change arrived through
      cat   Inventory | Deals | Projects | Sites | Rules | Access | Data
      act   the verb, short

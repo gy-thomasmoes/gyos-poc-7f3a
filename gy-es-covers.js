@@ -1,5 +1,5 @@
 /* gy-es-covers.js , the ecosystem service book covers, drawn as inline SVG.
-   One file so the Hive Mind Library and the press pages draw the same artwork.
+   One file so the Hive Mind and the press pages draw the same artwork.
    Needs only {id, name, type, col} on the record it is given.
    Exposes window.gyEsCover(d, idx, href) and the two tone helpers. */
 (function(){
