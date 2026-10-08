@@ -125,7 +125,14 @@ body.dragging{cursor:col-resize;user-select:none}
 .v5sug button:hover{border-color:var(--ink3);color:var(--ink)}
 
 /* ── composer ───────────────────────────────────────────────────────────── */
-.v5comp{flex:none;padding:10px 22px 14px}
+.v5comp{flex:none;padding:10px 22px 14px;position:relative}
+.v8down{position:absolute;left:50%;top:-50px;width:40px;height:40px;margin-left:-20px;border-radius:50%;
+  border:1px solid var(--line2);background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(20,18,12,.12);cursor:pointer;opacity:0;transform:translateY(6px);pointer-events:none;
+  transition:opacity .15s,transform .15s;z-index:3}
+.v8down.on{opacity:1;transform:none;pointer-events:auto}
+.v8down:hover{background:var(--graybg)}
+.v8down .ti{font-size:19px}
 .v5box{max-width:none;border:1px solid var(--line2);border-radius:18px;background:var(--card);
   padding:14px 16px 11px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
 .v5box .q{font-size:14.5px;color:var(--ink3);padding-bottom:11px}
@@ -169,9 +176,8 @@ body.dragging{cursor:col-resize;user-select:none}
 .v5tab.chat .ti{color:var(--blued)}
 .v5tab.chat.on{background:var(--bluebg);border-color:#CBE1F5;color:var(--blued)}
 .v5tab.chat.on .ti{color:var(--blued)}
-/* the right-hand drawer: Comments, To-dos and Sources open here, and the
-   assistant closes when they do, because the page holds one side panel at a
-   time and the middle should never be squeezed from both ends at once. */
+/* the right-hand drawer: Outputs, items and agents open here. The agent on
+   the left stays as it is when a drawer opens, and vice versa (8 Oct). */
 .v5dr{width:360px;flex:none;display:flex;flex-direction:column;min-width:0;
   background:var(--bg);border-left:1px solid var(--line)}
 .v5dr.hide{display:none}
@@ -747,6 +753,11 @@ body.dragging{cursor:col-resize;user-select:none}
 .v8dk2{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:22px 0 6px}
 .v8dk2:first-child{margin-top:0}
 .v8dr .v8row{padding:9px 0}
+.v8skdoc{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px 18px 16px;margin-top:10px}
+.v8skdoc h5{font-size:14px;font-weight:600;color:var(--ink);margin:14px 0 4px}
+.v8skdoc p{font-size:14px;line-height:1.55;color:var(--ink2);margin:0}
+.v8skdoc ol{margin:0;padding-left:20px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.v8skdoc li{margin:2px 0}
 .v8dtxt{font-size:14px;line-height:1.55;color:var(--ink2)}
 .v8q{display:flex;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5}
 .v8q:first-of-type{border-top:none}
@@ -851,6 +862,9 @@ body.pclosed .v5panel{padding-left:16px}
 .v8aopt.pri{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
 .v8aopt.pri:hover{background:var(--blued);border-color:var(--blued)}
 .v8aopt.pri .n{background:rgba(255,255,255,.22);color:#fff}
+.v8start{margin:16px 0}
+.v8start .v8aopt{justify-content:center;padding-top:13px;padding-bottom:13px;font-size:15.5px}
+.v8start .v8aopt .ti{font-size:18px}
 .v8dec{box-shadow:0 8px 24px rgba(138,90,16,.08)}
 
 /* outputs empty state: one icon, one sentence */
@@ -863,6 +877,16 @@ body.pclosed .v5panel{padding-left:16px}
 
 /* the person's own messages: right-aligned, with their avatar */
 .v8me{display:flex;justify-content:flex-end;align-items:flex-end;gap:8px;margin:14px 0}
+.v8them{display:flex;align-items:flex-end;gap:8px;margin:14px 0}
+.v8them .v5you{margin:0;max-width:82%;border-radius:16px 16px 16px 5px;background:var(--graybg)}
+.v8them .dlav{width:26px;height:26px;font-size:10px;flex:none}
+.v8side{margin:8px 0}
+.v8side .v8acch .ti{color:var(--ink3)}
+.v8sideb{border-left:2px solid var(--line2);padding-left:12px;margin:2px 0 10px 7px}
+.v8sideb .v5say{font-size:14.5px}
+.v8keep{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--greend);margin:-4px 0 14px}
+.v8keep .ti{font-size:15px}
+.v8pin{border:none;background:none;font-family:inherit;font-size:13.5px;color:var(--ink2);padding:2px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .v8me .v5you{margin:0;max-width:82%;border-radius:16px 16px 5px 16px}
 .v8me .dlav{width:26px;height:26px;font-size:10px;flex:none}
 
@@ -1285,14 +1309,72 @@ body.pclosed .v5vt{align-self:center}
 /* page menu: delete in red (3 Oct) */
 .gy-mpop .gy-mitem.danger,.gy-mpop .gy-mitem.danger .ti{color:#C23B2B}
 .gy-mpop .gy-mitem.danger:hover{background:#FBEDEA}
+
+/* settings section nav (8 Oct): the side list on the right by default, at any column width.
+   It turns into one sticky row of pills above the cards only when the agent and a drawer are
+   both open, or on a phone. */
+.v8setw{flex-direction:row;gap:48px}
+.v8setc{flex:1;min-width:0;width:auto}
+.v8anc{position:sticky;top:24px;order:0;align-self:flex-start;width:150px;margin:0;padding:0;
+  background:none;border-bottom:none;z-index:auto}
+.v8anc > div{display:block;overflow:visible;-webkit-mask-image:none}
+.v8anc a{display:flex;align-items:flex-start;white-space:normal;border-left:2px solid var(--line);border-radius:0;
+  padding:6px 10px;font-size:13.5px;color:var(--ink3)}
+.v8anc a .ti{margin-top:2px;font-size:15px}
+.v8anc a.on{background:none;color:var(--ink);border-left-color:var(--dark)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8setw{flex-direction:column;gap:0}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8setc,body:not(.pclosed):has(#drawer:not(.hide)) .v8set{width:100%;min-width:0;flex:none}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc{position:sticky;top:-60px;order:-1;align-self:stretch;width:auto;z-index:3;
+  background:var(--card);margin:0 0 22px;padding:14px 0 12px;border-bottom:1px solid var(--line)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc > div{position:static;display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px;
+  overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc > div::-webkit-scrollbar{display:none}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a{flex:none;align-items:center;white-space:nowrap;border-left:none;border-radius:999px;
+  padding:6px 12px;font-size:13px;color:var(--ink2)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a .ti{margin-top:0;font-size:14px}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
+@media (max-width: 760px){
+body .v8setw{flex-direction:column;gap:0}
+body .v8setc,body .v8set{width:100%;min-width:0;flex:none}
+body .v8anc{position:sticky;top:-60px;order:-1;align-self:stretch;width:auto;z-index:3;
+  background:var(--card);margin:0 0 22px;padding:14px 0 12px;border-bottom:1px solid var(--line)}
+body .v8anc > div{position:static;display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px;
+  overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+body .v8anc > div::-webkit-scrollbar{display:none}
+body .v8anc a{flex:none;align-items:center;white-space:nowrap;border-left:none;border-radius:999px;
+  padding:6px 12px;font-size:13px;color:var(--ink2)}
+body .v8anc a .ti{margin-top:0;font-size:14px}
+body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
+}
+/* tighter padding inside the middle card when it is very narrow, so the cards keep their width */
+.v5panel{container-type:inline-size;container-name:col}
+@container col (max-width: 600px){
+  .v5body{padding:32px 24px}
+  body:not(.pclosed):has(#drawer:not(.hide)) .v8anc{top:-32px}
+}
+@media (max-width: 760px){ @container col (max-width: 600px){ body .v8anc{top:-32px} } }
+
+/* review block, more outspoken (8 Oct): solid card, header band, primary CTA */
+.v8wait{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:0;margin:16px 0;overflow:hidden;
+  box-shadow:0 8px 24px rgba(26,12,18,.07)}
+.v8waith{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--graybg);border-bottom:1px solid var(--line)}
+.v8waith .pip{width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none;animation:gypip 1.5s ease-in-out infinite}
+.v8waith .k{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.v8waith .ti{font-size:15px;color:var(--ink2)}
+.v8wait .h{display:flex;align-items:flex-start;gap:10px;padding:15px 16px 4px;font-size:15.5px;line-height:1.55;color:var(--ink)}
+.v8wait .h .dlav{width:26px;height:26px;font-size:10px;flex:none;margin-top:0}
+.v8wait .v8aopts{padding:12px 16px 16px}
+.v8wait.done{box-shadow:none}
+.v8wait.done .h{padding-bottom:15px;color:var(--ink2)}
+@media (prefers-reduced-motion:reduce){.v8waith .pip{animation:none}}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active":"deliverables","arts":"demand","rail":true};</script>
-<script src="gy-nav.js?v=d794329b"></script>
-<script src="gy-versions.js?v=2400190b"></script>
+<script src="gy-nav.js?v=d99df486"></script>
+<script src="gy-versions.js?v=30654df5"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -1315,6 +1397,7 @@ body.pclosed .v5vt{align-self:center}
     <div class="v8prog" id="prog" onclick="openTab('workflow')" role="button" tabindex="0"></div>
     <div class="v5log" id="chatlog"><div class="v5in" id="chatin"></div></div>
     <div class="v5comp">
+      <button class="v8down" id="chatdown" onclick="chatToEnd()" aria-label="Scroll to latest"><i class="ti ti-arrow-down"></i></button>
       <div class="v5box">
         <input class="v8in" id="ask" placeholder="Ask the agent" onkeydown="if(event.key==='Enter')sendMsg()">
         <div class="v5tools">
@@ -1356,7 +1439,7 @@ var TEAM = [
   ['Caitlin Ciceri','CC','#1D9E75','Champion'],
   ['Harry Fox','HF','#EF9F27','Analysis'],
   ['Izzie Bell','IB','#7F77DD','Trade'],
-  ['Emily Norton','EN','#378ADD','Team lead, review']
+  ['Emily Norton','EN','#378ADD','Team lead']
 ];
 function av(p,cls){
   return '<span class="dlav '+(cls||'')+'" style="background:'+p[2]+'" title="'+p[0]+', '+p[3]+'">'+p[1]+'</span>';
@@ -1493,14 +1576,14 @@ var ESCARD = {
 var FIELDS = {
   a0:{l:'Objective', by:'Kick-off meeting', cf:['ai',"Agent's reading"], at:'1.1',
       t:'Landscape-scale restoration of the biodiversity-rich, carbon-rich Upper Dee headwaters, improving water quality at source, sequestering carbon in peat, and delivering biodiversity uplift at a flagship, catchment scale.'},
-  a1:{l:'Site description and current land use', by:'Land management plan', cf:['ok','Confirmed by client'], at:'1.1',
+  a1:{l:'Site description and current land use', by:'Land management plan', cf:['ok','Confirmed by client'], at:'1.2',
       t:'Upper Dee catchment within the Cairngorms, including tributaries Muick, Geldie and Baddoch. Peat-dominated uplands with low tree cover (~8% in the upper catchment). The River Dee supplies Aberdeen, with a key abstraction point near Invercannie / Cairnton.'},
-  a2:{l:'Planned interventions', by:'Land management plan', cf:['ok','Confirmed by client'], at:'1.1',
+  a2:{l:'Planned interventions', by:'Land management plan', cf:['ok','Confirmed by client'], at:'1.2',
       t:'Peatland restoration (top priority), native woodland creation, river and catchment restoration, and habitat enhancement across the estates.'},
   a3:{l:'Target habitats and outcomes', by:'Kick-off meeting', cf:['ai',"Agent's reading"], at:'1.1',
       t:'Reduced dissolved organic carbon (&ldquo;brown water&rdquo;) and sediment runoff, improved flow regulation, carbon sequestration in restored peat, and biodiversity uplift.'},
   a4:{l:'Constraints and dependencies', by:'Discovery information request', cf:['ai',"Agent's reading"], at:'1.2',
-      t:'Peatland condition data dates from 2015, so a new survey is needed before the carbon case can be relied on. Open question: is a total economic valuation needed before buyers are approached.'}
+      t:'Peatland condition data dates from 2015, so a new survey is needed before the carbon case can be relied on. Open questions: is a total economic valuation needed before buyers are approached, and is Scottish Water already in touch with the estates.'}
 };
 var BUYCOLS = ['Buyer','Why relevant','Hook','Relationship'];
 var MARKETS = [
@@ -1579,7 +1662,7 @@ function you(h){ return '<div class="v8me"><div class="v5you">'+h+'</div>'+avNam
 function them(n,h){ return '<div class="v8them"><div class="who">'+avName(n)+n+'</div><div class="bub">'+h+'</div></div>'; }
 function item(it, run){
   var tag = it[2] ? '<span class="v8tag '+it[2]+'"><i class="ti '+({tool:'ti-tool',conn:'ti-plug-connected',know:'ti-book'})[it[2]]+'"></i>'
-    + ({tool:'Tool',conn:'Connector',know:'Knowledge'})[it[2]]+'</span>' : '';
+    + ({tool:'Tool',conn:'Connection',know:'Context'})[it[2]]+'</span>' : '';
   return '<div class="v5step rise"><span class="bx'+(run?' run':'')+'"></span><div><span class="w">'+it[0]+'</span>'
     + '<em>'+tag+it[1]+'</em></div></div>';
 }
@@ -1602,19 +1685,24 @@ function conHtml(id, state){
    or a person's step, and waits there. */
 var S = [
   {t:'step',k:'1.1'},
-  {t:'ask', q:'To start, add what you have from the client: the kick-off recording and any land or survey documents.',
-   o:[['Add recording and 3 files',[]],['Start from the kick-off notes only',[{t:'say',h:'Fine. I will work from the notes and mark more fields as my reading.'}]]]},
-  {t:'work', i:[['Transcribed the kick-off recording','kick_off_upper_dee.m4a &middot; 52 min'],
-               ['Read the land management plan','Questionnaire &middot; 14 of 20 questions answered','tool'],
-               ['Read the tenure map','cairngorms_tenure_map.pdf'],
-               ['Read the peat condition survey','peat_condition_survey_2015.pdf &middot; dated 2015']]},
+  {t:'ask', q:'To start, add the kick-off meeting notes. They hold the recording and the transcript.',
+   o:[['Add kick-off notes',[]]]},
+  {t:'work', i:[['Read the kick-off notes','Recording and transcript &middot; 52 min'],
+               ['Answered the kick-off questions','Questionnaire &middot; 9 of 20 answered','tool']]},
   {t:'done',k:'1.1'},
-  {t:'say', h:'Chapter 1 has four of five fields. Two are my reading rather than the client\'s words, so they are marked blue. One gap matters: the peat survey is from <b>2015</b>, and the carbon case leans on it.'},
+  {t:'say', h:'Chapter 1 has two of five fields, both my reading of the call, so they are marked blue. Site and interventions wait for the client\'s documents. One gap matters: the estates said their last peat survey is from <b>2015</b>, and the carbon case leans on it.'},
+  {t:'side', s:'about the blue fields', x:[['Harry Fox','Why are two of the fields blue?','Blue means it is my reading of the call, not the client\'s words. A field turns green once the client confirms it.'],
+                                          ['Harry Fox','Does the client see the blue?','No. The PDF shows the text only.']]},
   {t:'step',k:'1.2'},
-  {t:'ask', q:'Shall I draft the information request to the estates? It asks for a newer peat survey, the estate boundaries and any existing grants.',
+  {t:'ask', q:'Shall I draft the information request to the estates? It asks for the land management plan, the tenure map and the peat condition survey.',
    o:[['Draft the request',[{t:'work',i:[['Drafted the request','Email composer &middot; 3 questions','tool'],['Passed it to Harry Fox to send','Harry owns client contact']]},
-                            {t:'made',a:['ti-mail','var(--bluebg)','var(--blued)','Information request to the estates','Email draft &middot; 3 questions']}]],
+                            {t:'made',a:['ti-mail','var(--bluebg)','var(--blued)','Information request to the estates','Email draft &middot; 3 documents']}]],
       ['I will ask them myself',[]]]},
+  {t:'work', i:[['Received the land management plan','upper_dee_land_management_plan.pdf &middot; 38 pages'],
+               ['Received the tenure map','cairngorms_tenure_map.pdf'],
+               ['Received the peat condition survey','peat_condition_survey_2015.pdf &middot; dated 2015'],
+               ['Checked chapter 1 against the documents','Questionnaire &middot; 16 of 20 answered','tool']]},
+  {t:'side', keep:'Changed Constraints and dependencies', x:[['Emily Norton','Is Scottish Water already talking to the estates?','Not in the kick-off notes or the documents. I have added it as an open question under Constraints and dependencies.']]},
   {t:'done',k:'1.2'},
   {t:'step',k:'1.3'},
   {t:'dec', k:'1.3', q:'Is the project context complete enough to start Demand?',
@@ -1637,7 +1725,7 @@ var S = [
   {t:'done',k:'2.3'},
   {t:'step',k:'2.4'},
   {t:'work', i:[['Joined the signals into one beneficiary map','Planning, licences, funding and sector profiles'],
-               ['Checked the GY buyer database','9 known buyers in this catchment','know'],
+               ['Checked the GY buyer database','9 known buyers in this catchment','conn'],
                ['Drafted why relevant and a hook per buyer','15 buyers across 4 markets'],
                ['Wrote the buyer tables into chapter 2','4 tables']]},
   {t:'done',k:'2.4'},
@@ -1659,6 +1747,7 @@ var S = [
   {t:'ask', q:'From the planned interventions, four services could sell here: peatland carbon, woodland carbon, voluntary biodiversity and water quality. I would park flood management. Shall I ask the Ecosystem Service agents?',
    o:[['Ask the agents',[]],['Include flood management too',[{t:'say',h:'There is no flood management agent yet, so I have logged it as a gap for the blueprint owner.'}]]]},
   {t:'consult', ids:['peat','wood','bio','water']},
+  {t:'side', s:'about Peatland Code buffers', x:[['Harry Fox','What is the buffer in the Peatland Code?','A share of the units held back in a shared pool, in case restored peat is lost later. It is why the revenue figure is lower than volume times price.']]},
   {t:'done',k:'3.1'},
   {t:'say', h:'All four cards are in chapter 3. Only carbon gets a revenue figure; biodiversity and water quality are mapped without one. The peatland figure is <b>low confidence</b> because it rests on the 2015 survey.'},
   {t:'ask', q:'Shall I flag the 2015 peat data to the Carbon lead, who manages the Peatland carbon Agent? Then the next project does not hit the same gap.',
@@ -1708,6 +1797,7 @@ function run(){
   if(b.t === 'say'){ push(say(b.h)); return next(); }
   if(b.t === 'made'){ push(made.apply(null, b.a)); act('ai','made','Made '+b.a[3]); return next(); }
   if(b.t === 'flag'){ doFlag(b.id, true); return next(); }
+  if(b.t === 'side'){ addSide(b.x, b.s, b.keep); return next(); }
   if(b.t === 'done'){
     DONE.push(b.k); JUST = b.k; if(stepByKey(b.k).x !== 'gate') act(stepByKey(b.k).x === 'ai' ? 'ai' : stepByKey(b.k).x,'done','Finished '+b.k+' '+stepByKey(b.k).t, b.k); paintAll(); scrollDoc(b.k);
     setTimeout(function(){ JUST = null; }, 1300);
@@ -1796,9 +1886,23 @@ function decHtml(b, done){
   }
   return h + '</div>';
 }
+/* review block (8 Oct): a solid card like the ask block, with a header band and a primary CTA */
 function waitHtml(b, done){
-  return '<div class="v8wait"><div class="h">'+avName(b.who)+'<div>'+b.h+'</div></div>'
-    + (done ? '' : '<div class="v8opts"><button class="v8opt" onclick="reply()">'+b.b+'</button></div>') + '</div>';
+  return '<div class="v8wait'+(done?' done':'')+'"><div class="v8waith">'
+    + (done ? '<i class="ti ti-circle-check"></i><span class="k">Reviewed</span>' : '<span class="pip"></span><span class="k">In review</span>')
+    + '</div><div class="h">'+avName(b.who)+'<div>'+b.h+'</div></div>'
+    + (done ? '' : '<div class="v8aopts"><button class="v8aopt pri" onclick="reply()"><i class="ti ti-message-2"></i>'
+      + '<span class="l">'+b.b+'</span><i class="ti ti-arrow-right"></i></button></div>') + '</div>';
+}
+function startHtml(){
+  return '<div class="v8start"><button class="v8aopt pri" onclick="startDeliverable()"><i class="ti ti-player-play"></i><span>Start deliverable</span></button></div>';
+}
+function startDeliverable(){
+  if(!Q || Q.t !== 'start') return;
+  act('Caitlin Ciceri','step','Started the deliverable');
+  CUR = '1.1'; LOG.push(lab('1.1')); BI = 1;
+  Q = S[1]; BI = 2;
+  paintProg(); paintChat();
 }
 function askHtml(b){
   return '<div class="v8ask"><div class="v8askh">'+avName(b.who || 'Caitlin Ciceri')+'<span class="k">Your input</span>'
@@ -1816,6 +1920,52 @@ document.addEventListener('keydown', function(e){
   var n = parseInt(e.key, 10); if(n >= 1 && n <= Q.o.length) answer(n-1);
 });
 
+/* Side questions from the team. Exchanges that changed nothing fold into one
+   line; one that changed the document or a decision stays open. */
+var SIDE = [];
+function addSide(x, sub, keep){
+  var last = LOG[LOG.length-1];
+  if(!keep && last && last.side !== undefined){
+    var g = SIDE[last.side];
+    if(!g.keep && !g.live && g.x[0][0] === x[0][0]){ g.x = g.x.concat(x); g.s = sub || g.s; paintChat(); return last.side; }
+  }
+  SIDE.push({x:x, s:sub||'', keep:keep||null, open:false, pin:false});
+  LOG.push({side:SIDE.length-1}); paintChat();
+  if(keep) act(x[0][0],'ask','Asked a question that '+keep.charAt(0).toLowerCase()+keep.slice(1));
+  return SIDE.length-1;
+}
+function firstName(n){ return n === 'Caitlin Ciceri' ? 'You' : n.split(' ')[0]; }
+function sideBubbles(g){
+  return g.x.map(function(e){
+    return (e[0] === 'Caitlin Ciceri' ? you(e[1]) : '<div class="v8them">'+avName(e[0])+'<div class="v5you">'+e[1]+'</div></div>')
+      + (e[2] ? say(e[2]) : '');
+  }).join('');
+}
+function sideHtml(id){
+  var g = SIDE[id];
+  if(g.keep || g.pin || g.live){
+    return sideBubbles(g) + (g.keep ? '<div class="v8keep"><i class="ti ti-pencil"></i>'+g.keep+'</div>' : '')
+      + (g.pin ? '<div class="v8keep" style="color:var(--ink3)"><button class="v8pin" onclick="pinSide('+id+',false)">Fold away</button></div>' : '');
+  }
+  var n = g.x.length, who = firstName(g.x[0][0]);
+  var t = who + ' asked ' + (n === 1 ? 'a question' : n + ' questions') + '<em>' + (g.s || g.x[0][1]) + '</em>';
+  var mine = g.x[0][0] === 'Caitlin Ciceri';
+  return '<div class="v8acc v8side'+(g.open?' open':'')+'"><button class="v8acch" onclick="toggleSide('+id+')"><i class="ti ti-messages"></i>'
+    + '<span class="t">'+t+'</span><i class="ti ti-chevron-down ch"></i></button>'
+    + (g.open ? '<div class="v8sideb">'+sideBubbles(g)+(mine ? '<button class="v8pin" onclick="pinSide('+id+',true)">Keep open for everyone</button>' : '')+'</div>' : '')
+    + '</div>';
+}
+function toggleSide(id){ SIDE[id].open = !SIDE[id].open; var lg = document.getElementById('chatlog'), st = lg.scrollTop; paintChat(true); lg.scrollTop = st; }
+function pinSide(id, on){ SIDE[id].pin = on; SIDE[id].open = false; var lg = document.getElementById('chatlog'), st = lg.scrollTop; paintChat(true); lg.scrollTop = st; }
+
+function chatDownCheck(){
+  var lg = document.getElementById('chatlog'), b = document.getElementById('chatdown'); if(!lg || !b) return;
+  b.classList.toggle('on', lg.scrollHeight - lg.scrollTop - lg.clientHeight > 80);
+}
+function chatToEnd(){ var lg = document.getElementById('chatlog'); lg.scrollTo({top:lg.scrollHeight, behavior:'smooth'}); }
+document.getElementById('chatlog').addEventListener('scroll', chatDownCheck);
+window.addEventListener('resize', chatDownCheck);
+
 var ACC = [], ACCOPEN = {};
 function accHtml(id){
   var a = ACC[id], open = ACCOPEN[id];
@@ -1831,8 +1981,9 @@ function accHtml(id){
 function toggleAcc(id){ ACCOPEN[id] = !ACCOPEN[id]; var lg = document.getElementById('chatlog'), st = lg.scrollTop; paintChat(true); lg.scrollTop = st; }
 function paintChat(keep){
   var el = document.getElementById('chatin');
-  var h = LOG.map(function(x){ return typeof x === 'string' ? x : accHtml(x.acc); }).join('');
+  var h = LOG.map(function(x){ return typeof x === 'string' ? x : x.side !== undefined ? sideHtml(x.side) : accHtml(x.acc); }).join('');
   if(Q){
+    if(Q.t === 'start') h += startHtml();
     if(Q.t === 'ask') h += askHtml(Q);
     if(Q.t === 'dec') h += decHtml(Q, false);
     if(Q.t === 'wait') h += waitHtml(Q, false);
@@ -1844,6 +1995,7 @@ function paintChat(keep){
   }
   el.innerHTML = h;
   var lg = document.getElementById('chatlog'); if(lg && !keep) lg.scrollTop = lg.scrollHeight;
+  chatDownCheck();
 }
 function paintProg(){
   var el = document.getElementById('prog'); if(!el) return;
@@ -1937,7 +2089,7 @@ function head(n,t,tip){
 
 var VIEWS = {
   doc: function(){
-    var h = '<div class="v5dt" contenteditable="true" spellcheck="false">Upper Dee: Customer Demand Mapping</div>'
+    var h = '<div class="v5dt" contenteditable="true" spellcheck="false">Customer Demand Mapping</div>'
       + '<div class="v8setw v8docw"><div class="v8setc">';
     h += '<section class="v5sec v8sec" id="sec-1">'
       + head(1,'Project context','The project\'s essentials from onboarding. It sets the scene; nothing is analysed here.')
@@ -2063,7 +2215,7 @@ var VIEWS = {
     var nAi = steps.filter(function(x){ return x.x==='ai'; }).length;
     var nHum = steps.length - nGate - nAi;
     h += '<div class="v8proj v8exp" id="set-project">'
-      + '<div class="v8bp" role="link" tabindex="0" onclick="location.href=\'customer-demand-mapping-v2-canvas.html\'">'
+      + '<div class="v8bp" role="link" tabindex="0" onclick="location.href=\'hive-mind-v2.html\'">'
       +   '<span class="bi"><i class="ti ti-hierarchy-2"></i></span>'
       +   '<span class="bt"><span class="bk">Blueprint</span><span class="bn">Customer Demand Mapping <em>v2</em></span></span>'
       +   '<span class="bo">Open blueprint<i class="ti ti-chevron-right"></i></span></div>'
@@ -2072,7 +2224,7 @@ var VIEWS = {
       +   '<p class="v8exp-why">Finds who would pay for Upper Dee\'s nature outcomes and what the land can supply, then turns it into a summary for the client.</p>'
       +   '<div class="v8exk">Team</div>'
       + '<div class="ptm">' + TEAM.map(function(p){
-          return '<div class="pp">'+av(p)+'<div><b>'+p[0]+'</b><span>'+runRole(p)+'</span></div></div>';
+          return '<div class="pp">'+av(p)+'<div><b>'+p[0]+'</b><span>'+p[3]+'</span></div></div>';
         }).join('')
       + (CANDIDATES.length ? '<div class="pp add" onclick="toggleAdd()"><span class="pa"><i class="ti ti-plus"></i></span><div><b>Add team member</b></div></div>' : '')
       + '</div>'
@@ -2134,12 +2286,12 @@ var VIEWS = {
 
 /* ── what each step consists of, for the Workflow drawer ──────────────── */
 var STEPD = {
- '1.1':{w:'Meet the estates and record what the project is for. The agent reads what the client sends and drafts chapter 1.',
-   t:[['Caitlin Ciceri','Runs the kick-off call with the estates'],['ai','Transcribes the recording'],['tool:Questionnaire','Reads the client documents and answers what it can'],['ai','Drafts the chapter 1 fields and flags gaps']],
+ '1.1':{w:'Meet the estates and record what the project is for. The agent reads the kick-off notes and drafts chapter 1.',
+   t:[['Caitlin Ciceri','Runs the kick-off call with the estates'],['ai','Reads the recording and transcript'],['tool:Questionnaire','Answers the kick-off questions it can'],['ai','Drafts the chapter 1 fields and flags gaps']],
    a:'Chapter 1 has an objective, a site description and a list of gaps.'},
  '1.2':{w:'Ask the client for what chapter 1 cannot be written without.',
    t:[['ai','Builds the request from the gaps'],['tool:Email composer','Drafts the email'],['Harry Fox','Sends it and chases replies']],
-   a:'Missing documents are on file or formally outstanding.'},
+   a:'The client documents are on file and chapter 1 is checked against them.'},
  '1.3':{w:'A decision: is the project context good enough to start Demand? Gaps can be carried as constraints.',
    t:[['ai','Lists what is still unwritten and recommends'],['Caitlin Ciceri','Decides: proceed or hold']],
    a:'Demand starts, or the request goes out again.'},
@@ -2153,7 +2305,7 @@ var STEPD = {
    t:[['Caitlin Ciceri','Confirms the route'],['conn:Funding registers','Lists open schemes and deadlines']],
    a:'Co-funding routes are known, with deadlines.'},
  '2.4':{w:'Join every signal into one beneficiary map, then a buyer list per market that Trade can work from.',
-   t:[['ai','Joins planning, licences, funding and sector profiles'],['know:GY buyer database','Adds buyers GY already knows'],['ai','Drafts why relevant and a hook per buyer']],
+   t:[['ai','Joins planning, licences, funding and sector profiles'],['conn:GY buyer database','Adds buyers GY already knows'],['ai','Drafts why relevant and a hook per buyer']],
    a:'Chapter 2 holds a buyer table per market, and a shared sheet.'},
  '2.5':{w:'Trade checks the list against what they know about each buyer.',
    t:[['Izzie Bell','Reviews each buyer and sets the relationship'],['ai','Folds the notes back into chapter 2']],
@@ -2226,36 +2378,41 @@ function anchorNav(items){
     return '<a class="'+(i===0?'on':'')+'" data-id="'+it[0]+'" onclick="setJump(\''+it[0]+'\')">'+(it[2]?'<i class="ti '+it[2]+'"></i>':'')+'<span>'+it[1]+'</span></a>';
   }).join('') + '</div></nav>';
 }
+/* in the narrow layout the nav is a sticky row above the cards, so jumps and the scroll spy clear its height */
+function navRow(){ var nav = document.getElementById('setnav'); return nav && nav.firstChild && getComputedStyle(nav.firstChild).flexDirection === 'row' ? nav : null; }
+function navOff(){ var nav = navRow(); return nav ? nav.offsetHeight : 0; }
 function relTop(el, sc){ return el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop; }
 function setJump(id){
   var el = document.getElementById(id), sc = document.querySelector('.v5body');
   if(!el || !sc) return;
   ANCLOCK = Date.now() + 900;
-  sc.scrollTo({top: Math.max(0, relTop(el, sc) - 32), behavior:'smooth'});
+  sc.scrollTo({top: Math.max(0, relTop(el, sc) - 32 - navOff()), behavior:'smooth'});
   setActive(id);
 }
 function setActive(id){
   var nav = document.getElementById('setnav'); if(!nav) return;
   [].forEach.call(nav.querySelectorAll('a'), function(a){ a.classList.toggle('on', a.getAttribute('data-id') === id); });
+  var row = navRow(), on = nav.querySelector('a.on');
+  if(row && on){ var box = row.firstChild; box.scrollTo({left: Math.max(0, on.offsetLeft - box.offsetLeft - 24), behavior:'smooth'}); }
 }
 document.addEventListener('scroll', function(e){
   if(!e.target || !e.target.classList || !e.target.classList.contains('v5body')) return;
   var nav = document.getElementById('setnav'); if(!nav || Date.now() < ANCLOCK) return;
   var sc = e.target, ids = [].map.call(nav.querySelectorAll('a'), function(a){ return a.getAttribute('data-id'); }), cur = ids[0];
-  ids.forEach(function(id){ var el = document.getElementById(id); if(el && relTop(el, sc) - 80 <= sc.scrollTop) cur = id; });
+  ids.forEach(function(id){ var el = document.getElementById(id); if(el && relTop(el, sc) - 80 - navOff() <= sc.scrollTop) cur = id; });
   if(sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 4) cur = ids[ids.length-1];
   setActive(cur);
 }, true);
 
 
 /* ── everything Settings lists, so every row can open a drawer ──────────
-   Skills say how to do a job (shown by the step that uses them); knowledge
+   Skills say how to do a job (shown by the step that uses them); context
    says what is true (shown by how fresh it is). */
 function usedAt(steps){ return 'Used at '+steps.join(', '); }
 var KINDS = [
   ['Skills','ti-sparkles','var(--amberbg)','var(--amberd)'],
-  ['Knowledge','ti-book','#F3E8DF','#8A5A3B'],
-  ['Connectors','ti-plug-connected','var(--bluebg)','var(--blued)'],
+  ['Context','ti-book','#F3E8DF','#8A5A3B'],
+  ['Connections','ti-plug-connected','var(--bluebg)','var(--blued)'],
   ['Tools','ti-tool','var(--graybg)','#766B62'],
   ['Inputs','ti-file-text','var(--bluebg)','var(--blued)', function(){ return isDone('1.1') ? '3 of 4 received' : 'None yet'; }],
   ['Outputs','ti-package','var(--greenbg)','var(--greend)', function(){
@@ -2271,45 +2428,49 @@ var SITEMS = {
 
   skben:{tag:'Finds who benefits', kind:'Skills', n:'Beneficiary mapping', ic:'ti-map-2', used:['2.4'],
     what:'How to join planning, licence, funding and sector signals into one list of who benefits from the catchment.',
+    body:[["When to use", "At step 2.4, once the planning, licence and funding signals are in."], ["Steps", ["List every organisation named in the planning, licence and funding signals.", "Merge duplicates against the GY buyer database.", "Tag each one with a sector and a market: carbon, biodiversity, water quality or flood.", "Write in one sentence why they benefit from this catchment.", "Drop anyone with no real link to the catchment."]], ["Done when", "Every beneficiary has a sector, a market and a sourced reason."], ["Ask a person when", "An organisation fits two markets, or the link to the catchment is a guess."]],
     det:[['Owner','Caitlin Ciceri'],['Version','v3, updated 2 Sep 2026'],['Stored in','Hive Mind']],
     lists:[['Reads',['GPAP planning register','SEPA abstraction licences','Sector profiles'],'ti-book']]},
   skbuy:{tag:'Qualifies each buyer', kind:'Skills', n:'Buyer qualification', ic:'ti-user-check', used:['2.4','2.5'],
     what:'How to judge relevance, write the hook and set the relationship status for each buyer.',
+    body:[["When to use", "At steps 2.4 and 2.5, on every buyer in the beneficiary map."], ["Steps", ["Score relevance high, medium or low against the sector profile.", "Check the GY buyer database for past contact and status.", "Write a hook: the buyer's need in their own words, tied to this site.", "Set the relationship: new, warm or active.", "Flag the buyers Trade should check first."]], ["Done when", "Trade could pick up the phone from the row alone."], ["Ask a person when", "The buyer is already in a live deal elsewhere at GY."]],
     det:[['Owner','Izzie Bell'],['Version','v2, updated 16 Sep 2026'],['Stored in','Hive Mind']],
     lists:[['Reads',['GY buyer database','Sector profiles'],'ti-book']]},
   skesc:{tag:'Writes the service cards', kind:'Skills', n:'Ecosystem Service Card writing', ic:'ti-id-badge-2', used:['3.1'],
     what:'The fields, sources and confidence rules every Ecosystem Service Card follows. Each Ecosystem Service Agent writes its card with it.',
+    body:[["When to use", "At step 3.1, by each Ecosystem Service Agent, one card per service."], ["Steps", ["Fill every field: eligibility, volume, price range, timing and risks.", "Give each field a source and a confidence: high, medium or low.", "Say what would raise the confidence.", "Flag a gap rather than guess it.", "Send the card to the agent's expert manager for review."]], ["Done when", "Someone outside GY could check every number on the card."], ["Ask a person when", "The rule book is out of date, or two sources disagree."]],
     det:[['Owner','Caitlin Ciceri'],['Version','v1, updated 3 Oct 2026'],['Stored in','Hive Mind']],
     lists:[['Used by',['Peatland carbon Agent','Woodland carbon Agent','Biodiversity Agent','Water quality Agent'],'ti-robot']]},
   sksum:{tag:'Writes the client summary', kind:'Skills', n:'Summary writing', ic:'ti-writing', used:['4.1'],
     what:'How to rank the markets and write the summary the client reads first, with caveats up front.',
+    body:[["When to use", "At step 4.1, once chapters 2 and 3 are reviewed."], ["Steps", ["Rank the markets by strength of demand.", "Put the caveats first, in plain words.", "Write one paragraph per market: who buys, why, and how sure we are.", "End with the recommended next step.", "Keep it to one page."]], ["Done when", "The landowner understands it without a call."], ["Ask a person when", "The ranking differs from what the client expected at kick-off."]],
     det:[['Owner','Emily Norton'],['Version','v2, updated 22 Sep 2026'],['Stored in','Hive Mind']]},
 
-  knrb:{tag:'Rules per ecosystem service', kind:'Knowledge', n:'ES rule books', ic:'ti-book-2', used:['3.1'], fresh:['Checked Oct 2025','warn'],
+  knrb:{tag:'Rules per ecosystem service', kind:'Context', n:'ES rule books', ic:'ti-book-2', used:['3.1'], fresh:['Checked Oct 2025','warn'],
     what:'The rules each ecosystem service transacts under: codes, eligibility, buffers and prices.',
     det:[['Checked','Oct 2025, due for review'],['Owners','The four Ecosystem Service Agent managers'],['Source','NatWest Markets Report, code registries']]},
-  knsp:{tag:'What each sector buys', kind:'Knowledge', n:'Sector profiles', ic:'ti-users-group', used:['2.4'], fresh:['Checked Sep 2026',''],
+  knsp:{tag:'What each sector buys', kind:'Context', n:'Sector profiles', ic:'ti-users-group', used:['2.4'], fresh:['Checked Sep 2026',''],
     what:'What each buyer sector cares about, and which signals are strong or weak.',
     det:[['Checked','Sep 2026'],['Covers','6 buyer sectors'],['Owner','Trade']]},
-  knbuy:{tag:'Buyers GY already knows', kind:'Knowledge', n:'GY buyer database', ic:'ti-address-book', used:['2.4','2.5'], fresh:['Updated daily','ok'],
+
+  cngpap:{kind:'Connections', n:'GPAP planning register', ic:'ti-database', used:['2.1'], st:['Connected','ok'],
+    what:'Planning applications, filtered to the project catchment.', det:[['Status','Connected'],['Last synced','Wednesday 06:00']]},
+  cnsepa:{kind:'Connections', n:'SEPA abstraction licences', ic:'ti-droplet', used:['2.2'], st:['Connected','ok'],
+    what:'Who takes water from the river, where and how much.', det:[['Status','Connected'],['Last synced','Wednesday 06:00']]},
+  cnpa:{kind:'Connections', n:'Peatland ACTION register', ic:'ti-coin', used:['2.3'], st:['Stale, 5 Sep','warn'],
+    what:'NatureScot peatland funding windows and eligibility.', det:[['Status','Stale'],['Last synced','5 Sep 2026'],['Fix','Reconnect in Settings, Connectors']]},
+  cnno:{kind:'Connections', n:'Notion', ic:'ti-brand-notion', used:['1.1'], st:['Connected','ok'],
+    what:'Project pages and meeting notes the agent reads at kick-off.', det:[['Status','Connected'],['Access','Read only']]},
+  cngd:{kind:'Connections', n:'Google Drive', ic:'ti-brand-google-drive', used:['1.1','4.2'], st:['Connected','ok'],
+    what:'Client documents come in here, and the finished PDF goes back.', det:[['Status','Connected'],['Folder','Upper Dee / Demand Mapping']]},
+  cndp:{kind:'Connections', n:'GY Data platform', ic:'ti-chart-dots-3', used:['4.4'], st:['Connected','ok'],
+    what:'Receives the buyer and service rows so the rest of GY can use them.', det:[['Status','Connected'],['Writes','Buyers, services']]},
+  cnbuy:{kind:'Connections', n:'GY buyer database', ic:'ti-address-book', used:['2.4','2.5'], st:['Connected','ok'],
     what:'One record per buyer, shared across every project, so the same company is never researched twice.',
     det:[['Updated','Daily'],['Records','212 buyers'],['Owner','Trade']]},
 
-  cngpap:{kind:'Connectors', n:'GPAP planning register', ic:'ti-database', used:['2.1'], st:['Connected','ok'],
-    what:'Planning applications, filtered to the project catchment.', det:[['Status','Connected'],['Last synced','Wednesday 06:00']]},
-  cnsepa:{kind:'Connectors', n:'SEPA abstraction licences', ic:'ti-droplet', used:['2.2'], st:['Connected','ok'],
-    what:'Who takes water from the river, where and how much.', det:[['Status','Connected'],['Last synced','Wednesday 06:00']]},
-  cnpa:{kind:'Connectors', n:'Peatland ACTION register', ic:'ti-coin', used:['2.3'], st:['Stale, 5 Sep','warn'],
-    what:'NatureScot peatland funding windows and eligibility.', det:[['Status','Stale'],['Last synced','5 Sep 2026'],['Fix','Reconnect in Settings, Connectors']]},
-  cnno:{kind:'Connectors', n:'Notion', ic:'ti-brand-notion', used:['1.1'], st:['Connected','ok'],
-    what:'Project pages and meeting notes the agent reads at kick-off.', det:[['Status','Connected'],['Access','Read only']]},
-  cngd:{kind:'Connectors', n:'Google Drive', ic:'ti-brand-google-drive', used:['1.1','4.2'], st:['Connected','ok'],
-    what:'Client documents come in here, and the finished PDF goes back.', det:[['Status','Connected'],['Folder','Upper Dee / Demand Mapping']]},
-  cndp:{kind:'Connectors', n:'GY Data platform', ic:'ti-chart-dots-3', used:['4.4'], st:['Connected','ok'],
-    what:'Receives the buyer and service rows so the rest of GY can use them.', det:[['Status','Connected'],['Writes','Buyers, services']]},
-
-  tlq:{kind:'Tools', n:'Questionnaire', ic:'ti-checkup-list', used:['1.1'], tag:'Fills in kick-off questions',
-    what:'Reads what the client sends and answers the 20 kick-off questions it can, then lists the gaps.', det:[['Type','Built by GY'],['Questions','20']]},
+  tlq:{kind:'Tools', n:'Questionnaire', ic:'ti-checkup-list', used:['1.1','1.2'], tag:'Fills in kick-off questions',
+    what:'Reads the kick-off notes and client documents, answers the 20 kick-off questions it can, then lists the gaps.', det:[['Type','Built by GY'],['Questions','20']]},
   tle:{kind:'Tools', n:'Email composer', ic:'ti-mail', used:['1.2'], tag:'Drafts client emails',
     what:'Drafts emails for a person to send. It never sends anything itself.', det:[['Type','Built by GY'],['Sends','Never']]},
   tlp:{kind:'Tools', n:'Pricing calculator', ic:'ti-calculator', used:['3.1'], tag:'Estimates revenue',
@@ -2317,21 +2478,17 @@ var SITEMS = {
   tlpdf:{kind:'Tools', n:'PDF generator', ic:'ti-file-type-pdf', used:['4.2'], tag:'Makes the client PDF',
     what:'Renders the four chapters into the Great Yellow template.', det:[['Type','Built by GY'],['Template','GY report, 2026']]},
 
-  in1:{kind:'Inputs', n:'kick_off_upper_dee.m4a', ic:'ti-microphone', used:['1.1'], inp:['Received','ok'],
-    what:'Recording of the kick-off call with the estates.', det:[['From','Kick-off meeting, 14 Jul'],['Length','52 min']]},
-  in2:{kind:'Inputs', n:'upper_dee_land_management_plan.pdf', ic:'ti-file-type-pdf', used:['1.1'], inp:['Received','ok'],
-    what:'The estates\' land management plan: site, interventions and outcomes.', det:[['From','Client, 2 Jul'],['Pages','38']]},
-  in3:{kind:'Inputs', n:'peat_condition_survey_2015.pdf', ic:'ti-file-type-pdf', used:['1.1','3.1'], inp:['Out of date','warn'],
-    what:'Peat condition survey the carbon case rests on. It dates from 2015.', det:[['From','Client'],['Dated','2015'],['Next','A new survey is requested']]},
+  in1:{kind:'Inputs', n:'Kick-off notes, Upper Dee', ic:'ti-microphone', used:['1.1'], inp:['Received','ok'],
+    what:'Meeting notes of the kick-off call with the estates, with the recording and transcript.', det:[['From','Kick-off meeting, 14 Jul'],['Length','52 min'],['Holds','Recording, transcript']]},
+  in2:{kind:'Inputs', n:'upper_dee_land_management_plan.pdf', ic:'ti-file-type-pdf', used:['1.2'], inp:['Received','ok'],
+    what:'The estates\' land management plan: site, interventions and outcomes.', det:[['From','Client, after the 1.2 request'],['Pages','38']]},
+  in3:{kind:'Inputs', n:'peat_condition_survey_2015.pdf', ic:'ti-file-type-pdf', used:['1.2','3.1'], inp:['Out of date','warn'],
+    what:'Peat condition survey the carbon case rests on. It dates from 2015.', det:[['From','Client, after the 1.2 request'],['Dated','2015'],['Next','A new survey is requested']]},
   in4:{kind:'Inputs', n:'tev_valuation.xlsx', ic:'ti-file-spreadsheet', used:['1.2'], inp:['Outstanding','warn'], miss:1,
     what:'Total economic valuation, if the client commissions one.', det:[['From','Not received'],['Asked at','1.2 Discovery information request']]}
   ,
   out1:{kind:'Outputs', n:'GY Demand Mapping, Upper Dee', ic:'ti-file-type-pdf', used:['4.2'], tag:'The client PDF',
     what:'The finished document the estates receive: four chapters in the GY template.', det:[['Format','PDF, 9 pages'],['Goes to','Google Drive, then the estates'],['Approved by','Caitlin Ciceri']]},
-  out2:{kind:'Outputs', n:'Upper Dee buyer list', ic:'ti-table', used:['2.4'], tag:'Buyers for Trade',
-    what:'Every qualified buyer per market, in a sheet Trade can work from.', det:[['Format','Sheet, 15 rows'],['Shared with','Trade']]},
-  out3:{kind:'Outputs', n:'Information request to the estates', ic:'ti-mail', used:['1.2'], tag:'Asks the client for data',
-    what:'The email asking the estates for what chapter 1 is missing.', det:[['Format','Email draft, 3 questions'],['Sent by','Harry Fox']]},
   out4:{kind:'Outputs', n:'GY database update', ic:'ti-database-export', used:['4.4'], tag:'Updates the GY database',
     what:'Writes the buyers and ecosystem services to the GY database, so other deliverables can use them.', det:[['Format','Rows in the GY Data platform'],['Read by','Commercial Strategy, Financial Model']]},
   out5:{kind:'Outputs', n:'Blueprint learnings', ic:'ti-bulb', used:['4.5'], tag:'Improves the next run',
@@ -2340,18 +2497,22 @@ var SITEMS = {
 Object.keys(SITEMS).forEach(function(k){
   var it = SITEMS[k];
   it.meta = function(){
-    if(it.kind === 'Skills' || it.kind === 'Knowledge') return [it.tag, ''];
-    if(it.kind === 'Connectors') return it.st;
+    if(it.kind === 'Skills' || it.kind === 'Context') return [it.tag, ''];
+    if(it.kind === 'Connections') return it.st;
     if(it.kind === 'Tools') return [it.tag, ''];
     if(it.kind === 'Outputs') return isDone(it.used[0]) ? ['Ready','ok'] : [it.tag,''];
     if(it.kind === 'Inputs'){ if(it.miss) return it.inp; return isDone('1.1') ? it.inp : ['Not received','warn']; }
     return ['',''];
   };
 });
+function skDoc(b){
+  return '<div class="v8dk2">Instructions</div><div class="v8skdoc">' + b.map(function(s){
+    return '<h5>'+s[0]+'</h5>' + (Array.isArray(s[1]) ? '<ol>'+s[1].map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ol>' : '<p>'+s[1]+'</p>');
+  }).join('') + '</div>';
+}
 function openItem(k){
   var it = SITEMS[k]; if(!it) return;
   DR = 'item';
-  document.body.classList.add('pclosed');
   var kd = KINDS.filter(function(x){ return x[0] === it.kind; })[0];
   var ic = document.getElementById('dricon');
   ic.className = 'v5dri'; ic.style.borderRadius = '';
@@ -2359,12 +2520,13 @@ function openItem(k){
   ic.style.color = it.dark ? 'var(--yellow)' : (kd ? kd[3] : 'var(--ink)');
   ic.innerHTML = '<i class="ti '+it.ic+'"></i>';
   document.getElementById('drtitle').textContent = it.n;
-  var m = it.kind === 'Knowledge' ? it.fresh
+  var m = it.kind === 'Context' ? it.fresh
     : it.kind === 'Outputs' ? (isDone(it.used[0]) ? ['Ready','ok'] : ['Made at '+it.used[0],''])
     : it.meta();
   var b = '<div class="v8dr">'
     + '<div class="v8dk2">'+(it.kind === 'Agent' ? 'Agent' : it.kind.replace(/s$/,''))+'</div>'
     + '<div class="v8dtxt">'+it.what+'</div>'
+    + (it.body ? skDoc(it.body) : '')
     + (m[0] && it.kind !== 'Skills' ? '<div class="v8istat '+(m[1]||'')+'">'+m[0]+'</div>' : '')
     + '<div class="v8dk2">Details</div>'
     + it.det.map(function(d,i){ return '<div class="v8row"'+(i?'':' style="border:none"')+'><span class="k">'+d[0]+'</span><span class="nm">'+d[1]+'</span></div>'; }).join('')
@@ -2387,7 +2549,6 @@ function openItem(k){
 function openAgent(id){
   var a = ESA[id];
   DR = 'agent';
-  document.body.classList.add('pclosed');
   var ic = document.getElementById('dricon');
   ic.className = 'v5dri'; ic.style.background = a.c; ic.style.color = '#fff'; ic.style.borderRadius = '50%';
   ic.innerHTML = '<i class="ti '+a.ic+'"></i>';
@@ -2456,15 +2617,12 @@ function scrollDoc(k){
   var s = document.getElementById(id); if(s) s.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function toggleChat(){
-  var opening = document.body.classList.contains('pclosed');
   document.body.classList.toggle('pclosed');
-  if(opening) closeDrawer();
   paintTabs();
 }
 function openDrawer(k){
   if(DR === k) return closeDrawer();
   DR = k;
-  document.body.classList.add('pclosed');
   var d = DRAWERS.filter(function(x){ return x[0]===k; })[0];
   document.getElementById('dricon').className = 'v5dri hide';
   document.getElementById('drtitle').textContent = d[2];
@@ -2490,9 +2648,13 @@ function sendMsg(){
   var inp = document.getElementById('ask'); var v = (inp.value||'').trim();
   if(!v) return;
   inp.value = '';
-  LOG.push(you(v));
-  LOG.push(say('In this sketch I only answer through the run. Pick an option on the card below.'));
-  paintChat();
+  var id = addSide([['Caitlin Ciceri', v, null]], '', null);
+  var g = SIDE[id]; g.live = true; paintChat();
+  setTimeout(function(){
+    g.x[g.x.length-1][2] = 'In this sketch I cannot answer free questions yet. Nothing in the document changed, so for the others this folds into one line.';
+    paintChat();
+    setTimeout(function(){ g.live = false; paintChat(); }, 2600);
+  }, 700);
 }
 function crExpand(){
   document.getElementById('crtrail').classList.add('on');
@@ -2536,10 +2698,7 @@ var CHAT_MIN = 340, CHAT_MAX = 680;
 act('Caitlin Ciceri','start','Created the deliverable from Customer Demand Mapping v2');
 LOG.push(say('I am set up for <b>Upper Dee</b> from the Customer Demand Mapping blueprint: four chapters, sixteen steps, three decisions. The document on the right is empty and fills in as we go.'));
 BI = 0;
-(function first(){
-  CUR = '1.1'; LOG.push(lab('1.1')); BI = 1;
-  Q = S[1]; BI = 2;
-})();
+Q = {t:'start'};
 paintTabs(); paintProg(); openTab('doc'); paintChat();
 </script>
 </body>

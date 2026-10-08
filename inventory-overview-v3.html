@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventory v3 · Evenlode · Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+
+:root{--gut:32px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px var(--gut) 100px}
+@media(max-width:900px){:root{--gut:22px}.wrap{padding:32px var(--gut) 90px}}
+
+.bsect{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:-.01em;margin:38px 0 14px;display:flex;align-items:center;gap:12px}
+.bsect .act{font-family:-apple-system,system-ui,Inter,'Segoe UI',sans-serif;margin-left:auto;font-size:13.5px;font-weight:400;color:var(--ink2);cursor:pointer}
+.bsect .act:hover{color:var(--ink)}
+.espill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:7px;background:var(--esc);color:#fff;white-space:nowrap}
+
+/* ── Pipeline: one column per ecosystem service, scrolling sideways ── */
+.rail{display:flex;gap:16px;overflow-x:auto;padding:2px 0 12px;scroll-snap-type:x proximity;
+      /* left stays on the page gutter; the right opens to the container edge so a
+         rail that overflows can scroll all the way out, and does nothing if it fits */
+      margin-right:calc(-1 * var(--gut))}
+.rail::-webkit-scrollbar{height:8px}
+.rail::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+.svc{flex:none;width:268px;scroll-snap-align:start}
+.svc .hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.svc .hd .nm{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.card{background:color-mix(in srgb, var(--esc) 13%, #fff);border:1px solid color-mix(in srgb, var(--esc) 42%, #fff);
+  border-radius:16px;overflow:hidden}
+.st{border-bottom:1px solid color-mix(in srgb, var(--esc) 30%, #fff)}
+.vm{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;font-size:13px;font-weight:600;
+  color:#fff;cursor:pointer;background:var(--esc)}
+.vm:hover{background:color-mix(in srgb, var(--esc) 82%, #000)}
+.vm .ti{font-size:14px}
+.st{padding:14px 16px}
+.st:last-child{border-bottom:none}
+.st .lb{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.st .nums{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+.st .u{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.st .un{font-size:12.5px;color:var(--ink2)}
+.st .v{margin-left:auto;font-size:14px;font-weight:700}
+.st .v.none{font-weight:400;color:var(--ink3)}
+.st .bar{height:6px;border-radius:99px;background:rgba(26,12,18,.10);overflow:hidden;margin-top:9px}
+.st .bar i{display:block;height:100%;border-radius:99px;background:var(--esc)}
+.st.s0 .bar i{background:color-mix(in srgb, var(--esc) 30%, #fff)}
+.st.s1 .bar i{background:color-mix(in srgb, var(--esc) 60%, #fff)}
+.st.s3{background:color-mix(in srgb, var(--esc) 26%, #fff)}
+.svc.ghost .card{border-style:dashed;border-color:var(--line2);background:transparent;min-height:232px;display:flex;align-items:center;justify-content:center}
+.svc.ghost .gt{font-size:13.5px;color:var(--ink3);text-align:center;padding:0 20px;line-height:1.5}
+
+/* ── Deals ── */
+/* Deals and Risk are one wide card each, not three cards side by side.
+   One border, one padding, the services split inside it by hairline dividers,
+   so the section reads as a single object instead of three competing ones. */
+.wcard{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
+.wcols>*{padding:16px 22px 18px;border-top:1px solid var(--line);min-width:0}
+.wcols>*:first-child{border-top:none}
+/* one service per row, its content laid out across the width */
+.drow2{display:grid;grid-template-columns:200px minmax(200px,1fr) 1fr 1fr;gap:26px;align-items:start}
+.rrow2{display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:start}
+.wnm{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.wnm .nm{font-size:14px;font-weight:600}
+.wlk{display:inline-block;margin-top:6px;font-size:13px;color:var(--ink2);
+      text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.wlk:hover{color:var(--ink)}
+.wsub{font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+@media(max-width:900px){.drow2,.rrow2{grid-template-columns:1fr;gap:14px}}
+.wkey{display:flex;gap:16px;flex-wrap:wrap;padding:11px 22px;border-top:1px solid var(--line);
+      background:var(--bg);font-size:12px;color:var(--ink2)}
+.wkey span{display:inline-flex;align-items:center;gap:6px}
+.wkey i{width:8px;height:8px;border-radius:50%;flex:none;background:var(--ink2)}
+.wkey i.m{background:var(--ink3);opacity:.55}
+.wkey i.l{background:var(--graybg)}
+
+
+.dcard{min-width:0}
+.dcard .dh{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.dcard .dh .nm{font-size:14px;font-weight:600}
+.dcard .dh .lk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.dcard .big{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.dcard .cap{font-size:13.5px;color:var(--ink2);margin-top:5px;line-height:1.45}
+.bar2{height:7px;border-radius:99px;background:var(--graybg);overflow:hidden;margin:11px 0 0}
+.bar2 i{display:block;height:100%;border-radius:99px;background:var(--esc)}
+.bar2.lite i{background:color-mix(in srgb, var(--esc) 45%, #fff)}
+.drow{font-size:13.5px;color:var(--ink2)}
+.drow+.drow{margin-top:13px}
+.drow b{color:var(--ink);font-weight:700}
+.drow .u{text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.dempty{font-size:13.5px;color:var(--ink3);line-height:1.55}
+
+/* ── Risk ── */
+.rcardx{min-width:0}
+.rcardx .rh{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.rcardx .rh .nm{font-size:14px;font-weight:600}
+.rrow{display:grid;grid-template-columns:minmax(0,220px) 1fr;align-items:center;gap:16px;padding:5px 0}
+.rrow .rl{font-size:13.5px;line-height:1.3}
+.rbarx{display:flex;height:18px;border-radius:6px;overflow:hidden;background:var(--graybg)}
+.rbarx span{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;min-width:0}
+.rbarx .s1{background:var(--esc)}
+.rbarx .s2{background:color-mix(in srgb, var(--esc) 55%, #fff);color:var(--ink)}
+.rmorex{font-size:13px;color:var(--ink2);text-decoration:underline;text-underline-offset:2px;cursor:pointer;margin-top:9px;display:inline-block}
+
+/* ── Search ── */
+[hidden]{display:none!important}
+
+.sdrop{position:fixed;inset:0;background:rgba(31,31,29,.28);z-index:1300;opacity:0;pointer-events:none;
+       transition:opacity .22s ease}
+.sdrop.on{opacity:1;pointer-events:auto}
+.sdrawer{position:fixed;top:0;right:0;bottom:0;width:460px;max-width:92vw;background:var(--card);
+         border-left:1px solid var(--line);box-shadow:-12px 0 40px rgba(31,31,29,.14);z-index:1301;
+         display:flex;flex-direction:column;transform:translateX(100%);
+         transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+.sdrawer.on{transform:none}
+.sdhead{display:flex;align-items:center;gap:10px;padding:18px 24px 15px;border-bottom:1px solid var(--line);flex:none}
+.sdhead b{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:-.01em}
+.sdhead .x{margin-left:auto;cursor:pointer;color:var(--ink3);font-size:20px;width:32px;height:32px;
+           display:flex;align-items:center;justify-content:center;border-radius:8px}
+.sdhead .x:hover{background:var(--graybg);color:var(--ink)}
+.sdbody{flex:1;overflow-y:auto;padding:20px 24px 26px}
+.sdfoot{flex:none;display:flex;align-items:center;gap:14px;padding:15px 24px;
+        border-top:1px solid var(--line);background:var(--card)}
+.sclose{font-size:13.5px;color:var(--ink2);cursor:pointer}
+.sclose:hover{color:var(--ink)}
+.fgrp{margin-top:22px}
+.fgrp:first-child{margin-top:0}
+.flabel{font-size:14px;font-weight:600;margin-bottom:9px}
+.fnote{font-size:12.5px;color:var(--ink3);margin-top:6px}
+.pickrow{display:flex;gap:9px;flex-wrap:wrap}
+.pick{border:1px solid var(--line2);background:#fff;border-radius:10px;padding:9px 16px;font-family:inherit;
+      font-size:14px;font-weight:500;color:var(--ink);cursor:pointer}
+.pick:hover{border-color:var(--ink3)}
+.pick.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.fcols{display:grid;grid-template-columns:1fr;gap:12px}
+.fld{min-width:0}
+.flab{display:flex;align-items:center;font-size:12.5px;font-weight:500;color:var(--ink2);margin:0 0 6px 2px}
+.fcols.two{grid-template-columns:1fr 1fr}
+.fsel{width:100%;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-family:inherit;
+      font-size:14px;color:var(--ink);background:#fff}
+.fnum{width:120px;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-family:inherit;
+      font-size:14px;color:var(--ink);background:#fff}
+.frange{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink2)}
+
+/* results */
+.rhead{display:flex;align-items:baseline;gap:12px;margin:26px 0 14px}
+.rhead .rt{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.rhead .rc{font-size:14px;color:var(--ink2)}
+.rhead .rx{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.rhead .rx:hover{color:var(--ink)}
+.shead{display:flex;align-items:baseline;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:.06em;
+        text-transform:uppercase;color:var(--ink2);margin-bottom:11px}
+.shead b{font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums}
+.pick{display:inline-flex;align-items:center;gap:7px}
+.pick .ti{font-size:15px;color:var(--esc,var(--ink3))}
+.pick.on{background:var(--esc,var(--dark));border-color:var(--esc,var(--dark));color:#fff}
+.pick.on .ti{color:#fff}
+.addline{border:1px dashed var(--line2);border-radius:11px;padding:11px 14px;margin-top:22px;
+         font-size:13.5px;color:var(--ink2);text-align:center;cursor:pointer}
+.addline:hover{border-color:var(--ink3);color:var(--ink)}
+.lcount{font-size:13px;color:var(--ink2)}
+.lcount b{color:var(--ink);font-weight:600}
+.fit{display:inline-flex;align-items:center;font-size:11.5px;font-weight:500;border-radius:999px;padding:3px 9px}
+.fit.ex{background:var(--greenbg);color:var(--greend)}
+.fit.pa{background:var(--amberbg);color:var(--amberd)}
+.fit.su{background:var(--bluebg);color:var(--blued)}
+.shortband{display:flex;align-items:baseline;gap:14px;background:#FDF6EE;border:1px solid #EBD9AE;
+           border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:14px}
+.shortband b{color:#B5462F;white-space:nowrap}
+.shortband span{color:var(--ink2);font-size:13.5px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chipx{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);
+       background:var(--graybg);border-radius:999px;padding:5px 12px}
+.nores{border:1px dashed var(--line2);border-radius:16px;padding:34px;text-align:center;color:var(--ink3);font-size:14.5px;line-height:1.6}
+
+/* ── All inventory preview ── */
+.ltbl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.lhd,.lrow{display:grid;grid-template-columns:96px minmax(180px,1.5fr) 128px 66px minmax(130px,1fr) 74px;
+           align-items:center;gap:14px;padding:12px 18px}
+.lhd{background:var(--graybg);border-bottom:1px solid var(--line);
+     font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.lhd .r,.lrow .r{text-align:right}
+.lrow{border-bottom:1px solid var(--line);font-size:14.5px;cursor:pointer}
+.lrow:last-child{border-bottom:none}
+.lrow:hover{background:#FBF8EF}
+.lrow .ty{font-weight:600;letter-spacing:-.01em}
+.lrow .un{font-variant-numeric:tabular-nums}
+.lrow .si{color:var(--ink2);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lmore{padding:13px 18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2);cursor:pointer}
+.lmore:hover{color:var(--ink);background:#FBF8EF}
+@media(max-width:900px){
+  .lhd{display:none}
+  .lrow{grid-template-columns:1fr auto;row-gap:7px}
+  .lrow .si{grid-column:1 / 3}
+}
+
+/* ── from deliverable sketch v8: agent column, tabs, drawer ── */
+
+/* v4-chat, the same deliverable with the assistant in the lead.
+   Everything from the document view is still here; it has just swapped
+   places with the conversation. The document becomes one tab of a docked
+   panel, and the workflow shows up as the run log inside the thread. */
+
+/* This page is a place to work rather than a place to browse, so it opens
+   with the rail folded away and the path folded down to the name. Both are one
+   click from coming back, and the choice is remembered for this page only. */
+/* The folded path is two slashes and an ellipsis, quiet until you go near it.
+   Hovering names the path, clicking unfolds it in place. */
+.crmore{flex:none;border:none;background:none;padding:2px 2px;font-family:inherit;font-size:14px;
+  line-height:1;color:var(--ink3);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  transition:color .12s}
+.crmore .sl{color:var(--line2);transition:color .12s}
+.crmore .el{letter-spacing:.09em}
+.crmore:hover{color:var(--ink)}
+.crmore:hover .sl{color:var(--ink3)}
+.crmore.hide{display:none}
+.crtrail{display:none;align-items:center}
+.crtrail.on{display:inline-flex}
+.mainc{overflow:hidden;display:flex;flex-direction:column}
+.v5row{flex:1;display:flex;min-height:0}
+
+/* ── the thread, which is now the page ──────────────────────────────────── */
+.v5chat{position:relative;width:var(--chatw,400px);flex:none;min-width:0;display:flex;
+  flex-direction:column;background:var(--bg);border-right:1px solid var(--line)}
+body.pclosed .v5chat{display:none}
+@media(max-width:1100px){.v5chat{width:min(var(--chatw,400px),360px)}}
+/* Drag the edge to trade width between the assistant and the document. The
+   handle is the border until you reach for it. */
+.v5grip{position:absolute;top:0;bottom:0;right:-3px;width:7px;cursor:col-resize;z-index:6}
+.v5grip:after{content:'';position:absolute;top:0;bottom:0;left:2px;width:3px;border-radius:2px;
+  background:transparent;transition:background .12s}
+.v5grip:hover:after,body.dragging .v5grip:after{background:var(--line2)}
+body.dragging{cursor:col-resize;user-select:none}
+.v5log{flex:1;overflow:auto;padding:22px 22px 6px}
+.v5in{max-width:none}
+
+.v5chead{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 12px 11px 22px;border-bottom:1px solid var(--line)}
+.v5on{flex:1;min-width:0;display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5on .ti{font-size:17px;color:var(--blued)}
+.v5cx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.v5cx:hover{background:var(--graybg);color:var(--ink)}
+.v5on .ti{font-size:15px}
+.v5on b{font-weight:500;color:var(--ink2)}
+
+.v5turn{margin-bottom:30px}
+.v5you{background:#F6EFE2;border-radius:16px 16px 5px 16px;padding:12px 15px;font-size:15px;line-height:1.5;
+  margin-left:auto;max-width:90%;width:fit-content}
+.v5say{font-size:15px;line-height:1.62;color:var(--ink);margin:13px 0}
+.v5say b{font-weight:600}
+
+/* what it did, in the order it did it */
+.v5step{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:14px;color:var(--ink2)}
+.v5step .bx{width:15px;height:15px;border-radius:4px;flex:none;margin-top:3px;background:var(--greend);position:relative}
+.v5step .bx:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5step .bx.run{background:none;border:1.5px solid var(--amber)}
+.v5step .bx.run:after{display:none}
+.v5step div{min-width:0}
+.v5step em{display:block;font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:12px;
+  color:var(--ink3);margin-top:3px}
+.v5step .w{color:var(--ink)}
+
+/* something it made */
+.v5made{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:14px;
+  padding:13px 15px;margin:14px 0;background:var(--card);cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.v5made:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.06)}
+.v5mt{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5mn{flex:1;min-width:0}
+.v5mn b{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5mn span{font-size:13.5px;color:var(--ink3)}
+.v5made .ti.go{font-size:17px;color:var(--ink3);flex:none}
+
+/* The one thing to do next, in the assistant column, as a card with a single
+   button. Automated steps run themselves; a person's step is just marked. */
+/* The run should look like it is happening. Tasks rise in one at a time, the
+   in-flight marker spins, the live step's dot breathes, the chapter bars slide
+   and a freshly written field flashes once. */
+@keyframes gyspin{to{transform:rotate(360deg)}}
+@keyframes gyrise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes gypip{0%,100%{box-shadow:0 0 0 3px var(--amberbg)}50%{box-shadow:0 0 0 7px rgba(239,159,39,.20)}}
+@keyframes gyflash{0%{background:#FEF6D8;border-color:#E9D79A}100%{background:var(--card);border-color:var(--line)}}
+@keyframes gyglow{0%,100%{box-shadow:0 2px 10px rgba(31,31,29,.05)}50%{box-shadow:0 2px 18px rgba(24,95,165,.18)}}
+.gyspin{animation:gyspin .9s linear infinite;display:inline-block}
+.v5step.rise{animation:gyrise .22s ease both}
+.v5wf.cur .dot,.dlpip.live{animation:gypip 1.5s ease-in-out infinite}
+.v5inp.just{animation:gyflash 1.2s ease-out}
+.v5tw.just,.v5win.just{animation:gyflash 1.2s ease-out}
+.dlsgb i{transition:width .45s ease}
+.v5rc.live{animation:gyglow 1.6s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+  .gyspin,.v5step.rise,.v5wf.cur .dot,.dlpip.live,.v5inp.just,.v5rc.live{animation:none}
+}
+.v5rc{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:16px 17px;
+  margin-top:8px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5rch{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5rch .ti{font-size:17px;color:var(--blued);flex:none}
+.v5rcb{font-size:14px;line-height:1.55;color:var(--ink2);margin-top:9px}
+.v5rcw{font-size:12.5px;color:var(--ink3);margin-top:9px;display:flex;align-items:center;gap:7px}
+.v5rcw .dlav{width:18px;height:18px;font-size:8.5px}
+.v5go{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;
+  border-radius:12px;padding:11px 16px;margin-top:14px;font-family:inherit;font-size:14.5px;
+  font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5go.sec{background:var(--card);color:var(--ink);border:1px solid var(--line2)}
+.v5go .ti{font-size:16px}
+.v5pl{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5pl .ti{font-size:15px}
+.v5sug{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.v5sug button{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer}
+.v5sug button:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* ── composer ───────────────────────────────────────────────────────────── */
+.v5comp{flex:none;padding:10px 22px 14px}
+.v5box{max-width:none;border:1px solid var(--line2);border-radius:18px;background:var(--card);
+  padding:14px 16px 11px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5box .q{font-size:14.5px;color:var(--ink3);padding-bottom:11px}
+.v5tools{display:flex;align-items:center;gap:9px}
+.v5tb{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:none;border-radius:999px;
+  padding:6px 12px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.v5tb:hover{border-color:var(--line2);color:var(--ink)}
+.v5send{margin-left:auto;width:34px;height:34px;border-radius:11px;border:none;background:var(--dark);color:#fff;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+
+/* ── the docked panel, tabs across the top ──────────────────────────────── */
+.v5panel{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:var(--card)}
+/* A quiet pair of icons in the panel's top corner: the same sixteen steps as
+   a list, or as the canvas they live on. It floats in the body's top padding
+   so it stays put while the list scrolls under it. */
+.v5vt{position:absolute;top:13px;right:16px;z-index:5;display:flex;gap:2px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px;box-shadow:0 1px 4px rgba(31,31,29,.05)}
+.v5vt.hide{display:none}
+.v5vb{width:29px;height:26px;border:none;background:none;border-radius:8px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .12s,color .12s}
+.v5vb:hover{background:var(--graybg);color:var(--ink2)}
+.v5vb.on{background:var(--graybg);color:var(--ink)}
+/* The second bar spans the whole page, above the three columns, so its width
+   never moves when a column opens or closes. Everything the buttons open ,
+   the assistant on the left, the document in the middle, a drawer on the
+   right, appears underneath it. */
+.v5tabs{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.v5tabgrp{flex:1;min-width:0;display:flex;align-items:center;gap:3px;padding-right:4px;overflow-x:auto;scrollbar-width:none}
+.v5tabgrp::-webkit-scrollbar{display:none}
+.v5tab{position:relative;display:inline-flex;align-items:center;gap:6px;border:none;background:none;
+  border-radius:10px;padding:7px 10px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.v5tab:hover{background:var(--graybg)}
+.v5tab.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5tab .ti{font-size:16px;color:var(--ink3)}
+.v5tab.on .ti{color:var(--ink)}
+.v5tab b{min-width:16px;height:16px;border-radius:999px;background:var(--graybg);color:var(--grayd);
+  font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.v5tab.chat{flex:none;order:-2;border:1px solid var(--line)}
+.v5tdiv{order:-1;flex:none;width:1px;align-self:stretch;background:var(--line);margin:2px 2px 2px 0}
+.v5tab.chat .ti{color:var(--blued)}
+.v5tab.chat.on{background:var(--bluebg);border-color:#CBE1F5;color:var(--blued)}
+.v5tab.chat.on .ti{color:var(--blued)}
+/* the right-hand drawer: Comments, To-dos and Sources open here, and the
+   assistant closes when they do, because the page holds one side panel at a
+   time and the middle should never be squeezed from both ends at once. */
+.v5dr{width:360px;flex:none;display:flex;flex-direction:column;min-width:0;
+  background:var(--bg);border-left:1px solid var(--line)}
+.v5dr.hide{display:none}
+.v5drh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;
+  padding:11px 12px 11px 18px;border-bottom:1px solid var(--line)}
+.v5drt{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5dri{width:30px;height:30px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5dri .ti{font-size:16px}
+.v5dri.hide{display:none}
+.v5drx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+.v5drx:hover{background:var(--graybg);color:var(--ink)}
+.v5drb{flex:1;overflow:auto;padding:20px 20px 40px;font-size:14px;line-height:1.55}
+.v5drgrp{flex:none;display:flex;align-items:center;gap:3px;margin-left:auto}
+.v5tab.dr.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5body{flex:1;overflow:auto;padding:46px 40px 110px}
+.v5bin{max-width:780px;margin:0 auto}
+
+/* the document, living inside the panel */
+.v5dt{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  padding-bottom:22px;border-bottom:1px solid var(--line)}
+
+/* A chapter is a block of fields with one heading. The guidance that used to
+   sit in a grey box under the heading now hangs off the i beside it, so the
+   page is fields and nothing else. */
+.v5sec{margin-top:54px}
+.v5ch{display:flex;align-items:center;gap:11px;margin-bottom:30px}
+.v5chn{width:30px;height:30px;border-radius:9px;background:var(--dark);color:var(--yellow);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.v5cht{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.v5ch .gyinfo{margin-left:1px}
+
+/* One field: a label row, then the field itself. Filled fields read as a
+   completed input, unwritten ones as an empty one, so the document looks like
+   something with blanks in it rather than prose with gaps. */
+.v5f{margin-bottom:34px}
+.v5f:last-child{margin-bottom:0}
+.v5flab{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-height:20px}
+.v5fl{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.v5inp{border:1px solid var(--line);border-radius:12px;background:var(--card);
+  padding:16px 18px;font-size:16.5px;line-height:1.6;color:var(--ink);outline:none;
+  transition:border-color .12s,box-shadow .12s,background .12s}
+.v5inp:hover{border-color:var(--line2);box-shadow:0 2px 8px rgba(31,31,29,.04)}
+.v5inp:focus{background:var(--card);border-style:solid;border-color:#9FC4E4;
+  box-shadow:0 0 0 3px rgba(24,95,165,.10)}
+/* An unwritten field is an empty field with a hint in it, so the first thing
+   you can do to it is type. The dashed frame clears itself on the first
+   keystroke, along with the chip that said it was not written yet. */
+.v5inp.empty{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;min-height:78px;
+  font-size:14.5px;color:var(--ink3)}
+.v5inp.empty:before{content:attr(data-ph);color:var(--ink3)}
+.v5inp.empty:focus:before{opacity:.45}
+.v5inp.parked{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;
+  font-size:14.5px;line-height:1.6;color:var(--ink3)}
+.v5tbl td[contenteditable]{outline:none}
+.v5tbl td[contenteditable]:focus{background:#F4F8FC;box-shadow:inset 0 0 0 2px #9FC4E4}
+.v5dt[contenteditable]{outline:none}
+.v5dt[contenteditable]:focus{box-shadow:inset 0 0 0 2px #9FC4E4;border-radius:8px}
+
+/* Provenance did not go away, it went quiet: one dot, coloured by how much the
+   field can be trusted, tooltip on hover, click for the full record. */
+.v5dot{width:9px;height:9px;border-radius:50%;flex:none;cursor:pointer;
+  box-shadow:0 0 0 3px transparent;transition:box-shadow .12s}
+.v5dot:hover{box-shadow:0 0 0 3px rgba(31,31,29,.07)}
+.v5dot.ai{background:var(--blued)}
+.v5dot.ok{background:var(--greend)}
+/* Chapter 2 splits into lettered markets, each with a buyer table; chapter 3
+   is one wide table. Tables scroll inside their own frame so the page never
+   does. An empty cell is drawn as an empty cell, not as nothing, because in
+   the source those blanks are work that has not happened yet. */
+.v5sh{font-size:15.5px;font-weight:600;letter-spacing:-.01em;margin:34px 0 13px;color:var(--ink)}
+.v5sec .v5sh:first-of-type{margin-top:0}
+.v5tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.v5tbl{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5}
+.v5tbl th{text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:bottom}
+.v5tbl td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+/* Chapter 3 has seven columns. Squeezing them into the panel turns every cell
+   into a column of single words, so the table keeps its natural width and the
+   frame scrolls instead. */
+.v5tbl.wide{width:auto;min-width:1180px}
+.v5tbl.wide td,.v5tbl.wide th{min-width:150px}
+.v5tbl.wide td:nth-child(4),.v5tbl.wide td:nth-child(5){min-width:230px}
+.v5tbl tr:last-child td{border-bottom:none}
+.v5tbl td.k{color:var(--ink);font-weight:600;min-width:150px}
+.v5tbl td.mt{background:#FBF9F2}
+.v5note{font-size:13.5px;line-height:1.6;color:var(--ink3);margin-top:11px}
+.v5call{display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:15px 17px;
+  margin-top:18px;font-size:14.5px;line-height:1.6;color:var(--ink2);background:var(--card)}
+.v5call > .ti{font-size:16px;color:var(--ink3);flex:none;margin-top:3px}
+.v5call ul{margin:0;padding-left:17px}
+.v5call li{margin:5px 0}
+.v5call b{color:var(--ink)}
+.v5win{background:#FEFAE6;border:1px solid #F1E3A6;border-radius:14px;padding:22px 24px}
+.v5win p{font-size:16.5px;line-height:1.62;color:var(--ink)}
+.v5win ul{margin:15px 0 0;padding-left:19px;font-size:15px;line-height:1.62;color:var(--ink2)}
+.v5win li{margin:8px 0}
+.v5win .gate{margin-top:17px;padding-top:15px;border-top:1px solid #F1E3A6;font-size:15px;color:var(--ink)}
+.v5txt{font-size:17px;line-height:1.62;color:var(--ink)}
+.v5pv{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--ink3)}
+.v5pv b{font-weight:400;color:var(--ink2)}
+.v5cf{font-size:12px;font-weight:500;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.v5cf.ai{background:var(--bluebg);color:var(--blued)}
+.v5cf.ok{background:var(--greenbg);color:var(--greend)}
+.v5cf.none{background:var(--amberbg);color:var(--amberd);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.v5cf.click{cursor:pointer}
+.v5cf.click:hover{filter:brightness(.97)}
+
+/* ── the Home tab ─────────────────────────────────────────────────────────
+   The v3 deliverable layout, lifted into the panel: progress as one reading,
+   the document and the workflow as real previews of themselves, then every
+   object this deliverable is wired to, grouped by the verb. Its .dl* names
+   never meet the .v5* ones, so it came across unchanged. */
+.dlav{width:30px;height:30px;border-radius:50%;color:#fff;font-size:11.5px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+/* ── progress, the one big reading on the page ── */
+/* The workflow bar carries the same title bar as the Document block, and
+   leads with the step in flight rather than with a big total. Smaller, but
+   the amber pip and the live step do the work the 28px number used to. */
+.dlpb{margin-bottom:18px;padding:11px 16px 13px}
+/* A ribbon, not a block: no title bar of its own, everything live on one
+   line, and four hairline bars under it. Two rows, about 70px. */
+.dlnow{display:flex;align-items:center;gap:9px;flex-wrap:nowrap;margin-bottom:11px;min-width:0}
+.dlnow > .ti{font-size:16px;color:#12684C;flex:none}
+.dlpip{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;
+  box-shadow:0 0 0 3px var(--amberbg);margin-left:3px}
+.dlnow .k{font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--amberd);flex:none;margin-right:1px}
+.dlnow .v{font-size:14px;font-weight:600;letter-spacing:-.01em;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlnow .w{margin-left:auto;font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:6px;
+  flex:none;white-space:nowrap}
+.dlnow .w .dlav{width:17px;height:17px;font-size:8px}
+.dlnow .c{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap;
+  padding-left:10px;margin-left:2px;border-left:1px solid var(--line)}
+.dlseg{display:flex;gap:6px}
+.dlsg{flex-basis:0;min-width:0}
+.dlsgb{height:5px;border-radius:999px;background:#F0EEE7;overflow:hidden;display:flex}
+.dlsgb i{display:block;height:100%}
+.dlsgb i.done{background:var(--greend)}
+.dlsgb i.cur{background:var(--yellow)}
+.dlsgl{display:flex;align-items:baseline;gap:5px;margin-top:6px;font-size:11px;color:var(--ink2);min-width:0}
+.dlsgl .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlsgl .c{color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
+.dlsg.off .dlsgl{color:var(--ink3)}
+
+/* ── the two objects the deliverable really is ── */
+.dlhero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:980px){.dlhero{grid-template-columns:minmax(0,1fr)}}
+.dlcol{display:flex;flex-direction:column;gap:18px}
+
+.dlobj{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.dlobj:hover{border-color:var(--line2);box-shadow:0 4px 16px rgba(31,31,29,.08)}
+.dlohd{display:flex;align-items:center;gap:11px;padding:13px 15px}
+.dltile{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.dltile .ti{font-size:17px}
+.dlonm{flex:1 1 auto;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlkeb{width:28px;height:28px;flex:none;border:none;background:transparent;border-radius:8px;
+  color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.dlkeb:hover{background:var(--graybg);color:var(--ink)}
+.dloft{display:flex;align-items:center;gap:10px;padding:12px 15px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.dloft .r{margin-left:auto;color:var(--ink);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.dloft .r .ti{font-size:15px}
+
+/* the document, as a small true miniature of the editor page */
+.dlthumb{position:relative;height:414px;overflow:hidden;background:#F1EDE0;padding:16px 0 0;
+  display:flex;justify-content:center;align-items:flex-start;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dlpage{width:900px;flex:none;background:#fff;border-radius:4px 4px 0 0;padding:50px 64px;
+  box-shadow:0 3px 14px rgba(26,12,18,.12);transform:scale(.5);transform-origin:top center;
+  font-family:var(--serif);color:var(--ink);text-align:left}
+.dlthumb:after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(rgba(241,237,224,0),#F1EDE0)}
+.dlpage h1{font-size:38px;font-weight:500;letter-spacing:-.02em;margin-bottom:10px}
+.dlpage .by{font-family:var(--sans);font-size:15px;color:var(--ink3);margin-bottom:34px}
+.dlpage h2{font-size:25px;font-weight:500;letter-spacing:-.015em;margin:30px 0 12px}
+.dlpage h2:first-of-type{margin-top:0}
+.dlpage p{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:13px}
+.dlpage ul{margin:0 0 13px 22px}
+.dlpage li{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:7px}
+.dlpage table{width:100%;border-collapse:collapse;margin:0 0 15px;font-family:var(--sans);font-size:15.5px}
+.dlpage th{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1.5px solid var(--line2);padding:7px 10px 7px 0}
+.dlpage td{border-bottom:1px solid var(--line);padding:7px 10px 7px 0;color:#33272C}
+.dlpage .blank{font-family:var(--sans);font-size:15.5px;color:var(--ink3);font-style:italic}
+.dlpage .em{background:#FEF6D8;padding:1px 3px;border-radius:3px}
+
+/* the workflow, as a viewport onto the real canvas: one line of nodes that
+   runs off both edges, parked on the step you are actually on */
+.dlwf{position:relative;height:182px;overflow:hidden;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background-color:#FBFAF5;background-image:radial-gradient(circle,#E0DED6 1px,transparent 1px);background-size:13px 13px}
+.dlstrip{position:absolute;top:50%;transform:translateY(-50%);display:flex;align-items:center}
+.dlwn{width:104px;flex:none;background:#fff;border:1px solid var(--line);border-radius:11px;
+  padding:8px 9px 9px;box-shadow:0 1px 3px rgba(31,31,29,.06)}
+.dlwn .h{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.dlwn .ic{width:21px;height:21px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlwn .ic .ti{font-size:12px}
+.dlwn .n{font-size:9.5px;color:var(--ink3);font-variant-numeric:tabular-nums;margin-left:auto}
+.dlwn .t{font-size:11px;line-height:1.3;color:var(--ink);height:43px;overflow:hidden}
+.dlwn.pend{background:#FCFBF7;border-color:#EAE6DA}
+.dlwn.pend .ic{background:#F1EFE8;color:#C6C1B4}
+.dlwn.pend .t{color:var(--ink3)}
+.dlwn.cur{box-shadow:0 0 0 2.5px var(--yellow),0 3px 10px rgba(31,31,29,.10)}
+.dlwl{width:17px;height:2px;border-radius:1px;background:#D8D2C4;flex:none}
+.dlwl.pend{background:#EAE6DC}
+.dlwph{position:absolute;top:18px;font-size:10px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+
+/* to-dos */
+.dlcardb{padding:4px 17px 14px}
+/* In a narrow panel the count gives way before the block's name does. */
+.dlohd .n{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--ink3);
+  flex:0 5 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlohd .n.warn{color:var(--amberd)}
+.dltd{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dltd:first-of-type{border-top:none}
+.dltd .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dltd .d{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap}
+.dltd .d.warn{color:var(--amberd)}
+.dltd .dlav{width:21px;height:21px;font-size:9.5px;box-shadow:none}
+.dlmore{border:none;background:transparent;color:var(--ink2);font-family:inherit;font-size:13px;
+  cursor:pointer;padding:9px 0 0;display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);width:100%;margin-top:2px}
+.dlmore:hover{color:var(--ink)}
+
+/* ── related objects: the verb is the relationship, the noun is the type,
+      and each object is a tile whose width its own content decides ── */
+/* Everything the deliverable leans on, in one block rather than three
+   loose lists. The verb and the count came off the group headings: inside a
+   named block, the noun is enough. */
+.dlrun{margin-top:24px}
+.dlrunb{padding:2px 18px 20px}
+.dlg{padding:20px 0 2px;border-top:1px solid var(--line)}
+.dlg:first-child{border-top:none;padding-top:16px}
+.dlghd{margin-bottom:13px}
+.dlghd .t{font-family:var(--serif);font-size:17.5px;font-weight:500;letter-spacing:-.01em}
+/* One line per object, nothing but what it is. The group header already
+   says how many there are and how many need attention. */
+.dlgw{display:flex;flex-direction:column}
+.dlr{display:flex;align-items:center;gap:14px;padding:15px 2px;border-top:1px solid var(--line);
+  cursor:pointer;font-size:15px;transition:padding-left .12s}
+.dlr:first-child{border-top:none}
+.dlr:hover{padding-left:6px}
+.dlr .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlr .ic .ti{font-size:17px}
+.dlr .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlr .go{font-size:16px;color:var(--ink3);flex:none;opacity:0;transition:opacity .12s}
+.dlr:hover .go{opacity:1}
+.dlr.miss .nm{color:var(--ink3)}
+
+/* Documents are shown as documents: the same page preview as the main
+   thumbnail, at a size you can line four of up. */
+.dlfilm{display:flex;flex-wrap:wrap;gap:16px}
+.dlfile{width:146px;cursor:pointer}
+.dlfp{height:104px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden;
+  padding:13px 12px;transition:border-color .12s,box-shadow .12s}
+.dlfile:hover .dlfp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dlfp b{display:block;height:6px;border-radius:2px;background:#D9D4C6;width:72%;margin-bottom:9px}
+.dlfp i{display:block;height:4px;border-radius:2px;background:#EDEAE1;margin-bottom:6px}
+.dlfile.miss .dlfp{border-style:dashed;background:transparent;display:flex;align-items:center;
+  justify-content:center;color:var(--ink3);font-size:12.5px;text-align:center;padding:13px}
+.dlfn{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;min-width:0}
+.dlfn .ti{font-size:15px;flex:none;color:var(--ink3)}
+.dlfn .ti.pdf{color:#C0432C}
+.dlfn .ti.doc{color:#185FA5}
+.dlfn .ti.xls{color:#1C7A4E}
+.dlfn span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlfile.miss .dlfn span{color:var(--ink3)}
+.dltool{width:146px;cursor:pointer}
+.dltp{height:78px;border:1px solid var(--line);border-radius:10px;display:flex;
+  align-items:center;justify-content:center;transition:border-color .12s,box-shadow .12s}
+.dltp .ti{font-size:28px}
+.dltool:hover .dltp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dltn{margin-top:10px;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The document miniature and the object tiles want more room than a column
+   of prose does, so the Home tab widens the measure. */
+.v5bin.wide{max-width:1060px}
+
+/* the other tabs */
+.v5item{padding:13px 0;border-top:1px solid var(--line)}
+.v5item:first-child{border-top:none;padding-top:0}
+.v5who{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.v5who .v5av{width:22px;height:22px;font-size:9.5px}
+.v5who b{font-size:13.5px;font-weight:600}
+.v5who span{font-size:12.5px;color:var(--ink3);margin-left:auto}
+.v5sub{font-size:12.5px;color:var(--ink3);margin-bottom:5px}
+.v5srow{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line);min-width:0;font-size:14px}
+.v5srow:first-child{border-top:none;padding-top:0}
+.v5srow .ti{font-size:16px;color:var(--ink3);flex:none}
+.v5srow .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v5srow .s{flex:none;font-size:13px;color:var(--ink3);white-space:nowrap}
+.v5srow .s.warn{color:var(--amberd)}
+.v5srow .s.ok{color:var(--greend)}
+.v5box2{width:15px;height:15px;border-radius:4px;border:1.5px solid #B4B2A9;flex:none;margin-top:2px;background:#fff}
+.v5box2.on{background:#185FA5;border-color:#185FA5;position:relative}
+.v5box2.on:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5td{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.45}
+.v5td:first-child{border-top:none;padding-top:0}
+/* workflow tab */
+.v5wfc{display:flex;align-items:baseline;gap:10px;margin:22px 0 8px;font-size:12px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.v5wfc:first-child{margin-top:14px}
+.v5wfc{padding:0 10px}
+
+/* ── the step detail: what it is for, the tasks inside it, what it leaves ── */
+.v5sk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.v5swhat{font-size:15px;line-height:1.55;color:var(--ink);margin-bottom:22px}
+.v5tkb{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.v5tkr{position:relative;display:flex;gap:12px;padding:14px;border-top:1px solid var(--line)}
+.v5tkr:first-child{border-top:none}
+.v5tkr:before{content:'';position:absolute;left:25px;top:0;height:14px;width:1px;background:var(--line)}
+.v5tkr:after{content:'';position:absolute;left:25px;top:36px;bottom:0;width:1px;background:var(--line)}
+.v5tkr:first-child:before,.v5tkr:last-child:after{display:none}
+.v5tkn{position:relative;z-index:1;width:22px;height:22px;border-radius:50%;flex:none;background:var(--card);
+  border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v5tkc{min-width:0}
+.v5act{display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-size:11.5px;font-weight:500;
+  padding:3px 10px 3px 5px;margin-bottom:8px}
+.v5act.ai{background:var(--dark);color:#fff}
+.v5act.ai .ti{font-size:13px;color:var(--yellow)}
+.v5act.who{background:var(--graybg);color:var(--ink)}
+.v5act.who .dlav{width:17px;height:17px;font-size:8px}
+.v5tkt{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.4}
+.v5tkw{font-size:12.5px;color:var(--ink3);margin-top:5px}
+.v5aft{display:flex;gap:11px;background:var(--bluebg);border-radius:12px;padding:14px 16px;margin-top:20px;
+  font-size:13.5px;line-height:1.55;color:var(--blued)}
+.v5aft .ti{font-size:16px;flex:none;margin-top:1px}
+
+/* ── the canvas view ──────────────────────────────────────────────────────
+   Not a redrawing of the canvas: the canvas itself. gy-nav.js already reads
+   ?embed=1 and drops its own sidebar, top bar and collapse control, which is
+   what that flag exists for, so the page arrives as the world plus its own
+   floating pills and side panel. The panel goes full-bleed to receive it. */
+.v5body.bleed{padding:0;overflow:hidden}
+.v5body.bleed #pbody{max-width:none;margin:0;height:100%}
+.v5cvf{display:block;width:100%;height:100%;border:none;background:#FBFAF5}
+.v5wfc span{margin-left:auto;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400;color:var(--ink3)}
+/* A step is an object you can open, so the row behaves like one. */
+.v5wf{display:flex;align-items:center;gap:11px;padding:10px 10px;border-top:1px solid var(--line);
+  font-size:14.5px;cursor:pointer;transition:background .12s}
+.v5wf:hover{background:var(--graybg)}
+.v5wf.sel{background:var(--graybg)}
+.v5wf .ch{flex:none;font-size:15px;color:var(--ink3);opacity:0;transition:opacity .12s}
+.v5wf:hover .ch,.v5wf.sel .ch{opacity:1}
+.v5wf .dot{width:15px;height:15px;border-radius:50%;flex:none;border:1.5px solid var(--line2);position:relative}
+.v5wf.done .dot{background:var(--greend);border-color:var(--greend)}
+.v5wf.done .dot:after{content:'';position:absolute;left:50%;top:50%;width:3.5px;height:7px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5wf.cur .dot{border-color:var(--amber);border-width:4px}
+.v5wf .no{flex:none;font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums;width:26px}
+.v5wf .ti2{flex:1;min-width:0}
+.v5wf.pend .ti2,.v5wf.pend .no{color:var(--ink3)}
+.v5wf.cur .ti2{font-weight:600}
+.v5wf .now{flex:none;font-size:12px;font-weight:500;color:var(--amberd);background:var(--amberbg);
+  padding:2px 8px;border-radius:999px}
+.v5dl{display:flex;gap:12px;padding:8px 0;font-size:13.5px}
+.v5dl dt{flex:none;width:84px;color:var(--ink3)}
+.v5dl dd{flex:1;min-width:0}
+.v5back{display:inline-flex;align-items:center;gap:7px;border:none;background:none;font-family:inherit;
+  font-size:13.5px;color:var(--blued);cursor:pointer;padding:0;margin-bottom:14px}
+.v5back:hover{text-decoration:underline}
+
+/* ── header bits ────────────────────────────────────────────────────────── */
+.v5av{border-radius:50%;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;
+  justify-content:center;flex:none;width:30px;height:30px}
+.v5pile{display:flex;align-items:center}
+.v5pile .v5av{margin-left:-9px;box-shadow:0 0 0 2px var(--bg)}
+.v5pile .v5av:first-child{margin-left:0}
+.v5keb{width:34px;height:34px;flex:none;border:none;background:transparent;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px}
+.v5keb:hover{background:var(--graybg);color:var(--ink)}
+.v5keb.on{background:var(--graybg);color:var(--ink)}
+
+
+/* ── v8: the agent leads, the document fills in ────────────────────────────
+   Built on v4-chat. The tab bar keeps its structure, minus Home and To-dos,
+   plus Settings. The assistant toggle became the agent itself: an avatar
+   with a name, like a colleague on the team. */
+
+/* the agent, in the tab bar */
+.v8agt{order:-2;flex:none;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;padding:3px 13px 3px 3px;font-family:inherit;font-size:14px;
+  font-weight:600;color:var(--ink);cursor:pointer;transition:background .12s,border-color .12s}
+.v8agt:hover{border-color:var(--line2)}
+.v8agt.on{background:var(--graybg);border-color:var(--graybg)}
+.v8ava{position:relative;width:28px;height:28px;border-radius:50%;background:var(--dark);color:var(--yellow);
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8ava .ti{font-size:15px}
+.v8ava.lg{width:32px;height:32px}
+.v8ava.lg .ti{font-size:17px}
+.v8ava.sm{width:20px;height:20px}
+.v8ava.sm .ti{font-size:11px}
+.v8ava.live:after{content:'';position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 0 2px var(--card);animation:gypip2 1.5s ease-in-out infinite}
+@keyframes gypip2{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* chat header and the progress line under it */
+.v8ch{flex:none;display:flex;align-items:center;gap:11px;min-height:58px;padding:10px 14px 10px 20px;
+  border-bottom:1px solid var(--line);background:var(--bg)}
+.v8chn{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v8prog{flex:none;padding:12px 20px 13px;border-bottom:1px solid var(--line);background:var(--bg)}
+.v8pt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.v8pt b{color:var(--ink);font-weight:600}
+.v8pt .c{margin-left:auto;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v8bar{display:flex;gap:4px}
+.v8bar span{height:5px;border-radius:3px;background:var(--line);overflow:hidden;position:relative}
+.v8bar span i{position:absolute;left:0;top:0;bottom:0;background:var(--greend);transition:width .45s ease}
+.v8bar span em{position:absolute;top:0;bottom:0;background:var(--yellow)}
+
+/* the thread */
+.v8lab{display:flex;align-items:center;gap:10px;margin:26px 0 4px;font-family:ui-monospace,Menlo,monospace;
+  font-size:11.5px;letter-spacing:.04em;color:var(--ink3);text-transform:uppercase}
+.v8lab:after{content:'';flex:1;height:1px;background:var(--line)}
+.v8lab:first-child{margin-top:0}
+.v8tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--sans);font-size:11.5px;font-style:normal;
+  border-radius:6px;padding:1px 7px;margin-right:6px;vertical-align:1px}
+.v8tag .ti{font-size:12px}
+.v8tag.tool{background:var(--graybg);color:#766B62}
+.v8tag.conn{background:var(--bluebg);color:var(--blued)}
+.v8tag.know{border:1px dashed var(--line2);color:var(--ink2)}
+.v8them{margin:16px 0}
+.v8them .who{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:7px}
+.v8them .who .dlav{width:22px;height:22px;font-size:9px}
+.v8them .bub{background:var(--card);border:1px solid var(--line);border-radius:5px 16px 16px 16px;
+  padding:11px 14px;font-size:14.5px;line-height:1.55}
+.v5you{margin-left:40px}
+
+/* a question from the agent */
+.v8ask{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:16px 17px;margin:14px 0;
+  box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v8ask .q{font-size:15px;line-height:1.55}
+.v8opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.v8opt{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:8px 15px;
+  font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer}
+.v8opt:hover{border-color:var(--ink3)}
+.v8opt.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.v8opt.pri:hover{background:var(--blued);border-color:var(--blued)}
+
+/* a decision: its own shape, its own colour, a named decider */
+.v8dec{border:1px solid #E9D79A;background:#FEFAE6;border-radius:16px;padding:16px 17px;margin:14px 0}
+.v8dh{display:flex;align-items:center;gap:11px}
+.v8dia{width:22px;height:22px;border-radius:5px;background:var(--dark);transform:rotate(45deg);flex:none;
+  display:inline-flex;align-items:center;justify-content:center;margin:0 3px}
+.v8dia .ti{transform:rotate(-45deg);color:var(--yellow);font-size:13px}
+.v8dk{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--amberd)}
+.v8dq{font-family:var(--serif);font-size:20px;line-height:1.25;letter-spacing:-.01em;margin:12px 0 12px}
+.v8rec{display:flex;gap:9px;background:var(--card);border:1px solid #F1E3A6;border-radius:11px;padding:10px 12px;
+  font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.v8rec b{color:var(--ink)}
+.v8by{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink3);margin-top:12px}
+.v8by .dlav{width:18px;height:18px;font-size:8px}
+.v8dopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.v8dopt{border:1px solid #E2D08C;background:var(--card);border-radius:12px;padding:11px 12px;font-family:inherit;
+  font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px}
+.v8dopt .ti{font-size:16px;flex:none}
+.v8dopt:hover{border-color:var(--amberd)}
+.v8dopt.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.v8dopt.pri:hover{border-color:var(--blued);background:var(--blued)}
+.v8dout{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;flex-wrap:wrap}
+.v8dout .ok{display:inline-flex;align-items:center;gap:6px;background:var(--greenbg);color:var(--greend);
+  border-radius:999px;padding:4px 11px;font-weight:600;font-size:13.5px}
+.v8dout .m{color:var(--ink3);font-size:13px}
+
+/* waiting on a person */
+.v8wait{border:1px dashed var(--line2);border-radius:14px;padding:13px 15px;margin:14px 0;background:var(--bg)}
+.v8wait .h{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.5}
+.v8wait .h .dlav{width:24px;height:24px;font-size:9.5px}
+.v8wait .v8opts{margin-top:11px}
+
+/* asking an Ecosystem Service agent */
+.v8con{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px;margin:9px 0;cursor:pointer}
+.v8con:hover{border-color:var(--line2)}
+.v8con.rise{animation:gyrise .22s ease both}
+.v8conh{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600}
+.v8conh .s{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--ink3);display:inline-flex;align-items:center;gap:5px}
+.v8conb{font-size:13.5px;line-height:1.5;color:var(--ink2);margin-top:7px}
+.v8conm{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3);margin-top:8px}
+.v8conm .dlav{width:16px;height:16px;font-size:7px}
+.v8esa{width:26px;height:26px;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8esa .ti{font-size:14px}
+.v8esa.sm{width:18px;height:18px}
+.v8esa.sm .ti{font-size:10px}
+
+/* confidence, three words only */
+.v8cf{display:inline-flex;align-items:center;font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.v8cf.lo{background:var(--amberbg);color:var(--amberd)}
+.v8cf.ind{background:var(--bluebg);color:var(--blued)}
+.v8cf.val{background:var(--greenbg);color:var(--greend)}
+
+/* the document, before and after */
+.v8ghost{border:1.5px dashed #DFD8C6;border-radius:14px;background:#FBF9F2;padding:18px 20px}
+.v8ghost .l{font-size:13.5px;color:var(--ink3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.v8ghost .l .ti{font-size:15px}
+.v8ghost i{display:block;height:9px;border-radius:5px;background:#EEE8D8;margin-top:9px}
+.v8sec{scroll-margin-top:24px}
+.v8es{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:16px;overflow:hidden}
+.v8es.just{animation:gyflash 1.2s ease-out}
+.v8esh{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.v8esh .t{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.v8esh .t .ti{font-size:18px}
+.v8esh .n{flex:1;min-width:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.v8achip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:3px 11px 3px 3px;
+  background:var(--card);font-family:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;flex:none;white-space:nowrap}
+.v8achip:hover{border-color:var(--line2);color:var(--ink)}
+.v8esd{display:grid;grid-template-columns:150px minmax(0,1fr);gap:0;margin:0;padding:4px 16px}
+.v8esd dt{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:10px 0;
+  border-bottom:1px solid var(--line)}
+.v8esd dd{margin:0;font-size:14px;line-height:1.5;color:var(--ink);padding:9px 0;border-bottom:1px solid var(--line)}
+.v8esd dd.mt{color:var(--ink3)}
+.v8esd dt:nth-last-child(2),.v8esd dd:last-child{border-bottom:none}
+.v8esf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 16px;background:#FBF9F2;border-top:1px solid var(--line)}
+.v8esf .nx{flex:1;min-width:0;font-size:13.5px;color:var(--ink2)}
+.v8flag{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--card);border-radius:999px;
+  padding:5px 12px;font-family:inherit;font-size:13px;color:var(--ink);cursor:pointer;flex:none}
+.v8flag:hover{border-color:var(--ink3)}
+.v8flag.on{background:var(--graybg);border-color:var(--graybg);color:var(--ink2);cursor:default}
+.v8flag .ti{font-size:14px}
+@media(max-width:1200px){.v8esd{grid-template-columns:minmax(0,1fr)}.v8esd dt{border-bottom:none;padding-bottom:0}}
+
+/* a decision, recorded where it applies in the document */
+.v8drec{display:flex;align-items:center;gap:11px;flex-wrap:wrap;border:1px dashed var(--line2);border-radius:12px;
+  padding:11px 14px;margin-top:22px;font-size:14px;color:var(--ink3)}
+.v8drec .v8dia{width:16px;height:16px;border-radius:4px;background:var(--line2)}
+.v8drec .v8dia .ti{font-size:10px;color:#fff}
+.v8drec .q{flex:1;min-width:0}
+.v8drec .dlav{width:20px;height:20px;font-size:8px}
+.v8drec.done{border-style:solid;border-color:#E9D79A;background:#FEFAE6;color:var(--ink)}
+.v8drec.done .v8dia{background:var(--dark)}
+.v8drec.done .v8dia .ti{color:var(--yellow)}
+.v8drec .ok{display:inline-flex;align-items:center;gap:5px;background:var(--greenbg);color:var(--greend);border-radius:999px;
+  padding:3px 10px;font-weight:600;font-size:13px}
+
+/* workflow list: who runs each step, and gates drawn as decisions */
+.v5wf .who8{flex:none;display:inline-flex;align-items:center}
+.v5wf .who8 .dlav{width:20px;height:20px;font-size:8px}
+.v5wf.gate .dot{border-radius:3px;transform:rotate(45deg);width:12px;height:12px;margin:0 1.5px}
+.v5wf.gate.done .dot{background:var(--dark);border-color:var(--dark)}
+.v5wf.gate.done .dot:after{display:none}
+.v5wf .out{flex:none;font-size:12px;font-weight:600;color:var(--greend);background:var(--greenbg);border-radius:999px;padding:2px 9px}
+.v5wf .gk{flex:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--amberd)}
+
+/* settings: everything this deliverable runs on, one line per thing */
+.v8set{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+@media(max-width:1100px){.v8set{grid-template-columns:minmax(0,1fr)}}
+.v8card{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;min-width:0}
+.v8card.span{grid-column:1/-1}
+.v8sh{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.v8sh .t{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.v8sh .t .ti{font-size:16px}
+.v8sh b{flex:1;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v8sh span{font-size:13px;color:var(--ink3)}
+.v8row{display:flex;align-items:center;gap:11px;padding:10px 16px;border-top:1px solid var(--line);font-size:14px;min-width:0}
+.v8row:first-of-type{border-top:none}
+.v8row.click{cursor:pointer}
+.v8row.click:hover{background:var(--graybg)}
+.v8row .ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--graybg);color:#766B62}
+.v8row .ic .ti{font-size:14px}
+.v8row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8row .k{flex:none;width:120px;color:var(--ink3);font-size:13px}
+.v8row .m{flex:none;color:var(--ink3);font-size:13px;white-space:nowrap}
+.v8row .m.warn{color:var(--amberd)}
+.v8row .m.ok{color:var(--greend)}
+.v8row .dlav{width:22px;height:22px;font-size:9px}
+.v8row .ch{flex:none;color:var(--ink3);font-size:15px}
+.v8ph{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);border:1px dashed var(--line2);
+  border-radius:5px;padding:1px 5px;flex:none}
+.v8ttl{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.02em;margin-bottom:24px}
+
+/* the agent drawer */
+.v8dk2{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:22px 0 6px}
+.v8dk2:first-child{margin-top:0}
+.v8dr .v8row{padding:9px 0}
+.v8dtxt{font-size:14px;line-height:1.55;color:var(--ink2)}
+.v8q{display:flex;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5}
+.v8q:first-of-type{border-top:none}
+.v8q .ti{color:var(--amberd);font-size:15px;flex:none;margin-top:2px}
+.v8q.new{background:#FEFAE6;margin:0 -10px;padding:10px;border-radius:10px;border-top:none}
+
+/* composer, quieter: the send button is not the one dark thing on screen */
+.v5send{background:var(--graybg);color:var(--ink)}
+
+/* step explainer in the Workflow drawer */
+.v5wf{cursor:pointer}
+.v8tk{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line)}
+.v8tk:first-of-type{border-top:none}
+.v8tk .n{width:20px;height:20px;border-radius:6px;background:var(--graybg);color:var(--ink2);font-size:11.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+.v8tk .a{display:flex;align-items:center;gap:7px;font-size:13px}
+.v8tk .a b{font-weight:600}
+.v8tk .a .dlav{width:20px;height:20px;font-size:8px}
+.v8tk .a .ic{border-radius:6px;background:var(--graybg);color:#766B62;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8tk .d{font-size:14px;line-height:1.5;color:var(--ink2);margin-top:4px}
+.v8dopts{display:grid;grid-template-columns:minmax(0,1fr)}
+
+.v8in{display:block;width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:14.5px;color:var(--ink);padding:0 0 11px}
+.v8in::placeholder{color:var(--ink3)}
+
+/* progress line is the way into the workflow */
+.v8prog{cursor:pointer;transition:background .12s}
+.v8prog:hover{background:transparent}
+/* step explainer, laid over the agent column */
+.v5chat{position:relative}
+.v8sov{position:absolute;inset:0;z-index:8;background:var(--bg);display:flex;flex-direction:column;
+  box-shadow:inset -1px 0 0 var(--line)}
+.v8sov.hide{display:none}
+.v8sovh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;padding:10px 14px 10px 20px;border-bottom:1px solid var(--line)}
+.v8sovb{flex:1;overflow:auto;padding:20px 20px 40px;font-size:14px;line-height:1.55}
+/* outputs: the PDF, or its placeholder */
+.v8out .pg{position:relative;aspect-ratio:1/1.3;max-width:100%;border:1px solid var(--line);border-radius:10px;background:var(--card);
+  padding:22px 20px;box-shadow:0 4px 16px rgba(31,31,29,.06)}
+.v8out .pg.live{cursor:pointer}
+.v8out .pg.live:hover{border-color:var(--line2)}
+.v8out .pg .t{font-family:var(--serif);font-size:19px;line-height:1.15;letter-spacing:-.01em}
+.v8out .pg .s{font-size:11px;color:var(--ink3);margin:6px 0 4px}
+.v8out .pg b{display:block;height:9px;width:42%;border-radius:4px;background:var(--line2);margin:18px 0 8px}
+.v8out .pg i.l{display:block;height:6px;border-radius:3px;background:var(--line);margin-top:7px}
+.v8out.ph .pg{border:1.5px dashed #DFD8C6;background:#FBF9F2;box-shadow:none}
+.v8out.ph .pg > .ti{font-size:26px;color:var(--ink3)}
+.v8out.ph .pg b{background:#EEE8D8}
+.v8out.ph .pg i.l{background:#EEE8D8}
+.v8out .nm{font-size:15px;font-weight:600;margin-top:14px;letter-spacing:-.01em}
+.v8out .mt{font-size:13px;color:var(--ink3);margin-top:4px}
+.v8obar{height:5px;border-radius:3px;background:var(--line);margin-top:14px;overflow:hidden}
+.v8obar i{display:block;height:100%;background:var(--greend)}
+/* topbar matches every other page: 61px, so the Share button is compact */
+.topbar{height:61px}
+.topbar .btn-out{padding-top:6px;padding-bottom:6px}
+
+/* ── v8 pass 4 ─────────────────────────────────────────────────────────── */
+/* v5's ground: the agent sits on the page tint, the content floats as a card */
+.v5row{background:var(--bg)}
+.v5chat{background:transparent;border-right:none}
+.v8prog{background:transparent}
+.v5panel{background:transparent;padding:14px 16px 16px 2px}
+.v5body{background:var(--card);border-radius:16px;
+  box-shadow:0 2px 16px rgba(26,12,18,.07),0 1px 3px rgba(26,12,18,.05)}
+.v5dr{background:transparent;border-left:none;padding:14px 16px 16px 0}
+.v5drh,.v5drb{background:var(--card)}
+.v5drh{border-radius:16px 16px 0 0;border-bottom:1px solid var(--line)}
+.v5drb{border-radius:0 0 16px 16px}
+.v5dr > *{box-shadow:0 2px 16px rgba(26,12,18,.05)}
+body.pclosed .v5panel{padding-left:16px}
+
+/* the agent's work, folded to one line */
+.v8acc{margin:10px 0}
+.v8acch{width:100%;display:flex;align-items:center;gap:9px;border:none;background:none;padding:6px 0;font-family:inherit;
+  font-size:14px;color:var(--ink2);cursor:pointer;text-align:left}
+.v8acch .ti{font-size:16px;flex:none}
+.v8acch .ti.ok{color:var(--greend)}
+.v8acch .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8acch .t em{font-style:normal;color:var(--ink3);margin-left:7px}
+.v8acch .t.run{color:var(--ink)}
+.v8acch .ch{color:var(--ink3);font-size:15px;transition:transform .15s}
+.v8acc.open .ch{transform:rotate(180deg)}
+.v8acch:hover .t{color:var(--ink)}
+.v8accb{margin:2px 0 4px 6px;padding-left:16px;border-left:2px solid var(--line)}
+
+/* the block where the agent needs you */
+.v8ask{border:1px solid #CFE0F3;border-radius:16px;background:var(--card);padding:0;margin:16px 0;overflow:hidden;
+  box-shadow:0 8px 24px rgba(24,95,165,.09),0 1px 3px rgba(26,12,18,.05)}
+.v8askh{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bluebg);border-bottom:1px solid #DCE9F7}
+.v8askh .k{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--blued)}
+.v8askh .s{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--blued);opacity:.7}
+.v8ask .q{font-size:15.5px;line-height:1.55;padding:15px 16px 4px;color:var(--ink)}
+.v8aopts{display:flex;flex-direction:column;gap:8px;padding:12px 16px 16px}
+.v8aopt{display:flex;align-items:center;gap:11px;width:100%;border:1px solid var(--line2);background:var(--card);border-radius:12px;
+  padding:11px 13px;font-family:inherit;font-size:14.5px;font-weight:500;color:var(--ink);cursor:pointer;text-align:left;
+  transition:border-color .12s,background .12s}
+.v8aopt:hover{border-color:var(--ink3);background:#FDFCF8}
+.v8aopt .n{width:22px;height:22px;border-radius:7px;background:var(--graybg);color:var(--ink2);font-size:12px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8aopt .l{flex:1;min-width:0}
+.v8aopt .ti{font-size:17px;flex:none}
+.v8aopt.pri{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.v8aopt.pri:hover{background:var(--blued);border-color:var(--blued)}
+.v8aopt.pri .n{background:rgba(255,255,255,.22);color:#fff}
+.v8dec{box-shadow:0 8px 24px rgba(138,90,16,.08)}
+
+/* outputs empty state: one icon, one sentence */
+.v8out.ph .pg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px}
+.v8out.ph .pg > .ti{font-size:56px;color:var(--ink3);opacity:.7}
+.v8out.ph .pg .tx{font-size:14px;line-height:1.5;color:var(--ink3);max-width:220px}
+
+/* decision question: body font, bold, not Manner */
+.v8dq{font-family:var(--sans);font-size:16.5px;font-weight:650;line-height:1.4;letter-spacing:-.01em}
+
+/* the person's own messages: right-aligned, with their avatar */
+.v8me{display:flex;justify-content:flex-end;align-items:flex-end;gap:8px;margin:14px 0}
+.v8me .v5you{margin:0;max-width:82%;border-radius:16px 16px 5px 16px}
+.v8me .dlav{width:26px;height:26px;font-size:10px;flex:none}
+
+/* composer: add a source is a plain + */
+.v8plus{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:var(--card);color:var(--ink2);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex:none}
+.v8plus:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* the input block shows who is needed, not the agent */
+.v8askh .dlav{width:22px;height:22px;font-size:9px}
+
+/* agent toggle sized like the tabs beside it */
+.v8agt{padding:5px 11px 5px 5px;border:none;border-radius:10px;font-size:13.5px;gap:7px;background:none}
+.v8agt:hover{background:var(--graybg)}
+.v8agt.on{background:var(--graybg)}
+.v8agt .v8ava{width:20px;height:20px}
+.v8agt .v8ava .ti{font-size:12px}
+
+/* ── workflow page, second design ─────────────────────────────────────── */
+.v8now{border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:22px;cursor:pointer;
+  background:linear-gradient(0deg,var(--card),var(--card));box-shadow:0 2px 12px rgba(26,12,18,.05);transition:border-color .12s}
+.v8now:hover{border-color:var(--line2)}
+.v8now .h{display:flex;align-items:center;gap:8px}
+.v8now .pip{width:9px;height:9px;border-radius:50%;background:var(--amber);animation:gypip 1.5s ease-in-out infinite}
+.v8now .k{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amberd)}
+.v8now .c{margin-left:auto;font-size:13px;color:var(--ink3)}
+.v8now .t{font-size:22px;font-weight:600;letter-spacing:-.015em;margin-top:10px;line-height:1.25}
+.v8now .t .n{color:var(--ink3);font-weight:500;margin-right:10px;font-variant-numeric:tabular-nums}
+.v8now .w{font-size:15px;line-height:1.55;color:var(--ink2);margin-top:8px;max-width:640px}
+.v8now .f{display:flex;align-items:center;gap:12px;margin-top:16px}
+.v8now .go{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--blued)}
+.v8now.gate{background:#FEFAE6;border-color:#E9D79A}
+.v8now.done .h .ti{color:var(--greend);font-size:18px}
+.v8now.done .k{color:var(--greend)}
+.v8now.done,.v8now.idle{cursor:default}
+.v8now.idle .k{color:var(--ink3)}
+.v8wstat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.v8wstat div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--card)}
+.v8wstat b{display:block;font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.v8wstat b em{font-style:normal;font-size:15px;color:var(--ink3);font-weight:500}
+.v8wstat span{font-size:13px;color:var(--ink3)}
+@media(max-width:1250px){.v8wstat{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v8wseg{display:flex;gap:6px;margin-bottom:36px}
+.v8wseg > div{min-width:0}
+.v8wseg i{display:block;height:7px;border-radius:4px;background:var(--line);overflow:hidden}
+.v8wseg i b{display:block;height:100%;background:var(--greend);transition:width .45s ease}
+.v8wseg span{display:block;font-size:12.5px;color:var(--ink3);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8wch{margin-bottom:30px}
+.v8wchh{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.v8wchh .nm{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.v8wchh .ct{margin-left:auto;font-size:13.5px;color:var(--ink3)}
+.v8wl{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.v8ws{display:flex;align-items:center;gap:14px;padding:15px 18px;border-top:1px solid var(--line);cursor:pointer;
+  font-size:15.5px;transition:background .12s;position:relative}
+.v8ws:first-child{border-top:none}
+.v8ws:hover,.v8ws.sel{background:#FBF9F2}
+.v8ws .mk{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid var(--line2);position:relative;background:var(--card)}
+.v8ws.done .mk{background:var(--greend);border-color:var(--greend)}
+.v8ws.done .mk:after{content:'';position:absolute;left:50%;top:45%;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;
+  transform:translate(-50%,-50%) rotate(45deg)}
+.v8ws.cur .mk{border-color:var(--amber);border-width:5px;animation:gypip 1.5s ease-in-out infinite}
+.v8ws.gate .mk{border-radius:4px;transform:rotate(45deg);width:15px;height:15px;margin:0 2.5px}
+.v8ws.gate.done .mk{background:var(--dark);border-color:var(--dark)}
+.v8ws.gate.done .mk:after{display:none}
+.v8ws.gate{background:#FFFCF0}
+.v8ws.gate:hover,.v8ws.gate.sel{background:#FEF7DC}
+.v8ws.cur{background:#FEFAE6}
+.v8ws .no{flex:none;width:30px;font-size:13.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v8ws .tt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8ws.pend .tt{color:var(--ink2)}
+.v8ws.cur .tt{font-weight:600}
+.v8wo{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.v8wo .ti{font-size:13px}
+.v8wo.ok{background:var(--greenbg);color:var(--greend)}
+.v8wo.dn{color:var(--greend);font-weight:500;padding:3px 4px}
+.v8wo.now{background:var(--amberbg);color:var(--amberd)}
+.v8wo.dec{color:var(--amberd);letter-spacing:.05em;text-transform:uppercase;font-size:11px}
+.v8who{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink2);width:136px;white-space:nowrap;overflow:hidden}
+.v8who .dlav,.v8who .v8ava{width:22px;height:22px;font-size:9px;flex:none}
+.v8who .v8ava .ti{font-size:12px}
+.v8ws .ch{flex:none;color:var(--ink3);font-size:16px;opacity:0;transition:opacity .12s}
+.v8ws:hover .ch,.v8ws.sel .ch{opacity:1}
+
+/* settings: one column, anchor nav on the right */
+.v8setw{display:flex;gap:40px;align-items:flex-start;max-width:1000px;margin:0 auto}
+.v8setc{flex:1;min-width:0;max-width:720px}
+.v8setw .v8set{display:flex;flex-direction:column;gap:18px}
+.v8setw .v8card{scroll-margin-top:24px}
+.v8setw .v8card .v8row{padding:12px 18px;font-size:14.5px}
+.v8setw .v8sh{padding:16px 18px}
+.v8anc{position:sticky;top:0;flex:none;width:170px;display:flex;flex-direction:column;gap:2px;padding-top:78px}
+.v8anc a{display:block;font-size:13.5px;color:var(--ink3);padding:6px 12px;border-left:2px solid var(--line);cursor:pointer;
+  text-decoration:none;transition:color .12s,border-color .12s}
+.v8anc a:hover{color:var(--ink)}
+.v8anc a.on{color:var(--ink);font-weight:600;border-left-color:var(--dark)}
+@media(max-width:1150px){.v8anc{display:none}}
+
+.v8setw{justify-content:center}
+.v8setc{flex:0 1 720px}
+.v8setw .v8set{align-items:stretch}
+
+/* workflow: Now card, stat tiles and chapter bar hidden for now (Thomas, 3 Oct); code kept */
+.v8now,.v8wstat,.v8wseg{display:none}
+
+/* same frame on all three tabs: one 780px column, same title (3 Oct) */
+.v8ttl{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:40px}
+.v8setw{display:block;max-width:none;margin:0;position:relative}
+.v8setc{max-width:none;width:100%}
+.v8anc{position:absolute;top:0;bottom:0;left:calc(100% + 20px);width:110px;padding-top:0}
+.v8anc > div{position:sticky;top:0}
+.v8anc a{padding:6px 10px}
+
+/* reserve room for the settings anchor nav on every tab, so all three columns stay identical and the nav never clips */
+.v5bin{max-width:min(780px, calc(100% - 290px))}
+.v8anc{width:125px;left:calc(100% + 20px)}
+.v8anc a{white-space:nowrap}
+@media(max-width:1150px){.v5bin{max-width:780px}}
+
+/* every tab keeps the same 780px column; the anchor nav sits beside it when there is room, and moves above the cards when there is not */
+.v5bin{max-width:780px}
+.v5body{container-type:inline-size;container-name:pane}
+@container pane (max-width: 779px){
+  .v8setw{display:flex;flex-direction:column}
+  .v8anc{position:sticky;top:-46px;order:-1;left:auto;width:auto;z-index:3;background:var(--card);
+    margin:-12px 0 16px;padding:12px 0 10px}
+  .v8anc > div{position:static;display:flex;flex-wrap:wrap;gap:4px}
+  .v8anc a{border-left:none;border-radius:999px;padding:5px 11px;font-size:13px}
+  .v8anc a.on{background:var(--graybg);border-left:none}
+}
+@media(max-width:1150px){.v8anc{display:block}}
+
+.v8anc{width:105px;left:calc(100% + 16px)}
+
+@container pane (max-width: 779px){
+  .v8anc{width:auto;left:auto;display:block}
+  .v8anc > div{display:flex;flex-direction:row;flex-wrap:wrap;gap:4px}
+}
+
+/* narrower reading column on every tab, always leaving room for the settings nav on the right (3 Oct) */
+.v5bin{max-width:min(700px, calc(100% - 250px))}
+.v8anc{width:105px;left:calc(100% + 18px)}
+@container pane (max-width: 779px){ .v5bin{max-width:100%} }
+/* Workflow tab, refined scale (3 Oct): smaller chapter tile and heading, tighter rows */
+.v8wchh{gap:10px;margin-bottom:9px}
+.v8wchh .v5chn{width:24px;height:24px;border-radius:7px;font-size:12px}
+.v8wchh .nm{font-size:19px}
+.v8wchh .ct{font-size:13px}
+.v8wl{border-radius:12px}
+.v8ws{gap:12px;padding:11px 16px;font-size:14.5px}
+.v8ws .mk{width:16px;height:16px;border-width:1.5px}
+.v8ws.cur .mk{border-width:4px}
+.v8ws.done .mk:after{width:3px;height:7px}
+.v8ws.gate .mk{width:12px;height:12px;margin:0 2px}
+.v8ws .no{width:28px;font-size:12.5px}
+.v8ws.cur .tt{font-weight:500}
+.v8wo{font-size:12px;font-weight:500;padding:2px 9px}
+.v8wo.dec{font-size:10.5px;font-weight:600}
+.v8who{font-size:12.5px;gap:6px}
+.v8who .dlav,.v8who .v8ava{width:20px;height:20px;font-size:8.5px}
+.v8ws .ch{font-size:15px}
+
+/* 60px all round inside the floating card, on all three tabs; content fills the width (3 Oct) */
+.v5body{padding:60px}
+.v5bin,.v5bin.wide{max-width:none;margin:0}
+.v8setw{display:flex;gap:48px;align-items:flex-start;position:static}
+.v8setc{flex:1;min-width:0;width:auto}
+.v8anc{position:sticky;top:24px;left:auto;bottom:auto;width:120px;flex:none;padding-top:0}
+.v8anc > div{position:static}
+@container pane (max-width: 779px){
+  .v8setw{flex-direction:column;gap:0}
+  .v8anc{top:-60px;width:auto}
+}
+/* Current vs needs-you (3 Oct): the current step takes the current tokens (ink);
+   amber stays only for a human in the loop: decisions and asks. */
+@keyframes gypipcur{0%,100%{box-shadow:0 0 0 3px var(--curbg,#ECE8DD)}50%{box-shadow:0 0 0 6px rgba(26,12,18,.10)}}
+.v8ws.cur{background:var(--currow,#F7F5EF)}
+.v8ws.cur .mk{border-color:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v8wo.now{background:var(--curbg,#ECE8DD);color:var(--curd,#1A0C12)}
+.v5wf.cur .dot{border-color:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v5wf .now{background:var(--curbg,#ECE8DD);color:var(--curd,#1A0C12)}
+.v8now .pip{background:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v8now .k{color:var(--curd,#1A0C12)}
+.v8now.gate .pip{background:var(--amber);animation:gypip 1.5s ease-in-out infinite}
+.v8now.gate .k{color:var(--amberd)}
+@media (prefers-reduced-motion:reduce){.v8ws.cur .mk,.v5wf.cur .dot,.v8now .pip{animation:none}}
+
+/* no divider under page titles; document gets the same anchor nav as settings (3 Oct) */
+.v5dt,.v8ttl{border-bottom:none;padding-bottom:0;margin-bottom:40px}
+.v8docw .v5sec:first-child{margin-top:0}
+
+/* settings: the project header block leads (3 Oct) */
+.v8proj{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#FBF8EF 0%,var(--card) 70%);
+  padding:24px 24px 20px;scroll-margin-top:24px}
+.v8proj .pt{display:flex;align-items:center;gap:14px}
+.v8proj .pb{width:46px;height:46px;border-radius:12px;background:var(--greenbg);color:var(--greend);font-weight:700;font-size:15px;
+  letter-spacing:.02em;display:flex;align-items:center;justify-content:center;flex:none}
+.v8proj .n{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:-.015em;line-height:1.1}
+.v8proj .s{font-size:14px;color:var(--ink3);margin-top:3px}
+.v8proj .pc{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.v8proj .pc span{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);background:var(--card);
+  border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+.v8proj .pc .ti{font-size:14px;color:var(--ink3)}
+.v8proj .ptm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.v8proj .pp{display:flex;align-items:center;gap:10px;min-width:0}
+.v8proj .pp .dlav{width:32px;height:32px;font-size:11.5px}
+.v8proj .pp div{min-width:0}
+.v8proj .pp b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8proj .pp > div span{display:block;font-size:12.5px;color:var(--ink3)}
+
+/* section nav: fixed column and one weight for every label, so the active label never rewraps and shifts the list (3 Oct).
+   Active is marked by ink and the bar only. */
+.v8anc{width:150px}
+.v8anc a{white-space:normal;line-height:1.35;font-weight:500}
+.v8anc a.on{font-weight:500}
+
+/* settings: one Agents card, add team member (3 Oct) */
+.v8sub{padding:14px 18px 6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);
+  border-top:1px solid var(--line)}
+.v8sub + .v8row{border-top:none}
+.v8proj .pp.add{cursor:pointer;color:var(--ink2)}
+.v8proj .pp.add b{font-weight:500;color:var(--ink2)}
+.v8proj .pp.add:hover b{color:var(--ink)}
+.v8proj .pa{width:32px;height:32px;border-radius:50%;border:1.5px dashed var(--line2);display:inline-flex;align-items:center;
+  justify-content:center;flex:none;color:var(--ink3);font-size:15px}
+.v8proj .pp.add:hover .pa{border-color:var(--ink3);color:var(--ink)}
+.v8proj .padd{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.v8proj .padd button{display:flex;align-items:center;gap:10px;width:100%;border:none;border-top:1px solid var(--line);background:none;
+  padding:9px 14px;font-family:inherit;font-size:14px;cursor:pointer;text-align:left}
+.v8proj .padd button:first-child{border-top:none}
+.v8proj .padd button:hover{background:#FBF9F2}
+.v8proj .padd .dlav{width:24px;height:24px;font-size:9px;flex:none}
+.v8proj .padd span:not(.dlav){color:var(--ink3);font-size:13px;flex:1}
+.v8proj .padd .ti{color:var(--ink3);font-size:15px}
+
+/* settings item drawer (3 Oct) */
+.v8istat{display:inline-flex;margin-top:10px;font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--graybg);color:var(--ink2)}
+.v8istat.ok{background:var(--greenbg);color:var(--greend)}
+.v8istat.warn{background:var(--amberbg);color:var(--amberd)}
+.v8steps{display:flex;flex-direction:column;gap:6px}
+.v8steps button{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 11px;
+  font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;text-align:left}
+.v8steps button:hover{border-color:var(--line2)}
+.v8steps button b{font-weight:500;color:var(--ink3);font-variant-numeric:tabular-nums;width:26px}
+
+/* outputs drawer: the PDF up top, every output below, linked to Settings (3 Oct) */
+.v8out.ph .pg{aspect-ratio:auto;height:230px}
+.v8orow{padding:10px 0}
+.v8orow:hover{background:none}
+.v8orow:hover .nm{color:var(--ink)}
+.v8oset{margin-top:16px}
+
+/* settings: the Agents block, lead agent on top, Ecosystem Service Agents as a grid (3 Oct) */
+.v8ag{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;scroll-margin-top:24px}
+.v8agl{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;background:var(--dark);color:#fff;cursor:pointer;
+  transition:transform .12s,box-shadow .12s}
+.v8agl:hover{box-shadow:0 6px 18px rgba(26,12,18,.18)}
+.v8agl .av{width:46px;height:46px;border-radius:12px;background:rgba(249,221,90,.14);color:var(--yellow);display:flex;align-items:center;
+  justify-content:center;flex:none}
+.v8agl .av .ti{font-size:24px}
+.v8agl .tx{flex:1;min-width:0}
+.v8agl .k{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);opacity:.85}
+.v8agl .n{font-size:17px;font-weight:600;letter-spacing:-.01em;margin-top:2px}
+.v8agl .bp{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;color:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.08);border-radius:999px;padding:3px 10px}
+.v8agl .bp .ti{font-size:13px}
+.v8agl .ch{color:rgba(255,255,255,.5);font-size:18px}
+.v8agc{display:flex;align-items:center;gap:10px;margin:14px 2px 12px}
+.v8agc .ln{flex:1;height:1px;background:var(--line)}
+.v8agc .t{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.v8agg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v8age{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:12px;background:var(--bg);border:1px solid var(--line);
+  cursor:pointer;min-width:0;transition:border-color .12s,background .12s}
+.v8age:hover{border-color:var(--c);background:var(--bg)}
+.v8age .ic{width:34px;height:34px;border-radius:10px;background:var(--bg);color:var(--c);display:flex;align-items:center;justify-content:center;flex:none}
+.v8age{background:color-mix(in srgb, var(--bg) 55%, #fff)}
+.v8age .ic{background:var(--c);color:#fff}
+.v8age .ic .ti{font-size:17px}
+.v8age .tx{flex:1;min-width:0}
+.v8age b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8age span{display:block;font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8age .ch{color:var(--ink3);font-size:15px;opacity:0;transition:opacity .12s}
+.v8age:hover .ch{opacity:1}
+@container pane (max-width: 779px){ .v8agg{grid-template-columns:minmax(0,1fr)} }
+
+/* agents as a list again, every row the same size, coloured icon tiles (3 Oct) */
+.v8agi{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8agi .ti{font-size:15px}
+
+/* agents: tinted, padded, rounded items with a label per group (3 Oct) */
+.v8agb{padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.v8agk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:12px 2px 2px}
+.v8agr{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--t);cursor:pointer;font-size:14.5px;
+  min-width:0;transition:box-shadow .12s,transform .12s}
+.v8agr:hover{box-shadow:inset 0 0 0 1px rgba(26,12,18,.10)}
+.v8agr .nm{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8agr .m{flex:none;font-size:13px;color:var(--ink2);opacity:.8;white-space:nowrap}
+.v8agr .ch{flex:none;color:var(--ink3);font-size:15px}
+.v8agr .v8agi{width:32px;height:32px;border-radius:10px}
+.v8agr .v8agi .ti{font-size:17px}
+
+/* activity tab (3 Oct) */
+.v8act{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.v8ae{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);font-size:14px}
+.v8ae:first-child{border-top:none}
+.v8ae.click{cursor:pointer}
+.v8ae.click:hover{background:#FBF9F2}
+.v8ae .who{flex:none;display:inline-flex}
+.v8ae .who .dlav,.v8ae .who .v8ava,.v8ae .who .v8esa{width:24px;height:24px;font-size:9px}
+.v8ae .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.v8ae .tx b{color:var(--ink);font-weight:600}
+.v8ae .kd{flex:none;color:var(--ink3);font-size:15px;display:inline-flex}
+.v8ae .at{flex:none;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;width:40px;text-align:right}
+
+/* outputs: PDF cover thumbnail (3 Oct) */
+.v8out .pg.cov{padding:0;overflow:hidden;aspect-ratio:1092/1542;background:#1A0F14;box-shadow:0 6px 20px rgba(26,12,18,.14)}
+.v8out .pg.cov img{display:block;width:100%;height:100%;object-fit:cover}
+/* settings anchor nav: a small icon before each label, the same icon as its card (3 Oct) */
+.v8anc a{display:flex;align-items:flex-start;gap:8px}
+.v8anc a .ti{flex:none;font-size:15px;line-height:1;margin-top:2px;color:var(--ink3)}
+.v8anc a:hover .ti,.v8anc a.on .ti{color:var(--ink)}
+/* project block: the blueprint chip is a link (3 Oct) */
+.v8proj .pc span.lk{cursor:pointer;color:var(--ink);transition:border-color .12s}
+.v8proj .pc span.lk:hover{border-color:var(--ink3)}
+.v8proj .pc span.lk .ti-arrow-up-right{font-size:13px;margin-left:-1px}
+/* skeletons: the filled components, muted, with bars for text (3 Oct) */
+.v8skl{font-size:13.5px;color:var(--ink3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.v8skl .ti{font-size:15px}
+.skb{display:block;height:9px;border-radius:5px;background:#EEE8D8;max-width:100%}
+.v8sk .v5sh .skb{height:11px;margin:4px 0}
+.v8sk .v5sh{margin-top:24px}
+.v8sk .v5sh:first-of-type{margin-top:0}
+.v8sk .v5tw,.v8sk .v8es{border-style:dashed;border-color:#DFD8C6}
+.v8sk .v5tbl td{padding:15px 14px}
+.v8sk .v8esh .t{opacity:.55}
+.v8sk .v8esh .n{color:var(--ink3)}
+.v8sk .v8achip{color:var(--ink3);cursor:default;opacity:.7}
+.v8sk .v8esd dd{padding:13px 0}
+.v8sk .v8esf{gap:12px}
+.v8sk .v8esf .skb{flex:none}
+.v8sk .v8cf.skp{width:56px;height:20px;background:#EEE8D8;padding:0}
+.v8sk .v5win{background:#FEFCF2;border-style:dashed;border-color:#EADFB6}
+.v8sk .v5win p .skb{height:11px;margin:9px 0}
+.v8sk .v5win p .skb:first-child{margin-top:4px}
+.v8sk .v5win li{margin:12px 0}
+.v8sk .v5win li::marker{color:#DDD3B4}
+.v8sk .v5win li .skb{display:inline-block;vertical-align:middle}
+.v8sk .v8esh .t.sk{background:#F3EFE1;color:#B9B09B}
+.v8sk .v8achip.sk{width:150px;padding:8px 12px;opacity:1}
+/* project block: the blueprint as a one-line list row, label left, blueprint right, whole row clickable (3 Oct) */
+.v8bprow{display:flex;align-items:center;gap:12px;margin-top:16px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;transition:border-color .12s,background .12s}
+.v8bprow:hover{border-color:var(--line2);background:#FBF9F2}
+.v8bprow .k{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink3);flex:none}
+.v8bprow .k .ti{font-size:15px}
+.v8bprow .v{margin-left:auto;font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.v8bprow .ch{flex:none;font-size:15px;color:var(--ink3)}
+.v8bprow:hover .ch{color:var(--ink)}
+/* list row icons: no box or fill, just a larger glyph (3 Oct). Tinted identity tiles (inline style) keep their box. */
+.v8row .ic:not([style]){width:22px;height:22px;background:none;border-radius:0}
+.v8row .ic:not([style]) .ti{font-size:19px;color:#766B62}
+/* card title icons: no box or fill, a larger glyph in the card's own tint (3 Oct).
+   Yellow was only legible on the dark tile, so it falls back to ink. */
+.v8sh .t{width:24px;height:24px;border-radius:0;background:none!important}
+.v8sh .t .ti{font-size:21px}
+.v8sh .t[style*="--yellow"]{color:var(--ink)!important}
+/* Settings header, what to expect (3 Oct) */
+.v8exp{padding:0;overflow:hidden;background:var(--card)}
+.v8bp{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#F7F4EA;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
+.v8bp:hover{background:#F2EEE1}
+.v8bp .bi{width:34px;height:34px;border-radius:10px;background:var(--dark);color:var(--yellow);display:flex;align-items:center;justify-content:center;flex:none}
+.v8bp .bi .ti{font-size:18px}
+.v8bp .bt{display:flex;flex-direction:column;min-width:0;flex:1}
+.v8bp .bk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.v8bp .bn{font-size:15.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8bp .bn em{font-style:normal;font-size:12px;font-weight:600;color:var(--ink2);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.v8bp .bo{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--ink2);flex:none}
+.v8bp:hover .bo{color:var(--ink)}
+.v8bp .bo .ti{font-size:15px}
+.v8exb{padding:22px 22px 6px}
+.v8ext{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-.015em;line-height:1.15}
+.v8exp-why{font-size:15px;line-height:1.55;color:var(--ink2);margin:8px 0 0;max-width:640px}
+.v8exf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.v8exf > div{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#FCFAF4}
+.v8exf .k{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.v8exf .k .ti{font-size:14px}
+.v8exf .v{display:block;font-size:14px;line-height:1.45;color:var(--ink);margin-top:6px}
+.v8exk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-top:22px}
+.v8exp .ptm{margin-top:10px;padding-top:0;border-top:none}
+.v8exc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 22px;margin-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}
+.v8exc span{display:inline-flex;align-items:center;gap:6px}
+.v8exc .ti{font-size:14px}
+@container pane (max-width: 779px){ .v8exf{grid-template-columns:minmax(0,1fr)} }
+/* what-to-expect facts as a definition list: outputs as items, the run as a segmented bar, time as a figure (3 Oct) */
+.v8exl{display:grid;grid-template-columns:120px minmax(0,1fr);margin:22px 0 0;border-top:1px solid var(--line)}
+.v8exl dt{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);padding:16px 0;border-bottom:1px solid var(--line)}
+.v8exl dd{margin:0;padding:13px 0;border-bottom:1px solid var(--line);min-width:0}
+.v8exo{display:flex;flex-wrap:wrap;gap:8px 22px}
+.v8exo span{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
+.v8exo .ti{font-size:18px;color:var(--ink2)}
+.v8exr{display:flex;gap:10px;padding-top:3px}
+.v8exr .ch{min-width:0}
+.v8exr .sg{display:flex;gap:3px}
+.v8exr .sg i{flex:1;height:10px;border-radius:3px}
+.v8exr .ch span{display:block;font-size:12px;color:var(--ink3);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8exr i.ai,.v8exg i.ai{background:#E6E1D3}
+.v8exr i.hu,.v8exg i.hu{background:var(--ink)}
+.v8exr i.gt,.v8exg i.gt{background:var(--amber)}
+.v8exg{display:flex;gap:18px;margin-top:12px;font-size:12.5px;color:var(--ink2)}
+.v8exg span{display:inline-flex;align-items:center;gap:6px}
+.v8exg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.v8ext2{font-size:16px;font-weight:600;letter-spacing:-.01em;margin-right:10px}
+.v8exs{font-size:13px;color:var(--ink3)}
+.v8exl dd:last-of-type,.v8exl dt:last-of-type{border-bottom:none}
+@container pane (max-width: 779px){ .v8exl{grid-template-columns:minmax(0,1fr)} .v8exl dt{border-bottom:none;padding-bottom:0} }
+
+/* chat closed: content card keeps the chat-open width, centred (3 Oct) */
+body.pclosed .v5body{width:100%;max-width:calc(100vw - var(--chatw,400px) - 86px);margin-left:auto;margin-right:auto}
+body.pclosed .v5vt{align-self:center}
+
+/* page menu: delete in red (3 Oct) */
+.gy-mpop .gy-mitem.danger,.gy-mpop .gy-mitem.danger .ti{color:#C23B2B}
+.gy-mpop .gy-mitem.danger:hover{background:#FBEDEA}
+
+
+/* ── Inventory v3: Inventory is a tool ───────────────────────────────────
+   No Inventory agent. The inventory is a system of record with deterministic
+   actions (the Inventory tool). Agents, checks and other tools propose changes;
+   a person approves; the tool runs the change and refuses what the rules forbid.
+   Who proposes: Woodland Carbon agent (grade steps), Sources check (HubSpot,
+   registries), File import tool (new metrics). State is in memory only. */
+.v5body{--gut:0px}
+.i2body{max-width:1080px;margin:0 auto}
+.i2body .phead{margin-bottom:0}
+.i2body .bsect:first-of-type{margin-top:26px}
+.rail{margin-right:0}
+
+/* a pending agent proposal, shown where it applies */
+.i2pend{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink);
+  background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:2px 9px 2px 3px;cursor:pointer;white-space:nowrap}
+.i2pend:hover{border-color:var(--ink3)}
+.i2pend .v8ava{width:18px;height:18px}
+.i2pend .v8ava .ti{font-size:10px}
+.svc .hd .i2pend{margin-left:auto}
+.lrow .i2pend{margin-left:8px;vertical-align:middle}
+
+/* one-line rows for Review and Checks */
+.i2list{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
+.i2r{display:flex;align-items:center;gap:12px;padding:13px 18px;border-top:1px solid var(--line);font-size:14.5px;min-width:0;cursor:pointer}
+.i2r:first-child{border-top:none}
+.i2r:hover{background:#FBF8EF}
+.i2r.sel{background:#F6F1E4}
+.i2r .tile{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+.i2r .tile .ti{font-size:15px}
+.i2r .nm{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.i2r .ln{flex:none;font-size:13px;color:var(--ink3);white-space:nowrap;max-width:300px;overflow:hidden;text-overflow:ellipsis}
+.i2r .ch{flex:none;color:var(--ink3);font-size:15px}
+.i2r .dlav{width:22px;height:22px;font-size:9px}
+.i2r.done .nm{font-weight:500;color:var(--ink2)}
+.i2st{flex:none;font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.i2st.wait{background:var(--amberbg);color:var(--amberd)}
+.i2st.ok{background:var(--greenbg);color:var(--greend)}
+.i2st.no{background:var(--graybg);color:var(--ink2)}
+.i2st.sync{background:var(--greenbg);color:var(--greend)}
+.i2k{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:34px 0 10px}
+.i2k:first-child{margin-top:0}
+.v8cf.hi{background:var(--greenbg);color:var(--greend)}
+.v8cf.md{background:var(--bluebg);color:var(--blued)}
+
+/* tile colours per kind of agent job */
+.k-grade{background:#E8F3EC;color:#1E7A50}
+.k-recon{background:var(--bluebg);color:var(--blued)}
+.k-ingest{background:#F3E8DF;color:#8A5A3B}
+.k-qual{background:var(--amberbg);color:var(--amberd)}
+
+/* proposal drawer: before and after */
+.i2chg{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:2px}
+.i2chg div{display:grid;grid-template-columns:96px 1fr 18px 1fr;gap:8px;align-items:center;padding:9px 12px;
+  border-top:1px solid var(--line);font-size:13.5px}
+.i2chg div:first-child{border-top:none}
+.i2chg .k{color:var(--ink3);font-size:12.5px}
+.i2chg .a{color:var(--ink2)}
+.i2chg .b{font-weight:600}
+.i2chg .x{color:var(--ink3);font-size:13px}
+.i2chg div.same .a,.i2chg div.same .b{color:var(--ink3);font-weight:400}
+.i2ev{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  font-size:13.5px;line-height:1.4;cursor:pointer}
+.i2ev:hover{border-color:var(--line2);background:#FBF8EF}
+.i2ev .ic{width:28px;height:28px;border-radius:8px;background:var(--graybg);color:#766B62;display:flex;align-items:center;justify-content:center;flex:none}
+.i2why{font-size:14px;line-height:1.55;color:var(--ink)}
+.i2warn{display:flex;gap:8px;align-items:flex-start;background:#FDF6EE;border:1px solid #EBD9AE;border-radius:10px;
+  padding:9px 12px;font-size:13px;line-height:1.45;color:#8A5A1E;margin-top:12px}
+.i2warn .ti{font-size:15px;margin-top:1px}
+.i2acts{display:flex;gap:8px;margin-top:22px}
+.i2acts button{flex:1;border:1px solid var(--line2);background:var(--card);border-radius:11px;padding:10px 12px;font-family:inherit;
+  font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.i2acts button:hover{border-color:var(--ink3)}
+.i2acts button.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.i2acts button.pri:hover{background:var(--blued);border-color:var(--blued)}
+.i2done{display:flex;align-items:center;gap:8px;margin-top:22px;font-size:14px;color:var(--greend);font-weight:600}
+.i2done.no{color:var(--ink2)}
+
+/* chat answers with numbers */
+.i2ans{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:10px 0 14px;overflow:hidden}
+.i2ans div{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--line);font-size:14px}
+.i2ans div:first-child{border-top:none}
+.i2ans span{flex:1;color:var(--ink2)}
+.i2ans b{font-variant-numeric:tabular-nums}
+.i2ans em{font-style:normal;color:var(--ink3);font-size:13px;width:52px;text-align:right}
+
+/* Settings: the three permission groups */
+.i2perm{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}
+.i2perm>div{padding:14px 16px;border-left:1px solid var(--line);min-width:0}
+.i2perm>div:first-child{border-left:none}
+.i2perm .h{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.i2perm .h.r{color:var(--greend)} .i2perm .h.p{color:var(--blued)} .i2perm .h.n{color:#B5462F}
+.i2perm ul{margin:0;padding:0;list-style:none}
+.i2perm li{font-size:13.5px;padding:4px 0;color:var(--ink)}
+@media(max-width:900px){.i2perm{grid-template-columns:1fr}.i2perm>div{border-left:none;border-top:1px solid var(--line)}}
+.v8row .m.sched{color:var(--ink2)}
+
+.i2lnk{text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.v5dri.k-grade,.v5dri.k-recon,.v5dri.k-ingest,.v5dri.k-qual{border-radius:8px}
+.i2pend.c{padding:2px 8px 2px 3px;font-size:11.5px}
+.i2r .nm{flex:1 1 auto;min-width:140px}
+.i2r .ln{flex:0 1 auto;min-width:0}
+@container pane (max-width: 760px){ .i2r .ln{display:none} }
+.i2body .v8ttl{margin-bottom:30px}
+
+.i2body .v8card{width:100%}
+.v5drb .v8ae .tx{white-space:normal;overflow:visible;text-overflow:clip}
+.v5drb .v8ae{align-items:flex-start}
+
+.i2body .phead{flex-wrap:wrap;row-gap:14px}
+.i2body .phead .acts{flex-wrap:wrap}
+@container pane (max-width: 760px){
+  .drow2,.rrow2{grid-template-columns:1fr;gap:14px}
+  .dempty{grid-column:auto!important}
+  .lhd{display:none}
+  .lrow{grid-template-columns:1fr auto;row-gap:7px}
+  .lrow .si{grid-column:1 / 3}
+  .rrow{grid-template-columns:1fr;gap:5px;padding:6px 0}
+}
+
+/* v3: Inventory is a tool. No agent column; proposals come from other agents and checks */
+body.pclosed .v5body{max-width:1080px}
+/* the Overview sits on the page background, no white container */
+body.tab-overview .v5body{background:transparent;box-shadow:none;border-radius:0}
+.i3ic{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--graybg);color:#5F5850}
+.i3ic .ti{font-size:11px}
+.i3ic.ag{background:#ECE6F7;color:#4E3A80}
+.i3ic.ck{background:#E3ECF3;color:#215274}
+.i3ic.tl{background:#DFF1EC;color:#155E55}
+.i3ic.lg{width:28px;height:28px}
+.i3ic.lg .ti{font-size:15px}
+.i3by{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink2);white-space:nowrap;flex-shrink:0}
+@media (max-width:760px){ .i3by span{display:none} }
+</style>
+</head>
+<body class="pclosed">
+
+<div class="shell">
+<script>window.GYNAV={"active":"prog-inventory","rail":true};</script>
+<script src="gy-nav.js?v=d99df486"></script>
+<script src="gy-versions.js?v=30654df5"></script>
+<script src="gy-select.js?v=8aa301ed"></script>
+<script src="gy-projects.js?v=493e46ca"></script>
+<script src="gy-inventory.js?v=358d8962"></script>
+<script src="gy-deals.js?v=bf5a5f28"></script>
+<script src="gy-search.js?v=7032cc3b"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Show the sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs">
+    <span class="cr cur">Inventory</span>
+  </div>
+  <div class="spacer"></div>
+  <div class="v5pile" id="pile"></div>
+  <button class="v5keb" onclick="pageMenu(this)">&#8942;</button>
+</div>
+
+<div class="v5tabs" id="tabs"></div>
+
+<div class="v5row">
+
+  <div class="v5panel" id="panel">
+    <div class="v5body"><div class="v5bin i2bin" id="pbody"></div></div>
+  </div>
+
+  <div class="v5dr hide" id="drawer">
+    <div class="v5drh">
+      <span class="v5dri hide" id="dricon"></span>
+      <div class="v5drt" id="drtitle"></div>
+      <button class="v5drx" onclick="closeDrawer()" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="v5drb" id="drbody"></div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="sdrop" id="sdrop" onclick="closeSearch()"></div>
+<aside class="sdrawer" id="sdrawer" aria-hidden="true">
+  <div class="sdhead"><b>Find units for buyer</b>
+    <i class="ti ti-x x" onclick="closeSearch()" title="Close"></i></div>
+  <div class="sdbody" id="sbuild"></div>
+  <div class="sdfoot">
+    <button class="btn-dark" onclick="runSearch()">Find units</button>
+    <span class="lcount" id="lcount"></span>
+    <span class="sclose" onclick="resetQ()">Reset</span>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3400);}
+if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};
+
+/* Bulk operations for inventory. The Manage wireframe gave each of these its
+   own card on a separate hub page; here they sit on the object they act on. */
+var INV_ADD = [
+  ['ti-file-upload','Bulk upload inventory','Bulk upload: drop a schedule, map the columns, review every line before it commits'],
+  ['ti-plus','Add inventory manually','Add one line: site, parcel, service, units and condition'],
+  ['ti-file-import','Add from any file','File import reads it and proposes the lines for review']
+];
+var INV_ACTIONS = [
+  ['label','Bulk'],
+  ['ti-tag','Set prices','Set prices: pick lines, apply a price or a per-unit uplift, effective from a date'],
+  ['ti-adjustments','Set sales restrictions','Sales restrictions: who may buy these units, by LPA, NCA or named buyer'],
+  '-',
+  ['ti-file-export','Export inventory','Export: every line with its stage, price and restriction as a spreadsheet'],
+  ['ti-file-upload','Match BNG metric','Upload a BNG metric: required units are matched against available inventory'],
+  ['ti-history','Audit log','go:audit-log.html']
+];
+</script>
+<script>
+var SHORT={bng:'BNG',wcc:'WCC',soc:'Soil'};
+var ESPAGE={bng:'inventory-bng-programme.html',wcc:'inventory-wcc-programme.html',soc:'inventory-soc-programme.html'};
+var PROG='Evenlode';
+function nameOf(k){ return GY_ES[k].name; }
+function pill(k){ return '<span class="espill">'+SHORT[k]+'</span>'; }
+function u(n){ return n.toLocaleString(); }
+
+/* Pipeline: one column per service, four states stacked inside it */
+function svcCard(es){
+  var p=pipe(es);
+  var states=[['Projected',p.projected,'s0'],['Available',p.available,'s1'],
+              ['Reserved',p.reserved,'s2'],['Sold',p.sold,'s3']];
+  if(es!=='bng'){ states[0][0]='Available: projected'; states[1][0]='Available: registered'; }
+  var max=Math.max(p.projected.u,p.available.u,p.reserved.u,p.sold.u,1);
+  return '<div class="svc '+GY_ES[es].cls+'">'
+    +'<div class="hd">'+pill(es)+'<span class="nm">'+nameOf(es)+'</span>'+pendChip(pendingFor(es),1)+'</div>'
+    +'<div class="card">'+states.map(function(s){
+        var d=s[1], w=Math.round(d.u/max*100);
+        return '<div class="st '+s[2]+'"><div class="lb">'+s[0]+'</div>'
+          +'<div class="nums"><span class="u">'+u(d.u)+'</span><span class="un">units</span>'
+          +'<span class="v'+(d.v?'':' none')+'">'+(d.v||'&mdash;')+'</span></div>'
+          +'<div class="bar"><i style="width:'+(d.u?Math.max(w,2):0)+'%"></i></div></div>';
+      }).join('')
+    +'<div class="vm" onclick="location.href=\''+ESPAGE[es]+'\'">View '+nameOf(es)+' <i class="ti ti-arrow-right"></i></div>'
+    +'</div></div>';
+}
+function rail(){
+  document.getElementById('rail').innerHTML =
+    GY_INV_API.services().map(svcCard).join('')
+    + '<div class="svc ghost"><div class="hd"><span class="nm" style="color:var(--ink3)">Next service</span></div>'
+    + '<div class="card"><span class="gt">A new ecosystem service appears here once it has a Project.</span></div></div>';
+}
+
+/* Deals */
+function dealCard(es){
+  var d=GY_INV_API.deals(es,PROG), n=nameOf(es);
+  var head = '<div><div class="wnm">'+pill(es)+'<span class="nm">'+n+'</span></div>'
+    +(d.open?'<span class="wlk" onclick="location.href=\'deals.html?es='+es+'\'">'+d.open+' open</span>':'')
+    +'</div>';
+  if(!d.open){
+    return '<div class="'+GY_ES[es].cls+'"><div class="dcard drow2">'+head
+      +'<div class="dempty" style="grid-column:2 / -1">No open deals. '
+      +u(GY_INV_API.pipeline(es,PROG).projected.u)
+      +' projected units, nothing registered to sell yet.</div></div></div>';
+  }
+  return '<div class="'+GY_ES[es].cls+'"><div class="dcard drow2">'+head
+    +'<div><div class="big">'+d.pct+'%</div>'
+      +'<div class="cap">('+u(d.inDeals)+' units) of available inventory in deals</div>'
+      +'<div class="bar2"><i style="width:'+d.pct+'%"></i></div></div>'
+    +'<div class="drow"><b>'+d.unreserved.pct+'%</b> ('+u(d.unreserved.u)+' units) in '
+      +'<span class="u" onclick="toast(\''+d.unreserved.deals+' deals against unreserved '+n+'\')">'
+      +d.unreserved.deals+' deal'+(d.unreserved.deals===1?'':'s')+' against unreserved</span>'
+      +'<div class="bar2 lite"><i style="width:'+d.unreserved.pct+'%"></i></div></div>'
+    +'<div class="drow"><b>'+d.reserved.pct+'%</b> ('+u(d.reserved.u)+' units) in '
+      +'<span class="u" onclick="toast(\''+d.reserved.deals+' deals against reserved '+n+'\')">'
+      +d.reserved.deals+' deal'+(d.reserved.deals===1?'':'s')+' against reserved</span>'
+      +'<div class="bar2"><i style="width:'+d.reserved.pct+'%"></i></div></div>'
+    +'</div></div>';
+}
+function deals(){
+  document.getElementById('deals').innerHTML =
+    '<div class="wcols">' + GY_INV_API.services().map(dealCard).join('') + '</div>';
+}
+
+/* Risk */
+var RISK_OPEN={};
+function riskCard(es){
+  var rows=GY_INV_API.risk(es), open=RISK_OPEN[es];
+  var show=open?rows:rows.slice(0,5), hidden=rows.length-5;
+  var body=show.map(function(r){
+    function w(v){ return (v/r.total*100).toFixed(1)+'%'; }
+    return '<div class="rrow"><span class="rl">'+r.label+'</span>'
+      +'<span class="rbarx">'
+      +(r.reserved  ?'<span class="s1" style="width:'+w(r.reserved)+'">'+r.reserved+'</span>':'')
+      +(r.unreserved?'<span class="s2" style="width:'+w(r.unreserved)+'">'+r.unreserved+'</span>':'')
+      +'<span style="width:'+w(r.free)+'"></span></span></div>';
+  }).join('');
+  var more = hidden>0 ? '<span class="rmorex" onclick="toggleRisk(\''+es+'\')">'
+    +(open?'Show fewer':'View '+hidden+' more')+'</span>' : '';
+  return '<div class="'+GY_ES[es].cls+'"><div class="rcardx rrow2">'
+    +'<div><div class="wnm">'+pill(es)+'<span class="nm">'+nameOf(es)+'</span></div>'
+      +'<div class="wsub">'+GY_INV_API.riskLabel(es)+'</div></div>'
+    +'<div>'+body+more+'</div></div></div>';
+}
+function toggleRisk(es){ RISK_OPEN[es]=!RISK_OPEN[es]; risks(); }
+function risks(){
+  document.getElementById('risks').innerHTML =
+    '<div class="wcols">' + GY_INV_API.services().map(riskCard).join('') + '</div>'
+    + '<div class="wkey"><span><i></i>Reserved</span>'
+    + '<span><i class="m"></i>Unreserved</span>'
+    + '<span><i class="l"></i>Not in deals</span></div>';
+}
+
+/* All inventory: the first rows, the full table lives on its own page */
+function list(){
+  var all=GY_INV_API.rows(PROG).map(function(r){
+    var k=r.es+'|'+r.avail+'|'+r.type, o=OVR[k]; r.key=k;
+    if(o){ if(o.units) r.units=o.units; if(o.type) r.type=o.type; if(o.avail) r.avail=o.avail; }
+    return r; });
+  var top=all.slice().sort(function(a,b){return b.units-a.units;}).slice(0,6);
+  var total=all.reduce(function(t,r){return t+r.units;},0);
+  document.getElementById('list').innerHTML =
+    '<div class="lhd"><span>Type</span><span>Availability</span><span>Specific type / vintage</span>'
+    +'<span class="r">Units</span><span>Site</span><span class="r">Area</span></div>'
+    + top.map(function(r){
+        var cls = r.avail==='Available'?'avail':r.avail==='Sold'?'sold':'future';
+        return '<div class="lrow '+GY_ES[r.es].cls+'" onclick="location.href=\'inventory-programme.html?es='+r.es+'\'">'
+          +'<span>'+pill(r.es)+'</span>'
+          +'<span><span class="badge '+cls+'">'+r.avail+'</span></span>'
+          +'<span class="ty">'+r.type+pendChip(pending().filter(function(p){ return p.key===r.key; }))+'</span>'
+          +'<span class="un r">'+u(r.units)+'</span>'
+          +'<span class="si">'+r.site+'</span>'
+          +'<span class="r si">'+r.ha+' ha</span></div>';
+      }).join('')
+    + '<div class="lmore" onclick="location.href=\'inventory-programme.html\'">All '+all.length
+      +' inventory lines, '+u(total)+' units ›</div>';
+}
+
+/* ── Search: the criteria builder folds into this page. It builds a
+   Requirement, not a filter set: a scope plus one line. Adding a second line
+   promotes the same object to requirement.html, which is why REQ travels
+   through gy-search.js rather than living here. ── */
+var LPA=['West Oxfordshire DC','Cotswold DC','Cherwell DC'];
+var NCA=['Cotswolds','Upper Thames Clay Vales','Midvale Ridge'];
+var LNRS=['Oxfordshire','Gloucestershire','Warwickshire'];
+var GS=window.GY_SEARCH_API;
+var REQ=GS.newReq('bng', PROG);
+
+function opts(list, cur, ph){
+  return '<option value="">'+ph+'</option>'
+    + list.map(function(o){ return '<option'+(o===cur?' selected':'')+'>'+o+'</option>'; }).join('');
+}
+function setService(es){ GS.setService(REQ, es); redraw(); }
+function setScope(k,v){ REQ.scope[k]=v; redraw(); }
+function setLine(k,v,quiet){ REQ.lines[0][k]=v; redraw(quiet); }
+function redraw(quiet){
+  if(!quiet) document.getElementById('sbuild').innerHTML=buildHtml();
+  liveCount();
+}
+function liveCount(){
+  var r=GS.run(REQ, GS.progOf(REQ, PROG)), el=document.getElementById('lcount');
+  if(!el) return;
+  el.innerHTML = r.rows
+    ? '<b>'+r.rows+'</b> line'+(r.rows===1?'':'s')+' match, <b>'+u(r.units)+'</b> units'
+      + (r.short ? ' · <b>'+r.short+'</b> short' : '')
+    : 'Nothing matches yet';
+}
+
+function buildHtml(){
+  var L=REQ.lines[0], isBng=REQ.es==='bng', n=0;
+  function sec(t,body){
+    return '<div class="fgrp"><div class="shead"><b>'+(++n)+'</b>'+t+'</div>'+body+'</div>';
+  }
+  function fld(label, tip, control){
+    return '<div class="fld"><label class="flab">'+label+(tip?gyInfo(tip):'')+'</label>'+control+'</div>';
+  }
+  /* the service picker carries the ecosystem service colours, so the same
+     mark means the same product here as everywhere else */
+  function pill(es){
+    var e=GY_ES[es];
+    return '<button class="pick '+e.cls+(REQ.es===es?' on':'')+'" onclick="setService(\''+es+'\')">'
+      +'<i class="ti '+e.icon+'"></i>'+SHORT[es]+'</button>';
+  }
+  return ''
+    + sec('Service','<div class="pickrow">'+GY_INV_API.services().map(pill).join('')+'</div>')
+
+    + ((isBng || !PROG) ? sec('Where','<div class="fcols">'
+        + (isBng ? fld('LPA','Local planning authority. A BNG buyer usually has to buy inside the LPA their development sits in, or pay a spatial penalty.',
+            gySel('q-lpa',{options:LPA, value:REQ.scope.lpa, placeholder:'Any LPA', width:'100%',
+                           onchange:function(v){ setScope('lpa',v); }})) : '')
+        + (isBng ? fld('NCA','National Character Area. The next ring out if the LPA cannot be matched.',
+            gySel('q-nca',{options:NCA, value:REQ.scope.nca, placeholder:'Any NCA', width:'100%',
+                           onchange:function(v){ setScope('nca',v); }})) : '')
+        + (isBng ? fld('LNRS','Local Nature Recovery Strategy area. Units inside one carry a strategic significance uplift.',
+            gySel('q-lnrs',{options:LNRS, value:REQ.scope.lnrs, placeholder:'Any LNRS authority', width:'100%',
+                            onchange:function(v){ setScope('lnrs',v); }})) : '')
+        + (!PROG ? fld('Programme','Limit the answer to one programme. Leave it on every programme to sell from wherever the units are.',
+            gySel('q-prog',{options:[['','Every programme']].concat(GY_INV_API.programmes().map(function(x){return [x,x];})),
+                            value:REQ.scope.prog, placeholder:'Every programme', width:'100%',
+                            onchange:function(v){ setScope('prog',v); }})) : '')
+        +'</div>') : '')
+
+    + sec('What','<div class="fcols'+(isBng?' two':'')+'">'
+        + gySel('q-type',{options:function(){ return GS.typesFor(REQ.es, GS.progOf(REQ, PROG)); }, value:L.type,
+                          placeholder:isBng?'Any habitat':REQ.es==='wcc'?'Any vintage':'Any land type',
+                          width:'100%', onchange:function(v){ setLine('type',v); }})
+        + (isBng ? gySel('q-cond',{options:function(){ return GS.condsFor(GS.progOf(REQ, PROG)); }, value:L.cond,
+                          placeholder:'Any condition', width:'100%',
+                          onchange:function(v){ setLine('cond',v); }}) : '')
+        +'</div>')
+
+    + sec('Terms','<div class="fcols">'
+        + gySel('q-floor',{options:function(){ return GS.ladder(REQ.es).map(function(r){
+                             return [r.key, 'At least '+r.lc]; }); }, value:L.floor, width:'100%',
+                           onchange:function(v){ setLine('floor',v); }})
+        +'</div>'
+        +'<div class="frange" style="margin-top:8px">'
+        +'<input class="fnum" type="number" placeholder="Units" value="'+L.units+'" oninput="setLine(\'units\',this.value,1)">'
+        +'<span>at most</span>\u00a3<input class="fnum" type="number" placeholder="a unit" value="'+L.pmax+'" oninput="setLine(\'pmax\',this.value,1)">'
+        +'</div>')
+
+    + '<div class="addline" onclick="promote()">+ Add another type</div>';
+}
+function promote(){ GS.save(REQ); location.href='requirement.html'; }
+
+function openSearch(){
+  document.getElementById('sbuild').innerHTML=buildHtml();
+  liveCount();
+  document.getElementById('sdrawer').classList.add('on');
+  document.getElementById('sdrawer').setAttribute('aria-hidden','false');
+  document.getElementById('sdrop').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeSearch(){
+  document.getElementById('sdrawer').classList.remove('on');
+  document.getElementById('sdrawer').setAttribute('aria-hidden','true');
+  document.getElementById('sdrop').classList.remove('on');
+  document.body.style.overflow='';
+}
+function searchOpen(){ return document.getElementById('sdrawer').classList.contains('on'); }
+function resetQ(){ REQ=GS.newReq('bng', PROG); redraw(); }
+
+var FITLAB={exact:'Exact', partial:'Partial', substitute:'Substitute'};
+var FITCLS={exact:'ex', partial:'pa', substitute:'su'};
+
+function runSearch(){
+  var res=GS.run(REQ, GS.progOf(REQ, PROG)), L=res.lines[0];
+  var body = L.matches.length
+    ? '<div class="ltbl">'
+      +'<div class="lhd"><span>Fit</span><span>Inventory line</span><span>Certainty</span>'
+      +'<span class="r">Units</span><span>Site</span><span class="r">Price</span></div>'
+      + L.matches.map(function(m){
+          var r=m.row;
+          return '<div class="lrow '+GY_ES[r.es].cls+'" onclick="location.href=\'inventory-programme.html?es='+r.es+'\'">'
+            +'<span><span class="fit '+FITCLS[m.fit]+'">'+FITLAB[m.fit]+'</span></span>'
+            +'<span class="ty">'+r.type+(r.cond?', '+r.cond:'')+'</span>'
+            +'<span class="si">'+GS.labelOf(r.es, r.avail==='Available'?'available':r.stage)+'</span>'
+            +'<span class="un r">'+u(m.units)+'</span>'
+            +'<span class="si">'+r.site+'</span>'
+            +'<span class="r si">'+(m.price?'£'+u(m.price):'&mdash;')+'</span></div>';
+        }).join('')
+      +'<div class="lmore" onclick="toast(\'Add to deal: pick the deal, then units and price per line\')">'
+        +'Add '+u(L.got)+' units to a deal \u203a</div></div>'
+    : '<div class="nores">Nothing in '+nameOf(REQ.es)+' matches this requirement.<br>Lower the certainty floor or drop the type.</div>';
+
+  var short = L.short
+    ? '<div class="shortband"><b>'+L.short+' units short</b><span>Lower the certainty floor, widen the geography, or take a substitute.</span></div>'
+    : '';
+
+  document.getElementById('results').innerHTML =
+      '<div class="rhead"><span class="rt">What we can supply</span>'
+      +'<span class="rc">'+L.matches.length+' line'+(L.matches.length===1?'':'s')+' · '+u(L.got)+' units'
+        +(L.need?' of '+L.need:'')+'</span>'
+      +'<span class="rx" onclick="clearSearch()">Clear</span></div>'
+      + chips() + short + body;
+  document.getElementById('results').hidden=false;
+  document.getElementById('overview').hidden=true;
+  closeSearch();
+}
+function chips(){
+  return '<div class="chips">'+GS.chips(REQ).map(function(x){
+    return '<span class="chipx">'+x[0]+' <b style="color:var(--ink);font-weight:600">'+x[1]+'</b></span>';
+  }).join('')+'</div>';
+}
+function clearSearch(){
+  document.getElementById('results').hidden=true;
+  document.getElementById('overview').hidden=false;
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(searchOpen()) closeSearch();
+    else if(!document.getElementById('results').hidden) clearSearch();
+  }
+});
+
+
+
+/* ── v3 data and actions. See the header note in the styles. */
+
+var TEAM = [
+  ['Caitlin Ciceri','CC','#1D9E75','Trade'],
+  ['Izzie Bell','IB','#7F77DD','Trade'],
+  ['Charlie','CH','#2F8F9D','Data']
+];
+var ME = TEAM[0];
+var AGENT_IC = 'ti-packages';
+/* who can propose a change. k: ag = agent, ck = scheduled check, tl = tool */
+var BY = {
+  wcc:   ['Woodland Carbon agent','ti-trees','ag'],
+  sync:  ['Sources check','ti-arrows-exchange','ck'],
+  qual:  ['Quality check','ti-alert-triangle','ck'],
+  imp:   ['File import','ti-file-import','tl'],
+  tool:  ['Inventory tool','ti-packages','tl']
+};
+function byIc(k, big){ var b = BY[k]; return '<span class="i3ic '+b[2]+(big?' lg':'')+'"><i class="ti '+b[1]+'"></i></span>'; }
+function av(p,cls){ return '<span class="dlav '+(cls||'')+'" style="background:'+p[2]+'" title="'+p[0]+', '+p[3]+'">'+p[1]+'</span>'; }
+function avName(n){ for(var i=0;i<TEAM.length;i++) if(TEAM[i][0]===n) return av(TEAM[i]); return av([n,'?','#9C9A92','']); }
+function firstName(n){ return n.split(' ')[0]; }
+function agAv(){ return '<span class="i3ic"><i class="ti ti-checklist"></i></span>'; }
+function paintPile(){
+  document.getElementById('pile').innerHTML = TEAM.map(function(p){
+    return '<span class="v5av" style="background:'+p[2]+'" data-tip="'+p[0]+', '+p[3]+'" tabindex="0">'+p[1]+'</span>'; }).join('')
+    ;
+}
+
+/* ── what the agent proposes. Each one carries its evidence and a confidence.
+   key = es|availability|type of the inventory line it touches. ───────────── */
+var KIND = {
+  grade:  ['ti-stairs-up','Grade progression','k-grade'],
+  recon:  ['ti-arrows-exchange','Reconciliation','k-recon'],
+  ingest: ['ti-file-import','File import','k-ingest'],
+  qual:   ['ti-alert-triangle','Quality','k-qual']
+};
+var PROPS = [
+  {id:'g1', kind:'grade', by:'wcc', run:'Progress grade', t:'Progress Bruern 2029 to WCU', es:'wcc', key:'wcc|Reserved|2029 (PIU)',
+   line:'Bruern Estate · 2029 (PIU) · 110 units',
+   why:'The Woodland Carbon agent read the verification statement and the registry entry: Bruern Estate\'s 2029 vintage is verified. The 110 units become Woodland Carbon Units. They stay reserved for Meridian Carbon Fund, because grade and commercial state move independently.',
+   ev:[['ti-building-bank','WCC registry entry WCC-B-2029-114','Verified 30 Sep 2026'],['ti-file-certificate','Verification statement.pdf','Google Drive, 30 Sep 2026']],
+   cf:['hi','High'], ch:[['Grade','PIU','WCU'],['Units','110','110'],['Commercial','Reserved','Reserved']], st:'wait'},
+  {id:'r1', kind:'recon', by:'sync', run:'Mark as Sold', t:'Mark Fairhaven hedgerow as Sold', es:'bng', key:'bng|Reserved|Hedgerow', final:true,
+   line:'Bruern Estate · Hedgerow · 38 units',
+   why:'The daily Sources check found a mismatch. HubSpot moved Fairhaven Group to Closed Won on 2 Oct. Its 38 Hedgerow units are still Reserved here, so inventory and the CRM disagree. Closed Won never sells units on its own.',
+   ev:[['ti-address-book','HubSpot deal REF-11510','Closed Won, 2 Oct 2026'],['ti-file-text','Fairhaven BNG allocation agreement.pdf','Signed 1 Oct 2026']],
+   cf:['hi','High'], ch:[['Commercial','Reserved','Sold'],['Units','38','38'],['Deal','Fairhaven Group','Fairhaven Group']], st:'wait'},
+  {id:'u1', kind:'ingest', by:'imp', run:'Update line', t:'Update Ascott meadow from metric v3', es:'bng', key:'bng|Projected|Lowland meadow',
+   line:'Ascott Farm, Kingham · Lowland meadow · 240 units',
+   why:'File import read a new statutory metric for Ascott Farm in Drive. One line changes: 12 more units and a better target condition. Habitat and area are unchanged.',
+   ev:[['ti-file-spreadsheet','Ascott Farm BNG metric v3.xlsx','Google Drive, added 2 Oct 2026'],['ti-file-spreadsheet','Ascott Farm BNG metric v2.xlsx','Previous version, 14 May 2026']],
+   cf:['md','Medium'], ch:[['Units','240','252'],['Condition','Poor','Moderate'],['Area','22.6 ha','22.6 ha']], st:'wait'}
+];
+function prop(id){ return PROPS.filter(function(p){ return p.id===id; })[0]; }
+function pending(){ return PROPS.filter(function(p){ return p.st==='wait'; }); }
+function pendingFor(es){ return pending().filter(function(p){ return p.es===es; }); }
+
+var ISSUES = [
+  {t:'Possible duplicate line', d:'Fifield Manor Farm · Cover crops', who:'Charlie',
+   why:'Two lines in the BNG metric share the habitat ID FM-01 with the same area. One may be a copy.'},
+  {t:'Minimum price not reviewed in a year', d:'Charlbury Down · 2024 (WCU)', who:'Izzie Bell',
+   why:'The minimum price was last set on 18 Sep 2025. Recent WCC sales cleared above it.'},
+  {t:'Soil carbon line without a Project', d:'Bruern Estate · Pasture', who:'Caitlin Ciceri',
+   why:'Grade progression runs per Project, so this line cannot move up the ladder until it has one.'}
+];
+var SOURCES = [
+  ['Inventory service','ti-database','19 lines', null],
+  ['HubSpot','ti-address-book','13 deals', 'r1'],
+  ['Woodland Carbon Code registry','ti-building-bank','6 vintages', 'g1'],
+  ['Google Drive','ti-brand-google-drive','4 metrics', 'u1'],
+  ['Carbon curve sheet','ti-table','2 vintages', null]
+];
+
+/* approved changes, applied on top of the shared inventory data */
+function pipe(es){
+  var p = GY_INV_API.pipeline(es, PROG), a = ADJ[es];
+  function f(k){ return {u:p[k].u + a[k], v:p[k].v}; }
+  return {projected:f('projected'), available:f('available'), reserved:f('reserved'), sold:f('sold')};
+}
+var ADJ = {bng:{projected:0,available:0,reserved:0,sold:0}, wcc:{projected:0,available:0,reserved:0,sold:0}, soc:{projected:0,available:0,reserved:0,sold:0}};
+var OVR = {};   /* key -> {type, units} */
+function applyProp(p){
+  if(p.id==='r1'){ ADJ.bng.reserved -= 38; ADJ.bng.sold += 38; OVR[p.key] = {avail:'Sold'}; }
+  if(p.id==='u1'){ ADJ.bng.projected += 12; OVR[p.key] = {units:252, cond:'Moderate'}; }
+  if(p.id==='g1'){ OVR[p.key] = {type:'2029 (WCU)'}; }
+}
+
+/* ── activity, newest first in the Audit log drawer ── */
+var ACT = [];
+function act(who, ic, text){
+  var d = new Date();
+  ACT.push({who:who, ic:ic, text:text, at:('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)});
+  if(DR==='audit') document.getElementById('drbody').innerHTML = VIEWS.audit();
+}
+
+/* ── approve or reject, from the chat, the Review tab or the drawer ── */
+function resolve(id, ok){
+  var p = prop(id); if(!p || p.st!=='wait') return;
+  p.st = ok ? 'ok' : 'no';
+  if(ok) applyProp(p);
+  act(ME[0], ok?'ti-check':'ti-x', (ok?'Approved: ':'Rejected: ')+p.t);
+  if(ok) act('tool', 'ti-database-edit', p.run+' ran on '+p.line+'. Rules passed, evidence attached');
+  else act(BY[p.by][0], 'ti-message-2', 'Told why, so it is not raised again');
+  gyToast(ok ? 'Approved. Inventory updated' : 'Rejected. Nothing changed');
+  paintAll();
+}
+
+/* ── the right drawer: a proposal, or the audit log ─────────────────────── */
+var DR = null, PSEL = null;
+function openProp(id){
+  var p = prop(id), k = KIND[p.kind];
+  DR = 'prop'; PSEL = id;
+  var ic = document.getElementById('dricon');
+  ic.className = 'v5dri '+k[2]; ic.innerHTML = '<i class="ti '+k[0]+'"></i>';
+  document.getElementById('drtitle').textContent = p.t;
+  document.getElementById('drbody').innerHTML = propHtml(p);
+  document.getElementById('drbody').scrollTop = 0;
+  document.getElementById('drawer').classList.remove('hide');
+  paintTabs(); if(TAB==='review') openTab('review', true);
+}
+function propHtml(p){
+  var k = KIND[p.kind];
+  return '<div class="v8dr">'
+    + '<div class="v8dk2">'+k[1]+'</div>'
+    + '<div class="v8row" style="border:none"><span class="ic"><i class="ti ti-packages"></i></span><span class="nm">'+p.line+'</span></div>'
+    + '<div class="v8dk2">Proposed by</div><div class="v8row" style="border:none">'+byIc(p.by)+'<span class="nm">'+BY[p.by][0]+'</span></div>'
+    + '<div class="v8dk2">Why</div><div class="i2why">'+p.why+'</div>'
+    + '<div class="v8dk2">Change</div><div class="i2chg">' + p.ch.map(function(c){
+        return '<div class="'+(c[1]===c[2]?'same':'')+'"><span class="k">'+c[0]+'</span><span class="a">'+c[1]+'</span>'
+          + '<span class="x"><i class="ti ti-arrow-right"></i></span><span class="b">'+c[2]+'</span></div>'; }).join('') + '</div>'
+    + '<div class="v8dk2">Evidence</div>' + p.ev.map(function(e){
+        return '<div class="i2ev" style="margin-top:6px" onclick="gyToast(\'Opening files is not wired up in this sketch\')"><span class="ic"><i class="ti '+e[0]+'"></i></span><div><b>'+e[1]+'</b><br><span style="color:var(--ink3);font-size:12.5px">'+e[2]+'</span></div></div>'; }).join('')
+    + '<div class="v8dk2">Confidence</div><span class="v8cf '+p.cf[0]+'">'+p.cf[1]+'</span>'
+    + '<div class="v8dk2">On approval</div><div class="v8row" style="border:none">'+byIc('tool')+'<span class="nm">'+p.run+'</span></div>'
+    + (p.final && p.st==='wait' ? '<div class="i2warn"><i class="ti ti-alert-circle"></i><div>Mark as Sold is final. The units cannot return to Reserved.</div></div>' : '')
+    + (p.st==='wait'
+        ? '<div class="i2acts"><button onclick="resolve(\''+p.id+'\',false)"><i class="ti ti-x"></i>Reject</button>'
+          + '<button class="pri" onclick="resolve(\''+p.id+'\',true)"><i class="ti ti-check"></i>Approve</button></div>'
+        : '<div class="i2done'+(p.st==='no'?' no':'')+'"><i class="ti '+(p.st==='ok'?'ti-circle-check':'ti-circle-x')+'"></i>'+(p.st==='ok'?'Approved':'Rejected')+' by '+firstName(ME[0])+'</div>')
+    + '</div>';
+}
+function openIssue(i){
+  var x = ISSUES[i];
+  DR = 'issue';
+  var ic = document.getElementById('dricon'); ic.className = 'v5dri k-qual'; ic.innerHTML = '<i class="ti ti-alert-triangle"></i>';
+  document.getElementById('drtitle').textContent = x.t;
+  document.getElementById('drbody').innerHTML = '<div class="v8dr">'
+    + '<div class="v8dk2">Line</div><div class="v8row" style="border:none"><span class="ic"><i class="ti ti-packages"></i></span><span class="nm">'+x.d+'</span></div>'
+    + '<div class="v8dk2">Why</div><div class="i2why">'+x.why+'</div>'
+    + '<div class="v8dk2">Owner</div><div class="v8row" style="border:none">'+avName(x.who)+'<span class="nm">'+x.who+'</span></div>'
+    + '<div class="v8dk2">Raised by</div><div class="v8row" style="border:none">'+byIc('qual')+'<span class="nm">Quality check, daily 07:00</span></div>'
+    + '</div>';
+  document.getElementById('drawer').classList.remove('hide');
+  paintTabs();
+}
+function openAudit(){
+  if(DR==='audit') return closeDrawer();
+  DR = 'audit';
+  var ic = document.getElementById('dricon'); ic.className = 'v5dri hide';
+  document.getElementById('drtitle').textContent = 'Audit log';
+  document.getElementById('drbody').innerHTML = VIEWS.audit();
+  document.getElementById('drawer').classList.remove('hide');
+  paintTabs();
+}
+function closeDrawer(){
+  DR = null; PSEL = null;
+  document.getElementById('drawer').classList.add('hide');
+  paintTabs(); if(TAB==='review') openTab('review', true);
+}
+
+/* ── tabs ─────────────────────────────────────────────────────────────── */
+var TABS = [['overview','ti-layout-dashboard','Overview'],['review','ti-checklist','Review'],['checks','ti-heart-rate-monitor','Checks'],['tool','ti-tool','Tool']];
+var TAB = 'overview';
+function paintTabs(){
+  document.getElementById('tabs').innerHTML =
+    '<div class="v5tabgrp">' + TABS.map(function(t){
+        var badge = t[0]==='review' && pending().length ? String(pending().length) : '';
+        return '<button class="v5tab'+(TAB===t[0]?' on':'')+'" onclick="openTab(\''+t[0]+'\')">'
+          + '<i class="ti '+t[1]+'"></i><span class="lb">'+t[2]+'</span>'+(badge?'<b>'+badge+'</b>':'')+'</button>';
+      }).join('') + '</div>'
+    + '<div class="v5drgrp"><button class="v5tab dr'+(DR==='audit'?' on':'')+'" onclick="openAudit()">'
+      + '<i class="ti ti-history"></i><span class="lb">Audit log</span></button></div>';
+}
+function openTab(k, keep){
+  TAB = k; document.body.classList.toggle('tab-overview', k==='overview'); paintTabs();
+  var el = document.getElementById('pbody'), sc = el.parentNode.scrollTop;
+  el.innerHTML = VIEWS[k]();
+  if(k==='overview') mountOverview();
+  el.parentNode.scrollTop = keep ? sc : 0;
+}
+function paintAll(){
+  paintTabs(); openTab(TAB, true);
+  if(DR==='prop' && PSEL) document.getElementById('drbody').innerHTML = propHtml(prop(PSEL));
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !searchOpen()) closeDrawer(); });
+
+function pendChip(list, compact){
+  if(!list.length) return '';
+  if(compact) return '<span class="i2pend c" onclick="event.stopPropagation();'+(list.length===1?'openProp(\''+list[0].id+'\')':'openTab(\'review\')')+'" data-tip="'+list.length+' to review">'+agAv()+list.length+'</span>';
+  return '<span class="i2pend" onclick="event.stopPropagation();'+(list.length===1?'openProp(\''+list[0].id+'\')':'openTab(\'review\')')+'" title="Waiting for review">'
+    + agAv() + list.length+' to review</span>';
+}
+
+var VIEWS = {
+  overview: function(){
+    return '<div class="i2body">'
+      + '<div class="phead"><div class="h1">Inventory</div><div class="acts" id="abar"></div></div>'
+      + '<div id="results" hidden></div>'
+      + '<div id="overview">'
+      + '<div class="bsect">Pipeline</div><div class="rail" id="rail"></div>'
+      + '<div class="bsect">Deals</div><div class="wcard" id="deals"></div>'
+      + '<div class="bsect">Risk</div><div class="wcard" id="risks"></div>'
+      + '<div class="bsect">All inventory'
+      +   '<span class="act" onclick="location.href=\'inventory-programme.html\'">Filters</span>'
+      +   '<span class="act" onclick="event.stopPropagation();gyMenu(this,INV_ACTIONS)">Actions</span></div>'
+      + '<div class="ltbl" id="list"></div>'
+      + '</div></div>';
+  },
+  review: function(){
+    var w = pending(), d = PROPS.filter(function(p){ return p.st!=='wait'; });
+    function row(p){
+      var k = KIND[p.kind];
+      var st = p.st==='wait' ? '<span class="i2st wait">Waiting</span>' : p.st==='ok' ? '<span class="i2st ok">Approved</span>' : '<span class="i2st no">Rejected</span>';
+      return '<div class="i2r'+(p.st!=='wait'?' done':'')+(PSEL===p.id?' sel':'')+'" onclick="openProp(\''+p.id+'\')">'
+        + '<span class="tile '+k[2]+'"><i class="ti '+k[0]+'"></i></span><span class="nm">'+p.t+'</span>'
+        + '<span class="ln">'+p.line+'</span><span class="i3by" data-tip="Proposed by '+BY[p.by][0]+'">'+byIc(p.by)+'<span>'+BY[p.by][0]+'</span></span><span class="v8cf '+p.cf[0]+'">'+p.cf[1]+'</span>'+st
+        + '<i class="ti ti-chevron-right ch"></i></div>';
+    }
+    return '<div class="i2body"><div class="v8ttl">Review</div>'
+      + '<div class="i2k">Waiting for you</div>'
+      + (w.length ? '<div class="i2list">'+w.map(row).join('')+'</div>' : '<div class="v8dtxt">Nothing waiting.</div>')
+      + (d.length ? '<div class="i2k">Done today</div><div class="i2list">'+d.map(row).join('')+'</div>' : '')
+      + '</div>';
+  },
+  checks: function(){
+    return '<div class="i2body"><div class="v8ttl">Checks</div>'
+      + '<div class="i2k">Sources</div><div class="i2list">' + SOURCES.map(function(s){
+          var p = s[3] ? prop(s[3]) : null, open = p && p.st==='wait';
+          return '<div class="i2r" onclick="'+(p?'openProp(\''+p.id+'\')':'gyToast(\''+s[0]+' matches inventory\')')+'">'
+            + '<span class="tile" style="background:var(--graybg);color:#766B62"><i class="ti '+s[1]+'"></i></span>'
+            + '<span class="nm">'+s[0]+'</span><span class="ln">'+s[2]+'</span>'
+            + (open ? '<span class="i2st wait">1 change</span>' : '<span class="i2st sync">In sync</span>')
+            + '<i class="ti ti-chevron-right ch"></i></div>'; }).join('') + '</div>'
+      + '<div class="i2k">Quality issues</div><div class="i2list">' + ISSUES.map(function(x,i){
+          return '<div class="i2r" onclick="openIssue('+i+')"><span class="tile k-qual"><i class="ti ti-alert-triangle"></i></span>'
+            + '<span class="nm">'+x.t+'</span><span class="ln">'+x.d+'</span>'+avName(x.who)
+            + '<i class="ti ti-chevron-right ch"></i></div>'; }).join('') + '</div>'
+      + '</div>';
+  },
+  tool: function(){
+    var row = function(ic, nm, m, mc){ return '<div class="v8row"><span class="ic"><i class="ti '+ic+'"></i></span><span class="nm">'+nm+'</span>'+(m?'<span class="m '+(mc||'')+'">'+m+'</span>':'')+'</div>'; };
+    var byRow = function(k, m){ return '<div class="v8row">'+byIc(k)+'<span class="nm">'+BY[k][0]+'</span><span class="m">'+m+'</span></div>'; };
+    var card = function(i,bg,fg,t,n,body){
+      return '<div class="v8card"><div class="v8sh"><span class="t" style="background:'+bg+';color:'+fg+'"><i class="ti '+i+'"></i></span><b>'+t+'</b><span>'+n+'</span></div>'+body+'</div>';
+    };
+    return '<div class="i2body" style="max-width:760px"><div class="v8ttl">Tool</div><div class="v8set" style="display:flex;flex-direction:column;align-items:stretch;gap:18px">'
+      + card('ti-packages','#DFF1EC','#155E55','Inventory tool','',
+          '<div class="v8row" style="border:none;white-space:normal"><span class="nm" style="white-space:normal;line-height:1.5">Holds Evenlode\'s inventory and runs every change to it. Same input, same result. It refuses any change the rules forbid.</span></div>'
+          + '<div class="v8row"><span class="k">Owner</span><span class="nm">Inventory owner</span><span class="v8ph">Placeholder</span></div>'
+          + '<div class="v8row"><span class="k">Backup</span>'+avName('Charlie')+'<span class="nm">Charlie</span></div>')
+      + card('ti-lock','var(--graybg)','#766B62','Permissions','',
+          '<div class="i2perm"><div><div class="h r"><i class="ti ti-eye"></i>Anyone reads</div><ul><li>Inventory lines</li><li>Pipeline</li><li>Deals and conflicts</li><li>Find units for buyer</li></ul></div>'
+          + '<div><div class="h p"><i class="ti ti-hand-finger"></i>Agents propose</div><ul><li>Bulk upload</li><li>Add a line</li><li>Update line</li><li>Progress grade</li></ul></div>'
+          + '<div><div class="h n"><i class="ti ti-user-check"></i>People only</div><ul><li>Edit quantity</li><li>Reserve and unreserve</li><li>Mark as Sold</li><li>Set price</li><li>Archive</li><li>Resolve conflicts</li></ul></div></div>')
+      + card('ti-shield-check','var(--greenbg)','var(--greend)','Rules','5',
+          row('ti-stairs-up','Grade progression moves one step, with evidence')
+          + row('ti-pencil-off','Edit never moves units between grades or statuses')
+          + row('ti-lock','Mark as Sold is final')
+          + row('ti-address-book','Closed Won never sells units on its own')
+          + row('ti-history','Every change is in the Audit log'))
+      + card('ti-plug-connected','#ECE6F7','#4E3A80','Called by','5',
+          byRow('wcc','Proposes grade steps')
+          + '<div class="v8row"><span class="i3ic ag"><i class="ti ti-target-arrow"></i></span><span class="nm">Demand Mapping agent</span><span class="m">Reads availability</span></div>'
+          + byRow('imp','Proposes line updates')
+          + byRow('sync','Daily, 07:00')
+          + byRow('qual','Daily, 07:00'))
+      + '</div></div>';
+  },
+  audit: function(){
+    if(!ACT.length) return '<div class="v8dtxt">Nothing yet.</div>';
+    return '<div class="v8act">' + ACT.slice().reverse().map(function(e){
+      var bk = null; for(var k in BY) if(BY[k][0]===e.who || (e.who==='tool' && k==='tool')) bk = k;
+      var w = bk ? byIc(bk) : avName(e.who);
+      return '<div class="v8ae"><span class="who">'+w+'</span>'
+        + '<div class="tx"><b>'+(bk?BY[bk][0]:firstName(e.who))+'</b> '+e.text+'</div>'
+        + '<span class="kd"><i class="ti '+e.ic+'"></i></span><span class="at">'+e.at+'</span></div>';
+    }).join('') + '</div>';
+  }
+};
+function mountOverview(){
+  rail(); deals(); risks(); list();
+  gyBar('abar', {
+    buttons: [{icon:'ti-target-arrow', label:'Find units for buyer', onclick:function(){ openSearch(); }}],
+    actions: INV_ACTIONS,
+    primary: {icon:'ti-plus', label:'Add inventory', onclick:function(b){ gyMenu(b, INV_ADD); }}
+  });
+}
+
+/* page menu */
+function pageMenu(btn){
+  gyMenu(btn, [
+    ['ti-link','Copy link', function(){ try{ navigator.clipboard.writeText(location.href); }catch(e){} gyToast('Link copied'); }],
+    ['ti-history','Audit log', function(){ openAudit(); }],
+    '-',
+    ['ti-rotate','Run checks now','Checks are not wired up in this sketch']
+  ]);
+}
+
+/* start: what came in overnight */
+act('Sources check','ti-arrows-exchange','Compared HubSpot, the registries and the carbon curve sheet. 1 mismatch');
+act('Quality check','ti-alert-triangle','Ran on 19 lines. 3 issues, each with an owner');
+act('File import','ti-file-import','Read Ascott Farm BNG metric v3. Proposed 1 line update');
+act('Woodland Carbon agent','ti-stairs-up','Proposed Bruern 2029 PIU to WCU, with evidence');
+paintPile(); paintTabs(); openTab('overview');
+</script>
+</body>
+</html>

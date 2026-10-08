@@ -206,12 +206,13 @@
 .bm .bw{color:var(--ink3);font-size:12.5px;width:48px;flex:none;font-variant-numeric:tabular-nums}
 .bact{display:flex;gap:10px;padding:16px 22px;border-top:1px solid var(--line)}
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:14.5px;padding:9px 18px;border-radius:999px;z-index:1800;display:none;max-width:80vw}
+.agtalk{width:32px;height:32px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px}.agtalk:hover{background:var(--graybg);border-color:var(--line);color:var(--ink)}
 </style>
 </head>
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"library","arts":null};</script>
-<script src="gy-nav.js?v=d794329b"></script>
+<script src="gy-nav.js?v=d99df486"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -221,8 +222,7 @@
 
 <div class="wrap">
   <div class="phead">
-    <div class="h1">Hive Mind <span id="hchip"></span></div>
-    <div id="abar"></div>
+    <div class="h1">Hive Mind</div>
   </div>
 
   <nav class="tabs" id="tabs">
@@ -230,6 +230,7 @@
     <button class="tab" data-v="review">Review <span class="tc need" id="tcRev"></span></button>
     <button class="tab" data-v="library">Library <span class="tc" id="tcLib"></span></button>
     <button class="tab" data-v="rules">Rules</button>
+    <button class="tab" data-v="activity">Activity</button>
   </nav>
 
   <!-- ── Overview ── -->
@@ -240,7 +241,6 @@
         <input id="askIn" type="text" placeholder="Ask the Hive Mind" autocomplete="off">
         <button class="go" type="submit" title="Ask"><i class="ti ti-arrow-up"></i></button>
       </form>
-      <div class="sugg" id="sugg"></div>
       <div class="ans" id="ans"></div>
     </div>
 
@@ -280,11 +280,10 @@
       <div class="reads" id="reads"></div>
     </div>
 
-    <div class="blk">
-      <div class="sh"><h2>Write-backs</h2><span class="act" onclick="location.href='audit-log.html'">Audit log</span></div>
-      <div class="log" id="log"></div>
-    </div>
   </section>
+
+  <!-- ── Activity ── -->
+  <section class="view" id="v-activity"><div class="log" id="log"></div></section>
 
   <!-- ── Review ── -->
   <section class="view" id="v-review"><div id="reviewGroups"></div></section>
@@ -319,7 +318,7 @@
 <script src="gy-es-covers.js?v=1fe57ced"></script>
 <script src="gy-personas.js?v=2f13de21"></script>
 <script src="gy-persona-covers.js?v=37895c2e"></script>
-<script src="gy-versions.js?v=2400190b"></script>
+<script src="gy-versions.js?v=30654df5"></script>
 <script>
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},3000)}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
@@ -327,7 +326,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 /* ── people ── */
 var PEOPLE={
  CC:'Caitlin Ciceri', EM:'Emily', AL:'Alex', SO:'Solene', JF:'Josh Fettes', AS:'Asha', HF:'Harry Forman',
- CR:'Charlie Regent', CT:'Cat', MI:'Millie', EH:'Ed Hewitt', TO:'Toon'
+ CR:'Charlie Regent', AN:'Andrew, to confirm', CT:'Cat', MI:'Millie', EH:'Ed Hewitt', TO:'Toon'
 };
 var ME='CC';
 function who(k){
@@ -338,7 +337,7 @@ function who(k){
 
 /* ── shelves ── counts are the whole shelf, the library lists a sample */
 var SHELVES=[
- {k:'agents',     n:'Agents',     i:'ti-robot',        c:'#6A4FA3', bg:'#ECE6F7', h:[2,4,1]},
+ {k:'agents',     n:'Agents',     i:'ti-robot',        c:'#6A4FA3', bg:'#ECE6F7', h:[1,5,1]},
  {k:'blueprints', n:'Blueprints', i:'ti-route',        c:'#8A6A2A', bg:'#F3ECDC', h:[2,4,0]},
  {k:'expertise',  n:'Expertise',  i:'ti-bulb',         c:'#3F6B2A', bg:'#E7F0DC', h:[37,7,4]},
  {k:'skills',     n:'Skills',     i:'ti-tool',         c:'#1D7A6E', bg:'#DFF1EC', h:[15,6,0]},
@@ -361,15 +360,15 @@ var ITEMS=[
  {id:'peat-cat',   n:'Peatland condition categories',        s:'expertise', o:null, st:'draft', u:1, d:'3 Aug',  tier:'Bronze', src:'Peatland Code', about:'Condition categories and their emission factors. No owner yet, so the agent answers at low confidence.', by:['Peatland Carbon agent']},
  {id:'nut-price',  n:'Nutrient credit pricing by catchment', s:'expertise', o:'TBC',st:'bad',   u:2, d:'4 May',  tier:'Silver', src:'Natural England, Norfolk Council', about:'Price per credit by catchment. Out of date since the P&I Bill consultation.', by:['Nutrient agent','Customer Demand Mapping']},
  {id:'wcc-qbank',  n:'Woodland carbon question bank',        s:'expertise', o:'SO', st:'draft', u:1, d:'3 Oct',  tier:'Silver', src:'Expert interviews', about:'The questions the agent asks a landowner, in order, and why each matters.', by:['Woodland Carbon agent']},
- {id:'ag-dm',      n:'Demand Mapping agent',                 s:'agents',    o:'EM', st:'draft', u:1, d:'1 Oct',  src:'Agents folder', about:'Coordinator. Runs GY\u2019s demand mapping process, calls the ES agents and tools, and routes the document for review.', by:['Customer Demand Mapping']},
- {id:'ag-wcc',     n:'Woodland Carbon agent definition v0.1',s:'agents',    o:'SO', st:'draft', u:3, d:'3 Oct',  src:'Agents folder', about:'The holistic source of truth for woodland carbon. Rule books are only an input. Reads numbers from Databricks, never copies them.', by:['Customer Demand Mapping','Financial Model','Blended Finance Plan']},
- {id:'ag-inv',     n:'Inventory agent',                      s:'agents',    o:'CR', st:'ok',    u:1, d:'3 Oct',  src:'Agents folder', about:'Steward of the ledger. Proposes grade changes and reconciliations; people approve.', by:['Inventory']},
+ {id:'ag-dm',      n:'Demand Mapping agent',                 s:'agents',    o:'EM', st:'draft', u:1, d:'1 Oct',  src:'Agents folder', go:'agent-demand-mapping.html', about:'Coordinator. Runs GY\u2019s demand mapping process, calls the ES agents and tools, and routes the document for review.', by:['Customer Demand Mapping']},
+ {id:'ag-wcc',     n:'Woodland Carbon agent definition v0.1',s:'agents',    o:'SO', st:'draft', u:3, d:'3 Oct',  src:'Agents folder', go:'agent-woodland-carbon.html', about:'The holistic source of truth for woodland carbon. Rule books are only an input. Reads numbers from Databricks, never copies them.', by:['Customer Demand Mapping','Financial Model','Blended Finance Plan']},
+ {id:'ag-bp',      n:'Blueprint agent definition v0.1',      s:'agents',    o:'AN', st:'draft', u:3, d:'8 Oct',  src:'Agents folder', go:'agent-blueprint.html', about:'Writes and maintains Blueprints: drafts them from workshops, then proposes changes from Deliverable runs. The Blueprint owner signs off every version.', by:['Customer Demand Mapping','Investor Q&A Log','Tender to Bid']},
  {id:'bp-dm',      n:'Customer Demand Mapping',              s:'blueprints',o:'EM', st:'ok',    u:5, d:'26 Sep', src:'Blueprint schema', about:'Steps, gates, tools allowed and the done-when for a demand map. Five live runs.', by:['Upper Dee','Evenlode','Denton Reserve']},
  {id:'bp-iqa',     n:'Investor Q&A Log',                     s:'blueprints',o:'TBC',st:'draft', u:3, d:'2 Oct',  src:'Blueprint schema', about:'Canonical answers to investor questions, reused across raises.', by:['Evenlode']},
  {id:'sk-card',    n:'Fill an ES Card',                      s:'skills',    o:'CT', st:'ok',    u:6, d:'30 Sep', src:'Skills library', about:'Fills one Ecosystem Service Card with confidence and a source per field. Flags gaps, never guesses.', by:['All ES agents']},
  {id:'sk-q',       n:'Extract questionnaire from client docs',s:'skills',   o:'CT', st:'ok',    u:2, d:'22 Sep', src:'Skills library', about:'Reads what the client sent and lists what is still missing.', by:['Demand Mapping agent','Tender to Bid']},
  {id:'sk-desk',    n:'Desk research',                        s:'skills',    o:'HF', st:'ok',    u:4, d:'15 Sep', src:'Skills library', about:'Searches public sources on a site and its market, with links kept.', by:['Demand Mapping agent','All ES agents']},
- {id:'sk-buyer',   n:'Match buyers to supply',               s:'skills',    o:'AL', st:'draft', u:2, d:'28 Sep', src:'Skills library', about:'Reads the shared buyer database and ranks buyers for a project. Buyers stay in the database.', by:['Demand Mapping agent','Inventory']},
+ {id:'sk-buyer',   n:'Match buyers to supply',               s:'skills',    o:'AL', st:'draft', u:2, d:'28 Sep', src:'Skills library', about:'Reads the shared buyer database and ranks buyers for a project. Buyers stay in the database.', by:['Demand Mapping agent']},
  {id:'ls-vint',    n:'Buyers ask vintage year before price', s:'lessons',   o:'CC', st:'draft', u:0, d:'Today',  src:'Upper Dee and Evenlode runs', about:'Seen in two runs. Proposed for step 2.4 of the Customer Demand Mapping blueprint.', by:[]},
  {id:'ls-survey',  n:'Hedgerow survey windows close in March',s:'lessons',  o:'EM', st:'ok',    u:2, d:'11 Sep', src:'Denton Reserve run', about:'Plan baseline surveys before March or lose a season.', by:['BNG agent','Customer Demand Mapping']},
  {id:'ls-peat',    n:'Peat depth data is usually missing',   s:'lessons',   o:'CC', st:'ok',    u:1, d:'20 Sep', src:'Upper Dee run', about:'Ask for peat depth surveys at kick-off, not at the ES Card step.', by:['Peatland Carbon agent']},
@@ -423,21 +422,21 @@ var REVIEW=[
 
 /* ── agents ── */
 var AGENTS=[
- {n:'Demand Mapping',  type:'Coordinator', o:'EM', items:24, st:'draft', i:'ti-target-arrow', c:'#8A6A2A', ref:'ag-dm'},
- {n:'Woodland Carbon', type:'Ecosystem service', o:'SO', items:31, st:'draft', es:'wcc', ref:'ag-wcc'},
- {n:'BNG',             type:'Ecosystem service', o:'EM', items:18, st:'plan', es:'bng'},
- {n:'Peatland Carbon', type:'Ecosystem service', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat'},
- {n:'Nutrient',        type:'Ecosystem service', o:'TBC',items:9,  st:'plan', es:'nut'},
- {n:'Flood',           type:'Ecosystem service', o:null, items:4,  st:'plan', es:'nfm'},
- {n:'Inventory',       type:'Steward', o:'CR', items:11, st:'live', i:'ti-stack-2', c:'#4E5D8C', ref:'ag-inv'}
+ {n:'Demand Mapping',  type:'Coordinator', o:'EM', items:24, st:'draft', i:'ti-target-arrow', c:'#8A6A2A', ref:'ag-dm', go:'agent-demand-mapping.html'},
+ {n:'Woodland Carbon', type:'Ecosystem service', o:'SO', items:31, st:'draft', es:'wcc', ref:'ag-wcc', go:'agent-woodland-carbon.html'},
+ {n:'BNG',             type:'Ecosystem service', o:'EM', items:18, st:'plan', es:'bng', go:'agent-bng.html'},
+ {n:'Peatland Carbon', type:'Ecosystem service', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat', go:'agent-peatland-carbon.html'},
+ {n:'Nutrient',        type:'Ecosystem service', o:'TBC',items:9,  st:'plan', es:'nut', go:'agent-nutrient.html'},
+ {n:'Flood',           type:'Ecosystem service', o:null, items:4,  st:'plan', es:'nfm', go:'agent-flood.html'},
+ {n:'Blueprint',       type:'Process', o:'AN', items:8,  st:'draft', i:'ti-route', c:'#8A6A2A', go:'agent-blueprint.html'}
 ];
 var AST={live:['live','Live'],draft:['draft','Draft'],plan:['plan','Planned']};
 
 /* ── blueprints ── */
 var BPS=[
  {n:'Customer Demand Mapping', d:'adv', dn:'Advisory', ph:'Discover', o:'EM', runs:5, st:'live', go:'deliverable-sketch-v8.html'},
- {n:'Investor Q&A Log',        d:'cap', dn:'Capital',  ph:'Build',    o:'TBC',runs:3, st:'sand', go:'investor-qa-log-canvas-prototype.html'},
- {n:'Tender to Bid',           d:'trd', dn:'Trade',    ph:'Plan',     o:'AL', runs:1, st:'sand', go:'tender-to-bid-canvas-prototype.html'},
+ {n:'Investor Q&A Log',        d:'cap', dn:'Capital',  ph:'Build',    o:'TBC',runs:3, st:'sand'},
+ {n:'Tender to Bid',           d:'trd', dn:'Trade',    ph:'Plan',     o:'AL', runs:1, st:'sand'},
  {n:'Blended Finance Plan',    d:'adv', dn:'Advisory', ph:'Plan',     o:'EM', runs:0, st:'draft'},
  {n:'Financial Model',         d:'cap', dn:'Capital',  ph:'Plan',     o:'TBC',runs:0, st:'draft'},
  {n:'Market Readiness',        d:'trd', dn:'Trade',    ph:'Discover', o:'AL', runs:0, st:'draft'}
@@ -479,7 +478,7 @@ function totals(){
 }
 function paintChip(){
   var x=totals(), out=SHELVES.reduce(function(a,s){return a+s.h[2]},0);
-  document.getElementById('hchip').innerHTML=gyChip(x.t+' items · '+x.pc+'% checked',
+  return; gyChip(x.t+' items · '+x.pc+'% checked',
     out+' out of date · last write-back today 09:12 from the Upper Dee demand map', out?'stale':'');
 }
 var ADD=[
@@ -490,22 +489,7 @@ var ADD=[
  ['ti-checklist','Eval set','New eval set'],
  ['ti-repeat','Lesson','New lesson']
 ];
-var BAR=gyBar('abar',{
-  search:{placeholder:'Search the Hive Mind', oninput:function(v){Q=v.toLowerCase(); if(v) showTab('library'); renderLib();}},
-  filters:[
-    ['Shelf',[['ti-circle-dot','All shelves','all']].concat(SHELVES.map(function(s){return [s.i,s.n,s.k]}))],
-    ['Status',[['ti-circle-dot','Any status','all'],['ti-circle-check','Checked','ok'],['ti-pencil','Draft','draft'],['ti-clock-exclamation','Out of date','bad']]],
-    ['Owner',[['ti-circle-dot','Anyone','all'],['ti-user','You','CC'],['ti-user-question','No owner','none']]]
-  ],
-  actions:[
-    ['ti-folder','Open Agents folder','The Agents folder sits next to the prototype in Great Yellow - AI'],
-    ['ti-file-export','Export checked items as skills','Exports every checked item as Agent Skills files'],
-    '-',
-    ['ti-history','Audit log','go:audit-log.html']
-  ],
-  primary:{icon:'ti-plus', label:'Add', onclick:function(b){ gyMenu(b, ADD); }},
-  onfilter:function(){ showTab('library'); renderLib(); }
-});
+var BAR={filter:{},set:function(k,v){this.filter[k]=v;}};
 var Q='';
 
 /* ── tabs ── */
@@ -513,12 +497,10 @@ function showTab(v){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on', t.getAttribute('data-v')===v)});
   document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('on', s.id==='v-'+v)});
 }
-document.getElementById('tabs').addEventListener('click',function(e){var t=e.target.closest('.tab'); if(t) showTab(t.getAttribute('data-v'));});
+document.getElementById('tabs').addEventListener('click',function(e){var t=e.target.closest('.tab'); if(t){ BAR.filter={}; renderLib(); showTab(t.getAttribute('data-v')); }});
 function openShelf(k){ BAR.set('Shelf',k); showTab('library'); renderLib(); }
 
 /* ── ask ── scripted answers with provenance */
-var SUGG=['What does a WCC unit sell for?','Average BNG unit price','Who buys peatland carbon?'];
-document.getElementById('sugg').innerHTML=SUGG.map(function(s){return '<span onclick="askQ(\''+s.replace(/'/g,"\\'")+'\')">'+s+'</span>'}).join('');
 function ask(e){ e.preventDefault(); var v=document.getElementById('askIn').value.trim(); if(v) askQ(v); }
 function askQ(q){
   document.getElementById('askIn').value=q;
@@ -546,7 +528,7 @@ function askQ(q){
 }
 
 /* ── review ── */
-var OPEN='r1';
+var OPEN=null;
 function reviewHtml(r){
   return '<div class="it k-'+r.k+(OPEN===r.id?' open':'')+'" data-id="'+r.id+'">'
     +'<div class="ih" onclick="toggleRev(\''+r.id+'\')"><i class="ti '+r.i+' ic"></i><span class="t">'+r.t+'</span>'
@@ -603,16 +585,17 @@ function renderShelves(){
 /* ── agents and blueprints ── */
 function renderAgents(){
   document.getElementById('agN').textContent=AGENTS.length;
-  var cols='minmax(0,1.6fr) 1.2fr 1.4fr 80px 90px';
+  var cols='minmax(0,1.6fr) 1.2fr 1.4fr 80px 90px 44px';
   document.getElementById('agents').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
-    +'<div class="gyhd"><span>Agent</span><span>Kind</span><span>Manager</span><span class="num">Items</span><span>Status</span></div>'
+    +'<div class="gyhd"><span>Agent</span><span>Kind</span><span>Manager</span><span class="num">Items</span><span>Status</span><span></span></div>'
     +AGENTS.map(function(a,i){
       var e=a.es&&window.GY_ES&&GY_ES[a.es];
       var face=e?'<span class="aface '+e.cls+'"><i class="ti '+e.icon+'"></i></span>':'<span class="aface" style="--fc:'+a.c+'"><i class="ti '+a.i+'"></i></span>';
       var s=AST[a.st];
-      return '<div class="gyrow" style="cursor:pointer" onclick="'+(a.ref?'openItem(\''+a.ref+'\')':'toast(\''+a.n+' agent: definition not written yet\')')+'">'
+      return '<div class="gyrow" style="cursor:pointer" onclick="'+(a.go?'location.href=\''+a.go+'\'':a.ref?'openItem(\''+a.ref+'\')':'toast(\''+a.n+' agent: definition not written yet\')')+'">'
         +'<span class="nmc">'+face+'<span class="nm">'+a.n+'</span></span><span class="mut">'+a.type+'</span>'+who(a.o)
-        +'<span class="num">'+a.items+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
+        +'<span class="num">'+a.items+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span>'
+        +(a.go?'<span><button class="agtalk" title="Talk to the '+a.n+' agent" onclick="event.stopPropagation();location.href=\''+a.go+'?chat=1\'"><i class="ti ti-message-circle"></i></button></span>':'<span></span>')+'</div>';
     }).join('')+'</div>';
 }
 function renderBps(){
@@ -647,7 +630,7 @@ function renderReads(){
   }).join('');
 }
 function renderLog(){
-  document.getElementById('log').innerHTML=LOG.slice(0,6).map(function(l){return '<div class="le"><span class="lt">'+l[0]+'</span><span class="lx">'+l[1]+'</span></div>'}).join('');
+  document.getElementById('log').innerHTML=LOG.map(function(l){return '<div class="le"><span class="lt">'+l[0]+'</span><span class="lx">'+l[1]+'</span></div>'}).join('');
 }
 
 /* ── library ── */
@@ -687,6 +670,7 @@ function renderRules(){
 /* ── drawer previewer ── */
 function openItem(id){
   var x=item(id); if(!x) return;
+  if(x.go){ location.href=x.go; return; }
   var s=shelf(x.s);
   var rv=REVIEW.filter(function(r){return r.ref===id})[0];
   document.getElementById('bdr').innerHTML='<div class="bdh"><span class="si" style="width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:'+s.bg+';color:'+s.c+';flex:none"><i class="ti '+s.i+'"></i></span><h3>'+x.n+'</h3><button class="x" onclick="closeItem()" aria-label="Close"><i class="ti ti-x"></i></button></div>'

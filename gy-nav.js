@@ -91,7 +91,7 @@ window.gyCartoTiles = function(style){
     ['lead-demand-mapping','Lead Demand mapping',"location.href='lead-demand-mapping-canvas.html'"],
     ['market-readiness','Market Readiness',"gyToast('Market Readiness Assessment is not in this prototype yet')"],
     ['financial-model','Financial Model',"gyToast('Financial Model is not in this prototype yet')"],
-    ['commercial-strategy','Commercial Strategy',"gyToast('Commercial Strategy is not in this prototype yet')"]
+    ['commercial-strategy','Commercial Strategy',"location.href='commercial-strategy-v8.html'"]
   ];
   var delActive = ['customer-demand-v2','demand-mapping','demand-textview','lead-mapping','upper-dee-mapping','upper-dee-executors','workflow-experiment-mapping','investor-qa','tender-to-bid','lead-demand-mapping','market-readiness','financial-model','commercial-strategy'].indexOf(active)>=0;
   /* Workflows accordion: open (respecting stored state) only when on a workflow page;
@@ -258,7 +258,7 @@ window.gyCartoTiles = function(style){
     +'<div class="gy-grp">Manage</div>'
     +ITEM_INV_PF
     +'<div class="sitem'+on('pf-deals')+'"'+(active==='pf-deals'?'':' onclick="location.href=\'deals.html\'"')+'><i class="ti ti-businessplan"></i> Deals</div>'
-    +'<div class="sitem" onclick="gyToast(\'Deliverables: cross-programme, portfolio-level deliverables live here\')"><i class="ti ti-hierarchy-2"></i> Deliverables</div>'
+    +'<div class="sitem'+on('pf-deliverables')+'"'+(active==='pf-deliverables'?'':' onclick="location.href=\'deliverables-portfolio.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables</div>'
     +'<div class="gy-grp">Intelligence</div>'
     +ITEM_MARKETMAP
     +RECORDS;
@@ -290,7 +290,7 @@ window.gyCartoTiles = function(style){
   var mode = 'advanced';
   try{ mode = localStorage.getItem('gyMode') || 'advanced'; }catch(e){}
   var invActive = (active && active.indexOf('inv-')===0) || active==='pf-inventory';
-  if(cfg.scope==='portfolio' || active==='market-map' || active==='outcome-engine' || active==='pf-overview' || active==='pf-reports' || invActive) scope='portfolio';
+  if(cfg.scope==='portfolio' || active==='market-map' || active==='outcome-engine' || active==='pf-overview' || active==='pf-reports' || active==='pf-deliverables' || invActive) scope='portfolio';
   else if(cfg.scope==='programme') scope='programme';
   else if(active && active!=='library' && active!=='home' && active!=='inbox' && scope==='portfolio') scope='programme';
   var meta = scopeMeta(scope);
@@ -782,6 +782,7 @@ window.gyCartoTiles = function(style){
         +'<div class="gy-pk" onclick="event.stopPropagation();gySetMode(\'advanced\')"><span>North Star version</span>'+(mode==='advanced'?'<i class="ti ti-check gy-ck"></i>':'')+'</div>'
         +'<div class="gy-pk" onclick="event.stopPropagation();gySetMode(\'basic\')"><span>Simple version</span>'+(mode==='basic'?'<i class="ti ti-check gy-ck"></i>':'')+'</div>'
         +'<div class="gy-pkdiv"></div>'
+        +'<div class="gy-pk" onclick="event.stopPropagation();location.href=\'updates.html\'"><span>Product updates</span><i class="ti ti-arrow-up-right gy-ck gy-go"></i></div>'
         +'<div class="gy-pk" onclick="event.stopPropagation();location.href=\'design-system.html\'"><span>Design system</span><i class="ti ti-arrow-up-right gy-ck gy-go"></i></div>'
       +'</div>'
       +'<div class="gy-usmenu" id="gyUsMenu" style="display:none">'
@@ -993,8 +994,7 @@ window.gyCartoTiles = function(style){
     ['Switch workspace','ti-topology-star-3','Spains Hall','Workspace','toast:Spains Hall is not in this prototype yet'],
     ['Switch workspace','ti-topology-star-3','Boothby','Workspace','toast:Boothby is not in this prototype yet'],
 
-    ['Records','ti-hierarchy-2','Evenlode · Customer Demand Mapping','Workflow','go:demand-mapping-canvas-prototype.html'],
-    ['Records','ti-file-search','Tender to Bid','Workflow','go:tender-to-bid-canvas-prototype.html'],
+    ['Records','ti-hierarchy-2','Evenlode · Customer Demand Mapping','Deliverable','go:deliverable-sketch-v8.html'],
     ['Records','ti-note','Evenlode · Kick-off call notes','Meeting note','go:meeting-note-kickoff.html'],
     ['Records','ti-packages','Denton Reserve · BNG units','Inventory','go:inventory-denton-reserve.html'],
     ['Records','ti-packages','All BNG Portfolio','Inventory','go:inventory-bng-portfolio.html'],
@@ -1203,6 +1203,7 @@ window.gyCartoTiles = function(style){
     'Documents':'documents-overview.html',
     'Meeting notes':'meeting-notes.html',
     'Hive Mind':'hive-mind-v2.html',
+    'Agents':'hive-mind-v2.html',
     'Customer Demand Mapping':'demand-mapping-canvas-prototype.html',
     'Investor Q&A Log':'investor-qa-log-canvas-prototype.html'
   };
@@ -1213,11 +1214,19 @@ window.gyCartoTiles = function(style){
     'home.html':                        {alt:'none'},
     'home-v2.html':                     {alt:'none'},
     'design-system.html':               {alt:'none'},
+    'updates.html':                     {alt:'none'},
     'settings-connectors.html':         {alt:'none', trail:['Settings']},
     'connector.html':                   {alt:'none', trail:['Settings','Connectors']},
     'todos.html':                       {alt:'none'},
     'hive-mind-library.html':           {alt:'none'},
     'hive-mind-v2.html':                {alt:'none'},
+    'agent-blueprint.html':             {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-demand-mapping.html':         {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-woodland-carbon.html':        {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-bng.html':                    {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-peatland-carbon.html':        {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-nutrient.html':               {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-flood.html':                  {alt:'none', trail:['Hive Mind','Agents']},
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind','Rule books']},
     'es-rulebook.html':                 {alt:'none', trail:['Hive Mind','Rule books']},
     'carbon-rule-book.html':            {alt:'none', trail:['Hive Mind','Rule books']},
@@ -1231,6 +1240,7 @@ window.gyCartoTiles = function(style){
     'inventory-all.html':               {alt:'portfolio', trail:['Inventory']},
     'requirement.html':                 {alt:'portfolio', trail:['Inventory']},
     'deals.html':                       {alt:'portfolio'},
+    'deliverables-portfolio.html':      {alt:'portfolio'},
     'deal.html':                        {alt:'portfolio', trail:['Deals']},
     'review-deals.html':                {alt:'portfolio', trail:['Deals']},
     'audit-log.html':                   {alt:'portfolio'},
@@ -1240,6 +1250,7 @@ window.gyCartoTiles = function(style){
     'programme-overview.html':          {alt:'programme'},
     'inventory-overview.html':          {alt:'programme'},
     'inventory-overview-v2.html':       {alt:'programme'},
+    'inventory-overview-v3.html':       {alt:'programme'},
     'inventory-programme.html':         {alt:'programme', trail:['Inventory']},
     'inventory-bng-programme.html':     {alt:'programme', trail:['Inventory']},
     'inventory-wcc-programme.html':     {alt:'programme', trail:['Inventory']},
@@ -1259,6 +1270,7 @@ window.gyCartoTiles = function(style){
     'deliverable-sketch-v6.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-v7.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-v8.html': {alt:'programme', trail:['Deliverables']},
+    'commercial-strategy-v8.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-document.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-workflow.html': {alt:'programme', trail:['Deliverables']},
     'meeting-notes.html':               {alt:'programme'},

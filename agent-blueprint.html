@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blueprint agent &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+/* Shell CSS copied from deliverable-sketch-v8.html (8 Oct) so this page matches the Deliverable pages. */
+
+/* v4-chat, the same deliverable with the assistant in the lead.
+   Everything from the document view is still here; it has just swapped
+   places with the conversation. The document becomes one tab of a docked
+   panel, and the workflow shows up as the run log inside the thread. */
+
+/* This page is a place to work rather than a place to browse, so it opens
+   with the rail folded away and the path folded down to the name. Both are one
+   click from coming back, and the choice is remembered for this page only. */
+/* The folded path is two slashes and an ellipsis, quiet until you go near it.
+   Hovering names the path, clicking unfolds it in place. */
+.crmore{flex:none;border:none;background:none;padding:2px 2px;font-family:inherit;font-size:14px;
+  line-height:1;color:var(--ink3);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  transition:color .12s}
+.crmore .sl{color:var(--line2);transition:color .12s}
+.crmore .el{letter-spacing:.09em}
+.crmore:hover{color:var(--ink)}
+.crmore:hover .sl{color:var(--ink3)}
+.crmore.hide{display:none}
+.crtrail{display:none;align-items:center}
+.crtrail.on{display:inline-flex}
+.mainc{overflow:hidden;display:flex;flex-direction:column}
+.v5row{flex:1;display:flex;min-height:0}
+
+/* ── the thread, which is now the page ──────────────────────────────────── */
+.v5chat{position:relative;width:var(--chatw,400px);flex:none;min-width:0;display:flex;
+  flex-direction:column;background:var(--bg);border-right:1px solid var(--line)}
+body.pclosed .v5chat{display:none}
+@media(max-width:1100px){.v5chat{width:min(var(--chatw,400px),360px)}}
+/* Drag the edge to trade width between the assistant and the document. The
+   handle is the border until you reach for it. */
+.v5grip{position:absolute;top:0;bottom:0;right:-3px;width:7px;cursor:col-resize;z-index:6}
+.v5grip:after{content:'';position:absolute;top:0;bottom:0;left:2px;width:3px;border-radius:2px;
+  background:transparent;transition:background .12s}
+.v5grip:hover:after,body.dragging .v5grip:after{background:var(--line2)}
+body.dragging{cursor:col-resize;user-select:none}
+.v5log{flex:1;overflow:auto;padding:22px 22px 6px}
+.v5in{max-width:none}
+
+.v5chead{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 12px 11px 22px;border-bottom:1px solid var(--line)}
+.v5on{flex:1;min-width:0;display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5on .ti{font-size:17px;color:var(--blued)}
+.v5cx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.v5cx:hover{background:var(--graybg);color:var(--ink)}
+.v5on .ti{font-size:15px}
+.v5on b{font-weight:500;color:var(--ink2)}
+
+.v5turn{margin-bottom:30px}
+.v5you{background:#F6EFE2;border-radius:16px 16px 5px 16px;padding:12px 15px;font-size:15px;line-height:1.5;
+  margin-left:auto;max-width:90%;width:fit-content}
+.v5say{font-size:15px;line-height:1.62;color:var(--ink);margin:13px 0}
+.v5say b{font-weight:600}
+
+/* what it did, in the order it did it */
+.v5step{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:14px;color:var(--ink2)}
+.v5step .bx{width:15px;height:15px;border-radius:4px;flex:none;margin-top:3px;background:var(--greend);position:relative}
+.v5step .bx:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5step .bx.run{background:none;border:1.5px solid var(--amber)}
+.v5step .bx.run:after{display:none}
+.v5step div{min-width:0}
+.v5step em{display:block;font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:12px;
+  color:var(--ink3);margin-top:3px}
+.v5step .w{color:var(--ink)}
+
+/* something it made */
+.v5made{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:14px;
+  padding:13px 15px;margin:14px 0;background:var(--card);cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.v5made:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.06)}
+.v5mt{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5mn{flex:1;min-width:0}
+.v5mn b{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5mn span{font-size:13.5px;color:var(--ink3)}
+.v5made .ti.go{font-size:17px;color:var(--ink3);flex:none}
+
+/* The one thing to do next, in the assistant column, as a card with a single
+   button. Automated steps run themselves; a person's step is just marked. */
+/* The run should look like it is happening. Tasks rise in one at a time, the
+   in-flight marker spins, the live step's dot breathes, the chapter bars slide
+   and a freshly written field flashes once. */
+@keyframes gyspin{to{transform:rotate(360deg)}}
+@keyframes gyrise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes gypip{0%,100%{box-shadow:0 0 0 3px var(--amberbg)}50%{box-shadow:0 0 0 7px rgba(239,159,39,.20)}}
+@keyframes gyflash{0%{background:#FEF6D8;border-color:#E9D79A}100%{background:var(--card);border-color:var(--line)}}
+@keyframes gyglow{0%,100%{box-shadow:0 2px 10px rgba(31,31,29,.05)}50%{box-shadow:0 2px 18px rgba(24,95,165,.18)}}
+.gyspin{animation:gyspin .9s linear infinite;display:inline-block}
+.v5step.rise{animation:gyrise .22s ease both}
+.v5wf.cur .dot,.dlpip.live{animation:gypip 1.5s ease-in-out infinite}
+.v5inp.just{animation:gyflash 1.2s ease-out}
+.v5tw.just,.v5win.just{animation:gyflash 1.2s ease-out}
+.dlsgb i{transition:width .45s ease}
+.v5rc.live{animation:gyglow 1.6s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+  .gyspin,.v5step.rise,.v5wf.cur .dot,.dlpip.live,.v5inp.just,.v5rc.live{animation:none}
+}
+.v5rc{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:16px 17px;
+  margin-top:8px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5rch{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5rch .ti{font-size:17px;color:var(--blued);flex:none}
+.v5rcb{font-size:14px;line-height:1.55;color:var(--ink2);margin-top:9px}
+.v5rcw{font-size:12.5px;color:var(--ink3);margin-top:9px;display:flex;align-items:center;gap:7px}
+.v5rcw .dlav{width:18px;height:18px;font-size:8.5px}
+.v5go{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;
+  border-radius:12px;padding:11px 16px;margin-top:14px;font-family:inherit;font-size:14.5px;
+  font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5go.sec{background:var(--card);color:var(--ink);border:1px solid var(--line2)}
+.v5go .ti{font-size:16px}
+.v5pl{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5pl .ti{font-size:15px}
+.v5sug{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.v5sug button{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer}
+.v5sug button:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* ── composer ───────────────────────────────────────────────────────────── */
+.v5comp{flex:none;padding:10px 22px 14px;position:relative}
+.v8down{position:absolute;left:50%;top:-50px;width:40px;height:40px;margin-left:-20px;border-radius:50%;
+  border:1px solid var(--line2);background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(20,18,12,.12);cursor:pointer;opacity:0;transform:translateY(6px);pointer-events:none;
+  transition:opacity .15s,transform .15s;z-index:3}
+.v8down.on{opacity:1;transform:none;pointer-events:auto}
+.v8down:hover{background:var(--graybg)}
+.v8down .ti{font-size:19px}
+.v5box{max-width:none;border:1px solid var(--line2);border-radius:18px;background:var(--card);
+  padding:14px 16px 11px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5box .q{font-size:14.5px;color:var(--ink3);padding-bottom:11px}
+.v5tools{display:flex;align-items:center;gap:9px}
+.v5tb{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:none;border-radius:999px;
+  padding:6px 12px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.v5tb:hover{border-color:var(--line2);color:var(--ink)}
+.v5send{margin-left:auto;width:34px;height:34px;border-radius:11px;border:none;background:var(--dark);color:#fff;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+
+/* ── the docked panel, tabs across the top ──────────────────────────────── */
+.v5panel{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:var(--card)}
+/* A quiet pair of icons in the panel's top corner: the same sixteen steps as
+   a list, or as the canvas they live on. It floats in the body's top padding
+   so it stays put while the list scrolls under it. */
+.v5vt{position:absolute;top:13px;right:16px;z-index:5;display:flex;gap:2px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px;box-shadow:0 1px 4px rgba(31,31,29,.05)}
+.v5vt.hide{display:none}
+.v5vb{width:29px;height:26px;border:none;background:none;border-radius:8px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .12s,color .12s}
+.v5vb:hover{background:var(--graybg);color:var(--ink2)}
+.v5vb.on{background:var(--graybg);color:var(--ink)}
+/* The second bar spans the whole page, above the three columns, so its width
+   never moves when a column opens or closes. Everything the buttons open ,
+   the assistant on the left, the document in the middle, a drawer on the
+   right, appears underneath it. */
+.v5tabs{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.v5tabgrp{flex:1;min-width:0;display:flex;align-items:center;gap:3px;padding-right:4px;overflow-x:auto;scrollbar-width:none}
+.v5tabgrp::-webkit-scrollbar{display:none}
+.v5tab{position:relative;display:inline-flex;align-items:center;gap:6px;border:none;background:none;
+  border-radius:10px;padding:7px 10px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.v5tab:hover{background:var(--graybg)}
+.v5tab.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5tab .ti{font-size:16px;color:var(--ink3)}
+.v5tab.on .ti{color:var(--ink)}
+.v5tab b{min-width:16px;height:16px;border-radius:999px;background:var(--graybg);color:var(--grayd);
+  font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.v5tab.chat{flex:none;order:-2;border:1px solid var(--line)}
+.v5tdiv{order:-1;flex:none;width:1px;align-self:stretch;background:var(--line);margin:2px 2px 2px 0}
+.v5tab.chat .ti{color:var(--blued)}
+.v5tab.chat.on{background:var(--bluebg);border-color:#CBE1F5;color:var(--blued)}
+.v5tab.chat.on .ti{color:var(--blued)}
+/* the right-hand drawer: Outputs, items and agents open here. The agent on
+   the left stays as it is when a drawer opens, and vice versa (8 Oct). */
+.v5dr{width:360px;flex:none;display:flex;flex-direction:column;min-width:0;
+  background:var(--bg);border-left:1px solid var(--line)}
+.v5dr.hide{display:none}
+.v5drh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;
+  padding:11px 12px 11px 18px;border-bottom:1px solid var(--line)}
+.v5drt{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5dri{width:30px;height:30px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5dri .ti{font-size:16px}
+.v5dri.hide{display:none}
+.v5drx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+.v5drx:hover{background:var(--graybg);color:var(--ink)}
+.v5drb{flex:1;overflow:auto;padding:20px 20px 40px;font-size:14px;line-height:1.55}
+.v5drgrp{flex:none;display:flex;align-items:center;gap:3px;margin-left:auto}
+.v5tab.dr.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5body{flex:1;overflow:auto;padding:46px 40px 110px}
+.v5bin{max-width:780px;margin:0 auto}
+
+/* the document, living inside the panel */
+.v5dt{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  padding-bottom:22px;border-bottom:1px solid var(--line)}
+
+/* A chapter is a block of fields with one heading. The guidance that used to
+   sit in a grey box under the heading now hangs off the i beside it, so the
+   page is fields and nothing else. */
+.v5sec{margin-top:54px}
+.v5ch{display:flex;align-items:center;gap:11px;margin-bottom:30px}
+.v5chn{width:30px;height:30px;border-radius:9px;background:var(--dark);color:var(--yellow);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.v5cht{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.v5ch .gyinfo{margin-left:1px}
+
+/* One field: a label row, then the field itself. Filled fields read as a
+   completed input, unwritten ones as an empty one, so the document looks like
+   something with blanks in it rather than prose with gaps. */
+.v5f{margin-bottom:34px}
+.v5f:last-child{margin-bottom:0}
+.v5flab{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-height:20px}
+.v5fl{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.v5inp{border:1px solid var(--line);border-radius:12px;background:var(--card);
+  padding:16px 18px;font-size:16.5px;line-height:1.6;color:var(--ink);outline:none;
+  transition:border-color .12s,box-shadow .12s,background .12s}
+.v5inp:hover{border-color:var(--line2);box-shadow:0 2px 8px rgba(31,31,29,.04)}
+.v5inp:focus{background:var(--card);border-style:solid;border-color:#9FC4E4;
+  box-shadow:0 0 0 3px rgba(24,95,165,.10)}
+/* An unwritten field is an empty field with a hint in it, so the first thing
+   you can do to it is type. The dashed frame clears itself on the first
+   keystroke, along with the chip that said it was not written yet. */
+.v5inp.empty{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;min-height:78px;
+  font-size:14.5px;color:var(--ink3)}
+.v5inp.empty:before{content:attr(data-ph);color:var(--ink3)}
+.v5inp.empty:focus:before{opacity:.45}
+.v5inp.parked{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;
+  font-size:14.5px;line-height:1.6;color:var(--ink3)}
+.v5tbl td[contenteditable]{outline:none}
+.v5tbl td[contenteditable]:focus{background:#F4F8FC;box-shadow:inset 0 0 0 2px #9FC4E4}
+.v5dt[contenteditable]{outline:none}
+.v5dt[contenteditable]:focus{box-shadow:inset 0 0 0 2px #9FC4E4;border-radius:8px}
+
+/* Provenance did not go away, it went quiet: one dot, coloured by how much the
+   field can be trusted, tooltip on hover, click for the full record. */
+.v5dot{width:9px;height:9px;border-radius:50%;flex:none;cursor:pointer;
+  box-shadow:0 0 0 3px transparent;transition:box-shadow .12s}
+.v5dot:hover{box-shadow:0 0 0 3px rgba(31,31,29,.07)}
+.v5dot.ai{background:var(--blued)}
+.v5dot.ok{background:var(--greend)}
+/* Chapter 2 splits into lettered markets, each with a buyer table; chapter 3
+   is one wide table. Tables scroll inside their own frame so the page never
+   does. An empty cell is drawn as an empty cell, not as nothing, because in
+   the source those blanks are work that has not happened yet. */
+.v5sh{font-size:15.5px;font-weight:600;letter-spacing:-.01em;margin:34px 0 13px;color:var(--ink)}
+.v5sec .v5sh:first-of-type{margin-top:0}
+.v5tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.v5tbl{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5}
+.v5tbl th{text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:bottom}
+.v5tbl td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+/* Chapter 3 has seven columns. Squeezing them into the panel turns every cell
+   into a column of single words, so the table keeps its natural width and the
+   frame scrolls instead. */
+.v5tbl.wide{width:auto;min-width:1180px}
+.v5tbl.wide td,.v5tbl.wide th{min-width:150px}
+.v5tbl.wide td:nth-child(4),.v5tbl.wide td:nth-child(5){min-width:230px}
+.v5tbl tr:last-child td{border-bottom:none}
+.v5tbl td.k{color:var(--ink);font-weight:600;min-width:150px}
+.v5tbl td.mt{background:#FBF9F2}
+.v5note{font-size:13.5px;line-height:1.6;color:var(--ink3);margin-top:11px}
+.v5call{display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:15px 17px;
+  margin-top:18px;font-size:14.5px;line-height:1.6;color:var(--ink2);background:var(--card)}
+.v5call > .ti{font-size:16px;color:var(--ink3);flex:none;margin-top:3px}
+.v5call ul{margin:0;padding-left:17px}
+.v5call li{margin:5px 0}
+.v5call b{color:var(--ink)}
+.v5win{background:#FEFAE6;border:1px solid #F1E3A6;border-radius:14px;padding:22px 24px}
+.v5win p{font-size:16.5px;line-height:1.62;color:var(--ink)}
+.v5win ul{margin:15px 0 0;padding-left:19px;font-size:15px;line-height:1.62;color:var(--ink2)}
+.v5win li{margin:8px 0}
+.v5win .gate{margin-top:17px;padding-top:15px;border-top:1px solid #F1E3A6;font-size:15px;color:var(--ink)}
+.v5txt{font-size:17px;line-height:1.62;color:var(--ink)}
+.v5pv{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--ink3)}
+.v5pv b{font-weight:400;color:var(--ink2)}
+.v5cf{font-size:12px;font-weight:500;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.v5cf.ai{background:var(--bluebg);color:var(--blued)}
+.v5cf.ok{background:var(--greenbg);color:var(--greend)}
+.v5cf.none{background:var(--amberbg);color:var(--amberd);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.v5cf.click{cursor:pointer}
+.v5cf.click:hover{filter:brightness(.97)}
+
+/* ── the Home tab ─────────────────────────────────────────────────────────
+   The v3 deliverable layout, lifted into the panel: progress as one reading,
+   the document and the workflow as real previews of themselves, then every
+   object this deliverable is wired to, grouped by the verb. Its .dl* names
+   never meet the .v5* ones, so it came across unchanged. */
+.dlav{width:30px;height:30px;border-radius:50%;color:#fff;font-size:11.5px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+/* ── progress, the one big reading on the page ── */
+/* The workflow bar carries the same title bar as the Document block, and
+   leads with the step in flight rather than with a big total. Smaller, but
+   the amber pip and the live step do the work the 28px number used to. */
+.dlpb{margin-bottom:18px;padding:11px 16px 13px}
+/* A ribbon, not a block: no title bar of its own, everything live on one
+   line, and four hairline bars under it. Two rows, about 70px. */
+.dlnow{display:flex;align-items:center;gap:9px;flex-wrap:nowrap;margin-bottom:11px;min-width:0}
+.dlnow > .ti{font-size:16px;color:#12684C;flex:none}
+.dlpip{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;
+  box-shadow:0 0 0 3px var(--amberbg);margin-left:3px}
+.dlnow .k{font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--amberd);flex:none;margin-right:1px}
+.dlnow .v{font-size:14px;font-weight:600;letter-spacing:-.01em;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlnow .w{margin-left:auto;font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:6px;
+  flex:none;white-space:nowrap}
+.dlnow .w .dlav{width:17px;height:17px;font-size:8px}
+.dlnow .c{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap;
+  padding-left:10px;margin-left:2px;border-left:1px solid var(--line)}
+.dlseg{display:flex;gap:6px}
+.dlsg{flex-basis:0;min-width:0}
+.dlsgb{height:5px;border-radius:999px;background:#F0EEE7;overflow:hidden;display:flex}
+.dlsgb i{display:block;height:100%}
+.dlsgb i.done{background:var(--greend)}
+.dlsgb i.cur{background:var(--yellow)}
+.dlsgl{display:flex;align-items:baseline;gap:5px;margin-top:6px;font-size:11px;color:var(--ink2);min-width:0}
+.dlsgl .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlsgl .c{color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
+.dlsg.off .dlsgl{color:var(--ink3)}
+
+/* ── the two objects the deliverable really is ── */
+.dlhero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:980px){.dlhero{grid-template-columns:minmax(0,1fr)}}
+.dlcol{display:flex;flex-direction:column;gap:18px}
+
+.dlobj{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.dlobj:hover{border-color:var(--line2);box-shadow:0 4px 16px rgba(31,31,29,.08)}
+.dlohd{display:flex;align-items:center;gap:11px;padding:13px 15px}
+.dltile{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.dltile .ti{font-size:17px}
+.dlonm{flex:1 1 auto;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlkeb{width:28px;height:28px;flex:none;border:none;background:transparent;border-radius:8px;
+  color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.dlkeb:hover{background:var(--graybg);color:var(--ink)}
+.dloft{display:flex;align-items:center;gap:10px;padding:12px 15px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.dloft .r{margin-left:auto;color:var(--ink);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.dloft .r .ti{font-size:15px}
+
+/* the document, as a small true miniature of the editor page */
+.dlthumb{position:relative;height:414px;overflow:hidden;background:#F1EDE0;padding:16px 0 0;
+  display:flex;justify-content:center;align-items:flex-start;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dlpage{width:900px;flex:none;background:#fff;border-radius:4px 4px 0 0;padding:50px 64px;
+  box-shadow:0 3px 14px rgba(26,12,18,.12);transform:scale(.5);transform-origin:top center;
+  font-family:var(--serif);color:var(--ink);text-align:left}
+.dlthumb:after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(rgba(241,237,224,0),#F1EDE0)}
+.dlpage h1{font-size:38px;font-weight:500;letter-spacing:-.02em;margin-bottom:10px}
+.dlpage .by{font-family:var(--sans);font-size:15px;color:var(--ink3);margin-bottom:34px}
+.dlpage h2{font-size:25px;font-weight:500;letter-spacing:-.015em;margin:30px 0 12px}
+.dlpage h2:first-of-type{margin-top:0}
+.dlpage p{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:13px}
+.dlpage ul{margin:0 0 13px 22px}
+.dlpage li{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:7px}
+.dlpage table{width:100%;border-collapse:collapse;margin:0 0 15px;font-family:var(--sans);font-size:15.5px}
+.dlpage th{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1.5px solid var(--line2);padding:7px 10px 7px 0}
+.dlpage td{border-bottom:1px solid var(--line);padding:7px 10px 7px 0;color:#33272C}
+.dlpage .blank{font-family:var(--sans);font-size:15.5px;color:var(--ink3);font-style:italic}
+.dlpage .em{background:#FEF6D8;padding:1px 3px;border-radius:3px}
+
+/* the workflow, as a viewport onto the real canvas: one line of nodes that
+   runs off both edges, parked on the step you are actually on */
+.dlwf{position:relative;height:182px;overflow:hidden;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background-color:#FBFAF5;background-image:radial-gradient(circle,#E0DED6 1px,transparent 1px);background-size:13px 13px}
+.dlstrip{position:absolute;top:50%;transform:translateY(-50%);display:flex;align-items:center}
+.dlwn{width:104px;flex:none;background:#fff;border:1px solid var(--line);border-radius:11px;
+  padding:8px 9px 9px;box-shadow:0 1px 3px rgba(31,31,29,.06)}
+.dlwn .h{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.dlwn .ic{width:21px;height:21px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlwn .ic .ti{font-size:12px}
+.dlwn .n{font-size:9.5px;color:var(--ink3);font-variant-numeric:tabular-nums;margin-left:auto}
+.dlwn .t{font-size:11px;line-height:1.3;color:var(--ink);height:43px;overflow:hidden}
+.dlwn.pend{background:#FCFBF7;border-color:#EAE6DA}
+.dlwn.pend .ic{background:#F1EFE8;color:#C6C1B4}
+.dlwn.pend .t{color:var(--ink3)}
+.dlwn.cur{box-shadow:0 0 0 2.5px var(--yellow),0 3px 10px rgba(31,31,29,.10)}
+.dlwl{width:17px;height:2px;border-radius:1px;background:#D8D2C4;flex:none}
+.dlwl.pend{background:#EAE6DC}
+.dlwph{position:absolute;top:18px;font-size:10px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+
+/* to-dos */
+.dlcardb{padding:4px 17px 14px}
+/* In a narrow panel the count gives way before the block's name does. */
+.dlohd .n{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--ink3);
+  flex:0 5 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlohd .n.warn{color:var(--amberd)}
+.dltd{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dltd:first-of-type{border-top:none}
+.dltd .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dltd .d{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap}
+.dltd .d.warn{color:var(--amberd)}
+.dltd .dlav{width:21px;height:21px;font-size:9.5px;box-shadow:none}
+.dlmore{border:none;background:transparent;color:var(--ink2);font-family:inherit;font-size:13px;
+  cursor:pointer;padding:9px 0 0;display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);width:100%;margin-top:2px}
+.dlmore:hover{color:var(--ink)}
+
+/* ── related objects: the verb is the relationship, the noun is the type,
+      and each object is a tile whose width its own content decides ── */
+/* Everything the deliverable leans on, in one block rather than three
+   loose lists. The verb and the count came off the group headings: inside a
+   named block, the noun is enough. */
+.dlrun{margin-top:24px}
+.dlrunb{padding:2px 18px 20px}
+.dlg{padding:20px 0 2px;border-top:1px solid var(--line)}
+.dlg:first-child{border-top:none;padding-top:16px}
+.dlghd{margin-bottom:13px}
+.dlghd .t{font-family:var(--serif);font-size:17.5px;font-weight:500;letter-spacing:-.01em}
+/* One line per object, nothing but what it is. The group header already
+   says how many there are and how many need attention. */
+.dlgw{display:flex;flex-direction:column}
+.dlr{display:flex;align-items:center;gap:14px;padding:15px 2px;border-top:1px solid var(--line);
+  cursor:pointer;font-size:15px;transition:padding-left .12s}
+.dlr:first-child{border-top:none}
+.dlr:hover{padding-left:6px}
+.dlr .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlr .ic .ti{font-size:17px}
+.dlr .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlr .go{font-size:16px;color:var(--ink3);flex:none;opacity:0;transition:opacity .12s}
+.dlr:hover .go{opacity:1}
+.dlr.miss .nm{color:var(--ink3)}
+
+/* Documents are shown as documents: the same page preview as the main
+   thumbnail, at a size you can line four of up. */
+.dlfilm{display:flex;flex-wrap:wrap;gap:16px}
+.dlfile{width:146px;cursor:pointer}
+.dlfp{height:104px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden;
+  padding:13px 12px;transition:border-color .12s,box-shadow .12s}
+.dlfile:hover .dlfp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dlfp b{display:block;height:6px;border-radius:2px;background:#D9D4C6;width:72%;margin-bottom:9px}
+.dlfp i{display:block;height:4px;border-radius:2px;background:#EDEAE1;margin-bottom:6px}
+.dlfile.miss .dlfp{border-style:dashed;background:transparent;display:flex;align-items:center;
+  justify-content:center;color:var(--ink3);font-size:12.5px;text-align:center;padding:13px}
+.dlfn{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;min-width:0}
+.dlfn .ti{font-size:15px;flex:none;color:var(--ink3)}
+.dlfn .ti.pdf{color:#C0432C}
+.dlfn .ti.doc{color:#185FA5}
+.dlfn .ti.xls{color:#1C7A4E}
+.dlfn span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlfile.miss .dlfn span{color:var(--ink3)}
+.dltool{width:146px;cursor:pointer}
+.dltp{height:78px;border:1px solid var(--line);border-radius:10px;display:flex;
+  align-items:center;justify-content:center;transition:border-color .12s,box-shadow .12s}
+.dltp .ti{font-size:28px}
+.dltool:hover .dltp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dltn{margin-top:10px;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The document miniature and the object tiles want more room than a column
+   of prose does, so the Home tab widens the measure. */
+.v5bin.wide{max-width:1060px}
+
+/* the other tabs */
+.v5item{padding:13px 0;border-top:1px solid var(--line)}
+.v5item:first-child{border-top:none;padding-top:0}
+.v5who{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.v5who .v5av{width:22px;height:22px;font-size:9.5px}
+.v5who b{font-size:13.5px;font-weight:600}
+.v5who span{font-size:12.5px;color:var(--ink3);margin-left:auto}
+.v5sub{font-size:12.5px;color:var(--ink3);margin-bottom:5px}
+.v5srow{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line);min-width:0;font-size:14px}
+.v5srow:first-child{border-top:none;padding-top:0}
+.v5srow .ti{font-size:16px;color:var(--ink3);flex:none}
+.v5srow .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v5srow .s{flex:none;font-size:13px;color:var(--ink3);white-space:nowrap}
+.v5srow .s.warn{color:var(--amberd)}
+.v5srow .s.ok{color:var(--greend)}
+.v5box2{width:15px;height:15px;border-radius:4px;border:1.5px solid #B4B2A9;flex:none;margin-top:2px;background:#fff}
+.v5box2.on{background:#185FA5;border-color:#185FA5;position:relative}
+.v5box2.on:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5td{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.45}
+.v5td:first-child{border-top:none;padding-top:0}
+/* workflow tab */
+.v5wfc{display:flex;align-items:baseline;gap:10px;margin:22px 0 8px;font-size:12px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.v5wfc:first-child{margin-top:14px}
+.v5wfc{padding:0 10px}
+
+/* ── the step detail: what it is for, the tasks inside it, what it leaves ── */
+.v5sk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.v5swhat{font-size:15px;line-height:1.55;color:var(--ink);margin-bottom:22px}
+.v5tkb{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.v5tkr{position:relative;display:flex;gap:12px;padding:14px;border-top:1px solid var(--line)}
+.v5tkr:first-child{border-top:none}
+.v5tkr:before{content:'';position:absolute;left:25px;top:0;height:14px;width:1px;background:var(--line)}
+.v5tkr:after{content:'';position:absolute;left:25px;top:36px;bottom:0;width:1px;background:var(--line)}
+.v5tkr:first-child:before,.v5tkr:last-child:after{display:none}
+.v5tkn{position:relative;z-index:1;width:22px;height:22px;border-radius:50%;flex:none;background:var(--card);
+  border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v5tkc{min-width:0}
+.v5act{display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-size:11.5px;font-weight:500;
+  padding:3px 10px 3px 5px;margin-bottom:8px}
+.v5act.ai{background:var(--dark);color:#fff}
+.v5act.ai .ti{font-size:13px;color:var(--yellow)}
+.v5act.who{background:var(--graybg);color:var(--ink)}
+.v5act.who .dlav{width:17px;height:17px;font-size:8px}
+.v5tkt{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.4}
+.v5tkw{font-size:12.5px;color:var(--ink3);margin-top:5px}
+.v5aft{display:flex;gap:11px;background:var(--bluebg);border-radius:12px;padding:14px 16px;margin-top:20px;
+  font-size:13.5px;line-height:1.55;color:var(--blued)}
+.v5aft .ti{font-size:16px;flex:none;margin-top:1px}
+
+/* ── the canvas view ──────────────────────────────────────────────────────
+   Not a redrawing of the canvas: the canvas itself. gy-nav.js already reads
+   ?embed=1 and drops its own sidebar, top bar and collapse control, which is
+   what that flag exists for, so the page arrives as the world plus its own
+   floating pills and side panel. The panel goes full-bleed to receive it. */
+.v5body.bleed{padding:0;overflow:hidden}
+.v5body.bleed #pbody{max-width:none;margin:0;height:100%}
+.v5cvf{display:block;width:100%;height:100%;border:none;background:#FBFAF5}
+.v5wfc span{margin-left:auto;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400;color:var(--ink3)}
+/* A step is an object you can open, so the row behaves like one. */
+.v5wf{display:flex;align-items:center;gap:11px;padding:10px 10px;border-top:1px solid var(--line);
+  font-size:14.5px;cursor:pointer;transition:background .12s}
+.v5wf:hover{background:var(--graybg)}
+.v5wf.sel{background:var(--graybg)}
+.v5wf .ch{flex:none;font-size:15px;color:var(--ink3);opacity:0;transition:opacity .12s}
+.v5wf:hover .ch,.v5wf.sel .ch{opacity:1}
+.v5wf .dot{width:15px;height:15px;border-radius:50%;flex:none;border:1.5px solid var(--line2);position:relative}
+.v5wf.done .dot{background:var(--greend);border-color:var(--greend)}
+.v5wf.done .dot:after{content:'';position:absolute;left:50%;top:50%;width:3.5px;height:7px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5wf.cur .dot{border-color:var(--amber);border-width:4px}
+.v5wf .no{flex:none;font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums;width:26px}
+.v5wf .ti2{flex:1;min-width:0}
+.v5wf.pend .ti2,.v5wf.pend .no{color:var(--ink3)}
+.v5wf.cur .ti2{font-weight:600}
+.v5wf .now{flex:none;font-size:12px;font-weight:500;color:var(--amberd);background:var(--amberbg);
+  padding:2px 8px;border-radius:999px}
+.v5dl{display:flex;gap:12px;padding:8px 0;font-size:13.5px}
+.v5dl dt{flex:none;width:84px;color:var(--ink3)}
+.v5dl dd{flex:1;min-width:0}
+.v5back{display:inline-flex;align-items:center;gap:7px;border:none;background:none;font-family:inherit;
+  font-size:13.5px;color:var(--blued);cursor:pointer;padding:0;margin-bottom:14px}
+.v5back:hover{text-decoration:underline}
+
+/* ── header bits ────────────────────────────────────────────────────────── */
+.v5av{border-radius:50%;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;
+  justify-content:center;flex:none;width:30px;height:30px}
+.v5pile{display:flex;align-items:center}
+.v5pile .v5av{margin-left:-9px;box-shadow:0 0 0 2px var(--bg)}
+.v5pile .v5av:first-child{margin-left:0}
+.v5keb{width:34px;height:34px;flex:none;border:none;background:transparent;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px}
+.v5keb:hover{background:var(--graybg);color:var(--ink)}
+.v5keb.on{background:var(--graybg);color:var(--ink)}
+
+
+/* ── v8: the agent leads, the document fills in ────────────────────────────
+   Built on v4-chat. The tab bar keeps its structure, minus Home and To-dos,
+   plus Settings. The assistant toggle became the agent itself: an avatar
+   with a name, like a colleague on the team. */
+
+/* the agent, in the tab bar */
+.v8agt{order:-2;flex:none;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;padding:3px 13px 3px 3px;font-family:inherit;font-size:14px;
+  font-weight:600;color:var(--ink);cursor:pointer;transition:background .12s,border-color .12s}
+.v8agt:hover{border-color:var(--line2)}
+.v8agt.on{background:var(--graybg);border-color:var(--graybg)}
+.v8ava{position:relative;width:28px;height:28px;border-radius:50%;background:var(--dark);color:var(--yellow);
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8ava .ti{font-size:15px}
+.v8ava.lg{width:32px;height:32px}
+.v8ava.lg .ti{font-size:17px}
+.v8ava.sm{width:20px;height:20px}
+.v8ava.sm .ti{font-size:11px}
+.v8ava.live:after{content:'';position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 0 2px var(--card);animation:gypip2 1.5s ease-in-out infinite}
+@keyframes gypip2{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* chat header and the progress line under it */
+.v8ch{flex:none;display:flex;align-items:center;gap:11px;min-height:58px;padding:10px 14px 10px 20px;
+  border-bottom:1px solid var(--line);background:var(--bg)}
+.v8chn{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v8prog{flex:none;padding:12px 20px 13px;border-bottom:1px solid var(--line);background:var(--bg)}
+.v8pt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.v8pt b{color:var(--ink);font-weight:600}
+.v8pt .c{margin-left:auto;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v8bar{display:flex;gap:4px}
+.v8bar span{height:5px;border-radius:3px;background:var(--line);overflow:hidden;position:relative}
+.v8bar span i{position:absolute;left:0;top:0;bottom:0;background:var(--greend);transition:width .45s ease}
+.v8bar span em{position:absolute;top:0;bottom:0;background:var(--yellow)}
+
+/* the thread */
+.v8lab{display:flex;align-items:center;gap:10px;margin:26px 0 4px;font-family:ui-monospace,Menlo,monospace;
+  font-size:11.5px;letter-spacing:.04em;color:var(--ink3);text-transform:uppercase}
+.v8lab:after{content:'';flex:1;height:1px;background:var(--line)}
+.v8lab:first-child{margin-top:0}
+.v8tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--sans);font-size:11.5px;font-style:normal;
+  border-radius:6px;padding:1px 7px;margin-right:6px;vertical-align:1px}
+.v8tag .ti{font-size:12px}
+.v8tag.tool{background:var(--graybg);color:#766B62}
+.v8tag.conn{background:var(--bluebg);color:var(--blued)}
+.v8tag.know{border:1px dashed var(--line2);color:var(--ink2)}
+.v8them{margin:16px 0}
+.v8them .who{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:7px}
+.v8them .who .dlav{width:22px;height:22px;font-size:9px}
+.v8them .bub{background:var(--card);border:1px solid var(--line);border-radius:5px 16px 16px 16px;
+  padding:11px 14px;font-size:14.5px;line-height:1.55}
+.v5you{margin-left:40px}
+
+/* a question from the agent */
+.v8ask{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:16px 17px;margin:14px 0;
+  box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v8ask .q{font-size:15px;line-height:1.55}
+.v8opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.v8opt{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:8px 15px;
+  font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer}
+.v8opt:hover{border-color:var(--ink3)}
+.v8opt.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.v8opt.pri:hover{background:var(--blued);border-color:var(--blued)}
+
+/* a decision: its own shape, its own colour, a named decider */
+.v8dec{border:1px solid #E9D79A;background:#FEFAE6;border-radius:16px;padding:16px 17px;margin:14px 0}
+.v8dh{display:flex;align-items:center;gap:11px}
+.v8dia{width:22px;height:22px;border-radius:5px;background:var(--dark);transform:rotate(45deg);flex:none;
+  display:inline-flex;align-items:center;justify-content:center;margin:0 3px}
+.v8dia .ti{transform:rotate(-45deg);color:var(--yellow);font-size:13px}
+.v8dk{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--amberd)}
+.v8dq{font-family:var(--serif);font-size:20px;line-height:1.25;letter-spacing:-.01em;margin:12px 0 12px}
+.v8rec{display:flex;gap:9px;background:var(--card);border:1px solid #F1E3A6;border-radius:11px;padding:10px 12px;
+  font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.v8rec b{color:var(--ink)}
+.v8by{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink3);margin-top:12px}
+.v8by .dlav{width:18px;height:18px;font-size:8px}
+.v8dopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.v8dopt{border:1px solid #E2D08C;background:var(--card);border-radius:12px;padding:11px 12px;font-family:inherit;
+  font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px}
+.v8dopt .ti{font-size:16px;flex:none}
+.v8dopt:hover{border-color:var(--amberd)}
+.v8dopt.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.v8dopt.pri:hover{border-color:var(--blued);background:var(--blued)}
+.v8dout{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;flex-wrap:wrap}
+.v8dout .ok{display:inline-flex;align-items:center;gap:6px;background:var(--greenbg);color:var(--greend);
+  border-radius:999px;padding:4px 11px;font-weight:600;font-size:13.5px}
+.v8dout .m{color:var(--ink3);font-size:13px}
+
+/* waiting on a person */
+.v8wait{border:1px dashed var(--line2);border-radius:14px;padding:13px 15px;margin:14px 0;background:var(--bg)}
+.v8wait .h{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.5}
+.v8wait .h .dlav{width:24px;height:24px;font-size:9.5px}
+.v8wait .v8opts{margin-top:11px}
+
+/* asking an Ecosystem Service agent */
+.v8con{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px;margin:9px 0;cursor:pointer}
+.v8con:hover{border-color:var(--line2)}
+.v8con.rise{animation:gyrise .22s ease both}
+.v8conh{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600}
+.v8conh .s{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--ink3);display:inline-flex;align-items:center;gap:5px}
+.v8conb{font-size:13.5px;line-height:1.5;color:var(--ink2);margin-top:7px}
+.v8conm{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3);margin-top:8px}
+.v8conm .dlav{width:16px;height:16px;font-size:7px}
+.v8esa{width:26px;height:26px;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8esa .ti{font-size:14px}
+.v8esa.sm{width:18px;height:18px}
+.v8esa.sm .ti{font-size:10px}
+
+/* confidence, three words only */
+.v8cf{display:inline-flex;align-items:center;font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.v8cf.lo{background:var(--amberbg);color:var(--amberd)}
+.v8cf.ind{background:var(--bluebg);color:var(--blued)}
+.v8cf.val{background:var(--greenbg);color:var(--greend)}
+
+/* the document, before and after */
+.v8ghost{border:1.5px dashed #DFD8C6;border-radius:14px;background:#FBF9F2;padding:18px 20px}
+.v8ghost .l{font-size:13.5px;color:var(--ink3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.v8ghost .l .ti{font-size:15px}
+.v8ghost i{display:block;height:9px;border-radius:5px;background:#EEE8D8;margin-top:9px}
+.v8sec{scroll-margin-top:24px}
+.v8es{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:16px;overflow:hidden}
+.v8es.just{animation:gyflash 1.2s ease-out}
+.v8esh{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.v8esh .t{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.v8esh .t .ti{font-size:18px}
+.v8esh .n{flex:1;min-width:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.v8achip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:3px 11px 3px 3px;
+  background:var(--card);font-family:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;flex:none;white-space:nowrap}
+.v8achip:hover{border-color:var(--line2);color:var(--ink)}
+.v8esd{display:grid;grid-template-columns:150px minmax(0,1fr);gap:0;margin:0;padding:4px 16px}
+.v8esd dt{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:10px 0;
+  border-bottom:1px solid var(--line)}
+.v8esd dd{margin:0;font-size:14px;line-height:1.5;color:var(--ink);padding:9px 0;border-bottom:1px solid var(--line)}
+.v8esd dd.mt{color:var(--ink3)}
+.v8esd dt:nth-last-child(2),.v8esd dd:last-child{border-bottom:none}
+.v8esf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 16px;background:#FBF9F2;border-top:1px solid var(--line)}
+.v8esf .nx{flex:1;min-width:0;font-size:13.5px;color:var(--ink2)}
+.v8flag{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--card);border-radius:999px;
+  padding:5px 12px;font-family:inherit;font-size:13px;color:var(--ink);cursor:pointer;flex:none}
+.v8flag:hover{border-color:var(--ink3)}
+.v8flag.on{background:var(--graybg);border-color:var(--graybg);color:var(--ink2);cursor:default}
+.v8flag .ti{font-size:14px}
+@media(max-width:1200px){.v8esd{grid-template-columns:minmax(0,1fr)}.v8esd dt{border-bottom:none;padding-bottom:0}}
+
+/* a decision, recorded where it applies in the document */
+.v8drec{display:flex;align-items:center;gap:11px;flex-wrap:wrap;border:1px dashed var(--line2);border-radius:12px;
+  padding:11px 14px;margin-top:22px;font-size:14px;color:var(--ink3)}
+.v8drec .v8dia{width:16px;height:16px;border-radius:4px;background:var(--line2)}
+.v8drec .v8dia .ti{font-size:10px;color:#fff}
+.v8drec .q{flex:1;min-width:0}
+.v8drec .dlav{width:20px;height:20px;font-size:8px}
+.v8drec.done{border-style:solid;border-color:#E9D79A;background:#FEFAE6;color:var(--ink)}
+.v8drec.done .v8dia{background:var(--dark)}
+.v8drec.done .v8dia .ti{color:var(--yellow)}
+.v8drec .ok{display:inline-flex;align-items:center;gap:5px;background:var(--greenbg);color:var(--greend);border-radius:999px;
+  padding:3px 10px;font-weight:600;font-size:13px}
+
+/* workflow list: who runs each step, and gates drawn as decisions */
+.v5wf .who8{flex:none;display:inline-flex;align-items:center}
+.v5wf .who8 .dlav{width:20px;height:20px;font-size:8px}
+.v5wf.gate .dot{border-radius:3px;transform:rotate(45deg);width:12px;height:12px;margin:0 1.5px}
+.v5wf.gate.done .dot{background:var(--dark);border-color:var(--dark)}
+.v5wf.gate.done .dot:after{display:none}
+.v5wf .out{flex:none;font-size:12px;font-weight:600;color:var(--greend);background:var(--greenbg);border-radius:999px;padding:2px 9px}
+.v5wf .gk{flex:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--amberd)}
+
+/* settings: everything this deliverable runs on, one line per thing */
+.v8set{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+@media(max-width:1100px){.v8set{grid-template-columns:minmax(0,1fr)}}
+.v8card{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;min-width:0}
+.v8card.span{grid-column:1/-1}
+.v8sh{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.v8sh .t{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.v8sh .t .ti{font-size:16px}
+.v8sh b{flex:1;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v8sh span{font-size:13px;color:var(--ink3)}
+.v8row{display:flex;align-items:center;gap:11px;padding:10px 16px;border-top:1px solid var(--line);font-size:14px;min-width:0}
+.v8row:first-of-type{border-top:none}
+.v8row.click{cursor:pointer}
+.v8row.click:hover{background:var(--graybg)}
+.v8row .ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--graybg);color:#766B62}
+.v8row .ic .ti{font-size:14px}
+.v8row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8row .k{flex:none;width:120px;color:var(--ink3);font-size:13px}
+.v8row .m{flex:none;color:var(--ink3);font-size:13px;white-space:nowrap}
+.v8row .m.warn{color:var(--amberd)}
+.v8row .m.ok{color:var(--greend)}
+.v8row .dlav{width:22px;height:22px;font-size:9px}
+.v8row .ch{flex:none;color:var(--ink3);font-size:15px}
+.v8ph{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);border:1px dashed var(--line2);
+  border-radius:5px;padding:1px 5px;flex:none}
+.v8ttl{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.02em;margin-bottom:24px}
+
+/* the agent drawer */
+.v8dk2{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:22px 0 6px}
+.v8dk2:first-child{margin-top:0}
+.v8dr .v8row{padding:9px 0}
+.v8skdoc{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px 18px 16px;margin-top:10px}
+.v8skdoc h5{font-size:14px;font-weight:600;color:var(--ink);margin:14px 0 4px}
+.v8skdoc p{font-size:14px;line-height:1.55;color:var(--ink2);margin:0}
+.v8skdoc ol{margin:0;padding-left:20px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.v8skdoc li{margin:2px 0}
+.v8dtxt{font-size:14px;line-height:1.55;color:var(--ink2)}
+.v8q{display:flex;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5}
+.v8q:first-of-type{border-top:none}
+.v8q .ti{color:var(--amberd);font-size:15px;flex:none;margin-top:2px}
+.v8q.new{background:#FEFAE6;margin:0 -10px;padding:10px;border-radius:10px;border-top:none}
+
+/* composer, quieter: the send button is not the one dark thing on screen */
+.v5send{background:var(--graybg);color:var(--ink)}
+
+/* step explainer in the Workflow drawer */
+.v5wf{cursor:pointer}
+.v8tk{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line)}
+.v8tk:first-of-type{border-top:none}
+.v8tk .n{width:20px;height:20px;border-radius:6px;background:var(--graybg);color:var(--ink2);font-size:11.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+.v8tk .a{display:flex;align-items:center;gap:7px;font-size:13px}
+.v8tk .a b{font-weight:600}
+.v8tk .a .dlav{width:20px;height:20px;font-size:8px}
+.v8tk .a .ic{border-radius:6px;background:var(--graybg);color:#766B62;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8tk .d{font-size:14px;line-height:1.5;color:var(--ink2);margin-top:4px}
+.v8dopts{display:grid;grid-template-columns:minmax(0,1fr)}
+
+.v8in{display:block;width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:14.5px;color:var(--ink);padding:0 0 11px}
+.v8in::placeholder{color:var(--ink3)}
+
+/* progress line is the way into the workflow */
+.v8prog{cursor:pointer;transition:background .12s}
+.v8prog:hover{background:transparent}
+/* step explainer, laid over the agent column */
+.v5chat{position:relative}
+.v8sov{position:absolute;inset:0;z-index:8;background:var(--bg);display:flex;flex-direction:column;
+  box-shadow:inset -1px 0 0 var(--line)}
+.v8sov.hide{display:none}
+.v8sovh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;padding:10px 14px 10px 20px;border-bottom:1px solid var(--line)}
+.v8sovb{flex:1;overflow:auto;padding:20px 20px 40px;font-size:14px;line-height:1.55}
+/* outputs: the PDF, or its placeholder */
+.v8out .pg{position:relative;aspect-ratio:1/1.3;max-width:100%;border:1px solid var(--line);border-radius:10px;background:var(--card);
+  padding:22px 20px;box-shadow:0 4px 16px rgba(31,31,29,.06)}
+.v8out .pg.live{cursor:pointer}
+.v8out .pg.live:hover{border-color:var(--line2)}
+.v8out .pg .t{font-family:var(--serif);font-size:19px;line-height:1.15;letter-spacing:-.01em}
+.v8out .pg .s{font-size:11px;color:var(--ink3);margin:6px 0 4px}
+.v8out .pg b{display:block;height:9px;width:42%;border-radius:4px;background:var(--line2);margin:18px 0 8px}
+.v8out .pg i.l{display:block;height:6px;border-radius:3px;background:var(--line);margin-top:7px}
+.v8out.ph .pg{border:1.5px dashed #DFD8C6;background:#FBF9F2;box-shadow:none}
+.v8out.ph .pg > .ti{font-size:26px;color:var(--ink3)}
+.v8out.ph .pg b{background:#EEE8D8}
+.v8out.ph .pg i.l{background:#EEE8D8}
+.v8out .nm{font-size:15px;font-weight:600;margin-top:14px;letter-spacing:-.01em}
+.v8out .mt{font-size:13px;color:var(--ink3);margin-top:4px}
+.v8obar{height:5px;border-radius:3px;background:var(--line);margin-top:14px;overflow:hidden}
+.v8obar i{display:block;height:100%;background:var(--greend)}
+/* topbar matches every other page: 61px, so the Share button is compact */
+.topbar{height:61px}
+.topbar .btn-out{padding-top:6px;padding-bottom:6px}
+
+/* ── v8 pass 4 ─────────────────────────────────────────────────────────── */
+/* v5's ground: the agent sits on the page tint, the content floats as a card */
+.v5row{background:var(--bg)}
+.v5chat{background:transparent;border-right:none}
+.v8prog{background:transparent}
+.v5panel{background:transparent;padding:14px 16px 16px 2px}
+.v5body{background:var(--card);border-radius:16px;
+  box-shadow:0 2px 16px rgba(26,12,18,.07),0 1px 3px rgba(26,12,18,.05)}
+.v5dr{background:transparent;border-left:none;padding:14px 16px 16px 0}
+.v5drh,.v5drb{background:var(--card)}
+.v5drh{border-radius:16px 16px 0 0;border-bottom:1px solid var(--line)}
+.v5drb{border-radius:0 0 16px 16px}
+.v5dr > *{box-shadow:0 2px 16px rgba(26,12,18,.05)}
+body.pclosed .v5panel{padding-left:16px}
+
+/* the agent's work, folded to one line */
+.v8acc{margin:10px 0}
+.v8acch{width:100%;display:flex;align-items:center;gap:9px;border:none;background:none;padding:6px 0;font-family:inherit;
+  font-size:14px;color:var(--ink2);cursor:pointer;text-align:left}
+.v8acch .ti{font-size:16px;flex:none}
+.v8acch .ti.ok{color:var(--greend)}
+.v8acch .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8acch .t em{font-style:normal;color:var(--ink3);margin-left:7px}
+.v8acch .t.run{color:var(--ink)}
+.v8acch .ch{color:var(--ink3);font-size:15px;transition:transform .15s}
+.v8acc.open .ch{transform:rotate(180deg)}
+.v8acch:hover .t{color:var(--ink)}
+.v8accb{margin:2px 0 4px 6px;padding-left:16px;border-left:2px solid var(--line)}
+
+/* the block where the agent needs you */
+.v8ask{border:1px solid #CFE0F3;border-radius:16px;background:var(--card);padding:0;margin:16px 0;overflow:hidden;
+  box-shadow:0 8px 24px rgba(24,95,165,.09),0 1px 3px rgba(26,12,18,.05)}
+.v8askh{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bluebg);border-bottom:1px solid #DCE9F7}
+.v8askh .k{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--blued)}
+.v8askh .s{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--blued);opacity:.7}
+.v8ask .q{font-size:15.5px;line-height:1.55;padding:15px 16px 4px;color:var(--ink)}
+.v8aopts{display:flex;flex-direction:column;gap:8px;padding:12px 16px 16px}
+.v8aopt{display:flex;align-items:center;gap:11px;width:100%;border:1px solid var(--line2);background:var(--card);border-radius:12px;
+  padding:11px 13px;font-family:inherit;font-size:14.5px;font-weight:500;color:var(--ink);cursor:pointer;text-align:left;
+  transition:border-color .12s,background .12s}
+.v8aopt:hover{border-color:var(--ink3);background:#FDFCF8}
+.v8aopt .n{width:22px;height:22px;border-radius:7px;background:var(--graybg);color:var(--ink2);font-size:12px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8aopt .l{flex:1;min-width:0}
+.v8aopt .ti{font-size:17px;flex:none}
+.v8aopt.pri{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.v8aopt.pri:hover{background:var(--blued);border-color:var(--blued)}
+.v8aopt.pri .n{background:rgba(255,255,255,.22);color:#fff}
+.v8start{margin:16px 0}
+.v8start .v8aopt{justify-content:center;padding-top:13px;padding-bottom:13px;font-size:15.5px}
+.v8start .v8aopt .ti{font-size:18px}
+.v8dec{box-shadow:0 8px 24px rgba(138,90,16,.08)}
+
+/* outputs empty state: one icon, one sentence */
+.v8out.ph .pg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px}
+.v8out.ph .pg > .ti{font-size:56px;color:var(--ink3);opacity:.7}
+.v8out.ph .pg .tx{font-size:14px;line-height:1.5;color:var(--ink3);max-width:220px}
+
+/* decision question: body font, bold, not Manner */
+.v8dq{font-family:var(--sans);font-size:16.5px;font-weight:650;line-height:1.4;letter-spacing:-.01em}
+
+/* the person's own messages: right-aligned, with their avatar */
+.v8me{display:flex;justify-content:flex-end;align-items:flex-end;gap:8px;margin:14px 0}
+.v8them{display:flex;align-items:flex-end;gap:8px;margin:14px 0}
+.v8them .v5you{margin:0;max-width:82%;border-radius:16px 16px 16px 5px;background:var(--graybg)}
+.v8them .dlav{width:26px;height:26px;font-size:10px;flex:none}
+.v8side{margin:8px 0}
+.v8side .v8acch .ti{color:var(--ink3)}
+.v8sideb{border-left:2px solid var(--line2);padding-left:12px;margin:2px 0 10px 7px}
+.v8sideb .v5say{font-size:14.5px}
+.v8keep{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--greend);margin:-4px 0 14px}
+.v8keep .ti{font-size:15px}
+.v8pin{border:none;background:none;font-family:inherit;font-size:13.5px;color:var(--ink2);padding:2px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.v8me .v5you{margin:0;max-width:82%;border-radius:16px 16px 5px 16px}
+.v8me .dlav{width:26px;height:26px;font-size:10px;flex:none}
+
+/* composer: add a source is a plain + */
+.v8plus{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:var(--card);color:var(--ink2);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex:none}
+.v8plus:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* the input block shows who is needed, not the agent */
+.v8askh .dlav{width:22px;height:22px;font-size:9px}
+
+/* agent toggle sized like the tabs beside it */
+.v8agt{padding:5px 11px 5px 5px;border:none;border-radius:10px;font-size:13.5px;gap:7px;background:none}
+.v8agt:hover{background:var(--graybg)}
+.v8agt.on{background:var(--graybg)}
+.v8agt .v8ava{width:20px;height:20px}
+.v8agt .v8ava .ti{font-size:12px}
+
+/* ── workflow page, second design ─────────────────────────────────────── */
+.v8now{border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:22px;cursor:pointer;
+  background:linear-gradient(0deg,var(--card),var(--card));box-shadow:0 2px 12px rgba(26,12,18,.05);transition:border-color .12s}
+.v8now:hover{border-color:var(--line2)}
+.v8now .h{display:flex;align-items:center;gap:8px}
+.v8now .pip{width:9px;height:9px;border-radius:50%;background:var(--amber);animation:gypip 1.5s ease-in-out infinite}
+.v8now .k{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amberd)}
+.v8now .c{margin-left:auto;font-size:13px;color:var(--ink3)}
+.v8now .t{font-size:22px;font-weight:600;letter-spacing:-.015em;margin-top:10px;line-height:1.25}
+.v8now .t .n{color:var(--ink3);font-weight:500;margin-right:10px;font-variant-numeric:tabular-nums}
+.v8now .w{font-size:15px;line-height:1.55;color:var(--ink2);margin-top:8px;max-width:640px}
+.v8now .f{display:flex;align-items:center;gap:12px;margin-top:16px}
+.v8now .go{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--blued)}
+.v8now.gate{background:#FEFAE6;border-color:#E9D79A}
+.v8now.done .h .ti{color:var(--greend);font-size:18px}
+.v8now.done .k{color:var(--greend)}
+.v8now.done,.v8now.idle{cursor:default}
+.v8now.idle .k{color:var(--ink3)}
+.v8wstat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.v8wstat div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--card)}
+.v8wstat b{display:block;font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.v8wstat b em{font-style:normal;font-size:15px;color:var(--ink3);font-weight:500}
+.v8wstat span{font-size:13px;color:var(--ink3)}
+@media(max-width:1250px){.v8wstat{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v8wseg{display:flex;gap:6px;margin-bottom:36px}
+.v8wseg > div{min-width:0}
+.v8wseg i{display:block;height:7px;border-radius:4px;background:var(--line);overflow:hidden}
+.v8wseg i b{display:block;height:100%;background:var(--greend);transition:width .45s ease}
+.v8wseg span{display:block;font-size:12.5px;color:var(--ink3);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8wch{margin-bottom:30px}
+.v8wchh{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.v8wchh .nm{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.v8wchh .ct{margin-left:auto;font-size:13.5px;color:var(--ink3)}
+.v8wl{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.v8ws{display:flex;align-items:center;gap:14px;padding:15px 18px;border-top:1px solid var(--line);cursor:pointer;
+  font-size:15.5px;transition:background .12s;position:relative}
+.v8ws:first-child{border-top:none}
+.v8ws:hover,.v8ws.sel{background:#FBF9F2}
+.v8ws .mk{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid var(--line2);position:relative;background:var(--card)}
+.v8ws.done .mk{background:var(--greend);border-color:var(--greend)}
+.v8ws.done .mk:after{content:'';position:absolute;left:50%;top:45%;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;
+  transform:translate(-50%,-50%) rotate(45deg)}
+.v8ws.cur .mk{border-color:var(--amber);border-width:5px;animation:gypip 1.5s ease-in-out infinite}
+.v8ws.gate .mk{border-radius:4px;transform:rotate(45deg);width:15px;height:15px;margin:0 2.5px}
+.v8ws.gate.done .mk{background:var(--dark);border-color:var(--dark)}
+.v8ws.gate.done .mk:after{display:none}
+.v8ws.gate{background:#FFFCF0}
+.v8ws.gate:hover,.v8ws.gate.sel{background:#FEF7DC}
+.v8ws.cur{background:#FEFAE6}
+.v8ws .no{flex:none;width:30px;font-size:13.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v8ws .tt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8ws.pend .tt{color:var(--ink2)}
+.v8ws.cur .tt{font-weight:600}
+.v8wo{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.v8wo .ti{font-size:13px}
+.v8wo.ok{background:var(--greenbg);color:var(--greend)}
+.v8wo.dn{color:var(--greend);font-weight:500;padding:3px 4px}
+.v8wo.now{background:var(--amberbg);color:var(--amberd)}
+.v8wo.dec{color:var(--amberd);letter-spacing:.05em;text-transform:uppercase;font-size:11px}
+.v8who{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink2);width:136px;white-space:nowrap;overflow:hidden}
+.v8who .dlav,.v8who .v8ava{width:22px;height:22px;font-size:9px;flex:none}
+.v8who .v8ava .ti{font-size:12px}
+.v8ws .ch{flex:none;color:var(--ink3);font-size:16px;opacity:0;transition:opacity .12s}
+.v8ws:hover .ch,.v8ws.sel .ch{opacity:1}
+
+/* settings: one column, anchor nav on the right */
+.v8setw{display:flex;gap:40px;align-items:flex-start;max-width:1000px;margin:0 auto}
+.v8setc{flex:1;min-width:0;max-width:720px}
+.v8setw .v8set{display:flex;flex-direction:column;gap:18px}
+.v8setw .v8card{scroll-margin-top:24px}
+.v8setw .v8card .v8row{padding:12px 18px;font-size:14.5px}
+.v8setw .v8sh{padding:16px 18px}
+.v8anc{position:sticky;top:0;flex:none;width:170px;display:flex;flex-direction:column;gap:2px;padding-top:78px}
+.v8anc a{display:block;font-size:13.5px;color:var(--ink3);padding:6px 12px;border-left:2px solid var(--line);cursor:pointer;
+  text-decoration:none;transition:color .12s,border-color .12s}
+.v8anc a:hover{color:var(--ink)}
+.v8anc a.on{color:var(--ink);font-weight:600;border-left-color:var(--dark)}
+@media(max-width:1150px){.v8anc{display:none}}
+
+.v8setw{justify-content:center}
+.v8setc{flex:0 1 720px}
+.v8setw .v8set{align-items:stretch}
+
+/* workflow: Now card, stat tiles and chapter bar hidden for now (Thomas, 3 Oct); code kept */
+.v8now,.v8wstat,.v8wseg{display:none}
+
+/* same frame on all three tabs: one 780px column, same title (3 Oct) */
+.v8ttl{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:40px}
+.v8setw{display:block;max-width:none;margin:0;position:relative}
+.v8setc{max-width:none;width:100%}
+.v8anc{position:absolute;top:0;bottom:0;left:calc(100% + 20px);width:110px;padding-top:0}
+.v8anc > div{position:sticky;top:0}
+.v8anc a{padding:6px 10px}
+
+/* reserve room for the settings anchor nav on every tab, so all three columns stay identical and the nav never clips */
+.v5bin{max-width:min(780px, calc(100% - 290px))}
+.v8anc{width:125px;left:calc(100% + 20px)}
+.v8anc a{white-space:nowrap}
+@media(max-width:1150px){.v5bin{max-width:780px}}
+
+/* every tab keeps the same 780px column; the anchor nav sits beside it when there is room, and moves above the cards when there is not */
+.v5bin{max-width:780px}
+.v5body{container-type:inline-size;container-name:pane}
+@container pane (max-width: 779px){
+  .v8setw{display:flex;flex-direction:column}
+  .v8anc{position:sticky;top:-46px;order:-1;left:auto;width:auto;z-index:3;background:var(--card);
+    margin:-12px 0 16px;padding:12px 0 10px}
+  .v8anc > div{position:static;display:flex;flex-wrap:wrap;gap:4px}
+  .v8anc a{border-left:none;border-radius:999px;padding:5px 11px;font-size:13px}
+  .v8anc a.on{background:var(--graybg);border-left:none}
+}
+@media(max-width:1150px){.v8anc{display:block}}
+
+.v8anc{width:105px;left:calc(100% + 16px)}
+
+@container pane (max-width: 779px){
+  .v8anc{width:auto;left:auto;display:block}
+  .v8anc > div{display:flex;flex-direction:row;flex-wrap:wrap;gap:4px}
+}
+
+/* narrower reading column on every tab, always leaving room for the settings nav on the right (3 Oct) */
+.v5bin{max-width:min(700px, calc(100% - 250px))}
+.v8anc{width:105px;left:calc(100% + 18px)}
+@container pane (max-width: 779px){ .v5bin{max-width:100%} }
+/* Workflow tab, refined scale (3 Oct): smaller chapter tile and heading, tighter rows */
+.v8wchh{gap:10px;margin-bottom:9px}
+.v8wchh .v5chn{width:24px;height:24px;border-radius:7px;font-size:12px}
+.v8wchh .nm{font-size:19px}
+.v8wchh .ct{font-size:13px}
+.v8wl{border-radius:12px}
+.v8ws{gap:12px;padding:11px 16px;font-size:14.5px}
+.v8ws .mk{width:16px;height:16px;border-width:1.5px}
+.v8ws.cur .mk{border-width:4px}
+.v8ws.done .mk:after{width:3px;height:7px}
+.v8ws.gate .mk{width:12px;height:12px;margin:0 2px}
+.v8ws .no{width:28px;font-size:12.5px}
+.v8ws.cur .tt{font-weight:500}
+.v8wo{font-size:12px;font-weight:500;padding:2px 9px}
+.v8wo.dec{font-size:10.5px;font-weight:600}
+.v8who{font-size:12.5px;gap:6px}
+.v8who .dlav,.v8who .v8ava{width:20px;height:20px;font-size:8.5px}
+.v8ws .ch{font-size:15px}
+
+/* 60px all round inside the floating card, on all three tabs; content fills the width (3 Oct) */
+.v5body{padding:60px}
+.v5bin,.v5bin.wide{max-width:none;margin:0}
+.v8setw{display:flex;gap:48px;align-items:flex-start;position:static}
+.v8setc{flex:1;min-width:0;width:auto}
+.v8anc{position:sticky;top:24px;left:auto;bottom:auto;width:120px;flex:none;padding-top:0}
+.v8anc > div{position:static}
+@container pane (max-width: 779px){
+  .v8setw{flex-direction:column;gap:0}
+  .v8anc{top:-60px;width:auto}
+}
+/* Current vs needs-you (3 Oct): the current step takes the current tokens (ink);
+   amber stays only for a human in the loop: decisions and asks. */
+@keyframes gypipcur{0%,100%{box-shadow:0 0 0 3px var(--curbg,#ECE8DD)}50%{box-shadow:0 0 0 6px rgba(26,12,18,.10)}}
+.v8ws.cur{background:var(--currow,#F7F5EF)}
+.v8ws.cur .mk{border-color:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v8wo.now{background:var(--curbg,#ECE8DD);color:var(--curd,#1A0C12)}
+.v5wf.cur .dot{border-color:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v5wf .now{background:var(--curbg,#ECE8DD);color:var(--curd,#1A0C12)}
+.v8now .pip{background:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v8now .k{color:var(--curd,#1A0C12)}
+.v8now.gate .pip{background:var(--amber);animation:gypip 1.5s ease-in-out infinite}
+.v8now.gate .k{color:var(--amberd)}
+@media (prefers-reduced-motion:reduce){.v8ws.cur .mk,.v5wf.cur .dot,.v8now .pip{animation:none}}
+
+/* no divider under page titles; document gets the same anchor nav as settings (3 Oct) */
+.v5dt,.v8ttl{border-bottom:none;padding-bottom:0;margin-bottom:40px}
+.v8docw .v5sec:first-child{margin-top:0}
+
+/* settings: the project header block leads (3 Oct) */
+.v8proj{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#FBF8EF 0%,var(--card) 70%);
+  padding:24px 24px 20px;scroll-margin-top:24px}
+.v8proj .pt{display:flex;align-items:center;gap:14px}
+.v8proj .pb{width:46px;height:46px;border-radius:12px;background:var(--greenbg);color:var(--greend);font-weight:700;font-size:15px;
+  letter-spacing:.02em;display:flex;align-items:center;justify-content:center;flex:none}
+.v8proj .n{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:-.015em;line-height:1.1}
+.v8proj .s{font-size:14px;color:var(--ink3);margin-top:3px}
+.v8proj .pc{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.v8proj .pc span{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);background:var(--card);
+  border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+.v8proj .pc .ti{font-size:14px;color:var(--ink3)}
+.v8proj .ptm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.v8proj .pp{display:flex;align-items:center;gap:10px;min-width:0}
+.v8proj .pp .dlav{width:32px;height:32px;font-size:11.5px}
+.v8proj .pp div{min-width:0}
+.v8proj .pp b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8proj .pp > div span{display:block;font-size:12.5px;color:var(--ink3)}
+
+/* section nav: fixed column and one weight for every label, so the active label never rewraps and shifts the list (3 Oct).
+   Active is marked by ink and the bar only. */
+.v8anc{width:150px}
+.v8anc a{white-space:normal;line-height:1.35;font-weight:500}
+.v8anc a.on{font-weight:500}
+
+/* settings: one Agents card, add team member (3 Oct) */
+.v8sub{padding:14px 18px 6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);
+  border-top:1px solid var(--line)}
+.v8sub + .v8row{border-top:none}
+.v8proj .pp.add{cursor:pointer;color:var(--ink2)}
+.v8proj .pp.add b{font-weight:500;color:var(--ink2)}
+.v8proj .pp.add:hover b{color:var(--ink)}
+.v8proj .pa{width:32px;height:32px;border-radius:50%;border:1.5px dashed var(--line2);display:inline-flex;align-items:center;
+  justify-content:center;flex:none;color:var(--ink3);font-size:15px}
+.v8proj .pp.add:hover .pa{border-color:var(--ink3);color:var(--ink)}
+.v8proj .padd{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.v8proj .padd button{display:flex;align-items:center;gap:10px;width:100%;border:none;border-top:1px solid var(--line);background:none;
+  padding:9px 14px;font-family:inherit;font-size:14px;cursor:pointer;text-align:left}
+.v8proj .padd button:first-child{border-top:none}
+.v8proj .padd button:hover{background:#FBF9F2}
+.v8proj .padd .dlav{width:24px;height:24px;font-size:9px;flex:none}
+.v8proj .padd span:not(.dlav){color:var(--ink3);font-size:13px;flex:1}
+.v8proj .padd .ti{color:var(--ink3);font-size:15px}
+
+/* settings item drawer (3 Oct) */
+.v8istat{display:inline-flex;margin-top:10px;font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--graybg);color:var(--ink2)}
+.v8istat.ok{background:var(--greenbg);color:var(--greend)}
+.v8istat.warn{background:var(--amberbg);color:var(--amberd)}
+.v8steps{display:flex;flex-direction:column;gap:6px}
+.v8steps button{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 11px;
+  font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;text-align:left}
+.v8steps button:hover{border-color:var(--line2)}
+.v8steps button b{font-weight:500;color:var(--ink3);font-variant-numeric:tabular-nums;width:26px}
+
+/* outputs drawer: the PDF up top, every output below, linked to Settings (3 Oct) */
+.v8out.ph .pg{aspect-ratio:auto;height:230px}
+.v8orow{padding:10px 0}
+.v8orow:hover{background:none}
+.v8orow:hover .nm{color:var(--ink)}
+.v8oset{margin-top:16px}
+
+/* settings: the Agents block, lead agent on top, Ecosystem Service Agents as a grid (3 Oct) */
+.v8ag{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;scroll-margin-top:24px}
+.v8agl{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;background:var(--dark);color:#fff;cursor:pointer;
+  transition:transform .12s,box-shadow .12s}
+.v8agl:hover{box-shadow:0 6px 18px rgba(26,12,18,.18)}
+.v8agl .av{width:46px;height:46px;border-radius:12px;background:rgba(249,221,90,.14);color:var(--yellow);display:flex;align-items:center;
+  justify-content:center;flex:none}
+.v8agl .av .ti{font-size:24px}
+.v8agl .tx{flex:1;min-width:0}
+.v8agl .k{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);opacity:.85}
+.v8agl .n{font-size:17px;font-weight:600;letter-spacing:-.01em;margin-top:2px}
+.v8agl .bp{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;color:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.08);border-radius:999px;padding:3px 10px}
+.v8agl .bp .ti{font-size:13px}
+.v8agl .ch{color:rgba(255,255,255,.5);font-size:18px}
+.v8agc{display:flex;align-items:center;gap:10px;margin:14px 2px 12px}
+.v8agc .ln{flex:1;height:1px;background:var(--line)}
+.v8agc .t{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.v8agg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v8age{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:12px;background:var(--bg);border:1px solid var(--line);
+  cursor:pointer;min-width:0;transition:border-color .12s,background .12s}
+.v8age:hover{border-color:var(--c);background:var(--bg)}
+.v8age .ic{width:34px;height:34px;border-radius:10px;background:var(--bg);color:var(--c);display:flex;align-items:center;justify-content:center;flex:none}
+.v8age{background:color-mix(in srgb, var(--bg) 55%, #fff)}
+.v8age .ic{background:var(--c);color:#fff}
+.v8age .ic .ti{font-size:17px}
+.v8age .tx{flex:1;min-width:0}
+.v8age b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8age span{display:block;font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8age .ch{color:var(--ink3);font-size:15px;opacity:0;transition:opacity .12s}
+.v8age:hover .ch{opacity:1}
+@container pane (max-width: 779px){ .v8agg{grid-template-columns:minmax(0,1fr)} }
+
+/* agents as a list again, every row the same size, coloured icon tiles (3 Oct) */
+.v8agi{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8agi .ti{font-size:15px}
+
+/* agents: tinted, padded, rounded items with a label per group (3 Oct) */
+.v8agb{padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.v8agk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:12px 2px 2px}
+.v8agr{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--t);cursor:pointer;font-size:14.5px;
+  min-width:0;transition:box-shadow .12s,transform .12s}
+.v8agr:hover{box-shadow:inset 0 0 0 1px rgba(26,12,18,.10)}
+.v8agr .nm{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8agr .m{flex:none;font-size:13px;color:var(--ink2);opacity:.8;white-space:nowrap}
+.v8agr .ch{flex:none;color:var(--ink3);font-size:15px}
+.v8agr .v8agi{width:32px;height:32px;border-radius:10px}
+.v8agr .v8agi .ti{font-size:17px}
+
+/* activity tab (3 Oct) */
+.v8act{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.v8ae{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);font-size:14px}
+.v8ae:first-child{border-top:none}
+.v8ae.click{cursor:pointer}
+.v8ae.click:hover{background:#FBF9F2}
+.v8ae .who{flex:none;display:inline-flex}
+.v8ae .who .dlav,.v8ae .who .v8ava,.v8ae .who .v8esa{width:24px;height:24px;font-size:9px}
+.v8ae .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.v8ae .tx b{color:var(--ink);font-weight:600}
+.v8ae .kd{flex:none;color:var(--ink3);font-size:15px;display:inline-flex}
+.v8ae .at{flex:none;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;width:40px;text-align:right}
+
+/* outputs: PDF cover thumbnail (3 Oct) */
+.v8out .pg.cov{padding:0;overflow:hidden;aspect-ratio:1092/1542;background:#1A0F14;box-shadow:0 6px 20px rgba(26,12,18,.14)}
+.v8out .pg.cov img{display:block;width:100%;height:100%;object-fit:cover}
+/* settings anchor nav: a small icon before each label, the same icon as its card (3 Oct) */
+.v8anc a{display:flex;align-items:flex-start;gap:8px}
+.v8anc a .ti{flex:none;font-size:15px;line-height:1;margin-top:2px;color:var(--ink3)}
+.v8anc a:hover .ti,.v8anc a.on .ti{color:var(--ink)}
+/* project block: the blueprint chip is a link (3 Oct) */
+.v8proj .pc span.lk{cursor:pointer;color:var(--ink);transition:border-color .12s}
+.v8proj .pc span.lk:hover{border-color:var(--ink3)}
+.v8proj .pc span.lk .ti-arrow-up-right{font-size:13px;margin-left:-1px}
+/* skeletons: the filled components, muted, with bars for text (3 Oct) */
+.v8skl{font-size:13.5px;color:var(--ink3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.v8skl .ti{font-size:15px}
+.skb{display:block;height:9px;border-radius:5px;background:#EEE8D8;max-width:100%}
+.v8sk .v5sh .skb{height:11px;margin:4px 0}
+.v8sk .v5sh{margin-top:24px}
+.v8sk .v5sh:first-of-type{margin-top:0}
+.v8sk .v5tw,.v8sk .v8es{border-style:dashed;border-color:#DFD8C6}
+.v8sk .v5tbl td{padding:15px 14px}
+.v8sk .v8esh .t{opacity:.55}
+.v8sk .v8esh .n{color:var(--ink3)}
+.v8sk .v8achip{color:var(--ink3);cursor:default;opacity:.7}
+.v8sk .v8esd dd{padding:13px 0}
+.v8sk .v8esf{gap:12px}
+.v8sk .v8esf .skb{flex:none}
+.v8sk .v8cf.skp{width:56px;height:20px;background:#EEE8D8;padding:0}
+.v8sk .v5win{background:#FEFCF2;border-style:dashed;border-color:#EADFB6}
+.v8sk .v5win p .skb{height:11px;margin:9px 0}
+.v8sk .v5win p .skb:first-child{margin-top:4px}
+.v8sk .v5win li{margin:12px 0}
+.v8sk .v5win li::marker{color:#DDD3B4}
+.v8sk .v5win li .skb{display:inline-block;vertical-align:middle}
+.v8sk .v8esh .t.sk{background:#F3EFE1;color:#B9B09B}
+.v8sk .v8achip.sk{width:150px;padding:8px 12px;opacity:1}
+/* project block: the blueprint as a one-line list row, label left, blueprint right, whole row clickable (3 Oct) */
+.v8bprow{display:flex;align-items:center;gap:12px;margin-top:16px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;transition:border-color .12s,background .12s}
+.v8bprow:hover{border-color:var(--line2);background:#FBF9F2}
+.v8bprow .k{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink3);flex:none}
+.v8bprow .k .ti{font-size:15px}
+.v8bprow .v{margin-left:auto;font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.v8bprow .ch{flex:none;font-size:15px;color:var(--ink3)}
+.v8bprow:hover .ch{color:var(--ink)}
+/* list row icons: no box or fill, just a larger glyph (3 Oct). Tinted identity tiles (inline style) keep their box. */
+.v8row .ic:not([style]){width:22px;height:22px;background:none;border-radius:0}
+.v8row .ic:not([style]) .ti{font-size:19px;color:#766B62}
+/* card title icons: no box or fill, a larger glyph in the card's own tint (3 Oct).
+   Yellow was only legible on the dark tile, so it falls back to ink. */
+.v8sh .t{width:24px;height:24px;border-radius:0;background:none!important}
+.v8sh .t .ti{font-size:21px}
+.v8sh .t[style*="--yellow"]{color:var(--ink)!important}
+/* Settings header, what to expect (3 Oct) */
+.v8exp{padding:0;overflow:hidden;background:var(--card)}
+.v8bp{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#F7F4EA;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
+.v8bp:hover{background:#F2EEE1}
+.v8bp .bi{width:34px;height:34px;border-radius:10px;background:var(--dark);color:var(--yellow);display:flex;align-items:center;justify-content:center;flex:none}
+.v8bp .bi .ti{font-size:18px}
+.v8bp .bt{display:flex;flex-direction:column;min-width:0;flex:1}
+.v8bp .bk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.v8bp .bn{font-size:15.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8bp .bn em{font-style:normal;font-size:12px;font-weight:600;color:var(--ink2);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.v8bp .bo{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--ink2);flex:none}
+.v8bp:hover .bo{color:var(--ink)}
+.v8bp .bo .ti{font-size:15px}
+.v8exb{padding:22px 22px 6px}
+.v8ext{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-.015em;line-height:1.15}
+.v8exp-why{font-size:15px;line-height:1.55;color:var(--ink2);margin:8px 0 0;max-width:640px}
+.v8exf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.v8exf > div{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#FCFAF4}
+.v8exf .k{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.v8exf .k .ti{font-size:14px}
+.v8exf .v{display:block;font-size:14px;line-height:1.45;color:var(--ink);margin-top:6px}
+.v8exk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-top:22px}
+.v8exp .ptm{margin-top:10px;padding-top:0;border-top:none}
+.v8exc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 22px;margin-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}
+.v8exc span{display:inline-flex;align-items:center;gap:6px}
+.v8exc .ti{font-size:14px}
+@container pane (max-width: 779px){ .v8exf{grid-template-columns:minmax(0,1fr)} }
+/* what-to-expect facts as a definition list: outputs as items, the run as a segmented bar, time as a figure (3 Oct) */
+.v8exl{display:grid;grid-template-columns:120px minmax(0,1fr);margin:22px 0 0;border-top:1px solid var(--line)}
+.v8exl dt{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);padding:16px 0;border-bottom:1px solid var(--line)}
+.v8exl dd{margin:0;padding:13px 0;border-bottom:1px solid var(--line);min-width:0}
+.v8exo{display:flex;flex-wrap:wrap;gap:8px 22px}
+.v8exo span{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
+.v8exo .ti{font-size:18px;color:var(--ink2)}
+.v8exr{display:flex;gap:10px;padding-top:3px}
+.v8exr .ch{min-width:0}
+.v8exr .sg{display:flex;gap:3px}
+.v8exr .sg i{flex:1;height:10px;border-radius:3px}
+.v8exr .ch span{display:block;font-size:12px;color:var(--ink3);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8exr i.ai,.v8exg i.ai{background:#E6E1D3}
+.v8exr i.hu,.v8exg i.hu{background:var(--ink)}
+.v8exr i.gt,.v8exg i.gt{background:var(--amber)}
+.v8exg{display:flex;gap:18px;margin-top:12px;font-size:12.5px;color:var(--ink2)}
+.v8exg span{display:inline-flex;align-items:center;gap:6px}
+.v8exg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.v8ext2{font-size:16px;font-weight:600;letter-spacing:-.01em;margin-right:10px}
+.v8exs{font-size:13px;color:var(--ink3)}
+.v8exl dd:last-of-type,.v8exl dt:last-of-type{border-bottom:none}
+@container pane (max-width: 779px){ .v8exl{grid-template-columns:minmax(0,1fr)} .v8exl dt{border-bottom:none;padding-bottom:0} }
+
+/* chat closed: content card keeps the chat-open width, centred (3 Oct) */
+body.pclosed .v5body{width:100%;max-width:calc(100vw - var(--chatw,400px) - 86px);margin-left:auto;margin-right:auto}
+body.pclosed .v5vt{align-self:center}
+
+/* page menu: delete in red (3 Oct) */
+.gy-mpop .gy-mitem.danger,.gy-mpop .gy-mitem.danger .ti{color:#C23B2B}
+.gy-mpop .gy-mitem.danger:hover{background:#FBEDEA}
+
+/* settings section nav (8 Oct): the side list on the right by default, at any column width.
+   It turns into one sticky row of pills above the cards only when the agent and a drawer are
+   both open, or on a phone. */
+.v8setw{flex-direction:row;gap:48px}
+.v8setc{flex:1;min-width:0;width:auto}
+.v8anc{position:sticky;top:24px;order:0;align-self:flex-start;width:150px;margin:0;padding:0;
+  background:none;border-bottom:none;z-index:auto}
+.v8anc > div{display:block;overflow:visible;-webkit-mask-image:none}
+.v8anc a{display:flex;align-items:flex-start;white-space:normal;border-left:2px solid var(--line);border-radius:0;
+  padding:6px 10px;font-size:13.5px;color:var(--ink3)}
+.v8anc a .ti{margin-top:2px;font-size:15px}
+.v8anc a.on{background:none;color:var(--ink);border-left-color:var(--dark)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8setw{flex-direction:column;gap:0}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8setc,body:not(.pclosed):has(#drawer:not(.hide)) .v8set{width:100%;min-width:0;flex:none}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc{position:sticky;top:-60px;order:-1;align-self:stretch;width:auto;z-index:3;
+  background:var(--card);margin:0 0 22px;padding:14px 0 12px;border-bottom:1px solid var(--line)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc > div{position:static;display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px;
+  overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc > div::-webkit-scrollbar{display:none}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a{flex:none;align-items:center;white-space:nowrap;border-left:none;border-radius:999px;
+  padding:6px 12px;font-size:13px;color:var(--ink2)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a .ti{margin-top:0;font-size:14px}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
+@media (max-width: 760px){
+body .v8setw{flex-direction:column;gap:0}
+body .v8setc,body .v8set{width:100%;min-width:0;flex:none}
+body .v8anc{position:sticky;top:-60px;order:-1;align-self:stretch;width:auto;z-index:3;
+  background:var(--card);margin:0 0 22px;padding:14px 0 12px;border-bottom:1px solid var(--line)}
+body .v8anc > div{position:static;display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px;
+  overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+body .v8anc > div::-webkit-scrollbar{display:none}
+body .v8anc a{flex:none;align-items:center;white-space:nowrap;border-left:none;border-radius:999px;
+  padding:6px 12px;font-size:13px;color:var(--ink2)}
+body .v8anc a .ti{margin-top:0;font-size:14px}
+body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
+}
+/* tighter padding inside the middle card when it is very narrow, so the cards keep their width */
+.v5panel{container-type:inline-size;container-name:col}
+@container col (max-width: 600px){
+  .v5body{padding:32px 24px}
+  body:not(.pclosed):has(#drawer:not(.hide)) .v8anc{top:-32px}
+}
+@media (max-width: 760px){ @container col (max-width: 600px){ body .v8anc{top:-32px} } }
+
+/* Blueprint agent on the Deliverable shell (8 Oct): agent on the left, Content and
+   Settings tabs, section nav on the right. Honeycomb document parts below are the
+   ones the read-only version used, scoped to .bpdoc. */
+.bpdoc .callout{display:flex;gap:11px;align-items:flex-start;background:#F7F6F3;border:1px solid #EDECE8;border-radius:10px;padding:14px 16px;margin-top:18px;font-size:15.5px;line-height:1.6;color:#37352F}
+.bpdoc .callout .ti{font-size:17px;color:#B78A0E;flex:none;position:relative;top:1px}
+.bpdoc .pblk{margin-top:11px;font-size:16.5px;line-height:1.7;outline:none;border-radius:6px;color:#2A2824}
+.bpdoc .pblk b{font-weight:600}
+.bpdoc .bul{display:flex;gap:11px;align-items:flex-start;margin-top:10px;font-size:16.5px;line-height:1.65;color:#2A2824}
+.bpdoc .bul .dot{color:#9C9A92;flex:none;position:relative;top:1px}
+.bpdoc .todo{display:flex;gap:11px;align-items:flex-start;margin-top:11px;font-size:16.5px;line-height:1.6;color:#2A2824}
+.bpdoc .tbox{width:18px;height:18px;border:1.5px solid #C9C7C0;border-radius:5px;flex:none;position:relative;top:4px;display:flex;align-items:center;justify-content:center}
+.bpdoc .tbox .ti{font-size:13px;color:#fff;opacity:0}
+.bpdoc .dprov{font-size:13px;color:var(--ink3);margin-top:10px}
+.bpdoc .pv{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;margin-left:4px}
+.bpdoc .dnote{display:flex;gap:10px;background:var(--graybg);border-radius:12px;padding:13px 16px;margin-top:14px;font-size:14px;line-height:1.6;color:var(--ink2)}
+.bpdoc .dnote .ti{font-size:17px;color:var(--ink3);flex:none;margin-top:2px}
+.bpdoc .dnote b{color:var(--ink)}
+.bpdoc .dnote.q{background:var(--card);border:1px solid var(--line)}
+.bpdoc .dnote ul{margin:4px 0 0 16px;padding:0}
+.bpdoc .dnote li{margin:3px 0}
+.bpdoc .dtwrap{border:1px solid var(--line);border-radius:12px;overflow:auto;margin-top:14px;background:var(--card)}
+.bpdoc .dtbl{width:100%;border-collapse:collapse;font-size:14px}
+.bpdoc .dtbl th{text-align:left;font-weight:600;color:var(--ink2);font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:none}
+.bpdoc .dtbl td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top;line-height:1.55;font-size:14px;white-space:normal}
+.bpdoc .dtbl tbody tr:hover{background:none}
+.bpdoc .dtbl tr:last-child td{border-bottom:none}
+.bpdoc .dtbl td.mut{color:var(--ink3)}
+.bpdoc .dtbl td.m{font-weight:500;white-space:nowrap}
+.bpdoc .dtbl td .estag{white-space:nowrap}
+.dcap{font-size:14px;line-height:1.6;color:var(--ink2);margin-top:10px}
+.bpdoc .dtbl td .ti{color:var(--ink3);margin-right:7px;font-size:15px}
+.chipx{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);background:var(--graybg);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.fig{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:16px 14px 6px;background:var(--card)}
+.fig svg{width:100%;height:auto;display:block}
+.bpdoc .callout{margin-top:0}
+.bpdoc .v5sec .pblk:first-of-type{margin-top:0}
+.bpdoc .dtwrap:first-child,.bpdoc .fig:first-child,.bpdoc .dnote:first-child{margin-top:0}
+.bpdoc .bul:first-of-type,.bpdoc .todo:first-of-type{margin-top:0}
+.bpdoc .dnote ul{margin:0 0 0 16px;padding:0}
+.bpdoc .dnote li{margin:3px 0}
+.v8setw .v8row.kv .nm{color:var(--ink2);flex:none;width:120px}
+.v8setw .v8row.kv .v{flex:1;min-width:0;color:var(--ink);text-align:right}
+.v8setw .v8row.kv a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+.v8setw .v8row .ic{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:var(--graybg);color:var(--ink3)}
+.v8setw .v8row .ic .ti{font-size:15px}
+.bpav{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;background:#FAEEDA;color:#854F0B;margin-right:8px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"library","arts":null,"rail":true};</script>
+<script src="gy-nav.js?v=d99df486"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Show the sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs"><span class="cr cur">Blueprint agent</span></div>
+  <div class="spacer"></div>
+  <button class="btn-out" onclick="gyToast('Sharing is not wired up in this sketch')"><i class="ti ti-users"></i> Share</button>
+  <button class="v5keb" onclick="gyToast('Not wired up in this sketch')">&#8942;</button>
+</div>
+
+<div class="v5tabs" id="tabs"></div>
+
+<div class="v5row">
+
+  <div class="v5chat">
+    <div class="v5grip" id="chatgrip" title="Drag to resize"></div>
+    <div class="v5log" id="chatlog"><div class="v5in" id="chatin"></div></div>
+    <div class="v5comp">
+      <div class="v5box">
+        <input class="v8in" id="ask" placeholder="Ask the agent" onkeydown="if(event.key==='Enter')sendMsg()">
+        <div class="v5tools">
+          <button class="v8plus" onclick="gyToast('Adding sources is not wired up in this sketch')" aria-label="Add source"><i class="ti ti-plus"></i></button>
+          <button class="v5send" onclick="sendMsg()" aria-label="Send"><i class="ti ti-arrow-up"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v5panel" id="panel">
+    <div class="v5body"><div class="v5bin" id="pbody"></div></div>
+  </div>
+
+  <div class="v5dr hide" id="drawer">
+    <div class="v5drh"><span class="v5dri hide" id="dricon"></span><div class="v5drt" id="drtitle"></div>
+      <button class="v5drx" onclick="closeDrawer()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+    <div class="v5drb" id="drbody"></div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+var AGENT_IC = 'ti-route';
+function closeDrawer(){ document.getElementById('drawer').classList.add('hide'); }
+function head(n,t){ return '<div class="v5ch"><span class="v5chn">'+n+'</span><span class="v5cht">'+t+'</span></div>'; }
+function sec(id,n,t,body){ return '<section class="v5sec v8sec" id="'+id+'">'+head(n,t)+body+'</section>'; }
+function tbl(cols, rows, colw){
+  return '<div class="dtwrap"><table class="dtbl">'+(colw?'<colgroup>'+colw.map(function(w){return '<col style="width:'+w+'%">';}).join('')+'</colgroup>':'')
+    +'<thead><tr>'+cols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>'
+    + rows.map(function(r){ return '<tr>'+r.map(function(c,i){ return '<td'+(i===0?' class="m"':'')+'>'+c+'</td>'; }).join('')+'</tr>'; }).join('')
+    + '</tbody></table></div>';
+}
+function bul(list){ return list.map(function(t){ return '<div class="bul"><span class="dot">&bull;</span><span>'+t+'</span></div>'; }).join(''); }
+function todo(list){ return list.map(function(t){ return '<div class="todo"><span class="tbox"><i class="ti ti-check"></i></span><span>'+t+'</span></div>'; }).join(''); }
+var SVG = '<svg viewBox="0 0 760 360" role="img" aria-label="Every run sharpens the Blueprint, only the owner publishes" font-family="-apple-system,system-ui,Inter,sans-serif" font-size="13">         <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#A79E8D"/></marker></defs>         <text x="24" y="22" font-size="11.5" fill="#766B62">Author mode</text>         <text x="24" y="352" font-size="11.5" fill="#766B62">Maintain mode</text>         <g fill="none" stroke="#A79E8D" stroke-width="1.25">           <path d="M184 60H208" marker-end="url(#ar)"/><path d="M368 60H392" marker-end="url(#ar)"/><path d="M552 60H576" marker-end="url(#ar)"/>           <path d="M472 84V106H288V84" marker-end="url(#ar)"/>           <path d="M656 84V162H490" marker-end="url(#ar)"/>           <path d="M270 174H104V280" marker-end="url(#ar)"/>           <path d="M184 304H208" marker-end="url(#ar)"/><path d="M368 304H392" marker-end="url(#ar)"/><path d="M552 304H576" marker-end="url(#ar)"/>           <path d="M656 280V186H490" marker-end="url(#ar)"/>         </g>         <g fill="#FFFFFF" stroke="#DED8CA" stroke-width="1.25">           <rect x="24" y="36" width="160" height="48" rx="8"/><rect x="208" y="36" width="160" height="48" rx="8"/><rect x="392" y="36" width="160" height="48" rx="8"/><rect x="576" y="36" width="160" height="48" rx="8"/>           <rect x="24" y="280" width="160" height="48" rx="8"/><rect x="208" y="280" width="160" height="48" rx="8"/><rect x="392" y="280" width="160" height="48" rx="8"/><rect x="576" y="280" width="160" height="48" rx="8"/>         </g>         <rect x="270" y="150" width="220" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="2"/>         <g text-anchor="middle" fill="#1A0C12">           <text x="104" y="64">New type requested</text><text x="288" y="64">Agent drafts</text><text x="472" y="64">Experts workshop</text><text x="656" y="64">Owner signs off</text>           <text x="380" y="178" font-weight="600">Blueprint live, versioned</text>           <text x="104" y="308">Deliverable runs</text><text x="288" y="308">Corrections logged</text><text x="472" y="308">Agent proposes diff</text><text x="656" y="308">Owner approves</text>         </g>         <g font-size="11.5" fill="#766B62">           <text x="380" y="124" text-anchor="middle">gaps left: redraft</text>           <text x="664" y="128">publish v1</text>           <text x="664" y="240">new version</text>           <text x="187" y="166" text-anchor="middle">each run pins a version</text>         </g>       </svg>';
+
+var SECS = [
+  ['c-where','Where it sits', '<div class="pblk">A Blueprint is the spec: mostly a Skill, plus pointers to the Context it reads, the Tools it may use and the Governance gates that apply. A Deliverable is one instance of it in a programme. Lead agents such as Demand Mapping run Deliverables and call Ecosystem Service agents; the Blueprint agent works one level up, on the spec they all run from.</div>'],
+  ['c-why','Why it matters', '<div class="pblk">Mapping a Deliverable today takes long expert sessions, and what is learned in a run stays in people\'s heads or single Claude threads. The Blueprint is the asset in progress; this agent is how it gets sharper with every programme.</div>'],
+  ['c-how','How it works', '<div class="fig">'+SVG+'</div><div class="dcap">Author mode loops between draft and workshop until the owner signs off. Maintain mode turns corrections seen in at least two runs into a proposed diff; the owner\'s approval creates the next version, which new Deliverables pin.</div>'],
+  ['c-jobs','Jobs', tbl(['Job','Mode','Question it answers','Gives','Signs off'],[
+    ['Draft','<span class="chipx">Author</span>','What does good look like, and what steps get us there?','Blueprint draft, every field with source and confidence','Blueprint owner'],
+    ['Challenge','<span class="chipx">Author</span>','Where did similar Deliverables go wrong, and what is missing?','Risks and open questions for the experts','Workshop group'],
+    ['Prepare workshops','<span class="chipx">Author</span>','What do we still need to ask the experts?','Pre-filled step cards and a short question list','Andrew'],
+    ['Learn from runs','<span class="chipx">Maintain</span>','What happened in real runs that should change the spec?','A proposed diff, with the runs as evidence','Blueprint owner'],
+    ['Promote','<span class="chipx">Maintain</span>','Is this ready for the Hive Mind?','Promotion proposal with run record','Blueprint owner']],[19,13,28,26,14])],
+  ['c-schema','Blueprint schema', '<div class="dnote"><i class="ti ti-info-circle"></i><div>Codify only what is externally constrained or evidentially required (DEFRA, Natural England, registries, buyer diligence); everything else stays as Context. A template without a workflow is not a Blueprint, and a run that only writes data is an operational workflow with no Blueprint.</div></div>'
+    + tbl(['Field','Holds','Required'],[
+    ['About','Definition, why it matters, scope in and out','Yes'],
+    ['Done when','The test a reviewer uses to judge the Deliverable finished','<span class="estag">Never empty</span>'],
+    ['Inputs','What each step consumes: uploads, earlier outputs, other Blueprints\' outputs','Yes'],
+    ['Outputs','A list of mixed kinds: documents and database writes','Yes'],
+    ['Template','The document skeleton and its chapters','For documents'],
+    ['Workflow','Steps in chapters, each with owner, executor mode, needs and produces, tools, guardrails','Yes'],
+    ['To-dos','Checks, each with its verification method','Yes'],
+    ['Gates','Human review at chapter ends, sign-off points','Yes'],
+    ['Context','Rule books, sector profiles, ES agents it calls','Yes'],
+    ['Tools','Tools the run may use','Yes'],
+    ['Governance','Who may run, edit, approve','Yes'],
+    ['Learning','What a run saves back before it counts as done','Yes'],
+    ['Ownership','Owner, version, status, changelog','Yes']])],
+  ['c-guard','Guardrails', bul(['Drafts and proposes; never publishes.','Every field carries its source and a confidence.','Never invents steps; a gap becomes an open question.','No draft is ready without a testable "done when".','Pushes back on over-specification.','Proposes a change once it shows up in two runs.','Batches questions weekly; never blocks a running Deliverable.','Leaves ES knowledge to the ES agents and their managers.'])],
+  ['c-evals','Evals', tbl(['Eval','Passes when'],[
+    ['Rebuild test','Its draft from the Demand Mapping workshop material matches the current Customer Demand Mapping Blueprint'],
+    ['Completeness','Every required field is filled or listed as an open question'],
+    ['Done-when test','A reviewer can judge pass or fail from "done when" alone'],
+    ['Consistency','No clash with the settled vocabulary or other live Blueprints'],
+    ['Proposal quality','Share of diffs the owner accepts; rejections logged with the reason'],
+    ['Run test','A run from its draft finishes without the lead asking what the Blueprint should have answered']])],
+  ['c-open','Open questions', '<div class="dnote q"><i class="ti ti-help-circle"></i><div><ul><li>Is Andrew the manager, and who backs him up?</li><li>One agent or two, author and maintain?</li><li>Where do Blueprints live: Notion now, GY OS later?</li><li>Who owns the schema format: Toon, with Nicky on the stack?</li><li>Should it spot Deliverables that have no Blueprint yet?</li><li>Final name: Blueprint agent or Requirements agent?</li></ul></div></div>'],
+  ['c-next','Next steps', todo(['Confirm Andrew as manager and name a backup','Write Blueprint schema v0.1 with Toon','Run the rebuild test on Demand Mapping','Run maintain mode alongside the Ernest Cook Trust runs','Review with Emily and Caitlin'])]
+];
+
+/* the harness configuration, as Settings cards */
+var CONF = [
+  ['Tools','ti-tool','var(--graybg)','#766B62',['Transcript reader','Schema validator','Diff writer','Workshop question list','Publish to the Hive Mind']],
+  ['Skills','ti-sparkles','var(--amberbg)','var(--amberd)',['Run a Blueprint workshop','Write a step card','Make "done when" testable','Apply the codify rule']],
+  ['Context','ti-books','#F3E8DF','#8A5A3B',['Live Blueprints and requirements pages','Published Deliverables','ES agent definitions','Sector profiles','The settled model']],
+  ['Governance','ti-shield-check','#E1F5EE','#0F6E56',['Only the owner publishes','Every change is a diff with its source','All activity logged']],
+  ['Memory','ti-history','#EEEAF8','#5B4BA0',['Past workshops','Decisions and why','Proposals the owner rejected']],
+  ['Connections','ti-plug-connected','var(--bluebg)','var(--blued)',['Granola','Notion','Slack','GY OS Deliverable runs','Activity log']]
+];
+
+var VIEWS = {
+  content: function(){
+    var h = '<div class="v5dt">Blueprint agent</div><div class="v8setw v8docw"><div class="v8setc bpdoc">'
+      + '<section class="v5sec v8sec" id="c-purpose"><div class="callout"><i class="ti ti-target-arrow"></i><span><b>Purpose.</b> The Blueprint agent writes and maintains GY\'s Blueprints. It turns setup workshops into a typed Blueprint, then learns from every Deliverable run and proposes improvements to the Blueprint owner. It runs on GY OS, the one shared harness, as a configuration like every other agent.</span></div></section>';
+    h += SECS.map(function(s,i){ return sec(s[0], i+1, s[1], s[2]); }).join('');
+    return h + '</div>' + anchorNav([['c-purpose','Purpose']].concat(SECS.map(function(s){ return [s[0], s[1]]; }))) + '</div>';
+  },
+  settings: function(){
+    var card = function(t,i,bg,fg,n,body){
+      return '<div class="v8card" id="set-'+t.toLowerCase()+'"><div class="v8sh"><span class="t" style="background:'+bg+';color:'+fg+'"><i class="ti '+i+'"></i></span>'
+        + '<b>'+t+'</b><span>'+n+'</span></div>'+body+'</div>';
+    };
+    var kv = function(k,v){ return '<div class="v8row kv"><span class="nm">'+k+'</span><span class="v">'+v+'</span></div>'; };
+    var h = '<div class="v8ttl">Settings</div><div class="v8setw"><div class="v8setc"><div class="v8set">';
+    h += card('Agent','ti-route','#F3ECDC','#8A6A2A','',
+        kv('Kind','Process agent') + kv('Status','Draft v0.1') + kv('Manager','<span class="bpav">AN</span>Andrew, to confirm')
+      + kv('Signs off','Each Blueprint\'s owner') + kv('First test','Customer Demand Mapping')
+      + kv('Source','<a href="https://claude.ai/code/artifact/8cd8add2-48d6-499f-8f65-15050c74286d" target="_blank" rel="noopener">Live doc</a>'));
+    h += CONF.map(function(c){
+      return card(c[0],c[1],c[2],c[3],String(c[4].length), c[4].map(function(x){
+        return '<div class="v8row"><span class="ic"><i class="ti '+c[1]+'"></i></span><span class="nm">'+x+'</span></div>';
+      }).join(''));
+    }).join('');
+    var nav = [['set-agent','Agent','ti-route']].concat(CONF.map(function(c){ return ['set-'+c[0].toLowerCase(), c[0], c[1]]; }));
+    return h + '</div></div>' + anchorNav(nav) + '</div>';
+  }
+};
+
+var SETNAV = [], SETICO = {};
+var ANCLOCK = 0;
+function anchorNav(items){
+  return '<nav class="v8anc" id="setnav"><div>' + items.map(function(it,i){
+    return '<a class="'+(i===0?'on':'')+'" data-id="'+it[0]+'" onclick="setJump(\''+it[0]+'\')">'+(it[2]?'<i class="ti '+it[2]+'"></i>':'')+'<span>'+it[1]+'</span></a>';
+  }).join('') + '</div></nav>';
+}
+/* in the narrow layout the nav is a sticky row above the cards, so jumps and the scroll spy clear its height */
+function navRow(){ var nav = document.getElementById('setnav'); return nav && nav.firstChild && getComputedStyle(nav.firstChild).flexDirection === 'row' ? nav : null; }
+function navOff(){ var nav = navRow(); return nav ? nav.offsetHeight : 0; }
+function relTop(el, sc){ return el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop; }
+function setJump(id){
+  var el = document.getElementById(id), sc = document.querySelector('.v5body');
+  if(!el || !sc) return;
+  ANCLOCK = Date.now() + 900;
+  sc.scrollTo({top: Math.max(0, relTop(el, sc) - 32 - navOff()), behavior:'smooth'});
+  setActive(id);
+}
+function setActive(id){
+  var nav = document.getElementById('setnav'); if(!nav) return;
+  [].forEach.call(nav.querySelectorAll('a'), function(a){ a.classList.toggle('on', a.getAttribute('data-id') === id); });
+  var row = navRow(), on = nav.querySelector('a.on');
+  if(row && on){ var box = row.firstChild; box.scrollTo({left: Math.max(0, on.offsetLeft - box.offsetLeft - 24), behavior:'smooth'}); }
+}
+document.addEventListener('scroll', function(e){
+  if(!e.target || !e.target.classList || !e.target.classList.contains('v5body')) return;
+  var nav = document.getElementById('setnav'); if(!nav || Date.now() < ANCLOCK) return;
+  var sc = e.target, ids = [].map.call(nav.querySelectorAll('a'), function(a){ return a.getAttribute('data-id'); }), cur = ids[0];
+  ids.forEach(function(id){ var el = document.getElementById(id); if(el && relTop(el, sc) - 80 - navOff() <= sc.scrollTop) cur = id; });
+  if(sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 4) cur = ids[ids.length-1];
+  setActive(cur);
+}, true);
+
+var TABS = [['content','ti-file-text','Content'],['settings','ti-settings','Settings']];
+var TAB = 'content';
+function paintTabs(){
+  var shut = document.body.classList.contains('pclosed');
+  document.getElementById('tabs').innerHTML =
+    '<button class="v8agt'+(shut?'':' on')+'" onclick="toggleChat()" title="'+(shut?'Show':'Hide')+' the agent">'
+      + '<span class="v8ava"><i class="ti '+AGENT_IC+'"></i></span>Agent</button>'
+    + '<span class="v5tdiv"></span>'
+    + '<div class="v5tabgrp">' + TABS.map(function(t){
+        return '<button class="v5tab'+(TAB===t[0]?' on':'')+'" onclick="openTab(\''+t[0]+'\')"><i class="ti '+t[1]+'"></i><span class="lb">'+t[2]+'</span></button>';
+      }).join('') + '</div>';
+}
+function openTab(k){
+  TAB = k; paintTabs();
+  var el = document.getElementById('pbody');
+  el.innerHTML = VIEWS[k]();
+  el.parentNode.scrollTop = 0;
+}
+function toggleChat(){ document.body.classList.toggle('pclosed'); paintTabs(); }
+
+/* chat */
+function say(h){ return '<div class="v5say">'+h+'</div>'; }
+function you(h){ return '<div class="v8me"><div class="v5you">'+h+'</div></div>'; }
+var LOG = [say('I write and maintain GY\'s Blueprints. I draft them from setup workshops, then propose changes from what happens in Deliverable runs. Every version is signed off by its Blueprint owner.'),
+           say('My first test is <b>Customer Demand Mapping</b>.')];
+function paintChat(){ document.getElementById('chatin').innerHTML = LOG.join(''); var lg = document.getElementById('chatlog'); lg.scrollTop = lg.scrollHeight; }
+function esc(s){ return s.replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function sendMsg(){
+  var inp = document.getElementById('ask'), v = (inp.value||'').trim(); if(!v) return;
+  inp.value = ''; LOG.push(you(esc(v))); paintChat();
+  setTimeout(function(){ LOG.push(say('In this sketch I cannot answer free questions yet.')); paintChat(); }, 600);
+}
+/* chat width, shared with the Deliverable pages */
+var CHAT_MIN = 340, CHAT_MAX = 680;
+(function(){
+  var w = 0;
+  try{ w = parseInt(localStorage.getItem('gyChatW8') || '', 10) || 0; }catch(e){}
+  if(w) document.body.style.setProperty('--chatw', Math.max(CHAT_MIN, Math.min(CHAT_MAX, w)) + 'px');
+  var grip = document.getElementById('chatgrip'), chat = document.querySelector('.v5chat');
+  if(!grip || !chat) return;
+  grip.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    var x0 = e.clientX, w0 = chat.getBoundingClientRect().width;
+    document.body.classList.add('dragging'); grip.setPointerCapture(e.pointerId);
+    function move(ev){
+      var room = document.querySelector('.v5row').getBoundingClientRect().width - 420;
+      document.body.style.setProperty('--chatw', Math.round(Math.max(CHAT_MIN, Math.min(Math.min(CHAT_MAX, room), w0 + (ev.clientX - x0)))) + 'px');
+    }
+    function up(){
+      grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up);
+      document.body.classList.remove('dragging');
+      try{ localStorage.setItem('gyChatW8', String(Math.round(chat.getBoundingClientRect().width))); }catch(e){}
+    }
+    grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up);
+  });
+})();
+
+paintTabs(); openTab('content'); paintChat();
+</script>
+<script src="gy-agent-chat.js?v=d259e658"></script>
+</body>
+</html>

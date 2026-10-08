@@ -204,16 +204,21 @@ select.cin{cursor:pointer}
 .kbempty{font-size:14px;color:var(--ink3);padding:12px 5px;line-height:1.5}
 .wfhide{display:none!important}
 .gseat{display:block;width:100%;margin-bottom:12px}
+/* column names live in the group band itself, one header row per card (8 Oct) */
+.gytbl .gygrp.grphd{display:grid;grid-template-columns:var(--cols,1fr);gap:14px}
+.grphd .gname{display:flex;align-items:center;gap:11px}
+.grphd .ch{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#766B62}
+@media(max-width:860px){.gytbl .gygrp.grphd{display:flex}.grphd .ch{display:none}}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=d794329b"></script>
-<script src="gy-versions.js?v=2400190b"></script>
+<script src="gy-nav.js?v=d99df486"></script>
+<script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
-<script src="gy-docs.js?v=fdac0446"></script>
+<script src="gy-docs.js?v=5f16dc2e"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -229,7 +234,7 @@ select.cin{cursor:pointer}
   <div class="phead">
     <div class="h1">Deliverables</div>
     <div class="acts">
-      <div class="seg" id="viewSeg">
+      <div class="seg" id="viewSeg" style="display:none"><!-- List/Board hidden for now (8 Oct) -->
         <button class="on" id="vList" onclick="setView('list')">List</button>
         <button id="vBoard" onclick="setView('board')">Board</button>
       </div>
@@ -237,13 +242,13 @@ select.cin{cursor:pointer}
     </div>
   </div>
 
-  <div class="favstrip" id="favStrip"></div>
+  <!-- Favourites hidden for now (8 Oct); re-enable: restore this div and the DOMContentLoaded line below
+  <div class="favstrip" id="favStrip"></div> -->
 
   <div id="listWrap" style="--cols:minmax(0,2.5fr) 1.1fr .75fr .85fr 1.1fr;margin-top:18px">
-  <div class="gylegend"><span>Deliverable</span><span>Setup</span><span>Owner</span><span>State</span><span>Outputs</span></div>
   <div class="gystack">
   <div class="gytbl">
-  <div class="gygrp" id="delGrp">Deliverables <span class="count">1</span></div>
+  <div class="gygrp grphd" id="delGrp"><span class="gname">Deliverables <span class="count">1</span></span><span class="ch">Setup</span><span class="ch">Owner</span><span class="ch">State</span><span class="ch">Outputs</span></div>
   <div id="draftDocs"></div>
   </div>
   </div>
@@ -252,28 +257,44 @@ select.cin{cursor:pointer}
   <div class="kb wfhide" id="kbWrap"></div>
 
   <div class="advonly" id="foldedWrap" style="--cols:minmax(0,2.5fr) 1.1fr .75fr .85fr 1.1fr">
-  <div class="group acc closed" style="margin-top:22px" onclick="toggleAcc(this,'accDesign')"><i class="ti ti-chevron-down accarr"></i> Blueprints in design <span class="count">2</span></div>
-  <div class="accbody closed" id="accDesign">
-  <div class="gytbl">
-  <div class="gyrow click" data-type="blueprint" data-state="design" onclick="location.href='tender-to-bid-canvas-prototype.html'">
-    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-file-search"></i></div><div class="nm">Tender to Bid</div></div>
-    <div class="setup"><span class="st" style="background:var(--amberbg);color:var(--amberd)">1 to configure</span><span data-tip="No to-dos defined yet" class="gyinfo" tabindex="0" style="margin-left:6px">i</span></div>
-    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">AR</span>Archie</div>
-    <div class="state">In design</div>
-    <div class="mut">none yet</div>
-  </div>
-  <div class="gyrow click" data-type="blueprint" data-state="design" onclick="location.href='lead-demand-mapping-canvas.html'">
-    <div class="name"><div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-map-search"></i></div><div class="nm">Lead Demand mapping</div></div>
-    <div><span class="st" style="background:var(--greenbg);color:var(--greend)">Ready</span></div>
-    <div class="who"><span class="av" style="background:var(--graybg);color:var(--grayd)">IZ</span>Izzie</div>
-    <div class="state">In design</div>
-    <div class="mut">none yet</div>
-  </div>
-  </div>
-  </div>
-  <div class="group acc closed" style="margin-top:14px" onclick="toggleAcc(this,'accArch')"><i class="ti ti-chevron-down accarr"></i> Archive <span class="count">9</span></div>
+  <div class="group acc closed" style="margin-top:22px" onclick="toggleAcc(this,'accArch')"><i class="ti ti-chevron-down accarr"></i> Archive <span class="count">14</span></div>
   <div class="accbody closed" id="accArch">
   <div class="gytbl">
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='document.html?mode=deliverable'">
+    <div class="name"><div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-file-text"></i></div><div class="nm">Customer Demand Mapping: document view</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">EN</span>Emily</div>
+    <div class="state">Document view</div>
+    <div class="mut">&middot;</div>
+  </div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='tender-to-bid-canvas-prototype.html'">
+    <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-file-search"></i></div><div class="nm">Tender to Bid</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--amberbg);color:var(--amberd)">AR</span>Archie</div>
+    <div class="state">Canvas view</div>
+    <div class="mut">&middot;</div>
+  </div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='lead-demand-mapping-canvas.html'">
+    <div class="name"><div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-map-search"></i></div><div class="nm">Lead Demand mapping</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">IZ</span>Izzie</div>
+    <div class="state">Canvas view</div>
+    <div class="mut">&middot;</div>
+  </div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='demand-mapping-canvas-prototype.html'">
+    <div class="name"><div class="tile" style="background:var(--tealbg);color:var(--teald)"><i class="ti ti-topology-star-3"></i></div><div class="nm">Customer Demand Mapping: canvas</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--tealbg);color:var(--teald)">CC</span>Caitlin</div>
+    <div class="state">Canvas view</div>
+    <div class="mut">&middot;</div>
+  </div>
+  <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='investor-qa-log-canvas-prototype.html'">
+    <div class="name"><div class="tile" style="background:var(--bluebg);color:var(--blued)"><i class="ti ti-messages"></i></div><div class="nm">Investor Q&amp;A Log: canvas</div></div>
+    <div class="mut">&middot;</div>
+    <div class="who"><span class="av" style="background:var(--bluebg);color:var(--blued)">KI</span>Kishen</div>
+    <div class="state">Canvas view</div>
+    <div class="mut">&middot;</div>
+  </div>
   <div class="gyrow click arch" data-type="archive" data-state="experiment" onclick="location.href='upper-dee-deliverable-page.html'">
     <div class="name"><div class="tile" style="background:var(--amberbg);color:var(--amberd)"><i class="ti ti-mountain"></i></div><div class="nm">Upper Dee: Customer Demand Mapping</div></div>
     <div class="mut">&middot;</div>
@@ -669,7 +690,8 @@ function wfInitStars(){
   });
   wfPaintStars();
 }
-document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRenderFavs(); });
+/* Favourites hidden for now (Thomas, 8 Oct): no strip, no row stars.
+document.addEventListener('DOMContentLoaded', function(){ wfInitStars(); wfRenderFavs(); }); */
 
 /* Every deliverable whose workflow has not been run yet shows here, not started.
    One source with Documents, so the two pages can never disagree. */
@@ -695,8 +717,11 @@ function ownerCell(by){
   function paint(){
     if(!window.GYD) return;
     var el=document.getElementById('draftDocs'); if(!el) return;
-    var rows=GYD.deliverables();
-    el.innerHTML = rows.map(function(x){
+    /* only the newer, built-out deliverables stay in the list (8 Oct); the rest go to Archive */
+    var NEWER={sdm:1, comm:1, fm:1};
+    var all=GYD.deliverables();
+    var rows=all.filter(function(x){ return NEWER[x.id]; }), old=all.filter(function(x){ return !NEWER[x.id]; });
+    var rowHtml=function(x, arch){
       var d=GYD.dept(x.dept);
       var es=x.es?(window.GY_ES||{})[x.es]:null;
       var name=String(x.name).replace(/&amp;/g,'and').replace(/'/g,'');
@@ -713,8 +738,8 @@ function ownerCell(by){
              + (x.out.length>1 ? '<span class="omore" tabindex="0" data-tip="'+x.out.slice(1).map(function(o){return o[0];}).join(', ')+'">+'+(x.out.length-1)+'</span>' : '')
              + '</div>';
       }
-      return '<div class="gyrow click"'+(x.id==='sdm'?' id="dmRow"':'')
-        +' data-type="deliverable" data-state="'+state+'" data-dept="'+(x.dept||'')+'" onclick="'+go+'">'
+      return '<div class="gyrow click'+(arch?' arch moved':'')+'"'+(x.id==='sdm'?' id="dmRow"':'')
+        +' data-type="'+(arch?'archive':'deliverable')+'" data-state="'+state+'" data-dept="'+(x.dept||'')+'" onclick="'+go+'">'
         +'<div class="name">'
           +'<div class="tile" style="background:'+d.bg+';color:'+d.fg+'"><i class="ti ti-topology-star-3"></i></div>'
           +'<div class="nm">'+x.name
@@ -725,11 +750,19 @@ function ownerCell(by){
         +barCell(done, steps)
         +outs
       +'</div>';
-    }).join('');
+    };
+    el.innerHTML = rows.map(function(x){ return rowHtml(x); }).join('');
+    var ab=document.querySelector('#accArch .gytbl');
+    if(ab){
+      [].slice.call(ab.querySelectorAll('.moved')).forEach(function(r){ r.remove(); });
+      ab.insertAdjacentHTML('afterbegin', old.map(function(x){ return rowHtml(x, true); }).join(''));
+      var ac=document.querySelector('#foldedWrap .group.acc .count');
+      if(ac) ac.textContent = ab.querySelectorAll('.gyrow').length;
+    }
     var c=document.querySelector('#delGrp .count');
     if(c) c.textContent = rows.length;
-    if(window.wfInitStars){ wfInitStars(); wfRenderFavs(); }
-    var v='list'; try{ v=localStorage.getItem('gyDelView')||'list'; }catch(e){}
+    /* favourites hidden for now: if(window.wfInitStars){ wfInitStars(); wfRenderFavs(); } */
+    var v='list'; /* List/Board hidden for now (8 Oct): always list. was: try{ v=localStorage.getItem('gyDelView')||'list'; }catch(e){} */
     if(v==='board') setView('board'); else if(kbIsOpen()) kbBuild();
   }
   window.addEventListener('DOMContentLoaded',paint);
@@ -821,11 +854,9 @@ function kbIsOpen(){ var k=document.getElementById('kbWrap'); return k && !k.cla
 gyBar('abar', {
   search:  {placeholder:'Search deliverables', oninput:function(v){ WFQ=v; wfApply(); }},
   filters: [
-    ['Type',[['ti-circle-dot','Any type','all'],['ti-checklist','Deliverables','deliverable'],
-             ['ti-ruler-measure','Blueprints','blueprint'],['ti-archive','Archive','archive']]],
+    ['Type',[['ti-circle-dot','Any type','all'],['ti-checklist','Deliverables','deliverable'],['ti-archive','Archive','archive']]],
     ['State',[['ti-circle-dot','Any state','all'],['ti-player-play','In progress','progress'],
-              ['ti-pencil','Not started','notstarted'],['ti-circle-check','Complete','complete'],
-              ['ti-ruler-measure','In design','design']]]
+              ['ti-pencil','Not started','notstarted'],['ti-circle-check','Complete','complete']]]
   ],
   onfilter: function(group, value){
     if(group==='Type') WFTYPE=value; else WFSTATE=value;

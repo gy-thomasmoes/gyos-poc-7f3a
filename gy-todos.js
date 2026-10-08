@@ -13,14 +13,18 @@
     'Izzie Bell'    :{ini:'IB',c:'#7F77DD'},
     'Millie Gray'   :{ini:'MG',c:'#D4537E'},
     'Josh Read'     :{ini:'JR',c:'#639922'},
+    'Kishen'        :{ini:'KI',c:'#993C1D'},
+    'Oscar'         :{ini:'OS',c:'#0F6E56'},
     'Vertical Lead' :{ini:'VL',c:'#5F5E5A'}
   };
 
   var DELIVERABLES = [
     {k:'sdm-ev', name:'Customer Demand', full:'Customer Demand Mapping', prog:'Evenlode',
-     ic:'ti-checkup-list', bg:'var(--tealbg)',  fg:'var(--teald)',  href:'document.html?mode=deliverable'},
+     ic:'ti-checkup-list', bg:'var(--tealbg)',  fg:'var(--teald)',  href:'deliverable-sketch-v8.html'},
     {k:'iqa-ev', name:'Investor Q&A',    full:'Investor Q&A pack',      prog:'Evenlode',
      ic:'ti-checkup-list', bg:'var(--bluebg)',  fg:'var(--blued)',  href:'investor-qa-pack-example.html'},
+    {k:'fm-ev',  name:'Financial model', full:'ELR investment model',  prog:'Evenlode',
+     ic:'ti-table',        bg:'var(--greenbg)', fg:'var(--greend)', href:'financial-model-v8.html'},
     {k:'sdm-sh', name:'Customer Demand', full:'Customer Demand Mapping', prog:'Spains Hall',
      ic:'ti-checkup-list', bg:'var(--tealbg)',  fg:'var(--teald)',  href:null},
     {k:'bep-bo', name:'Baseline evidence',full:'Baseline evidence pack', prog:'Boothby',
@@ -63,7 +67,17 @@
     {id:'t19',t:'Reply to the Boothby onboarding email',                  who:ME,             d:'none',   on:'2026-09-11', step:'', node:null, done:false},
     {id:'t20',t:'Book the quarterly review with the Vertical Lead',       who:ME,             d:'none',   on:'2026-09-22', step:'', node:null, done:false},
     {id:'t21',t:'Tidy the shared shelf of ES rule books',                 who:ME,             d:'none',   on:'',           step:'', node:null, done:false},
-    {id:'t22',t:'Write up the Spains Hall handover note',                 who:'Emily Norton', d:'none',   on:'',           step:'', node:null, done:true}
+    {id:'t22',t:'Write up the Spains Hall handover note',                 who:'Emily Norton', d:'none',   on:'',           step:'', node:null, done:true},
+    {id:'t30',t:'Load habitat hectares',who:'Josh Read',d:'fm-ev', on:'', step:'1.1 Load habitat hectares', node:'hect', done:true},
+    {id:'t31',t:'Set scenario variables',who:'Josh Read',d:'fm-ev', on:'', step:'1.2 Set scenario variables', node:'scen', done:true},
+    {id:'t32',t:'Check: Inputs complete?',who:'Josh Read',d:'fm-ev', on:'', step:'1.3 Check: Inputs complete?', node:'gin', done:true},
+    {id:'t33',t:'Run base scenario',who:'Josh Read',d:'fm-ev', on:'', step:'2.1 Run base scenario', node:'base', done:true},
+    {id:'t34',t:'Run downside scenarios',who:'Josh Read',d:'fm-ev', on:'', step:'2.2 Run downside scenarios', node:'sens', done:true},
+    {id:'t35',t:'Reconcile units with Inventory',who:'Josh Read',d:'fm-ev', on:'', step:'2.3 Reconcile units with Inventory', node:'recon', done:true},
+    {id:'t36',t:'Capital review',who:'Kishen',d:'fm-ev', on:'', step:'3.1 Capital review', node:'caprev', done:true},
+    {id:'t37',t:'Check: Model signed off?',who:'Josh Read',d:'fm-ev', on:'', step:'3.2 Check: Model signed off?', node:'gsign', done:true},
+    {id:'t38',t:'Lock submission version',who:'Josh Read',d:'fm-ev', on:'', step:'4.1 Lock submission version', node:'lock', done:true},
+    {id:'t39',t:'Send outputs to Data platform',who:'Josh Read',d:'fm-ev', on:'', step:'4.2 Send outputs to Data platform', node:'plat', done:true}
   ];
 
   var KEY='gyTodoDone';

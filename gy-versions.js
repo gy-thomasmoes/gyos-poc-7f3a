@@ -26,7 +26,8 @@
     ]},
     { name: 'Inventory', pages: [
       ['inventory-overview.html',    'v1'],
-      ['inventory-overview-v2.html', 'v2']
+      ['inventory-overview-v2.html', 'v2'],
+      ['inventory-overview-v3.html', 'v3']
     ]}
   ];
 

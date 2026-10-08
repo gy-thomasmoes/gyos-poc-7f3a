@@ -210,9 +210,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 
 <div class="shell">
 <script>window.GYNAV={"active":"home","arts":"demand"};</script>
-<script src="gy-nav.js?v=d794329b"></script>
+<script src="gy-nav.js?v=d99df486"></script>
 <script src="gy-calendar.js?v=b1dfa958"></script>
-<script src="gy-todos.js?v=7226a07d"></script>
+<script src="gy-todos.js?v=9516746a"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -235,14 +235,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
         <div class="pdesc">Supply is scored. The Trade check-in is queued behind you.</div>
         <div class="ractions">
           <button class="btn primary" onclick="openStepDrawer()">Open the step</button>
-          <button class="btn soft" onclick="location.href='document.html?mode=deliverable'">Open the deliverable</button>
+          <button class="btn soft" onclick="location.href='deliverable-sketch-v8.html'">Open the deliverable</button>
         </div>
       </div>
 
       <section class="block">
         <div class="blabel"><h2>Running now</h2></div>
         <div class="rcards">
-          <div class="rcard" onclick="location.href='document.html?mode=deliverable'">
+          <div class="rcard" onclick="location.href='deliverable-sketch-v8.html'">
             <div class="rc1"><span class="pulse"></span> Evenlode</div>
             <div class="rc2">Beneficiary map &amp; Buyer list</div>
             <div class="rbar"><i style="width:50%"></i></div>
@@ -273,7 +273,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
         <section class="block">
           <div class="blabel"><h2>Documents</h2><span class="act" onclick="location.href='documents-overview.html'">All</span></div>
           <div class="list">
-            <div class="hrow" onclick="location.href='document.html?mode=deliverable'"><i class="ti ti-checkup-list ric"></i><div class="rmain"><div class="rtitle">Customer Demand Mapping</div></div><div class="rwhen">14 min</div></div>
+            <div class="hrow" onclick="location.href='deliverable-sketch-v8.html'"><i class="ti ti-checkup-list ric"></i><div class="rmain"><div class="rtitle">Customer Demand Mapping</div></div><div class="rwhen">14 min</div></div>
             <div class="hrow" onclick="location.href='investor-qa-pack-example.html'"><i class="ti ti-checkup-list ric"></i><div class="rmain"><div class="rtitle">Investor Q&amp;A pack</div></div><div class="rwhen">1 Jul</div></div>
             <div class="hrow" onclick="toast('Boothby is not in this prototype yet')"><i class="ti ti-checkup-list ric"></i><div class="rmain"><div class="rtitle">Baseline evidence pack</div></div><div class="rwhen">Yest.</div></div>
             <div class="hrow" onclick="location.href='documents-overview.html'"><i class="ti ti-file-text ric"></i><div class="rmain"><div class="rtitle">tenure_map.pdf</div></div><div class="rwhen">3 Jul</div></div>
@@ -349,7 +349,7 @@ var BLOCKERS=[
  {t:'Client send needs your tap', note:'Spains Hall', when:'2 days', warn:true,
   go:"toast('Spains Hall is not in this prototype yet')"},
  {t:'Emily asked you to name the buyers', note:'Evenlode', when:'2h', warn:false,
-  go:"location.href='document.html?mode=deliverable'"}
+  go:"location.href='deliverable-sketch-v8.html'"}
 ];
 function homeQueue(){
   var el=document.getElementById('homeQueue'); if(!el||!window.GYT)return;
@@ -387,6 +387,6 @@ if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle(
 window.addEventListener('message',e=>{if(e.data==='gy-close-drawer')closeStepDrawer();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeStepDrawer();});
 </script>
-<script src="gy-versions.js?v=2400190b"></script>
+<script src="gy-versions.js?v=30654df5"></script>
 </body>
 </html>
