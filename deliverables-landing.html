@@ -215,10 +215,10 @@ select.cin{cursor:pointer}
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=d99df486"></script>
+<script src="gy-nav.js?v=b81afd78"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
-<script src="gy-docs.js?v=5f16dc2e"></script>
+<script src="gy-docs.js?v=37a07b8a"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -718,7 +718,7 @@ function ownerCell(by){
     if(!window.GYD) return;
     var el=document.getElementById('draftDocs'); if(!el) return;
     /* only the newer, built-out deliverables stay in the list (8 Oct); the rest go to Archive */
-    var NEWER={sdm:1, comm:1, fm:1};
+    var NEWER={sdm:1, comm:1, fm:1, nc101:1};
     var all=GYD.deliverables();
     var rows=all.filter(function(x){ return NEWER[x.id]; }), old=all.filter(function(x){ return !NEWER[x.id]; });
     var rowHtml=function(x, arch){

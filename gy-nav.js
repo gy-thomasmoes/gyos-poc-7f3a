@@ -91,9 +91,10 @@ window.gyCartoTiles = function(style){
     ['lead-demand-mapping','Lead Demand mapping',"location.href='lead-demand-mapping-canvas.html'"],
     ['market-readiness','Market Readiness',"gyToast('Market Readiness Assessment is not in this prototype yet')"],
     ['financial-model','Financial Model',"gyToast('Financial Model is not in this prototype yet')"],
-    ['commercial-strategy','Commercial Strategy',"location.href='commercial-strategy-v8.html'"]
+    ['commercial-strategy','Commercial Strategy',"location.href='commercial-strategy-v8.html'"],
+    ['natcap-101','NatCap 101 Presentation',"location.href='natcap-101-v8.html'"]
   ];
-  var delActive = ['customer-demand-v2','demand-mapping','demand-textview','lead-mapping','upper-dee-mapping','upper-dee-executors','workflow-experiment-mapping','investor-qa','tender-to-bid','lead-demand-mapping','market-readiness','financial-model','commercial-strategy'].indexOf(active)>=0;
+  var delActive = ['customer-demand-v2','demand-mapping','demand-textview','lead-mapping','upper-dee-mapping','upper-dee-executors','workflow-experiment-mapping','investor-qa','tender-to-bid','lead-demand-mapping','market-readiness','financial-model','commercial-strategy','natcap-101'].indexOf(active)>=0;
   /* Workflows accordion: open (respecting stored state) only when on a workflow page;
      always collapsed on first load of the programme layer / Overview. */
   var delCls = delActive ? gyCls('delSub', true) : ' closed';
@@ -1271,6 +1272,7 @@ window.gyCartoTiles = function(style){
     'deliverable-sketch-v7.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-v8.html': {alt:'programme', trail:['Deliverables']},
     'commercial-strategy-v8.html': {alt:'programme', trail:['Deliverables']},
+    'natcap-101-v8.html':          {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-document.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-workflow.html': {alt:'programme', trail:['Deliverables']},
     'meeting-notes.html':               {alt:'programme'},

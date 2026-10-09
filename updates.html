@@ -32,19 +32,16 @@ a{color:inherit;text-decoration:none}
 
 /* hero */
 .hero{max-width:1120px;margin:0 auto;padding:36px 32px 20px}
-.hero .phead{display:flex;align-items:center;gap:14px}
+.hero .phead{display:flex;align-items:center;gap:14px;border-bottom:none;padding-bottom:0;margin-bottom:0}
 .hero .phead .acts{margin-left:auto;display:flex;gap:10px}
 .hero .asearch{margin:16px 0 0}
 .empty{max-width:1120px;margin:0 auto;padding:56px 32px;border-top:1px solid var(--line);color:var(--ink2);font-size:16px}
 .hero h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 
-/* jump row */
-.jump{max-width:1120px;margin:0 auto;padding:0 32px 40px;display:flex;flex-wrap:wrap;gap:8px}
-.jump a{font-size:14px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--card)}
-.jump a:hover{color:var(--ink);border-color:var(--line2)}
 
 /* releases */
 .rel{max-width:1120px;margin:0 auto;padding:56px 32px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;border-top:1px solid var(--line);scroll-margin-top:61px}
+#rels .rel:first-child{border-top:none;padding-top:24px}
 .rdate{position:sticky;top:93px;align-self:start}
 .rdate .d{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:-.01em}
 .rdate .wd{font-size:14.5px;color:var(--ink2);margin-top:4px}
@@ -71,7 +68,6 @@ a{color:inherit;text-decoration:none}
 
 @media(max-width:860px){
   .hero{padding:32px 20px 18px}
-  .jump{padding:0 20px 28px}
   .rel{grid-template-columns:1fr;gap:18px;padding:40px 20px}
   .rdate{position:static}
   .it h2{font-size:24px}
@@ -82,7 +78,7 @@ a{color:inherit;text-decoration:none}
 
 <div class="shell">
 <script>window.GYNAV={"active":"none"};</script>
-<script src="gy-nav.js?v=d99df486"></script>
+<script src="gy-nav.js?v=b81afd78"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 
 <div class="mainc">
@@ -95,7 +91,6 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <section class="hero"><div class="phead"><h1>Product updates</h1><div class="acts"><div id="abar"></div></div></div></section>
-<nav class="jump" id="jump"></nav>
 <main id="rels"></main>
 <footer class="foot">Based on changes to the GY OS prototype between 28 September and 8 October 2026.</footer>
 </div>
@@ -106,6 +101,10 @@ a{color:inherit;text-decoration:none}
    main element highlighted; smaller changes go in "also". Add a new release at the top. */
 var RELEASES = [
   {id:'oct-08', d:'8 October', wd:'Thursday', items:[
+    {img:'upd-document-types.jpg', area:'Deliverables', title:'Three kinds of document', h:'deliverables-landing.html',
+     p:'A Deliverable now produces one of three document types. A Word document such as Commercial Strategy fills chapter by chapter into a paged report; a spreadsheet such as the ELR investment model fills tab by tab in a workbook viewer; a keynote such as NatCap 101 fills slide by slide into a 16:9 deck. The run, the agents, the decisions and the Blueprint work the same way for all three, and each ends in a file you can download.'},
+    {img:'upd-natcap-101.jpg', area:'Deliverables', title:'NatCap 101, the first keynote Deliverable', h:'natcap-101-v8.html',
+     p:'NatCap 101 for Walkham Valley is built from its new Blueprint: 19 slides, with library slides reused and programme slides written from one evidence register. Every slide has its chapter colour and a schematic illustration, and the approved deck is generated as a PDF. On the way, the agent catches the figure mismatches the July deck had.'},
     {img:'upd-commercial-strategy.jpg', area:'Deliverables', title:'Commercial Strategy, built from a Blueprint', h:'commercial-strategy-v8.html',
      p:'The first Deliverable made from a Blueprint document: Commercial Strategy for Upper Dee, based on the real May 2026 final. It opens with four chapters already filled from the finished Customer Demand Mapping. Eight Ecosystem Service agents then write the market chapters.'},
     {img:'upd-financial-model.jpg', area:'Deliverables', title:'Deliverables that are spreadsheets', h:'financial-model-v8.html',
@@ -121,7 +120,10 @@ var RELEASES = [
     {also:[
       {a:'Hive Mind', i:'ti-brain', t:'Hive Mind simplified, with a new Activity tab', h:'hive-mind-v2.html'},
       {a:'Deliverables', i:'ti-archive', t:'Canvas view and document view moved to the Deliverables Archive', h:'deliverables-landing.html'},
-      {a:'Deliverables', i:'ti-layout-sidebar-right', t:'Demand Mapping v8 opens Outputs, items and agents in one right drawer', h:'deliverable-sketch-v8.html'}
+      {a:'Deliverables', i:'ti-layout-sidebar-right', t:'Demand Mapping v8 opens Outputs, items and agents in one right drawer', h:'deliverable-sketch-v8.html'},
+      {a:'Deliverables', i:'ti-player-track-next', t:'Click a step\'s circle in Workflow to fill the document up to that step, in all four Deliverable demos', h:'natcap-101-v8.html'},
+      {a:'Deliverables', i:'ti-list-numbers', t:'NatCap 101 joins the Deliverables list as its fourth Deliverable', h:'deliverables-landing.html'},
+      {a:'Deliverables', i:'ti-arrows-horizontal', t:'NatCap 101: drag the Slides sidebar to make it wider or narrower', h:'natcap-101-v8.html'}
     ]}
   ]},
   {id:'oct-06', d:'6 October', wd:'Tuesday', items:[
@@ -198,8 +200,6 @@ function uRender(){
     j += '<a href="#'+r.id+'">'+r.d+'</a>';
     out += '<section class="rel" id="'+r.id+'"><div class="rdate"><div class="d">'+r.d+'</div><div class="wd">'+r.wd+'</div></div><div class="items">'+body+'</div></section>';
   });
-  document.getElementById('jump').innerHTML = j;
-  document.getElementById('jump').style.display = j ? '' : 'none';
   document.getElementById('rels').innerHTML = out || '<div class="empty">No updates match.</div>';
 }
 gyBar('abar', {

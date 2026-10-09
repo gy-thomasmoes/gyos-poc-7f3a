@@ -1367,13 +1367,16 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 .v8wait.done{box-shadow:none}
 .v8wait.done .h{padding-bottom:15px;color:var(--ink2)}
 @media (prefers-reduced-motion:reduce){.v8waith .pip{animation:none}}
+/* fill to here: the step circle in Workflow is a button (8 Oct) */
+.v8ws .mk{cursor:pointer;transition:box-shadow .12s}
+.v8ws .mk:hover{box-shadow:0 0 0 4px rgba(26,12,18,.12)}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active":"deliverables","arts":"demand","rail":true};</script>
-<script src="gy-nav.js?v=d99df486"></script>
+<script src="gy-nav.js?v=b81afd78"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 
 <div class="mainc">
@@ -2185,7 +2188,7 @@ var VIEWS = {
                          : st==='done' ? '<span class="v8wo dn">Done</span>'
                          : st==='cur' ? '<span class="v8wo now">Now</span>' : '';
             return '<div class="v8ws '+st+(g?' gate':'')+(STEPSEL===s.k?' sel':'')+'" onclick="openStep(\''+s.k+'\')">'
-              + '<span class="mk"></span><span class="no">'+s.k+'</span><span class="tt">'+s.t+'</span>'
+              + '<span class="mk" data-tip="Fill the document to the end of this step" tabindex="0"></span><span class="no">'+s.k+'</span><span class="tt">'+s.t+'</span>'
               + tail + whoChip(s) + '<i class="ti ti-chevron-right ch"></i></div>';
           }).join('') + '</div></section>';
     }).join('');
@@ -2700,6 +2703,54 @@ LOG.push(say('I am set up for <b>Upper Dee</b> from the Customer Demand Mapping 
 BI = 0;
 Q = {t:'start'};
 paintTabs(); paintProg(); openTab('doc'); paintChat();
+/* ── fill to here (8 Oct): click a step's circle in Workflow and the run fast-forwards to the end of
+   that step, taking the recommended answer at every question, decision and review, then pauses. ── */
+var FF = null, FFSP = null;
+function ffTo(k){
+  if(FF) return;
+  if(isDone(k)){ gyToast('Step '+k+' is already done. Restart the run from the page menu to go back.'); return; }
+  FF = k; FFSP = {say:SP.say, item:SP.item, settle:SP.settle, con:SP.con};
+  SP.say = SP.item = SP.settle = SP.con = 0;
+  if(Q && Q.t === 'ff'){ Q = null; }
+  if(!Q && !T && S[BI] && S[BI].t !== 'end') run();
+  ffPump();
+}
+function ffPump(){
+  if(!FF) return;
+  if(S[BI-1] && S[BI-1].t === 'end' && !Q){ ffRestore(); return; }
+  if(Q){
+    if(Q.t === 'start') startDeliverable();
+    else if(Q.t === 'ask') answer(0);
+    else if(Q.t === 'dec') decide(0);
+    else if(Q.t === 'wait') reply();
+  }
+  setTimeout(ffPump, 15);
+}
+function ffRestore(){ if(FFSP){ SP.say = FFSP.say; SP.item = FFSP.item; SP.settle = FFSP.settle; SP.con = FFSP.con; } FFSP = null; FF = null; }
+var ffRun0 = run;
+run = function(){
+  if(FF && isDone(FF)){
+    var k = FF; T = null; BUSY = false; ffRestore();
+    LOG.push(say('Filled the document up to step <b>'+k+'</b>, taking the recommended answer at each question and decision. I paused here.'));
+    Q = {t:'ff'}; paintAll(); paintChat(); return;
+  }
+  ffRun0();
+};
+function ffResume(){ if(!Q || Q.t !== 'ff') return; Q = null; paintChat(); run(); }
+var ffPaint0 = paintChat;
+paintChat = function(keep){
+  ffPaint0(keep);
+  if(Q && Q.t === 'ff'){
+    var el = document.getElementById('chatin');
+    el.insertAdjacentHTML('beforeend', '<div class="v8start"><button class="v8aopt pri" onclick="ffResume()"><i class="ti ti-player-play"></i><span>Continue the run</span></button></div>');
+    var lg = document.getElementById('chatlog'); if(lg && !keep) lg.scrollTop = lg.scrollHeight;
+  }
+};
+document.addEventListener('click', function(e){
+  var m = e.target.closest && e.target.closest('.v8ws .mk'); if(!m) return;
+  e.stopPropagation(); e.preventDefault();
+  var no = m.parentNode.querySelector('.no'); if(no) ffTo(no.textContent.trim());
+}, true);
 </script>
 </body>
 </html>
