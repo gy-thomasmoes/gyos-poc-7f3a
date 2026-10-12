@@ -70,16 +70,6 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 .phead .acts{margin-left:auto;display:flex;gap:10px}
 .h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.015em;color:var(--ink)}
 
-/* ── folder path: where in the tree this view is standing ─────────────── */
-.fpath{display:flex;align-items:center;gap:8px;margin-bottom:14px;min-width:0;flex-wrap:wrap}
-.fpath .up{width:30px;height:30px;border-radius:9px;border:1px solid var(--line2);background:var(--card);
-  color:var(--ink2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
-.fpath .up:hover{border-color:var(--ink3);color:var(--ink)}
-.fpath .up .ti{font-size:16px}
-.fpath .fc{font-size:15px;color:var(--ink2);cursor:pointer;white-space:nowrap;padding:3px 2px;border-radius:6px}
-.fpath .fc:hover{color:var(--ink)}
-.fpath .fc.cur{color:var(--ink);font-weight:600;cursor:default}
-.fpath .fs{color:var(--ink3);font-size:13px}
 
 /* ── table: same card, header and row rhythm as Sites and Projects ────── */
 .glab{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:22px 2px 9px;display:flex;align-items:center;gap:8px}
@@ -120,6 +110,24 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
   .dhd{display:none}
   .drow{grid-template-columns:1fr;row-gap:9px;align-items:start}
 }
+/* ── answer: shown under the search field when you press Enter ─────────── */
+.ans{background:var(--graybg);border-radius:14px;padding:16px 18px;margin:0 0 18px}
+.ans p{font-size:15px;line-height:1.55;color:var(--ink)}
+
+/* ── folder brief: a read-only drawer, opened from the folder path ─────── */
+.bdrawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:92vw;background:var(--card);
+  border-left:1px solid var(--line);z-index:1301;visibility:hidden;
+  display:flex;flex-direction:column;transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.3,1),visibility .24s}
+.bdrawer.on{transform:none;visibility:visible;box-shadow:-8px 0 28px rgba(31,31,29,.10)}
+.bdrawer .bh{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.bdrawer .bh b{font-family:var(--serif);font-weight:500;font-size:20px;flex:1}
+.bdrawer .bx{border:none;background:transparent;color:var(--ink3);font-size:20px;cursor:pointer}
+.bdrawer .bb{flex:1;overflow:auto;padding:6px 22px 22px}
+.bsec{padding:14px 0;border-bottom:1px solid var(--line)}
+.bsec:last-child{border-bottom:none}
+.bsec h4{font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:4px}
+.bsec p{font-size:15px;line-height:1.5;color:var(--ink)}
+
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:15px;padding:9px 18px;border-radius:999px;z-index:1500;display:none;max-width:80vw}
 </style>
 </head>
@@ -127,9 +135,9 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
 
 <div class="shell">
 <script>window.GYNAV={"active": "documents", "arts": "demand"};</script>
-<script src="gy-nav.js?v=b81afd78"></script>
-<script src="gy-todos.js?v=9516746a"></script>
-<script src="gy-docs.js?v=37a07b8a"></script>
+<script src="gy-nav.js?v=60372a4e"></script>
+<script src="gy-todos.js?v=7e37fad4"></script>
+<script src="gy-docs.js?v=ed032563"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -147,12 +155,16 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
     <div class="acts" id="abar"></div>
   </div>
 
-  <div class="fpath" id="fpath"></div>
+  <div id="ans"></div>
   <div id="body"></div>
 </div>
 </div>
 </div>
 
+<aside class="bdrawer" id="bdrawer">
+  <div class="bh"><b id="btitle">Brief</b><button class="bx" onclick="bClose()">&times;</button></div>
+  <div class="bb" id="bbody"></div>
+</aside>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -161,9 +173,18 @@ body.navpeek .snav.hid{display:flex;position:fixed;left:0;top:10px;bottom:10px;w
    flattens the view: it searches the whole tree from here down, the way
    Drive does, so folders drop out and every match shows as a row. */
 var PATH = [];
-var FQ = '', FTYPE = 'all', FWHO = 'any', FWHEN = 'any';
+var ASKED = null;   /* ids an answer cited; they become the result list */
+var FQ = '', FTYPE = 'all', FWHO = 'any', FWHEN = 'any', FTRUST = 'any';
 
-function flat(){ return !!(FQ || FTYPE!=='all' || FWHO!=='any' || FWHEN!=='any'); }
+function flat(){ return !!(FQ || FTYPE!=='all' || FWHO!=='any' || FWHEN!=='any' || FTRUST!=='any'); }
+
+/* Status: what an agent may rely on. Final deliverables are the source of
+   truth, deliverables in progress are working material, plain files are inputs. */
+function trustOk(x){ return FTRUST==='any' || trustOf(x)===FTRUST; }
+function trustOf(x){
+  if(x.kind!=='deliverable') return 'input';
+  return x.state==='Final' ? 'truth' : 'working';
+}
 
 function ext(n){ var m=/\.([a-z0-9]+)$/i.exec(String(n)); return m?m[1].toLowerCase():''; }
 function typeOf(x){
@@ -194,27 +215,26 @@ function matchWhen(x){
 }
 function keep(x){
   var q=FQ.toLowerCase();
+  if(ASKED) return ASKED.indexOf(x.id)>=0 && matchType(x) && trustOk(x);
   if(q && (String(x.name)+' '+String(x.wf||'')+' '+String(x.by||'')).toLowerCase().indexOf(q)<0) return false;
   if(!matchType(x)) return false;
   if(FWHO!=='any' && x.by!==FWHO) return false;
+  if(!trustOk(x)) return false;
   return matchWhen(x);
 }
 
 /* ── render ───────────────────────────────────────────────────────────── */
 function fRender(){
-  var pth=document.getElementById('fpath'), h='';
-  if(PATH.length || flat()){
-    h+='<span class="up" onclick="fUp()" title="Up one level"><i class="ti ti-arrow-up"></i></span>';
-    h+='<span class="fc'+(PATH.length?'':' cur')+'" onclick="fGo([])">All documents</span>';
-    PATH.forEach(function(k,i){
-      var n=GYD.node(PATH.slice(0,i+1))||{name:k};
-      h+='<span class="fs">&rsaquo;</span><span class="fc'+(i===PATH.length-1?' cur':'')
-        +'" onclick=\'fGo('+JSON.stringify(PATH.slice(0,i+1))+')\'>'+n.name+'</span>';
-    });
-    if(flat()) h+='<span class="fs">&rsaquo;</span><span class="fc cur">Matches</span>';
-  }
-  pth.innerHTML=h;
-  pth.style.display=h?'':'none';
+  /* where we stand: folder levels extend the top bar trail */
+  var lv=PATH.map(function(k,i){
+    var n=GYD.node(PATH.slice(0,i+1))||{name:k}, to=PATH.slice(0,i+1);
+    return [n.name, function(){ fGo(to); }];
+  });
+  if(flat()) lv.push(['Matches']);
+  if(window.gyCrumbLevels) gyCrumbLevels(lv, function(){ fGo([]); });
+  var up=document.getElementById('upBtn'), br=document.getElementById('briefBtn');
+  if(up) up.style.display=PATH.length?'':'none';
+  if(br) br.style.display=(!flat() && BRIEFS[PATH.join('/')])?'':'none';
 
   var out='';
   if(!flat()){
@@ -265,7 +285,7 @@ function dRow(x){
   if(x.kind==='deliverable'){
     var pct = x.steps ? Math.round(x.done/x.steps*100) : 0;
     third = x.state==='Not started' ? '<div class="dprog"><span class="dst">Not started</span></div>'
-      : x.state==='Final' ? '<div class="dprog"><span class="dst" style="color:var(--greend)">Final</span></div>'
+      : x.state==='Final' ? '<div class="dprog"><span class="dst" style="color:var(--greend)" title="Source of truth">Final</span></div>'
       : '<div class="dprog"><span class="dbar"><i style="width:'+pct+'%"></i></span><span class="dst">'+x.state+'</span></div>';
   } else {
     third = '<div class="src"><i class="ti ti-forms"></i><span>'+(x.src||'')+'</span></div>';
@@ -283,6 +303,59 @@ function dRow(x){
     +'<div class="who"><span class="av" style="background:'+p.c+'">'+p.ini+'</span><span>'+(x.by||'')+'</span></div>'
     +'<div class="mut">'+x.upd+'</div></div>';
 }
+/* ── folder briefs ────────────────────────────────────────────────────────
+   A short brief per folder, written for the agents that read it: what the
+   folder is for, which file wins, who reads it and the rules. The AGENTS.md
+   of the folder, kept next to its files. Read-only here. */
+var BRIEFS = {
+  'prog/demand': {
+    purpose:'Evidence of who could buy what from Evenlode.',
+    truth:'Customer Demand Mapping, once Final.',
+    agents:'Demand Mapping, Commercial Strategy, NatCap 101',
+    rules:'Landowner files stay inside the programme. tenure_map.pdf is a scan that agents cannot read yet.'
+  },
+  'prog/finance': {
+    purpose:'Valuation, models and the finance plans built on them.',
+    truth:'ELR investment model.',
+    agents:'Financial Model, Blended Finance Plan, Catchment Investment Plan',
+    rules:'Figures come from the Final model only, never from a draft.'
+  },
+  'trade/bng': {
+    purpose:'BNG units for sale: quotes, registration and buyer diligence.',
+    truth:'BNG Unit registration and bng_metric_4.0.xlsx.',
+    agents:'BNG',
+    rules:'Unit numbers come from the metric file only. Buyer names stay in Trade.'
+  }
+};
+function bOpen(){
+  var b=BRIEFS[PATH.join('/')]; if(!b) return;
+  document.getElementById('btitle').textContent=(GYD.node(PATH)||{}).name||'Brief';
+  document.getElementById('bbody').innerHTML=[['Purpose',b.purpose],['Source of truth',b.truth],['Read by',b.agents],['Rules',b.rules]]
+    .map(function(r){return '<div class="bsec"><h4>'+r[0]+'</h4><p>'+r[1]+'</p></div>';}).join('');
+  document.getElementById('bdrawer').classList.add('on');
+}
+function bClose(){ document.getElementById('bdrawer').classList.remove('on'); }
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') bClose(); });
+
+/* ── ask: Enter in the search field answers; the files it drew on are the list */
+var ANSWERS = [
+  {k:/demand|buyer|customer|offtak/i, ids:['sdm','emp','sfi','tenure'],
+   a:'Customer Demand Mapping is 8 of 16 steps done, owned by Caitlin Ciceri. Commercial Strategy and NatCap 101 both wait on it.'},
+  {k:/model|financ|irr|valuation|blended|bfp/i, ids:['fm','bfp','esv'],
+   a:'The ELR investment model is Final and is the figure to use. The Blended Finance Plan waits on it; the Ecosystem Services Valuation is 3 of 9.'},
+  {k:/bng|biodiversity|unit|metric/i, ids:['bngreg','bngcalc','quote'],
+   a:'BNG units are registered and counted in bng_metric_4.0.xlsx. The BNG Quote is 3 of 4, on a live deal with Izzie Bell.'}
+];
+function ask(q){
+  q=String(q||'').trim();
+  var host=document.getElementById('ans');
+  var hit=q && ANSWERS.filter(function(r){return r.k.test(q);})[0];
+  ASKED = hit ? hit.ids : null;
+  fRender();
+  if(!hit){ host.innerHTML=''; return; }
+  host.innerHTML='<div class="ans"><p>'+hit.a+'</p></div>';
+}
+
 function fmt(iso){
   if(!iso) return '';
   var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], p=iso.split('-');
@@ -369,7 +442,7 @@ if(localStorage.getItem('gyDelOpen')==='0'){
 })();
 
 gyBar('abar', {
-  search:  {placeholder:'Search documents', oninput:function(v){ FQ=v; fRender(); }},
+  search:  {placeholder:'Search or ask a question', oninput:function(v){ FQ=v; ASKED=null; document.getElementById('ans').innerHTML=''; fRender(); }},
   filters: [
     ['Type',[
       ['ti-circle-dot','All types','all'],
@@ -377,6 +450,12 @@ gyBar('abar', {
       ['ti-file-text','Documents','doc'],
       ['ti-file-type-pdf','PDFs','pdf'],
       ['ti-table','Spreadsheets','sheet']
+    ]],
+    ['Status',[
+      ['ti-circle-dot','Any status','any'],
+      ['ti-rosette-discount-check','Source of truth','truth'],
+      ['ti-progress','Working','working'],
+      ['ti-file-import','Inputs','input']
     ]],
     ['People',[['ti-users','Anyone','any']].concat(GYD.owners().map(function(n){return ['ti-user',n,n];}))],
     ['Modified',[
@@ -387,14 +466,25 @@ gyBar('abar', {
       ['ti-calendar-stats','This year','year']
     ]]
   ],
+  buttons: [
+    {id:'upBtn',    icon:'ti-arrow-up',  label:'Up',    onclick:function(){ fUp(); }},
+    {id:'briefBtn', icon:'ti-file-info', label:'Brief', onclick:function(){ bOpen(); }}
+  ],
   onfilter: function(group, value){
     if(group==='Type') FTYPE=value;
+    else if(group==='Status') FTRUST=value;
     else if(group==='People') FWHO=value;
     else FWHEN=value;
     fRender();
   },
   primary: {icon:'ti-plus', label:'Add document', onclick:'Upload: drop a file here or forward a client email and the AI Assistant files it to the right run'}
 });
+fRender();
+(function(){
+  var box=document.querySelector('.asearch'); if(!box) return;
+  box.parentNode.insertBefore(document.getElementById('ans'), box.nextSibling);
+  box.querySelector('input').addEventListener('keydown',function(e){ if(e.key==='Enter') ask(this.value); });
+})();
 </script>
 </body>
 </html>

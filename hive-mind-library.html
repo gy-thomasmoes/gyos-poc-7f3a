@@ -142,7 +142,7 @@ body.navhid .snav{display:none}
 <body>
 
 <script>window.GYNAV={active:'library',arts:null};</script>
-<script src="gy-nav.js?v=b81afd78"></script>
+<script src="gy-nav.js?v=60372a4e"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 
 <div class="mainc">
@@ -318,8 +318,8 @@ function closeES(){SEL=null;renderBooks();document.getElementById('drawer').styl
 
 /* deliverables under the Library */
 const DELS=[
- {em:'🗺',bg:'var(--greenbg)',name:'Demand Mapping',meta:'Nature Advisory · reads 8 rule books · writes evidence packs back',chip:['Live','var(--greenbg)','var(--greend)'],go:()=>location.href='demand-mapping-canvas-prototype.html'},
- {em:'💬',bg:'var(--bluebg)',name:'Investor Q&A Log',meta:'Capital · reads the Answer Library · writes canonical answers back',chip:['Live','var(--greenbg)','var(--greend)'],go:()=>location.href='investor-qa-log-canvas-prototype.html'},
+ {em:'🗺',bg:'var(--greenbg)',name:'Demand Mapping',meta:'Nature Advisory · reads 8 rule books · writes evidence packs back',chip:['Live','var(--greenbg)','var(--greend)'],go:()=>location.href='agent-demand-mapping.html'},
+ {em:'💬',bg:'var(--bluebg)',name:'Investor Q&A Log',meta:'Capital · reads the Answer Library · writes canonical answers back',chip:['Live','var(--greenbg)','var(--greend)'],go:()=>toast('Investor Q&A Log is not in this prototype yet')},
  {em:'📊',bg:'var(--graybg)',name:'Market Readiness',meta:'The NatWest report as a recurring Deliverable · would refresh these rule books automatically',chip:['Concept','var(--amberbg)','var(--amberd)'],go:()=>toast('Market Readiness Assessment is not in this prototype yet')},
  {em:'📈',bg:'var(--graybg)',name:'Financial Model',meta:'Builds on Demand Mapping evidence packs',chip:['Concept','var(--amberbg)','var(--amberd)'],go:()=>toast('Financial Model is not in this prototype yet')},
  {em:'🧭',bg:'var(--graybg)',name:'Commercial Strategy',meta:'Builds on the shortlist and buyer map',chip:['Concept','var(--amberbg)','var(--amberd)'],go:()=>toast('Commercial Strategy is not in this prototype yet')}

@@ -17,11 +17,9 @@ window.gyCartoTiles = function(style){
    config:
      active : 'library' | 'deliverables' | 'demand-mapping' | 'investor-qa'
               | 'meeting-notes' | 'documents' | 'home' | '' (nothing highlighted)
-     arts   : 'demand' | 'investor' | null   → which Tools list to show
-     artActive : label of the active Tool item (optional)
 
    Structure (v7 · Sep 2026 rail, altitude as scope):
-     Personal spine (Home, Notifications, To-dos) then a single Workspace
+     Personal spine (Home, Notifications) then a single Workspace
      picker listing BOTH altitudes: Portfolio above a divider, the three
      Programmes below it. The picker is the way to move between altitudes;
      a back row to Portfolio stays as a shortcut inside a programme.
@@ -83,103 +81,7 @@ window.gyCartoTiles = function(style){
     if(b) b.style.display = hid ? '' : 'none';
   };
 
-  var DELIVERABLES = [
-    ['customer-demand-v2','Customer Demand Mapping v2',"location.href='customer-demand-mapping-v2-canvas.html'"],
-    ['demand-mapping','Customer Demand Mapping',"location.href='demand-mapping-canvas-prototype.html'"],
-    ['investor-qa','Investor Q&A Log',"location.href='investor-qa-log-canvas-prototype.html'"],
-    ['tender-to-bid','Tender to Bid',"location.href='tender-to-bid-canvas-prototype.html'"],
-    ['lead-demand-mapping','Lead Demand mapping',"location.href='lead-demand-mapping-canvas.html'"],
-    ['market-readiness','Market Readiness',"gyToast('Market Readiness Assessment is not in this prototype yet')"],
-    ['financial-model','Financial Model',"gyToast('Financial Model is not in this prototype yet')"],
-    ['commercial-strategy','Commercial Strategy',"location.href='commercial-strategy-v8.html'"],
-    ['natcap-101','NatCap 101 Presentation',"location.href='natcap-101-v8.html'"]
-  ];
-  var delActive = ['customer-demand-v2','demand-mapping','demand-textview','lead-mapping','upper-dee-mapping','upper-dee-executors','workflow-experiment-mapping','investor-qa','tender-to-bid','lead-demand-mapping','market-readiness','financial-model','commercial-strategy','natcap-101'].indexOf(active)>=0;
-  /* Workflows accordion: open (respecting stored state) only when on a workflow page;
-     always collapsed on first load of the programme layer / Overview. */
-  var delCls = delActive ? gyCls('delSub', true) : ' closed';
-
-  var ARTSETS = {
-    demandv2: [
-      ['Questionnaire · Project context',"location.href='questionnaire-editor.html'"],
-      ['Agenda · Kick-off call',"location.href='artefact-editor.html?a=agenda'"],
-      ['Email · Project context',"location.href='artefact-editor.html?a=qemail'"],
-      ['Assistant · Pre-call brief',"location.href='artefact-editor.html?a=precall'"],
-      ['Assistant · Gap summary',"location.href='artefact-editor.html?a=gapsum'"],
-      ['Layer · Catchment mapping',"gyToast('Person-mediated through Katia. No editor yet.')"],
-      ['Feed · GPAP planning scrape',"gyToast('Person-mediated through George. No editor yet.')"],
-      ['Data · Abstraction licences',"gyToast('Person-mediated through Katia. No editor yet.')"],
-      ['List · SBTi targets',"gyToast('Manual look-up on sciencebasedtargets.org')"],
-      ['List · TNFD adopters',"gyToast('Manual look-up on tnfd.global')"],
-      ['Shelf · Public funding sources',"gyToast('gov.uk, gov.scot and NatureScot')"],
-      ['Library · Buyer sector profiles',"gyToast('Six buyer sectors. Standing store, refreshed Oct 2025.')"],
-      ['Template · Buyer tables',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Database · GY buyers',"location.href='artefact-editor.html?a=buyerdb'"],
-      ['Library · ES rule books',"location.href='artefact-editor.html?a=rulebooks'"],
-      ['Shelf · Supply registries',"location.href='artefact-editor.html?a=registries'"],
-      ['Template · Evidence pack',"location.href='artefact-editor.html?a=evidence'"],
-      ['Scoring · Market readiness',"location.href='artefact-editor.html?a=scoring'"],
-      ['Template · Verdict pack',"location.href='artefact-editor.html?a=verdict'"],
-      ['Schema · Data platform file',"gyToast('Handoff schema. No editor yet.')"]
-    ],
-    demand: [
-      ['Questionnaire · Project context',"location.href='questionnaire-editor.html'"],
-      ['Agenda · Kick-off call',"location.href='artefact-editor.html?a=agenda'"],
-      ['Email · Project context',"location.href='artefact-editor.html?a=qemail'"],
-      ['Assistant · Pre-call brief',"location.href='artefact-editor.html?a=precall'"],
-      ['Assistant · Gap summary',"location.href='artefact-editor.html?a=gapsum'"],
-      ['Library · ES rule books',"location.href='artefact-editor.html?a=rulebooks'"],
-      ['Shelf · Supply registries',"location.href='artefact-editor.html?a=registries'"],
-      ['Template · Evidence pack',"location.href='artefact-editor.html?a=evidence'"],
-      ['Scoring · Supply side',"location.href='artefact-editor.html?a=scoring'"],
-      ['Database · GY buyers',"location.href='artefact-editor.html?a=buyerdb'"],
-      ['Template · Verdict pack',"location.href='artefact-editor.html?a=verdict'"]
-    ],
-    tender: [
-      ['Tender pipeline',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Requirements extract',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Battenburg scorecard',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Evidence map',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Answer bank',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Rate card',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Lessons register',"gyToast('Tool editors are not wired for this Workflow yet')"]
-    ],
-    leaddemand: [
-      ['Shelf · Spatial layers',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Nat cap thresholds',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Database · GY buyers',"location.href='artefact-editor.html?a=buyerdb'"],
-      ['Top of funnel map',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Template · Lead demand report',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Email · Report to decision maker',"gyToast('Tool editors are not wired for this Workflow yet')"]
-    ],
-    investor: [
-      ['Q&A Protocol',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Q&A Log template',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Answer Library',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['ELR Investor FAQs',"gyToast('Tool editors are not wired for this Workflow yet')"],
-      ['Q&A pack · example Output',"location.href='investor-qa-pack-example.html'"]
-    ]
-  };
-
-  function rows(list){
-    return list.map(function(d){
-      var isOn = active===d[0];
-      return '<div class="sitem'+(isOn?' on':'')+'"'+(isOn?'':' onclick="'+d[2]+'"')+'>'+d[1]+'</div>';
-    }).join('');
-  }
-
-  var artsHtml = '';
-  if(cfg.arts && ARTSETS[cfg.arts]){
-    artsHtml =
-      '<div class="sitem" onclick="gyTgl(\'artArr\',\'artSub\')"><i class="ti ti-template"></i> Tools <i class="ti ti-chevron-down sarr'+gyCls('artSub',false)+'" id="artArr" onclick="event.stopPropagation();gyTgl(\'artArr\',\'artSub\')"></i></div>'
-      +'<div class="ssub'+gyCls('artSub',false)+'" id="artSub">'
-      +ARTSETS[cfg.arts].map(function(a){
-        var isOn = cfg.artActive===a[0];
-        return '<div class="sitem'+(isOn?' on':'')+'"'+(isOn?'':' onclick="'+a[1]+'"')+'>'+a[0]+'</div>';
-      }).join('')
-      +'</div>';
-  }
-
+  var delActive = ['customer-demand-v2','demand-mapping','financial-model','commercial-strategy','natcap-101','cip'].indexOf(active)>=0;
   var INV_PROG =
     '<div class="ssub'+gyCls('invSub',progInv)+'" id="invSub">'
     +'<div class="sitem'+on('prog-inventory')+'"'+(active==='prog-inventory'?'':' onclick="location.href=\'inventory-overview.html\'"')+'>Overview</div>'
@@ -208,13 +110,6 @@ window.gyCartoTiles = function(style){
     '<div class="sitem" onclick="gyToast(\'Ask the data (Genie): natural-language questions over the data platform, not in this prototype yet\')"><i class="ti ti-sparkles"></i> Ask the data (Genie)</div>';
   var ITEM_WORKFLOWS =
     '<div class="sitem'+(active==='deliverables'||delActive?' on':'')+'"'+(active==='deliverables'?'':' onclick="location.href=\'deliverables-landing.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables</div>';
-  /* Simple version: only the live pilot, Demand Mapping, opened in its manual first version. */
-  var DELIVERABLES_BASIC = [
-    ['lead-mapping','Lead Customer Demand Mapping',"location.href='lead-supply-demand-mapping-canvas.html'"],
-    ['upper-dee-mapping','Upper Dee: Customer Demand Mapping',"location.href='upper-dee-supply-demand-mapping-canvas.html'"],
-    ['workflow-experiment-mapping','Workflow experiment: S&D Mapping',"location.href='workflow-experiment-supply-demand-mapping-canvas.html'"],
-    ['demand-mapping','Customer Demand Mapping',"location.href='demand-mapping-canvas-prototype.html'"]
-  ];
   var ITEM_AUTOMATIONS =
     '<div class="sitem'+on('automations')+'"'+(active==='automations'?'':' onclick="location.href=\'automations.html\'"')+'><i class="ti ti-settings-automation"></i> Automations</div>';
   var ITEM_WORKFLOWS_BASIC =
@@ -704,16 +599,6 @@ window.gyCartoTiles = function(style){
    +'body.gydark.gyrail .gy-search i,body.gydark.gyrail .gy-notif i{color:#B5B2AB}'
    +'.gy-railtip{position:fixed;z-index:1800;background:#1F1F1D;color:#fff;font-family:-apple-system,system-ui,"Inter","Segoe UI",sans-serif;font-size:13px;line-height:1.3;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(31,31,29,.22);transform:translateY(-50%);display:none}';
 
-  /* keep the rail's to-do count in step with the shared store, on any page
-     that loads gy-todos.js */
-  function gyTodoCount(){
-    if(!window.GYT) return;
-    var el=document.getElementById('cntTodos');
-    if(el) el.textContent = GYT.myOpen().length;
-  }
-  window.addEventListener('DOMContentLoaded', gyTodoCount);
-  window.addEventListener('gy-todos-changed', gyTodoCount);
-  setTimeout(gyTodoCount, 0);
 
   document.write(
     '<style>'+CSS+RAIL_CSS+'</style>'
@@ -745,7 +630,6 @@ window.gyCartoTiles = function(style){
     /* personal spine - advanced only */
     +(mode==='advanced'
       ? '<div class="sitem'+on('home')+'"'+(active==='home'?'':' onclick="location.href=\'home.html\'"')+'><i class="ti ti-home"></i> Home</div>'
-        +'<div class="sitem'+on('todos')+'"'+(active==='todos'?'':' onclick="location.href=\'todos.html\'"')+'><i class="ti ti-list-check"></i> To-dos <span class="scount" id="cntTodos"></span></div>'
       : '')
 
     /* workspace switcher - advanced only (the one way to move between altitudes) */
@@ -1190,8 +1074,7 @@ window.gyCartoTiles = function(style){
      Shape: <altitude root> › <bucket> › <page>. The root is Portfolio at
      portfolio level and Portfolio › <workspace> inside a programme, so the
      breadcrumb states the full altitude. The page's own last crumb is never
-     touched, so pages that set it from JS keep working. Spine pages (Home,
-     To-dos) and the Hive Mind sit outside the altitudes and get no root.
+     touched, so pages that set it from JS keep working. Spine pages (Home) and the Hive Mind sit outside the altitudes and get no root.
 
      To add a page: one line in GY_CRUMB, keyed by filename. */
   var GY_CRUMB_HREF = {
@@ -1204,9 +1087,7 @@ window.gyCartoTiles = function(style){
     'Documents':'documents-overview.html',
     'Meeting notes':'meeting-notes.html',
     'Hive Mind':'hive-mind-v2.html',
-    'Agents':'hive-mind-v2.html',
-    'Customer Demand Mapping':'demand-mapping-canvas-prototype.html',
-    'Investor Q&A Log':'investor-qa-log-canvas-prototype.html'
+    'Agents':'hive-mind-v2.html'
   };
   var GY_PF_INV = 'inventory-portfolio-overview.html';
 
@@ -1218,7 +1099,6 @@ window.gyCartoTiles = function(style){
     'updates.html':                     {alt:'none'},
     'settings-connectors.html':         {alt:'none', trail:['Settings']},
     'connector.html':                   {alt:'none', trail:['Settings','Connectors']},
-    'todos.html':                       {alt:'none'},
     'hive-mind-library.html':           {alt:'none'},
     'hive-mind-v2.html':                {alt:'none'},
     'agent-blueprint.html':             {alt:'none', trail:['Hive Mind','Agents']},
@@ -1228,14 +1108,13 @@ window.gyCartoTiles = function(style){
     'agent-peatland-carbon.html':        {alt:'none', trail:['Hive Mind','Agents']},
     'agent-nutrient.html':               {alt:'none', trail:['Hive Mind','Agents']},
     'agent-flood.html':                  {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-brand.html':                  {alt:'none', trail:['Hive Mind','Agents']},
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind','Rule books']},
     'es-rulebook.html':                 {alt:'none', trail:['Hive Mind','Rule books']},
     'carbon-rule-book.html':            {alt:'none', trail:['Hive Mind','Rule books']},
 
     'portfolio-overview.html':          {alt:'portfolio'},
-    'portfolio-dashboard.html':         {alt:'portfolio'},
     'inventory-portfolio-overview.html':{alt:'portfolio'},
-    'inventory-portfolio-dashboard.html':{alt:'portfolio', trail:['Inventory']},
     'inventory-bng-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
     'inventory-wcc-portfolio.html':     {alt:'portfolio', trail:['Inventory']},
     'inventory-all.html':               {alt:'portfolio', trail:['Inventory']},
@@ -1246,7 +1125,6 @@ window.gyCartoTiles = function(style){
     'review-deals.html':                {alt:'portfolio', trail:['Deals']},
     'audit-log.html':                   {alt:'portfolio'},
     'market-map-kwame.html':            {alt:'portfolio', trail:['Intelligence']},
-    'outcome-engine.html':              {alt:'portfolio', trail:['Intelligence']},
 
     'programme-overview.html':          {alt:'programme'},
     'inventory-overview.html':          {alt:'programme'},
@@ -1273,32 +1151,17 @@ window.gyCartoTiles = function(style){
     'deliverable-sketch-v8.html': {alt:'programme', trail:['Deliverables']},
     'commercial-strategy-v8.html': {alt:'programme', trail:['Deliverables']},
     'natcap-101-v8.html':          {alt:'programme', trail:['Deliverables']},
+    'catchment-investment-plan-v8.html': {alt:'programme', trail:['Deliverables']},
+    'financial-model-v8.html':     {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-document.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-workflow.html': {alt:'programme', trail:['Deliverables']},
     'meeting-notes.html':               {alt:'programme'},
-    'meeting-notes-landing.html':       {alt:'programme'},
     'meeting-note-kickoff.html':        {alt:'programme', trail:['Meeting notes']},
     'meeting-note-buyer-review.html':   {alt:'programme', trail:['Meeting notes']},
     'activity-overview.html':           {alt:'programme'},
 
-    'customer-demand-mapping-v2-canvas.html':     {alt:'programme', trail:['Deliverables']},
-    'demand-mapping-canvas-prototype.html':       {alt:'programme', trail:['Deliverables']},
-    'demand-mapping-text-view-canvas.html':       {alt:'programme', trail:['Deliverables']},
-    'lead-demand-mapping-canvas.html':            {alt:'programme', trail:['Deliverables']},
-    'lead-supply-demand-mapping-canvas.html':     {alt:'programme', trail:['Deliverables']},
-    'investor-qa-log-canvas-prototype.html':      {alt:'programme', trail:['Deliverables']},
-    'tender-to-bid-canvas-prototype.html':        {alt:'programme', trail:['Deliverables']},
-    'upper-dee-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Deliverables']},
-    'upper-dee-canvas-list-sidebar.html':         {alt:'programme', trail:['Deliverables']},
-    'upper-dee-simple-drawer-canvas.html':        {alt:'programme', trail:['Deliverables']},
-    'upper-dee-executor-steps-canvas.html':       {alt:'programme', trail:['Deliverables']},
-    'upper-dee-deliverable-page.html':            {alt:'programme', trail:['Deliverables']},
-    'workflow-experiment-supply-demand-mapping-canvas.html':{alt:'programme', trail:['Deliverables']},
     'object-bar-sketch.html':           {alt:'programme', trail:['Deliverables']},
-    'artefact-editor.html':             {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
-    'questionnaire-editor.html':        {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
     'demand-mapping-intake-poc.html':   {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
-    'investor-qa-pack-example.html':    {alt:'programme', trail:['Workflows','Investor Q&A Log']}
   };
 
   function gyCrumbTrail(){
@@ -1346,15 +1209,17 @@ window.gyCartoTiles = function(style){
     var isNew = box.classList.contains('crumbs');
 
     var leaf;
+    /* levels a page appended with gyCrumbLevels sit after its own crumb */
+    var deep = !!box.querySelector('.gycr-x');
     if(isNew){
-      var crs = box.querySelectorAll('.cr');
+      var crs = box.querySelectorAll('.cr:not(.gycr-x)');
       leaf = crs.length ? crs[crs.length - 1] : null;
-      if(leaf) leaf.classList.add('cur');
+      if(leaf && !deep) leaf.classList.add('cur');
     } else {
       leaf = box.querySelector('.title');
     }
     if(!leaf) return;
-    leaf.classList.add('gycr-leaf');
+    if(!deep) leaf.classList.add('gycr-leaf');
 
     /* the leaf can sit inside a wrapper (the rule book's dropdown, say), so
        insert against whichever ancestor is the container's own child */
@@ -1379,6 +1244,45 @@ window.gyCartoTiles = function(style){
       box.insertBefore(gySepNode(), anchor);
     });
   }
+
+
+  /* ── Page levels after the page's own crumb (9 Oct 2026) ─────────────
+     A page with its own tree inside it (Documents and its folders) extends
+     the trail instead of drawing a second breadcrumb in the page:
+
+       gyCrumbLevels([['Programme-wide', fn], ['Strategy']], backToTop)
+
+     Levels follow the page's own crumb; all but the last are clickable.
+     While levels show, the page's own crumb is clickable too and runs
+     backToTop. An empty list restores the plain trail. */
+  window.gyCrumbLevels = function(levels, backToTop){
+    var box = document.querySelector('.topbar .crumbs, .row1 .crumbs');
+    if(!box) return;
+    var base = box.querySelector('.gycr-base');
+    if(!base){
+      var crs = box.querySelectorAll('.cr:not(.gycr-x)');
+      base = crs.length ? crs[crs.length - 1] : null;
+      if(!base) return;
+      base.classList.add('gycr-base');
+    }
+    Array.prototype.slice.call(box.querySelectorAll('.gycr-x')).forEach(function(n){ box.removeChild(n); });
+    levels = levels || [];
+    var deep = levels.length > 0;
+    base.classList.toggle('cur', !deep);
+    base.classList.toggle('gycr-leaf', !deep);
+    base.classList.toggle('gycr', deep);
+    base.onclick = (deep && backToTop) ? function(){ backToTop(); } : null;
+    base.style.cursor = deep ? 'pointer' : '';
+    levels.forEach(function(l, i){
+      var sep = gySepNode(); sep.classList.add('gycr-x'); box.appendChild(sep);
+      var last = i === levels.length - 1;
+      var el = document.createElement('span');
+      el.className = 'cr gycr-x ' + (last ? 'cur gycr-leaf' : 'gycr');
+      el.textContent = l[0];
+      if(!last && l[1]){ el.style.cursor = 'pointer'; el.onclick = l[1]; }
+      box.appendChild(el);
+    });
+  };
 
 
   /* ── Action menus ───────────────────────────────────────────────────────
@@ -1782,7 +1686,8 @@ window.gyCartoTiles = function(style){
 
     /* page buttons, then actions, then the primary */
     (cfg.buttons||[]).forEach(function(b){
-      btn('', ico(b.icon)+b.label, function(el2){ closePop(); run(b.go ? 'go:'+b.go : b.onclick, el2); });
+      var pb = btn('', ico(b.icon)+b.label, function(el2){ closePop(); run(b.go ? 'go:'+b.go : b.onclick, el2); });
+      if(b.id) pb.id = b.id;   /* so a page can show or hide its own button */
     });
     if(cfg.actions) btn('', 'Actions <i class="ti ti-chevron-down"></i>', function(b){
       closePop(); gyMenu(b, cfg.actions);

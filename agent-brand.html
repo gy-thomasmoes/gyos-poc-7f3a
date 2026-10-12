@@ -1,0 +1,2647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand agent &middot; Great Yellow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
+<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<style>
+/* Shell CSS copied from deliverable-sketch-v8.html (8 Oct) so this page matches the Deliverable pages. */
+
+/* v4-chat, the same deliverable with the assistant in the lead.
+   Everything from the document view is still here; it has just swapped
+   places with the conversation. The document becomes one tab of a docked
+   panel, and the workflow shows up as the run log inside the thread. */
+
+/* This page is a place to work rather than a place to browse, so it opens
+   with the rail folded away and the path folded down to the name. Both are one
+   click from coming back, and the choice is remembered for this page only. */
+/* The folded path is two slashes and an ellipsis, quiet until you go near it.
+   Hovering names the path, clicking unfolds it in place. */
+.crmore{flex:none;border:none;background:none;padding:2px 2px;font-family:inherit;font-size:14px;
+  line-height:1;color:var(--ink3);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  transition:color .12s}
+.crmore .sl{color:var(--line2);transition:color .12s}
+.crmore .el{letter-spacing:.09em}
+.crmore:hover{color:var(--ink)}
+.crmore:hover .sl{color:var(--ink3)}
+.crmore.hide{display:none}
+.crtrail{display:none;align-items:center}
+.crtrail.on{display:inline-flex}
+.mainc{overflow:hidden;display:flex;flex-direction:column}
+.v5row{flex:1;display:flex;min-height:0}
+
+/* ── the thread, which is now the page ──────────────────────────────────── */
+.v5chat{position:relative;width:var(--chatw,400px);flex:none;min-width:0;display:flex;
+  flex-direction:column;background:var(--bg);border-right:1px solid var(--line)}
+body.pclosed .v5chat{display:none}
+@media(max-width:1100px){.v5chat{width:min(var(--chatw,400px),360px)}}
+/* Drag the edge to trade width between the assistant and the document. The
+   handle is the border until you reach for it. */
+.v5grip{position:absolute;top:0;bottom:0;right:-3px;width:7px;cursor:col-resize;z-index:6}
+.v5grip:after{content:'';position:absolute;top:0;bottom:0;left:2px;width:3px;border-radius:2px;
+  background:transparent;transition:background .12s}
+.v5grip:hover:after,body.dragging .v5grip:after{background:var(--line2)}
+body.dragging{cursor:col-resize;user-select:none}
+.v5log{flex:1;overflow:auto;padding:22px 22px 6px}
+.v5in{max-width:none}
+
+.v5chead{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 12px 11px 22px;border-bottom:1px solid var(--line)}
+.v5on{flex:1;min-width:0;display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5on .ti{font-size:17px;color:var(--blued)}
+.v5cx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.v5cx:hover{background:var(--graybg);color:var(--ink)}
+.v5on .ti{font-size:15px}
+.v5on b{font-weight:500;color:var(--ink2)}
+
+.v5turn{margin-bottom:30px}
+.v5you{background:#F6EFE2;border-radius:16px 16px 5px 16px;padding:12px 15px;font-size:15px;line-height:1.5;
+  margin-left:auto;max-width:90%;width:fit-content}
+.v5say{font-size:15px;line-height:1.62;color:var(--ink);margin:13px 0}
+.v5say b{font-weight:600}
+
+/* what it did, in the order it did it */
+.v5step{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:14px;color:var(--ink2)}
+.v5step .bx{width:15px;height:15px;border-radius:4px;flex:none;margin-top:3px;background:var(--greend);position:relative}
+.v5step .bx:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5step .bx.run{background:none;border:1.5px solid var(--amber)}
+.v5step .bx.run:after{display:none}
+.v5step div{min-width:0}
+.v5step em{display:block;font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:12px;
+  color:var(--ink3);margin-top:3px}
+.v5step .w{color:var(--ink)}
+
+/* something it made */
+.v5made{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:14px;
+  padding:13px 15px;margin:14px 0;background:var(--card);cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.v5made:hover{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.06)}
+.v5mt{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5mn{flex:1;min-width:0}
+.v5mn b{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5mn span{font-size:13.5px;color:var(--ink3)}
+.v5made .ti.go{font-size:17px;color:var(--ink3);flex:none}
+
+/* The one thing to do next, in the assistant column, as a card with a single
+   button. Automated steps run themselves; a person's step is just marked. */
+/* The run should look like it is happening. Tasks rise in one at a time, the
+   in-flight marker spins, the live step's dot breathes, the chapter bars slide
+   and a freshly written field flashes once. */
+@keyframes gyspin{to{transform:rotate(360deg)}}
+@keyframes gyrise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes gypip{0%,100%{box-shadow:0 0 0 3px var(--amberbg)}50%{box-shadow:0 0 0 7px rgba(239,159,39,.20)}}
+@keyframes gyflash{0%{background:#FEF6D8;border-color:#E9D79A}100%{background:var(--card);border-color:var(--line)}}
+@keyframes gyglow{0%,100%{box-shadow:0 2px 10px rgba(31,31,29,.05)}50%{box-shadow:0 2px 18px rgba(24,95,165,.18)}}
+.gyspin{animation:gyspin .9s linear infinite;display:inline-block}
+.v5step.rise{animation:gyrise .22s ease both}
+.v5wf.cur .dot,.dlpip.live{animation:gypip 1.5s ease-in-out infinite}
+.v5inp.just{animation:gyflash 1.2s ease-out}
+.v5tw.just,.v5win.just{animation:gyflash 1.2s ease-out}
+.dlsgb i{transition:width .45s ease}
+.v5rc.live{animation:gyglow 1.6s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+  .gyspin,.v5step.rise,.v5wf.cur .dot,.dlpip.live,.v5inp.just,.v5rc.live{animation:none}
+}
+.v5rc{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:16px 17px;
+  margin-top:8px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5rch{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.v5rch .ti{font-size:17px;color:var(--blued);flex:none}
+.v5rcb{font-size:14px;line-height:1.55;color:var(--ink2);margin-top:9px}
+.v5rcw{font-size:12.5px;color:var(--ink3);margin-top:9px;display:flex;align-items:center;gap:7px}
+.v5rcw .dlav{width:18px;height:18px;font-size:8.5px}
+.v5go{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;
+  border-radius:12px;padding:11px 16px;margin-top:14px;font-family:inherit;font-size:14.5px;
+  font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5go.sec{background:var(--card);color:var(--ink);border:1px solid var(--line2)}
+.v5go .ti{font-size:16px}
+.v5pl{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:var(--dark);color:#fff}
+.v5pl .ti{font-size:15px}
+.v5sug{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.v5sug button{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer}
+.v5sug button:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* ── composer ───────────────────────────────────────────────────────────── */
+.v5comp{flex:none;padding:10px 22px 14px;position:relative}
+.v8down{position:absolute;left:50%;top:-50px;width:40px;height:40px;margin-left:-20px;border-radius:50%;
+  border:1px solid var(--line2);background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(20,18,12,.12);cursor:pointer;opacity:0;transform:translateY(6px);pointer-events:none;
+  transition:opacity .15s,transform .15s;z-index:3}
+.v8down.on{opacity:1;transform:none;pointer-events:auto}
+.v8down:hover{background:var(--graybg)}
+.v8down .ti{font-size:19px}
+.v5box{max-width:none;border:1px solid var(--line2);border-radius:18px;background:var(--card);
+  padding:14px 16px 11px;box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v5box .q{font-size:14.5px;color:var(--ink3);padding-bottom:11px}
+.v5tools{display:flex;align-items:center;gap:9px}
+.v5tb{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:none;border-radius:999px;
+  padding:6px 12px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.v5tb:hover{border-color:var(--line2);color:var(--ink)}
+.v5send{margin-left:auto;width:34px;height:34px;border-radius:11px;border:none;background:var(--dark);color:#fff;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+
+/* ── the docked panel, tabs across the top ──────────────────────────────── */
+.v5panel{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;background:var(--card)}
+/* A quiet pair of icons in the panel's top corner: the same sixteen steps as
+   a list, or as the canvas they live on. It floats in the body's top padding
+   so it stays put while the list scrolls under it. */
+.v5vt{position:absolute;top:13px;right:16px;z-index:5;display:flex;gap:2px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px;box-shadow:0 1px 4px rgba(31,31,29,.05)}
+.v5vt.hide{display:none}
+.v5vb{width:29px;height:26px;border:none;background:none;border-radius:8px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .12s,color .12s}
+.v5vb:hover{background:var(--graybg);color:var(--ink2)}
+.v5vb.on{background:var(--graybg);color:var(--ink)}
+/* The second bar spans the whole page, above the three columns, so its width
+   never moves when a column opens or closes. Everything the buttons open ,
+   the assistant on the left, the document in the middle, a drawer on the
+   right, appears underneath it. */
+.v5tabs{flex:none;display:flex;align-items:center;gap:10px;min-height:55px;
+  padding:11px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.v5tabgrp{flex:1;min-width:0;display:flex;align-items:center;gap:3px;padding-right:4px;overflow-x:auto;scrollbar-width:none}
+.v5tabgrp::-webkit-scrollbar{display:none}
+.v5tab{position:relative;display:inline-flex;align-items:center;gap:6px;border:none;background:none;
+  border-radius:10px;padding:7px 10px;font-family:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.v5tab:hover{background:var(--graybg)}
+.v5tab.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5tab .ti{font-size:16px;color:var(--ink3)}
+.v5tab.on .ti{color:var(--ink)}
+.v5tab b{min-width:16px;height:16px;border-radius:999px;background:var(--graybg);color:var(--grayd);
+  font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.v5tab.chat{flex:none;order:-2;border:1px solid var(--line)}
+.v5tdiv{order:-1;flex:none;width:1px;align-self:stretch;background:var(--line);margin:2px 2px 2px 0}
+.v5tab.chat .ti{color:var(--blued)}
+.v5tab.chat.on{background:var(--bluebg);border-color:#CBE1F5;color:var(--blued)}
+.v5tab.chat.on .ti{color:var(--blued)}
+/* the right-hand drawer: Outputs, items and agents open here. The agent on
+   the left stays as it is when a drawer opens, and vice versa (8 Oct). */
+.v5dr{width:360px;flex:none;display:flex;flex-direction:column;min-width:0;
+  background:var(--bg);border-left:1px solid var(--line)}
+.v5dr.hide{display:none}
+.v5drh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;
+  padding:11px 12px 11px 18px;border-bottom:1px solid var(--line)}
+.v5drt{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v5dri{width:30px;height:30px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center}
+.v5dri .ti{font-size:16px}
+.v5dri.hide{display:none}
+.v5drx{width:32px;height:32px;flex:none;border:none;background:none;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
+.v5drx:hover{background:var(--graybg);color:var(--ink)}
+.v5drb{flex:1;overflow:auto;padding:20px 20px 40px;font-size:14px;line-height:1.55}
+.v5drgrp{flex:none;display:flex;align-items:center;gap:3px;margin-left:auto}
+.v5tab.dr.on{background:var(--graybg);color:var(--ink);font-weight:600}
+.v5body{flex:1;overflow:auto;padding:46px 40px 110px}
+.v5bin{max-width:780px;margin:0 auto}
+
+/* the document, living inside the panel */
+.v5dt{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  padding-bottom:22px;border-bottom:1px solid var(--line)}
+
+/* A chapter is a block of fields with one heading. The guidance that used to
+   sit in a grey box under the heading now hangs off the i beside it, so the
+   page is fields and nothing else. */
+.v5sec{margin-top:54px}
+.v5ch{display:flex;align-items:center;gap:11px;margin-bottom:30px}
+.v5chn{width:30px;height:30px;border-radius:9px;background:var(--dark);color:var(--yellow);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.v5cht{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.v5ch .gyinfo{margin-left:1px}
+
+/* One field: a label row, then the field itself. Filled fields read as a
+   completed input, unwritten ones as an empty one, so the document looks like
+   something with blanks in it rather than prose with gaps. */
+.v5f{margin-bottom:34px}
+.v5f:last-child{margin-bottom:0}
+.v5flab{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-height:20px}
+.v5fl{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.v5inp{border:1px solid var(--line);border-radius:12px;background:var(--card);
+  padding:16px 18px;font-size:16.5px;line-height:1.6;color:var(--ink);outline:none;
+  transition:border-color .12s,box-shadow .12s,background .12s}
+.v5inp:hover{border-color:var(--line2);box-shadow:0 2px 8px rgba(31,31,29,.04)}
+.v5inp:focus{background:var(--card);border-style:solid;border-color:#9FC4E4;
+  box-shadow:0 0 0 3px rgba(24,95,165,.10)}
+/* An unwritten field is an empty field with a hint in it, so the first thing
+   you can do to it is type. The dashed frame clears itself on the first
+   keystroke, along with the chip that said it was not written yet. */
+.v5inp.empty{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;min-height:78px;
+  font-size:14.5px;color:var(--ink3)}
+.v5inp.empty:before{content:attr(data-ph);color:var(--ink3)}
+.v5inp.empty:focus:before{opacity:.45}
+.v5inp.parked{background:#FBF9F2;border-style:dashed;border-color:#DFD8C6;
+  font-size:14.5px;line-height:1.6;color:var(--ink3)}
+.v5tbl td[contenteditable]{outline:none}
+.v5tbl td[contenteditable]:focus{background:#F4F8FC;box-shadow:inset 0 0 0 2px #9FC4E4}
+.v5dt[contenteditable]{outline:none}
+.v5dt[contenteditable]:focus{box-shadow:inset 0 0 0 2px #9FC4E4;border-radius:8px}
+
+/* Provenance did not go away, it went quiet: one dot, coloured by how much the
+   field can be trusted, tooltip on hover, click for the full record. */
+.v5dot{width:9px;height:9px;border-radius:50%;flex:none;cursor:pointer;
+  box-shadow:0 0 0 3px transparent;transition:box-shadow .12s}
+.v5dot:hover{box-shadow:0 0 0 3px rgba(31,31,29,.07)}
+.v5dot.ai{background:var(--blued)}
+.v5dot.ok{background:var(--greend)}
+/* Chapter 2 splits into lettered markets, each with a buyer table; chapter 3
+   is one wide table. Tables scroll inside their own frame so the page never
+   does. An empty cell is drawn as an empty cell, not as nothing, because in
+   the source those blanks are work that has not happened yet. */
+.v5sh{font-size:15.5px;font-weight:600;letter-spacing:-.01em;margin:34px 0 13px;color:var(--ink)}
+.v5sec .v5sh:first-of-type{margin-top:0}
+.v5tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.v5tbl{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5}
+.v5tbl th{text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:bottom}
+.v5tbl td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+/* Chapter 3 has seven columns. Squeezing them into the panel turns every cell
+   into a column of single words, so the table keeps its natural width and the
+   frame scrolls instead. */
+.v5tbl.wide{width:auto;min-width:1180px}
+.v5tbl.wide td,.v5tbl.wide th{min-width:150px}
+.v5tbl.wide td:nth-child(4),.v5tbl.wide td:nth-child(5){min-width:230px}
+.v5tbl tr:last-child td{border-bottom:none}
+.v5tbl td.k{color:var(--ink);font-weight:600;min-width:150px}
+.v5tbl td.mt{background:#FBF9F2}
+.v5note{font-size:13.5px;line-height:1.6;color:var(--ink3);margin-top:11px}
+.v5call{display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:15px 17px;
+  margin-top:18px;font-size:14.5px;line-height:1.6;color:var(--ink2);background:var(--card)}
+.v5call > .ti{font-size:16px;color:var(--ink3);flex:none;margin-top:3px}
+.v5call ul{margin:0;padding-left:17px}
+.v5call li{margin:5px 0}
+.v5call b{color:var(--ink)}
+.v5win{background:#FEFAE6;border:1px solid #F1E3A6;border-radius:14px;padding:22px 24px}
+.v5win p{font-size:16.5px;line-height:1.62;color:var(--ink)}
+.v5win ul{margin:15px 0 0;padding-left:19px;font-size:15px;line-height:1.62;color:var(--ink2)}
+.v5win li{margin:8px 0}
+.v5win .gate{margin-top:17px;padding-top:15px;border-top:1px solid #F1E3A6;font-size:15px;color:var(--ink)}
+.v5txt{font-size:17px;line-height:1.62;color:var(--ink)}
+.v5pv{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--ink3)}
+.v5pv b{font-weight:400;color:var(--ink2)}
+.v5cf{font-size:12px;font-weight:500;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.v5cf.ai{background:var(--bluebg);color:var(--blued)}
+.v5cf.ok{background:var(--greenbg);color:var(--greend)}
+.v5cf.none{background:var(--amberbg);color:var(--amberd);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.v5cf.click{cursor:pointer}
+.v5cf.click:hover{filter:brightness(.97)}
+
+/* ── the Home tab ─────────────────────────────────────────────────────────
+   The v3 deliverable layout, lifted into the panel: progress as one reading,
+   the document and the workflow as real previews of themselves, then every
+   object this deliverable is wired to, grouped by the verb. Its .dl* names
+   never meet the .v5* ones, so it came across unchanged. */
+.dlav{width:30px;height:30px;border-radius:50%;color:#fff;font-size:11.5px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+/* ── progress, the one big reading on the page ── */
+/* The workflow bar carries the same title bar as the Document block, and
+   leads with the step in flight rather than with a big total. Smaller, but
+   the amber pip and the live step do the work the 28px number used to. */
+.dlpb{margin-bottom:18px;padding:11px 16px 13px}
+/* A ribbon, not a block: no title bar of its own, everything live on one
+   line, and four hairline bars under it. Two rows, about 70px. */
+.dlnow{display:flex;align-items:center;gap:9px;flex-wrap:nowrap;margin-bottom:11px;min-width:0}
+.dlnow > .ti{font-size:16px;color:#12684C;flex:none}
+.dlpip{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;
+  box-shadow:0 0 0 3px var(--amberbg);margin-left:3px}
+.dlnow .k{font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--amberd);flex:none;margin-right:1px}
+.dlnow .v{font-size:14px;font-weight:600;letter-spacing:-.01em;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlnow .w{margin-left:auto;font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:6px;
+  flex:none;white-space:nowrap}
+.dlnow .w .dlav{width:17px;height:17px;font-size:8px}
+.dlnow .c{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap;
+  padding-left:10px;margin-left:2px;border-left:1px solid var(--line)}
+.dlseg{display:flex;gap:6px}
+.dlsg{flex-basis:0;min-width:0}
+.dlsgb{height:5px;border-radius:999px;background:#F0EEE7;overflow:hidden;display:flex}
+.dlsgb i{display:block;height:100%}
+.dlsgb i.done{background:var(--greend)}
+.dlsgb i.cur{background:var(--yellow)}
+.dlsgl{display:flex;align-items:baseline;gap:5px;margin-top:6px;font-size:11px;color:var(--ink2);min-width:0}
+.dlsgl .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlsgl .c{color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
+.dlsg.off .dlsgl{color:var(--ink3)}
+
+/* ── the two objects the deliverable really is ── */
+.dlhero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:980px){.dlhero{grid-template-columns:minmax(0,1fr)}}
+.dlcol{display:flex;flex-direction:column;gap:18px}
+
+.dlobj{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.dlobj:hover{border-color:var(--line2);box-shadow:0 4px 16px rgba(31,31,29,.08)}
+.dlohd{display:flex;align-items:center;gap:11px;padding:13px 15px}
+.dltile{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.dltile .ti{font-size:17px}
+.dlonm{flex:1 1 auto;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlkeb{width:28px;height:28px;flex:none;border:none;background:transparent;border-radius:8px;
+  color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.dlkeb:hover{background:var(--graybg);color:var(--ink)}
+.dloft{display:flex;align-items:center;gap:10px;padding:12px 15px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.dloft .r{margin-left:auto;color:var(--ink);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.dloft .r .ti{font-size:15px}
+
+/* the document, as a small true miniature of the editor page */
+.dlthumb{position:relative;height:414px;overflow:hidden;background:#F1EDE0;padding:16px 0 0;
+  display:flex;justify-content:center;align-items:flex-start;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dlpage{width:900px;flex:none;background:#fff;border-radius:4px 4px 0 0;padding:50px 64px;
+  box-shadow:0 3px 14px rgba(26,12,18,.12);transform:scale(.5);transform-origin:top center;
+  font-family:var(--serif);color:var(--ink);text-align:left}
+.dlthumb:after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(rgba(241,237,224,0),#F1EDE0)}
+.dlpage h1{font-size:38px;font-weight:500;letter-spacing:-.02em;margin-bottom:10px}
+.dlpage .by{font-family:var(--sans);font-size:15px;color:var(--ink3);margin-bottom:34px}
+.dlpage h2{font-size:25px;font-weight:500;letter-spacing:-.015em;margin:30px 0 12px}
+.dlpage h2:first-of-type{margin-top:0}
+.dlpage p{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:13px}
+.dlpage ul{margin:0 0 13px 22px}
+.dlpage li{font-size:17.5px;line-height:1.6;color:#33272C;margin-bottom:7px}
+.dlpage table{width:100%;border-collapse:collapse;margin:0 0 15px;font-family:var(--sans);font-size:15.5px}
+.dlpage th{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1.5px solid var(--line2);padding:7px 10px 7px 0}
+.dlpage td{border-bottom:1px solid var(--line);padding:7px 10px 7px 0;color:#33272C}
+.dlpage .blank{font-family:var(--sans);font-size:15.5px;color:var(--ink3);font-style:italic}
+.dlpage .em{background:#FEF6D8;padding:1px 3px;border-radius:3px}
+
+/* the workflow, as a viewport onto the real canvas: one line of nodes that
+   runs off both edges, parked on the step you are actually on */
+.dlwf{position:relative;height:182px;overflow:hidden;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background-color:#FBFAF5;background-image:radial-gradient(circle,#E0DED6 1px,transparent 1px);background-size:13px 13px}
+.dlstrip{position:absolute;top:50%;transform:translateY(-50%);display:flex;align-items:center}
+.dlwn{width:104px;flex:none;background:#fff;border:1px solid var(--line);border-radius:11px;
+  padding:8px 9px 9px;box-shadow:0 1px 3px rgba(31,31,29,.06)}
+.dlwn .h{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.dlwn .ic{width:21px;height:21px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlwn .ic .ti{font-size:12px}
+.dlwn .n{font-size:9.5px;color:var(--ink3);font-variant-numeric:tabular-nums;margin-left:auto}
+.dlwn .t{font-size:11px;line-height:1.3;color:var(--ink);height:43px;overflow:hidden}
+.dlwn.pend{background:#FCFBF7;border-color:#EAE6DA}
+.dlwn.pend .ic{background:#F1EFE8;color:#C6C1B4}
+.dlwn.pend .t{color:var(--ink3)}
+.dlwn.cur{box-shadow:0 0 0 2.5px var(--yellow),0 3px 10px rgba(31,31,29,.10)}
+.dlwl{width:17px;height:2px;border-radius:1px;background:#D8D2C4;flex:none}
+.dlwl.pend{background:#EAE6DC}
+.dlwph{position:absolute;top:18px;font-size:10px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+
+/* to-dos */
+.dlcardb{padding:4px 17px 14px}
+/* In a narrow panel the count gives way before the block's name does. */
+.dlohd .n{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--ink3);
+  flex:0 5 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlohd .n.warn{color:var(--amberd)}
+.dltd{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dltd:first-of-type{border-top:none}
+.dltd .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dltd .d{font-size:12px;color:var(--ink3);flex:none;white-space:nowrap}
+.dltd .d.warn{color:var(--amberd)}
+.dltd .dlav{width:21px;height:21px;font-size:9.5px;box-shadow:none}
+.dlmore{border:none;background:transparent;color:var(--ink2);font-family:inherit;font-size:13px;
+  cursor:pointer;padding:9px 0 0;display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);width:100%;margin-top:2px}
+.dlmore:hover{color:var(--ink)}
+
+/* ── related objects: the verb is the relationship, the noun is the type,
+      and each object is a tile whose width its own content decides ── */
+/* Everything the deliverable leans on, in one block rather than three
+   loose lists. The verb and the count came off the group headings: inside a
+   named block, the noun is enough. */
+.dlrun{margin-top:24px}
+.dlrunb{padding:2px 18px 20px}
+.dlg{padding:20px 0 2px;border-top:1px solid var(--line)}
+.dlg:first-child{border-top:none;padding-top:16px}
+.dlghd{margin-bottom:13px}
+.dlghd .t{font-family:var(--serif);font-size:17.5px;font-weight:500;letter-spacing:-.01em}
+/* One line per object, nothing but what it is. The group header already
+   says how many there are and how many need attention. */
+.dlgw{display:flex;flex-direction:column}
+.dlr{display:flex;align-items:center;gap:14px;padding:15px 2px;border-top:1px solid var(--line);
+  cursor:pointer;font-size:15px;transition:padding-left .12s}
+.dlr:first-child{border-top:none}
+.dlr:hover{padding-left:6px}
+.dlr .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.dlr .ic .ti{font-size:17px}
+.dlr .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlr .go{font-size:16px;color:var(--ink3);flex:none;opacity:0;transition:opacity .12s}
+.dlr:hover .go{opacity:1}
+.dlr.miss .nm{color:var(--ink3)}
+
+/* Documents are shown as documents: the same page preview as the main
+   thumbnail, at a size you can line four of up. */
+.dlfilm{display:flex;flex-wrap:wrap;gap:16px}
+.dlfile{width:146px;cursor:pointer}
+.dlfp{height:104px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden;
+  padding:13px 12px;transition:border-color .12s,box-shadow .12s}
+.dlfile:hover .dlfp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dlfp b{display:block;height:6px;border-radius:2px;background:#D9D4C6;width:72%;margin-bottom:9px}
+.dlfp i{display:block;height:4px;border-radius:2px;background:#EDEAE1;margin-bottom:6px}
+.dlfile.miss .dlfp{border-style:dashed;background:transparent;display:flex;align-items:center;
+  justify-content:center;color:var(--ink3);font-size:12.5px;text-align:center;padding:13px}
+.dlfn{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;min-width:0}
+.dlfn .ti{font-size:15px;flex:none;color:var(--ink3)}
+.dlfn .ti.pdf{color:#C0432C}
+.dlfn .ti.doc{color:#185FA5}
+.dlfn .ti.xls{color:#1C7A4E}
+.dlfn span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlfile.miss .dlfn span{color:var(--ink3)}
+.dltool{width:146px;cursor:pointer}
+.dltp{height:78px;border:1px solid var(--line);border-radius:10px;display:flex;
+  align-items:center;justify-content:center;transition:border-color .12s,box-shadow .12s}
+.dltp .ti{font-size:28px}
+.dltool:hover .dltp{border-color:var(--line2);box-shadow:0 3px 12px rgba(31,31,29,.08)}
+.dltn{margin-top:10px;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The document miniature and the object tiles want more room than a column
+   of prose does, so the Home tab widens the measure. */
+.v5bin.wide{max-width:1060px}
+
+/* the other tabs */
+.v5item{padding:13px 0;border-top:1px solid var(--line)}
+.v5item:first-child{border-top:none;padding-top:0}
+.v5who{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.v5who .v5av{width:22px;height:22px;font-size:9.5px}
+.v5who b{font-size:13.5px;font-weight:600}
+.v5who span{font-size:12.5px;color:var(--ink3);margin-left:auto}
+.v5sub{font-size:12.5px;color:var(--ink3);margin-bottom:5px}
+.v5srow{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line);min-width:0;font-size:14px}
+.v5srow:first-child{border-top:none;padding-top:0}
+.v5srow .ti{font-size:16px;color:var(--ink3);flex:none}
+.v5srow .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v5srow .s{flex:none;font-size:13px;color:var(--ink3);white-space:nowrap}
+.v5srow .s.warn{color:var(--amberd)}
+.v5srow .s.ok{color:var(--greend)}
+.v5box2{width:15px;height:15px;border-radius:4px;border:1.5px solid #B4B2A9;flex:none;margin-top:2px;background:#fff}
+.v5box2.on{background:#185FA5;border-color:#185FA5;position:relative}
+.v5box2.on:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:8px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5td{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.45}
+.v5td:first-child{border-top:none;padding-top:0}
+/* workflow tab */
+.v5wfc{display:flex;align-items:baseline;gap:10px;margin:22px 0 8px;font-size:12px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.v5wfc:first-child{margin-top:14px}
+.v5wfc{padding:0 10px}
+
+/* ── the step detail: what it is for, the tasks inside it, what it leaves ── */
+.v5sk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.v5swhat{font-size:15px;line-height:1.55;color:var(--ink);margin-bottom:22px}
+.v5tkb{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.v5tkr{position:relative;display:flex;gap:12px;padding:14px;border-top:1px solid var(--line)}
+.v5tkr:first-child{border-top:none}
+.v5tkr:before{content:'';position:absolute;left:25px;top:0;height:14px;width:1px;background:var(--line)}
+.v5tkr:after{content:'';position:absolute;left:25px;top:36px;bottom:0;width:1px;background:var(--line)}
+.v5tkr:first-child:before,.v5tkr:last-child:after{display:none}
+.v5tkn{position:relative;z-index:1;width:22px;height:22px;border-radius:50%;flex:none;background:var(--card);
+  border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v5tkc{min-width:0}
+.v5act{display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-size:11.5px;font-weight:500;
+  padding:3px 10px 3px 5px;margin-bottom:8px}
+.v5act.ai{background:var(--dark);color:#fff}
+.v5act.ai .ti{font-size:13px;color:var(--yellow)}
+.v5act.who{background:var(--graybg);color:var(--ink)}
+.v5act.who .dlav{width:17px;height:17px;font-size:8px}
+.v5tkt{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.4}
+.v5tkw{font-size:12.5px;color:var(--ink3);margin-top:5px}
+.v5aft{display:flex;gap:11px;background:var(--bluebg);border-radius:12px;padding:14px 16px;margin-top:20px;
+  font-size:13.5px;line-height:1.55;color:var(--blued)}
+.v5aft .ti{font-size:16px;flex:none;margin-top:1px}
+
+/* ── the canvas view ──────────────────────────────────────────────────────
+   Not a redrawing of the canvas: the canvas itself. gy-nav.js already reads
+   ?embed=1 and drops its own sidebar, top bar and collapse control, which is
+   what that flag exists for, so the page arrives as the world plus its own
+   floating pills and side panel. The panel goes full-bleed to receive it. */
+.v5body.bleed{padding:0;overflow:hidden}
+.v5body.bleed #pbody{max-width:none;margin:0;height:100%}
+.v5cvf{display:block;width:100%;height:100%;border:none;background:#FBFAF5}
+.v5wfc span{margin-left:auto;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400;color:var(--ink3)}
+/* A step is an object you can open, so the row behaves like one. */
+.v5wf{display:flex;align-items:center;gap:11px;padding:10px 10px;border-top:1px solid var(--line);
+  font-size:14.5px;cursor:pointer;transition:background .12s}
+.v5wf:hover{background:var(--graybg)}
+.v5wf.sel{background:var(--graybg)}
+.v5wf .ch{flex:none;font-size:15px;color:var(--ink3);opacity:0;transition:opacity .12s}
+.v5wf:hover .ch,.v5wf.sel .ch{opacity:1}
+.v5wf .dot{width:15px;height:15px;border-radius:50%;flex:none;border:1.5px solid var(--line2);position:relative}
+.v5wf.done .dot{background:var(--greend);border-color:var(--greend)}
+.v5wf.done .dot:after{content:'';position:absolute;left:50%;top:50%;width:3.5px;height:7px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.v5wf.cur .dot{border-color:var(--amber);border-width:4px}
+.v5wf .no{flex:none;font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums;width:26px}
+.v5wf .ti2{flex:1;min-width:0}
+.v5wf.pend .ti2,.v5wf.pend .no{color:var(--ink3)}
+.v5wf.cur .ti2{font-weight:600}
+.v5wf .now{flex:none;font-size:12px;font-weight:500;color:var(--amberd);background:var(--amberbg);
+  padding:2px 8px;border-radius:999px}
+.v5dl{display:flex;gap:12px;padding:8px 0;font-size:13.5px}
+.v5dl dt{flex:none;width:84px;color:var(--ink3)}
+.v5dl dd{flex:1;min-width:0}
+.v5back{display:inline-flex;align-items:center;gap:7px;border:none;background:none;font-family:inherit;
+  font-size:13.5px;color:var(--blued);cursor:pointer;padding:0;margin-bottom:14px}
+.v5back:hover{text-decoration:underline}
+
+/* ── header bits ────────────────────────────────────────────────────────── */
+.v5av{border-radius:50%;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;
+  justify-content:center;flex:none;width:30px;height:30px}
+.v5pile{display:flex;align-items:center}
+.v5pile .v5av{margin-left:-9px;box-shadow:0 0 0 2px var(--bg)}
+.v5pile .v5av:first-child{margin-left:0}
+.v5keb{width:34px;height:34px;flex:none;border:none;background:transparent;border-radius:9px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px}
+.v5keb:hover{background:var(--graybg);color:var(--ink)}
+.v5keb.on{background:var(--graybg);color:var(--ink)}
+
+
+/* ── v8: the agent leads, the document fills in ────────────────────────────
+   Built on v4-chat. The tab bar keeps its structure, minus Home and To-dos,
+   plus Settings. The assistant toggle became the agent itself: an avatar
+   with a name, like a colleague on the team. */
+
+/* the agent, in the tab bar */
+.v8agt{order:-2;flex:none;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;padding:3px 13px 3px 3px;font-family:inherit;font-size:14px;
+  font-weight:600;color:var(--ink);cursor:pointer;transition:background .12s,border-color .12s}
+.v8agt:hover{border-color:var(--line2)}
+.v8agt.on{background:var(--graybg);border-color:var(--graybg)}
+.v8ava{position:relative;width:28px;height:28px;border-radius:50%;background:var(--dark);color:var(--yellow);
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8ava .ti{font-size:15px}
+.v8ava.lg{width:32px;height:32px}
+.v8ava.lg .ti{font-size:17px}
+.v8ava.sm{width:20px;height:20px}
+.v8ava.sm .ti{font-size:11px}
+.v8ava.live:after{content:'';position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 0 2px var(--card);animation:gypip2 1.5s ease-in-out infinite}
+@keyframes gypip2{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* chat header and the progress line under it */
+.v8ch{flex:none;display:flex;align-items:center;gap:11px;min-height:58px;padding:10px 14px 10px 20px;
+  border-bottom:1px solid var(--line);background:var(--bg)}
+.v8chn{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v8prog{flex:none;padding:12px 20px 13px;border-bottom:1px solid var(--line);background:var(--bg)}
+.v8pt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.v8pt b{color:var(--ink);font-weight:600}
+.v8pt .c{margin-left:auto;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v8bar{display:flex;gap:4px}
+.v8bar span{height:5px;border-radius:3px;background:var(--line);overflow:hidden;position:relative}
+.v8bar span i{position:absolute;left:0;top:0;bottom:0;background:var(--greend);transition:width .45s ease}
+.v8bar span em{position:absolute;top:0;bottom:0;background:var(--yellow)}
+
+/* the thread */
+.v8lab{display:flex;align-items:center;gap:10px;margin:26px 0 4px;font-family:ui-monospace,Menlo,monospace;
+  font-size:11.5px;letter-spacing:.04em;color:var(--ink3);text-transform:uppercase}
+.v8lab:after{content:'';flex:1;height:1px;background:var(--line)}
+.v8lab:first-child{margin-top:0}
+.v8tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--sans);font-size:11.5px;font-style:normal;
+  border-radius:6px;padding:1px 7px;margin-right:6px;vertical-align:1px}
+.v8tag .ti{font-size:12px}
+.v8tag.tool{background:var(--graybg);color:#766B62}
+.v8tag.conn{background:var(--bluebg);color:var(--blued)}
+.v8tag.know{border:1px dashed var(--line2);color:var(--ink2)}
+.v8them{margin:16px 0}
+.v8them .who{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:7px}
+.v8them .who .dlav{width:22px;height:22px;font-size:9px}
+.v8them .bub{background:var(--card);border:1px solid var(--line);border-radius:5px 16px 16px 16px;
+  padding:11px 14px;font-size:14.5px;line-height:1.55}
+.v5you{margin-left:40px}
+
+/* a question from the agent */
+.v8ask{border:1px solid var(--line2);border-radius:16px;background:var(--card);padding:16px 17px;margin:14px 0;
+  box-shadow:0 2px 10px rgba(31,31,29,.05)}
+.v8ask .q{font-size:15px;line-height:1.55}
+.v8opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.v8opt{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:8px 15px;
+  font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer}
+.v8opt:hover{border-color:var(--ink3)}
+.v8opt.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.v8opt.pri:hover{background:var(--blued);border-color:var(--blued)}
+
+/* a decision: its own shape, its own colour, a named decider */
+.v8dec{border:1px solid #E9D79A;background:#FEFAE6;border-radius:16px;padding:16px 17px;margin:14px 0}
+.v8dh{display:flex;align-items:center;gap:11px}
+.v8dia{width:22px;height:22px;border-radius:5px;background:var(--dark);transform:rotate(45deg);flex:none;
+  display:inline-flex;align-items:center;justify-content:center;margin:0 3px}
+.v8dia .ti{transform:rotate(-45deg);color:var(--yellow);font-size:13px}
+.v8dk{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--amberd)}
+.v8dq{font-family:var(--serif);font-size:20px;line-height:1.25;letter-spacing:-.01em;margin:12px 0 12px}
+.v8rec{display:flex;gap:9px;background:var(--card);border:1px solid #F1E3A6;border-radius:11px;padding:10px 12px;
+  font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.v8rec b{color:var(--ink)}
+.v8by{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink3);margin-top:12px}
+.v8by .dlav{width:18px;height:18px;font-size:8px}
+.v8dopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.v8dopt{border:1px solid #E2D08C;background:var(--card);border-radius:12px;padding:11px 12px;font-family:inherit;
+  font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px}
+.v8dopt .ti{font-size:16px;flex:none}
+.v8dopt:hover{border-color:var(--amberd)}
+.v8dopt.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.v8dopt.pri:hover{border-color:var(--blued);background:var(--blued)}
+.v8dout{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;flex-wrap:wrap}
+.v8dout .ok{display:inline-flex;align-items:center;gap:6px;background:var(--greenbg);color:var(--greend);
+  border-radius:999px;padding:4px 11px;font-weight:600;font-size:13.5px}
+.v8dout .m{color:var(--ink3);font-size:13px}
+
+/* waiting on a person */
+.v8wait{border:1px dashed var(--line2);border-radius:14px;padding:13px 15px;margin:14px 0;background:var(--bg)}
+.v8wait .h{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.5}
+.v8wait .h .dlav{width:24px;height:24px;font-size:9.5px}
+.v8wait .v8opts{margin-top:11px}
+
+/* asking an Ecosystem Service agent */
+.v8con{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px;margin:9px 0;cursor:pointer}
+.v8con:hover{border-color:var(--line2)}
+.v8con.rise{animation:gyrise .22s ease both}
+.v8conh{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600}
+.v8conh .s{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--ink3);display:inline-flex;align-items:center;gap:5px}
+.v8conb{font-size:13.5px;line-height:1.5;color:var(--ink2);margin-top:7px}
+.v8conm{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3);margin-top:8px}
+.v8conm .dlav{width:16px;height:16px;font-size:7px}
+.v8esa{width:26px;height:26px;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8esa .ti{font-size:14px}
+.v8esa.sm{width:18px;height:18px}
+.v8esa.sm .ti{font-size:10px}
+
+/* confidence, three words only */
+.v8cf{display:inline-flex;align-items:center;font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.v8cf.lo{background:var(--amberbg);color:var(--amberd)}
+.v8cf.ind{background:var(--bluebg);color:var(--blued)}
+.v8cf.val{background:var(--greenbg);color:var(--greend)}
+
+/* the document, before and after */
+.v8ghost{border:1.5px dashed #DFD8C6;border-radius:14px;background:#FBF9F2;padding:18px 20px}
+.v8ghost .l{font-size:13.5px;color:var(--ink3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.v8ghost .l .ti{font-size:15px}
+.v8ghost i{display:block;height:9px;border-radius:5px;background:#EEE8D8;margin-top:9px}
+.v8sec{scroll-margin-top:24px}
+.v8es{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:16px;overflow:hidden}
+.v8es.just{animation:gyflash 1.2s ease-out}
+.v8esh{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.v8esh .t{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.v8esh .t .ti{font-size:18px}
+.v8esh .n{flex:1;min-width:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.v8achip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:3px 11px 3px 3px;
+  background:var(--card);font-family:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;flex:none;white-space:nowrap}
+.v8achip:hover{border-color:var(--line2);color:var(--ink)}
+.v8esd{display:grid;grid-template-columns:150px minmax(0,1fr);gap:0;margin:0;padding:4px 16px}
+.v8esd dt{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:10px 0;
+  border-bottom:1px solid var(--line)}
+.v8esd dd{margin:0;font-size:14px;line-height:1.5;color:var(--ink);padding:9px 0;border-bottom:1px solid var(--line)}
+.v8esd dd.mt{color:var(--ink3)}
+.v8esd dt:nth-last-child(2),.v8esd dd:last-child{border-bottom:none}
+.v8esf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 16px;background:#FBF9F2;border-top:1px solid var(--line)}
+.v8esf .nx{flex:1;min-width:0;font-size:13.5px;color:var(--ink2)}
+.v8flag{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--card);border-radius:999px;
+  padding:5px 12px;font-family:inherit;font-size:13px;color:var(--ink);cursor:pointer;flex:none}
+.v8flag:hover{border-color:var(--ink3)}
+.v8flag.on{background:var(--graybg);border-color:var(--graybg);color:var(--ink2);cursor:default}
+.v8flag .ti{font-size:14px}
+@media(max-width:1200px){.v8esd{grid-template-columns:minmax(0,1fr)}.v8esd dt{border-bottom:none;padding-bottom:0}}
+
+/* a decision, recorded where it applies in the document */
+.v8drec{display:flex;align-items:center;gap:11px;flex-wrap:wrap;border:1px dashed var(--line2);border-radius:12px;
+  padding:11px 14px;margin-top:22px;font-size:14px;color:var(--ink3)}
+.v8drec .v8dia{width:16px;height:16px;border-radius:4px;background:var(--line2)}
+.v8drec .v8dia .ti{font-size:10px;color:#fff}
+.v8drec .q{flex:1;min-width:0}
+.v8drec .dlav{width:20px;height:20px;font-size:8px}
+.v8drec.done{border-style:solid;border-color:#E9D79A;background:#FEFAE6;color:var(--ink)}
+.v8drec.done .v8dia{background:var(--dark)}
+.v8drec.done .v8dia .ti{color:var(--yellow)}
+.v8drec .ok{display:inline-flex;align-items:center;gap:5px;background:var(--greenbg);color:var(--greend);border-radius:999px;
+  padding:3px 10px;font-weight:600;font-size:13px}
+
+/* workflow list: who runs each step, and gates drawn as decisions */
+.v5wf .who8{flex:none;display:inline-flex;align-items:center}
+.v5wf .who8 .dlav{width:20px;height:20px;font-size:8px}
+.v5wf.gate .dot{border-radius:3px;transform:rotate(45deg);width:12px;height:12px;margin:0 1.5px}
+.v5wf.gate.done .dot{background:var(--dark);border-color:var(--dark)}
+.v5wf.gate.done .dot:after{display:none}
+.v5wf .out{flex:none;font-size:12px;font-weight:600;color:var(--greend);background:var(--greenbg);border-radius:999px;padding:2px 9px}
+.v5wf .gk{flex:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--amberd)}
+
+/* settings: everything this deliverable runs on, one line per thing */
+.v8set{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+@media(max-width:1100px){.v8set{grid-template-columns:minmax(0,1fr)}}
+.v8card{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;min-width:0}
+.v8card.span{grid-column:1/-1}
+.v8sh{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.v8sh .t{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
+.v8sh .t .ti{font-size:16px}
+.v8sh b{flex:1;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.v8sh span{font-size:13px;color:var(--ink3)}
+.v8row{display:flex;align-items:center;gap:11px;padding:10px 16px;border-top:1px solid var(--line);font-size:14px;min-width:0}
+.v8row:first-of-type{border-top:none}
+.v8row.click{cursor:pointer}
+.v8row.click:hover{background:var(--graybg)}
+.v8row .ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--graybg);color:#766B62}
+.v8row .ic .ti{font-size:14px}
+.v8row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8row .k{flex:none;width:120px;color:var(--ink3);font-size:13px}
+.v8row .m{flex:none;color:var(--ink3);font-size:13px;white-space:nowrap}
+.v8row .m.warn{color:var(--amberd)}
+.v8row .m.ok{color:var(--greend)}
+.v8row .dlav{width:22px;height:22px;font-size:9px}
+.v8row .ch{flex:none;color:var(--ink3);font-size:15px}
+.v8ph{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);border:1px dashed var(--line2);
+  border-radius:5px;padding:1px 5px;flex:none}
+.v8ttl{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.02em;margin-bottom:24px}
+
+/* the agent drawer */
+.v8dk2{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:22px 0 6px}
+.v8dk2:first-child{margin-top:0}
+.v8dr .v8row{padding:9px 0}
+.v8skdoc{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px 18px 16px;margin-top:10px}
+.v8skdoc h5{font-size:14px;font-weight:600;color:var(--ink);margin:14px 0 4px}
+.v8skdoc p{font-size:14px;line-height:1.55;color:var(--ink2);margin:0}
+.v8skdoc ol{margin:0;padding-left:20px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.v8skdoc li{margin:2px 0}
+.v8dtxt{font-size:14px;line-height:1.55;color:var(--ink2)}
+.v8q{display:flex;gap:9px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5}
+.v8q:first-of-type{border-top:none}
+.v8q .ti{color:var(--amberd);font-size:15px;flex:none;margin-top:2px}
+.v8q.new{background:#FEFAE6;margin:0 -10px;padding:10px;border-radius:10px;border-top:none}
+
+/* composer, quieter: the send button is not the one dark thing on screen */
+.v5send{background:var(--graybg);color:var(--ink)}
+
+/* step explainer in the Workflow drawer */
+.v5wf{cursor:pointer}
+.v8tk{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line)}
+.v8tk:first-of-type{border-top:none}
+.v8tk .n{width:20px;height:20px;border-radius:6px;background:var(--graybg);color:var(--ink2);font-size:11.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+.v8tk .a{display:flex;align-items:center;gap:7px;font-size:13px}
+.v8tk .a b{font-weight:600}
+.v8tk .a .dlav{width:20px;height:20px;font-size:8px}
+.v8tk .a .ic{border-radius:6px;background:var(--graybg);color:#766B62;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8tk .d{font-size:14px;line-height:1.5;color:var(--ink2);margin-top:4px}
+.v8dopts{display:grid;grid-template-columns:minmax(0,1fr)}
+
+.v8in{display:block;width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:14.5px;color:var(--ink);padding:0 0 11px}
+.v8in::placeholder{color:var(--ink3)}
+
+/* progress line is the way into the workflow */
+.v8prog{cursor:pointer;transition:background .12s}
+.v8prog:hover{background:transparent}
+/* step explainer, laid over the agent column */
+.v5chat{position:relative}
+.v8sov{position:absolute;inset:0;z-index:8;background:var(--bg);display:flex;flex-direction:column;
+  box-shadow:inset -1px 0 0 var(--line)}
+.v8sov.hide{display:none}
+.v8sovh{flex:none;display:flex;align-items:center;gap:11px;min-height:55px;padding:10px 14px 10px 20px;border-bottom:1px solid var(--line)}
+.v8sovb{flex:1;overflow:auto;padding:20px 20px 40px;font-size:14px;line-height:1.55}
+/* outputs: the PDF, or its placeholder */
+.v8out .pg{position:relative;aspect-ratio:1/1.3;max-width:100%;border:1px solid var(--line);border-radius:10px;background:var(--card);
+  padding:22px 20px;box-shadow:0 4px 16px rgba(31,31,29,.06)}
+.v8out .pg.live{cursor:pointer}
+.v8out .pg.live:hover{border-color:var(--line2)}
+.v8out .pg .t{font-family:var(--serif);font-size:19px;line-height:1.15;letter-spacing:-.01em}
+.v8out .pg .s{font-size:11px;color:var(--ink3);margin:6px 0 4px}
+.v8out .pg b{display:block;height:9px;width:42%;border-radius:4px;background:var(--line2);margin:18px 0 8px}
+.v8out .pg i.l{display:block;height:6px;border-radius:3px;background:var(--line);margin-top:7px}
+.v8out.ph .pg{border:1.5px dashed #DFD8C6;background:#FBF9F2;box-shadow:none}
+.v8out.ph .pg > .ti{font-size:26px;color:var(--ink3)}
+.v8out.ph .pg b{background:#EEE8D8}
+.v8out.ph .pg i.l{background:#EEE8D8}
+.v8out .nm{font-size:15px;font-weight:600;margin-top:14px;letter-spacing:-.01em}
+.v8out .mt{font-size:13px;color:var(--ink3);margin-top:4px}
+.v8obar{height:5px;border-radius:3px;background:var(--line);margin-top:14px;overflow:hidden}
+.v8obar i{display:block;height:100%;background:var(--greend)}
+/* topbar matches every other page: 61px, so the Share button is compact */
+.topbar{height:61px}
+.topbar .btn-out{padding-top:6px;padding-bottom:6px}
+
+/* ── v8 pass 4 ─────────────────────────────────────────────────────────── */
+/* v5's ground: the agent sits on the page tint, the content floats as a card */
+.v5row{background:var(--bg)}
+.v5chat{background:transparent;border-right:none}
+.v8prog{background:transparent}
+.v5panel{background:transparent;padding:14px 16px 16px 2px}
+.v5body{background:var(--card);border-radius:16px;
+  box-shadow:0 2px 16px rgba(26,12,18,.07),0 1px 3px rgba(26,12,18,.05)}
+.v5dr{background:transparent;border-left:none;padding:14px 16px 16px 0}
+.v5drh,.v5drb{background:var(--card)}
+.v5drh{border-radius:16px 16px 0 0;border-bottom:1px solid var(--line)}
+.v5drb{border-radius:0 0 16px 16px}
+.v5dr > *{box-shadow:0 2px 16px rgba(26,12,18,.05)}
+body.pclosed .v5panel{padding-left:16px}
+
+/* the agent's work, folded to one line */
+.v8acc{margin:10px 0}
+.v8acch{width:100%;display:flex;align-items:center;gap:9px;border:none;background:none;padding:6px 0;font-family:inherit;
+  font-size:14px;color:var(--ink2);cursor:pointer;text-align:left}
+.v8acch .ti{font-size:16px;flex:none}
+.v8acch .ti.ok{color:var(--greend)}
+.v8acch .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8acch .t em{font-style:normal;color:var(--ink3);margin-left:7px}
+.v8acch .t.run{color:var(--ink)}
+.v8acch .ch{color:var(--ink3);font-size:15px;transition:transform .15s}
+.v8acc.open .ch{transform:rotate(180deg)}
+.v8acch:hover .t{color:var(--ink)}
+.v8accb{margin:2px 0 4px 6px;padding-left:16px;border-left:2px solid var(--line)}
+
+/* the block where the agent needs you */
+.v8ask{border:1px solid #CFE0F3;border-radius:16px;background:var(--card);padding:0;margin:16px 0;overflow:hidden;
+  box-shadow:0 8px 24px rgba(24,95,165,.09),0 1px 3px rgba(26,12,18,.05)}
+.v8askh{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bluebg);border-bottom:1px solid #DCE9F7}
+.v8askh .k{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--blued)}
+.v8askh .s{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--blued);opacity:.7}
+.v8ask .q{font-size:15.5px;line-height:1.55;padding:15px 16px 4px;color:var(--ink)}
+.v8aopts{display:flex;flex-direction:column;gap:8px;padding:12px 16px 16px}
+.v8aopt{display:flex;align-items:center;gap:11px;width:100%;border:1px solid var(--line2);background:var(--card);border-radius:12px;
+  padding:11px 13px;font-family:inherit;font-size:14.5px;font-weight:500;color:var(--ink);cursor:pointer;text-align:left;
+  transition:border-color .12s,background .12s}
+.v8aopt:hover{border-color:var(--ink3);background:#FDFCF8}
+.v8aopt .n{width:22px;height:22px;border-radius:7px;background:var(--graybg);color:var(--ink2);font-size:12px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8aopt .l{flex:1;min-width:0}
+.v8aopt .ti{font-size:17px;flex:none}
+.v8aopt.pri{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.v8aopt.pri:hover{background:var(--blued);border-color:var(--blued)}
+.v8aopt.pri .n{background:rgba(255,255,255,.22);color:#fff}
+.v8start{margin:16px 0}
+.v8start .v8aopt{justify-content:center;padding-top:13px;padding-bottom:13px;font-size:15.5px}
+.v8start .v8aopt .ti{font-size:18px}
+.v8dec{box-shadow:0 8px 24px rgba(138,90,16,.08)}
+
+/* outputs empty state: one icon, one sentence */
+.v8out.ph .pg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px}
+.v8out.ph .pg > .ti{font-size:56px;color:var(--ink3);opacity:.7}
+.v8out.ph .pg .tx{font-size:14px;line-height:1.5;color:var(--ink3);max-width:220px}
+
+/* decision question: body font, bold, not Manner */
+.v8dq{font-family:var(--sans);font-size:16.5px;font-weight:650;line-height:1.4;letter-spacing:-.01em}
+
+/* the person's own messages: right-aligned, with their avatar */
+.v8me{display:flex;justify-content:flex-end;align-items:flex-end;gap:8px;margin:14px 0}
+.v8them{display:flex;align-items:flex-end;gap:8px;margin:14px 0}
+.v8them .v5you{margin:0;max-width:82%;border-radius:16px 16px 16px 5px;background:var(--graybg)}
+.v8them .dlav{width:26px;height:26px;font-size:10px;flex:none}
+.v8side{margin:8px 0}
+.v8side .v8acch .ti{color:var(--ink3)}
+.v8sideb{border-left:2px solid var(--line2);padding-left:12px;margin:2px 0 10px 7px}
+.v8sideb .v5say{font-size:14.5px}
+.v8keep{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--greend);margin:-4px 0 14px}
+.v8keep .ti{font-size:15px}
+.v8pin{border:none;background:none;font-family:inherit;font-size:13.5px;color:var(--ink2);padding:2px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.v8me .v5you{margin:0;max-width:82%;border-radius:16px 16px 5px 16px}
+.v8me .dlav{width:26px;height:26px;font-size:10px;flex:none}
+
+/* composer: add a source is a plain + */
+.v8plus{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:var(--card);color:var(--ink2);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex:none}
+.v8plus:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* the input block shows who is needed, not the agent */
+.v8askh .dlav{width:22px;height:22px;font-size:9px}
+
+/* agent toggle sized like the tabs beside it */
+.v8agt{padding:5px 11px 5px 5px;border:none;border-radius:10px;font-size:13.5px;gap:7px;background:none}
+.v8agt:hover{background:var(--graybg)}
+.v8agt.on{background:var(--graybg)}
+.v8agt .v8ava{width:20px;height:20px}
+.v8agt .v8ava .ti{font-size:12px}
+
+/* ── workflow page, second design ─────────────────────────────────────── */
+.v8now{border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:22px;cursor:pointer;
+  background:linear-gradient(0deg,var(--card),var(--card));box-shadow:0 2px 12px rgba(26,12,18,.05);transition:border-color .12s}
+.v8now:hover{border-color:var(--line2)}
+.v8now .h{display:flex;align-items:center;gap:8px}
+.v8now .pip{width:9px;height:9px;border-radius:50%;background:var(--amber);animation:gypip 1.5s ease-in-out infinite}
+.v8now .k{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amberd)}
+.v8now .c{margin-left:auto;font-size:13px;color:var(--ink3)}
+.v8now .t{font-size:22px;font-weight:600;letter-spacing:-.015em;margin-top:10px;line-height:1.25}
+.v8now .t .n{color:var(--ink3);font-weight:500;margin-right:10px;font-variant-numeric:tabular-nums}
+.v8now .w{font-size:15px;line-height:1.55;color:var(--ink2);margin-top:8px;max-width:640px}
+.v8now .f{display:flex;align-items:center;gap:12px;margin-top:16px}
+.v8now .go{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--blued)}
+.v8now.gate{background:#FEFAE6;border-color:#E9D79A}
+.v8now.done .h .ti{color:var(--greend);font-size:18px}
+.v8now.done .k{color:var(--greend)}
+.v8now.done,.v8now.idle{cursor:default}
+.v8now.idle .k{color:var(--ink3)}
+.v8wstat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.v8wstat div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--card)}
+.v8wstat b{display:block;font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.v8wstat b em{font-style:normal;font-size:15px;color:var(--ink3);font-weight:500}
+.v8wstat span{font-size:13px;color:var(--ink3)}
+@media(max-width:1250px){.v8wstat{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v8wseg{display:flex;gap:6px;margin-bottom:36px}
+.v8wseg > div{min-width:0}
+.v8wseg i{display:block;height:7px;border-radius:4px;background:var(--line);overflow:hidden}
+.v8wseg i b{display:block;height:100%;background:var(--greend);transition:width .45s ease}
+.v8wseg span{display:block;font-size:12.5px;color:var(--ink3);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8wch{margin-bottom:30px}
+.v8wchh{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.v8wchh .nm{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.v8wchh .ct{margin-left:auto;font-size:13.5px;color:var(--ink3)}
+.v8wl{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.v8ws{display:flex;align-items:center;gap:14px;padding:15px 18px;border-top:1px solid var(--line);cursor:pointer;
+  font-size:15.5px;transition:background .12s;position:relative}
+.v8ws:first-child{border-top:none}
+.v8ws:hover,.v8ws.sel{background:#FBF9F2}
+.v8ws .mk{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid var(--line2);position:relative;background:var(--card)}
+.v8ws.done .mk{background:var(--greend);border-color:var(--greend)}
+.v8ws.done .mk:after{content:'';position:absolute;left:50%;top:45%;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;
+  transform:translate(-50%,-50%) rotate(45deg)}
+.v8ws.cur .mk{border-color:var(--amber);border-width:5px;animation:gypip 1.5s ease-in-out infinite}
+.v8ws.gate .mk{border-radius:4px;transform:rotate(45deg);width:15px;height:15px;margin:0 2.5px}
+.v8ws.gate.done .mk{background:var(--dark);border-color:var(--dark)}
+.v8ws.gate.done .mk:after{display:none}
+.v8ws.gate{background:#FFFCF0}
+.v8ws.gate:hover,.v8ws.gate.sel{background:#FEF7DC}
+.v8ws.cur{background:#FEFAE6}
+.v8ws .no{flex:none;width:30px;font-size:13.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.v8ws .tt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8ws.pend .tt{color:var(--ink2)}
+.v8ws.cur .tt{font-weight:600}
+.v8wo{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.v8wo .ti{font-size:13px}
+.v8wo.ok{background:var(--greenbg);color:var(--greend)}
+.v8wo.dn{color:var(--greend);font-weight:500;padding:3px 4px}
+.v8wo.now{background:var(--amberbg);color:var(--amberd)}
+.v8wo.dec{color:var(--amberd);letter-spacing:.05em;text-transform:uppercase;font-size:11px}
+.v8who{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink2);width:136px;white-space:nowrap;overflow:hidden}
+.v8who .dlav,.v8who .v8ava{width:22px;height:22px;font-size:9px;flex:none}
+.v8who .v8ava .ti{font-size:12px}
+.v8ws .ch{flex:none;color:var(--ink3);font-size:16px;opacity:0;transition:opacity .12s}
+.v8ws:hover .ch,.v8ws.sel .ch{opacity:1}
+
+/* settings: one column, anchor nav on the right */
+.v8setw{display:flex;gap:40px;align-items:flex-start;max-width:1000px;margin:0 auto}
+.v8setc{flex:1;min-width:0;max-width:720px}
+.v8setw .v8set{display:flex;flex-direction:column;gap:18px}
+.v8setw .v8card{scroll-margin-top:24px}
+.v8setw .v8card .v8row{padding:12px 18px;font-size:14.5px}
+.v8setw .v8sh{padding:16px 18px}
+.v8anc{position:sticky;top:0;flex:none;width:170px;display:flex;flex-direction:column;gap:2px;padding-top:78px}
+.v8anc a{display:block;font-size:13.5px;color:var(--ink3);padding:6px 12px;border-left:2px solid var(--line);cursor:pointer;
+  text-decoration:none;transition:color .12s,border-color .12s}
+.v8anc a:hover{color:var(--ink)}
+.v8anc a.on{color:var(--ink);font-weight:600;border-left-color:var(--dark)}
+@media(max-width:1150px){.v8anc{display:none}}
+
+.v8setw{justify-content:center}
+.v8setc{flex:0 1 720px}
+.v8setw .v8set{align-items:stretch}
+
+/* workflow: Now card, stat tiles and chapter bar hidden for now (Thomas, 3 Oct); code kept */
+.v8now,.v8wstat,.v8wseg{display:none}
+
+/* same frame on all three tabs: one 780px column, same title (3 Oct) */
+.v8ttl{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:40px}
+.v8setw{display:block;max-width:none;margin:0;position:relative}
+.v8setc{max-width:none;width:100%}
+.v8anc{position:absolute;top:0;bottom:0;left:calc(100% + 20px);width:110px;padding-top:0}
+.v8anc > div{position:sticky;top:0}
+.v8anc a{padding:6px 10px}
+
+/* reserve room for the settings anchor nav on every tab, so all three columns stay identical and the nav never clips */
+.v5bin{max-width:min(780px, calc(100% - 290px))}
+.v8anc{width:125px;left:calc(100% + 20px)}
+.v8anc a{white-space:nowrap}
+@media(max-width:1150px){.v5bin{max-width:780px}}
+
+/* every tab keeps the same 780px column; the anchor nav sits beside it when there is room, and moves above the cards when there is not */
+.v5bin{max-width:780px}
+.v5body{container-type:inline-size;container-name:pane}
+@container pane (max-width: 779px){
+  .v8setw{display:flex;flex-direction:column}
+  .v8anc{position:sticky;top:-46px;order:-1;left:auto;width:auto;z-index:3;background:var(--card);
+    margin:-12px 0 16px;padding:12px 0 10px}
+  .v8anc > div{position:static;display:flex;flex-wrap:wrap;gap:4px}
+  .v8anc a{border-left:none;border-radius:999px;padding:5px 11px;font-size:13px}
+  .v8anc a.on{background:var(--graybg);border-left:none}
+}
+@media(max-width:1150px){.v8anc{display:block}}
+
+.v8anc{width:105px;left:calc(100% + 16px)}
+
+@container pane (max-width: 779px){
+  .v8anc{width:auto;left:auto;display:block}
+  .v8anc > div{display:flex;flex-direction:row;flex-wrap:wrap;gap:4px}
+}
+
+/* narrower reading column on every tab, always leaving room for the settings nav on the right (3 Oct) */
+.v5bin{max-width:min(700px, calc(100% - 250px))}
+.v8anc{width:105px;left:calc(100% + 18px)}
+@container pane (max-width: 779px){ .v5bin{max-width:100%} }
+/* Workflow tab, refined scale (3 Oct): smaller chapter tile and heading, tighter rows */
+.v8wchh{gap:10px;margin-bottom:9px}
+.v8wchh .v5chn{width:24px;height:24px;border-radius:7px;font-size:12px}
+.v8wchh .nm{font-size:19px}
+.v8wchh .ct{font-size:13px}
+.v8wl{border-radius:12px}
+.v8ws{gap:12px;padding:11px 16px;font-size:14.5px}
+.v8ws .mk{width:16px;height:16px;border-width:1.5px}
+.v8ws.cur .mk{border-width:4px}
+.v8ws.done .mk:after{width:3px;height:7px}
+.v8ws.gate .mk{width:12px;height:12px;margin:0 2px}
+.v8ws .no{width:28px;font-size:12.5px}
+.v8ws.cur .tt{font-weight:500}
+.v8wo{font-size:12px;font-weight:500;padding:2px 9px}
+.v8wo.dec{font-size:10.5px;font-weight:600}
+.v8who{font-size:12.5px;gap:6px}
+.v8who .dlav,.v8who .v8ava{width:20px;height:20px;font-size:8.5px}
+.v8ws .ch{font-size:15px}
+
+/* 60px all round inside the floating card, on all three tabs; content fills the width (3 Oct) */
+.v5body{padding:60px}
+.v5bin,.v5bin.wide{max-width:none;margin:0}
+.v8setw{display:flex;gap:48px;align-items:flex-start;position:static}
+.v8setc{flex:1;min-width:0;width:auto}
+.v8anc{position:sticky;top:24px;left:auto;bottom:auto;width:120px;flex:none;padding-top:0}
+.v8anc > div{position:static}
+@container pane (max-width: 779px){
+  .v8setw{flex-direction:column;gap:0}
+  .v8anc{top:-60px;width:auto}
+}
+/* Current vs needs-you (3 Oct): the current step takes the current tokens (ink);
+   amber stays only for a human in the loop: decisions and asks. */
+@keyframes gypipcur{0%,100%{box-shadow:0 0 0 3px var(--curbg,#ECE8DD)}50%{box-shadow:0 0 0 6px rgba(26,12,18,.10)}}
+.v8ws.cur{background:var(--currow,#F7F5EF)}
+.v8ws.cur .mk{border-color:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v8wo.now{background:var(--curbg,#ECE8DD);color:var(--curd,#1A0C12)}
+.v5wf.cur .dot{border-color:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v5wf .now{background:var(--curbg,#ECE8DD);color:var(--curd,#1A0C12)}
+.v8now .pip{background:var(--cur,#1A0C12);animation:gypipcur 1.6s ease-in-out infinite}
+.v8now .k{color:var(--curd,#1A0C12)}
+.v8now.gate .pip{background:var(--amber);animation:gypip 1.5s ease-in-out infinite}
+.v8now.gate .k{color:var(--amberd)}
+@media (prefers-reduced-motion:reduce){.v8ws.cur .mk,.v5wf.cur .dot,.v8now .pip{animation:none}}
+
+/* no divider under page titles; document gets the same anchor nav as settings (3 Oct) */
+.v5dt,.v8ttl{border-bottom:none;padding-bottom:0;margin-bottom:40px}
+.v8docw .v5sec:first-child{margin-top:0}
+
+/* settings: the project header block leads (3 Oct) */
+.v8proj{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#FBF8EF 0%,var(--card) 70%);
+  padding:24px 24px 20px;scroll-margin-top:24px}
+.v8proj .pt{display:flex;align-items:center;gap:14px}
+.v8proj .pb{width:46px;height:46px;border-radius:12px;background:var(--greenbg);color:var(--greend);font-weight:700;font-size:15px;
+  letter-spacing:.02em;display:flex;align-items:center;justify-content:center;flex:none}
+.v8proj .n{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:-.015em;line-height:1.1}
+.v8proj .s{font-size:14px;color:var(--ink3);margin-top:3px}
+.v8proj .pc{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.v8proj .pc span{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);background:var(--card);
+  border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+.v8proj .pc .ti{font-size:14px;color:var(--ink3)}
+.v8proj .ptm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.v8proj .pp{display:flex;align-items:center;gap:10px;min-width:0}
+.v8proj .pp .dlav{width:32px;height:32px;font-size:11.5px}
+.v8proj .pp div{min-width:0}
+.v8proj .pp b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8proj .pp > div span{display:block;font-size:12.5px;color:var(--ink3)}
+
+/* section nav: fixed column and one weight for every label, so the active label never rewraps and shifts the list (3 Oct).
+   Active is marked by ink and the bar only. */
+.v8anc{width:150px}
+.v8anc a{white-space:normal;line-height:1.35;font-weight:500}
+.v8anc a.on{font-weight:500}
+
+/* settings: one Agents card, add team member (3 Oct) */
+.v8sub{padding:14px 18px 6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);
+  border-top:1px solid var(--line)}
+.v8sub + .v8row{border-top:none}
+.v8proj .pp.add{cursor:pointer;color:var(--ink2)}
+.v8proj .pp.add b{font-weight:500;color:var(--ink2)}
+.v8proj .pp.add:hover b{color:var(--ink)}
+.v8proj .pa{width:32px;height:32px;border-radius:50%;border:1.5px dashed var(--line2);display:inline-flex;align-items:center;
+  justify-content:center;flex:none;color:var(--ink3);font-size:15px}
+.v8proj .pp.add:hover .pa{border-color:var(--ink3);color:var(--ink)}
+.v8proj .padd{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.v8proj .padd button{display:flex;align-items:center;gap:10px;width:100%;border:none;border-top:1px solid var(--line);background:none;
+  padding:9px 14px;font-family:inherit;font-size:14px;cursor:pointer;text-align:left}
+.v8proj .padd button:first-child{border-top:none}
+.v8proj .padd button:hover{background:#FBF9F2}
+.v8proj .padd .dlav{width:24px;height:24px;font-size:9px;flex:none}
+.v8proj .padd span:not(.dlav){color:var(--ink3);font-size:13px;flex:1}
+.v8proj .padd .ti{color:var(--ink3);font-size:15px}
+
+/* settings item drawer (3 Oct) */
+.v8istat{display:inline-flex;margin-top:10px;font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--graybg);color:var(--ink2)}
+.v8istat.ok{background:var(--greenbg);color:var(--greend)}
+.v8istat.warn{background:var(--amberbg);color:var(--amberd)}
+.v8steps{display:flex;flex-direction:column;gap:6px}
+.v8steps button{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 11px;
+  font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;text-align:left}
+.v8steps button:hover{border-color:var(--line2)}
+.v8steps button b{font-weight:500;color:var(--ink3);font-variant-numeric:tabular-nums;width:26px}
+
+/* outputs drawer: the PDF up top, every output below, linked to Settings (3 Oct) */
+.v8out.ph .pg{aspect-ratio:auto;height:230px}
+.v8orow{padding:10px 0}
+.v8orow:hover{background:none}
+.v8orow:hover .nm{color:var(--ink)}
+.v8oset{margin-top:16px}
+
+/* settings: the Agents block, lead agent on top, Ecosystem Service Agents as a grid (3 Oct) */
+.v8ag{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;scroll-margin-top:24px}
+.v8agl{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;background:var(--dark);color:#fff;cursor:pointer;
+  transition:transform .12s,box-shadow .12s}
+.v8agl:hover{box-shadow:0 6px 18px rgba(26,12,18,.18)}
+.v8agl .av{width:46px;height:46px;border-radius:12px;background:rgba(249,221,90,.14);color:var(--yellow);display:flex;align-items:center;
+  justify-content:center;flex:none}
+.v8agl .av .ti{font-size:24px}
+.v8agl .tx{flex:1;min-width:0}
+.v8agl .k{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);opacity:.85}
+.v8agl .n{font-size:17px;font-weight:600;letter-spacing:-.01em;margin-top:2px}
+.v8agl .bp{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;color:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.08);border-radius:999px;padding:3px 10px}
+.v8agl .bp .ti{font-size:13px}
+.v8agl .ch{color:rgba(255,255,255,.5);font-size:18px}
+.v8agc{display:flex;align-items:center;gap:10px;margin:14px 2px 12px}
+.v8agc .ln{flex:1;height:1px;background:var(--line)}
+.v8agc .t{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.v8agg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v8age{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:12px;background:var(--bg);border:1px solid var(--line);
+  cursor:pointer;min-width:0;transition:border-color .12s,background .12s}
+.v8age:hover{border-color:var(--c);background:var(--bg)}
+.v8age .ic{width:34px;height:34px;border-radius:10px;background:var(--bg);color:var(--c);display:flex;align-items:center;justify-content:center;flex:none}
+.v8age{background:color-mix(in srgb, var(--bg) 55%, #fff)}
+.v8age .ic{background:var(--c);color:#fff}
+.v8age .ic .ti{font-size:17px}
+.v8age .tx{flex:1;min-width:0}
+.v8age b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8age span{display:block;font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8age .ch{color:var(--ink3);font-size:15px;opacity:0;transition:opacity .12s}
+.v8age:hover .ch{opacity:1}
+@container pane (max-width: 779px){ .v8agg{grid-template-columns:minmax(0,1fr)} }
+
+/* agents as a list again, every row the same size, coloured icon tiles (3 Oct) */
+.v8agi{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v8agi .ti{font-size:15px}
+
+/* agents: tinted, padded, rounded items with a label per group (3 Oct) */
+.v8agb{padding:6px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.v8agk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:12px 2px 2px}
+.v8agr{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--t);cursor:pointer;font-size:14.5px;
+  min-width:0;transition:box-shadow .12s,transform .12s}
+.v8agr:hover{box-shadow:inset 0 0 0 1px rgba(26,12,18,.10)}
+.v8agr .nm{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8agr .m{flex:none;font-size:13px;color:var(--ink2);opacity:.8;white-space:nowrap}
+.v8agr .ch{flex:none;color:var(--ink3);font-size:15px}
+.v8agr .v8agi{width:32px;height:32px;border-radius:10px}
+.v8agr .v8agi .ti{font-size:17px}
+
+/* activity tab (3 Oct) */
+.v8act{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.v8ae{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);font-size:14px}
+.v8ae:first-child{border-top:none}
+.v8ae.click{cursor:pointer}
+.v8ae.click:hover{background:#FBF9F2}
+.v8ae .who{flex:none;display:inline-flex}
+.v8ae .who .dlav,.v8ae .who .v8ava,.v8ae .who .v8esa{width:24px;height:24px;font-size:9px}
+.v8ae .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.v8ae .tx b{color:var(--ink);font-weight:600}
+.v8ae .kd{flex:none;color:var(--ink3);font-size:15px;display:inline-flex}
+.v8ae .at{flex:none;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;width:40px;text-align:right}
+
+/* outputs: PDF cover thumbnail (3 Oct) */
+.v8out .pg.cov{padding:0;overflow:hidden;aspect-ratio:1092/1542;background:#1A0F14;box-shadow:0 6px 20px rgba(26,12,18,.14)}
+.v8out .pg.cov img{display:block;width:100%;height:100%;object-fit:cover}
+/* settings anchor nav: a small icon before each label, the same icon as its card (3 Oct) */
+.v8anc a{display:flex;align-items:flex-start;gap:8px}
+.v8anc a .ti{flex:none;font-size:15px;line-height:1;margin-top:2px;color:var(--ink3)}
+.v8anc a:hover .ti,.v8anc a.on .ti{color:var(--ink)}
+/* project block: the blueprint chip is a link (3 Oct) */
+.v8proj .pc span.lk{cursor:pointer;color:var(--ink);transition:border-color .12s}
+.v8proj .pc span.lk:hover{border-color:var(--ink3)}
+.v8proj .pc span.lk .ti-arrow-up-right{font-size:13px;margin-left:-1px}
+/* skeletons: the filled components, muted, with bars for text (3 Oct) */
+.v8skl{font-size:13.5px;color:var(--ink3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.v8skl .ti{font-size:15px}
+.skb{display:block;height:9px;border-radius:5px;background:#EEE8D8;max-width:100%}
+.v8sk .v5sh .skb{height:11px;margin:4px 0}
+.v8sk .v5sh{margin-top:24px}
+.v8sk .v5sh:first-of-type{margin-top:0}
+.v8sk .v5tw,.v8sk .v8es{border-style:dashed;border-color:#DFD8C6}
+.v8sk .v5tbl td{padding:15px 14px}
+.v8sk .v8esh .t{opacity:.55}
+.v8sk .v8esh .n{color:var(--ink3)}
+.v8sk .v8achip{color:var(--ink3);cursor:default;opacity:.7}
+.v8sk .v8esd dd{padding:13px 0}
+.v8sk .v8esf{gap:12px}
+.v8sk .v8esf .skb{flex:none}
+.v8sk .v8cf.skp{width:56px;height:20px;background:#EEE8D8;padding:0}
+.v8sk .v5win{background:#FEFCF2;border-style:dashed;border-color:#EADFB6}
+.v8sk .v5win p .skb{height:11px;margin:9px 0}
+.v8sk .v5win p .skb:first-child{margin-top:4px}
+.v8sk .v5win li{margin:12px 0}
+.v8sk .v5win li::marker{color:#DDD3B4}
+.v8sk .v5win li .skb{display:inline-block;vertical-align:middle}
+.v8sk .v8esh .t.sk{background:#F3EFE1;color:#B9B09B}
+.v8sk .v8achip.sk{width:150px;padding:8px 12px;opacity:1}
+/* project block: the blueprint as a one-line list row, label left, blueprint right, whole row clickable (3 Oct) */
+.v8bprow{display:flex;align-items:center;gap:12px;margin-top:16px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;transition:border-color .12s,background .12s}
+.v8bprow:hover{border-color:var(--line2);background:#FBF9F2}
+.v8bprow .k{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink3);flex:none}
+.v8bprow .k .ti{font-size:15px}
+.v8bprow .v{margin-left:auto;font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.v8bprow .ch{flex:none;font-size:15px;color:var(--ink3)}
+.v8bprow:hover .ch{color:var(--ink)}
+/* list row icons: no box or fill, just a larger glyph (3 Oct). Tinted identity tiles (inline style) keep their box. */
+.v8row .ic:not([style]){width:22px;height:22px;background:none;border-radius:0}
+.v8row .ic:not([style]) .ti{font-size:19px;color:#766B62}
+/* card title icons: no box or fill, a larger glyph in the card's own tint (3 Oct).
+   Yellow was only legible on the dark tile, so it falls back to ink. */
+.v8sh .t{width:24px;height:24px;border-radius:0;background:none!important}
+.v8sh .t .ti{font-size:21px}
+.v8sh .t[style*="--yellow"]{color:var(--ink)!important}
+/* Settings header, what to expect (3 Oct) */
+.v8exp{padding:0;overflow:hidden;background:var(--card)}
+.v8bp{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#F7F4EA;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
+.v8bp:hover{background:#F2EEE1}
+.v8bp .bi{width:34px;height:34px;border-radius:10px;background:var(--dark);color:var(--yellow);display:flex;align-items:center;justify-content:center;flex:none}
+.v8bp .bi .ti{font-size:18px}
+.v8bp .bt{display:flex;flex-direction:column;min-width:0;flex:1}
+.v8bp .bk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.v8bp .bn{font-size:15.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8bp .bn em{font-style:normal;font-size:12px;font-weight:600;color:var(--ink2);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.v8bp .bo{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--ink2);flex:none}
+.v8bp:hover .bo{color:var(--ink)}
+.v8bp .bo .ti{font-size:15px}
+.v8exb{padding:22px 22px 6px}
+.v8ext{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-.015em;line-height:1.15}
+.v8exp-why{font-size:15px;line-height:1.55;color:var(--ink2);margin:8px 0 0;max-width:640px}
+.v8exf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.v8exf > div{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#FCFAF4}
+.v8exf .k{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.v8exf .k .ti{font-size:14px}
+.v8exf .v{display:block;font-size:14px;line-height:1.45;color:var(--ink);margin-top:6px}
+.v8exk{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-top:22px}
+.v8exp .ptm{margin-top:10px;padding-top:0;border-top:none}
+.v8exc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 22px;margin-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}
+.v8exc span{display:inline-flex;align-items:center;gap:6px}
+.v8exc .ti{font-size:14px}
+@container pane (max-width: 779px){ .v8exf{grid-template-columns:minmax(0,1fr)} }
+/* what-to-expect facts as a definition list: outputs as items, the run as a segmented bar, time as a figure (3 Oct) */
+.v8exl{display:grid;grid-template-columns:120px minmax(0,1fr);margin:22px 0 0;border-top:1px solid var(--line)}
+.v8exl dt{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);padding:16px 0;border-bottom:1px solid var(--line)}
+.v8exl dd{margin:0;padding:13px 0;border-bottom:1px solid var(--line);min-width:0}
+.v8exo{display:flex;flex-wrap:wrap;gap:8px 22px}
+.v8exo span{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
+.v8exo .ti{font-size:18px;color:var(--ink2)}
+.v8exr{display:flex;gap:10px;padding-top:3px}
+.v8exr .ch{min-width:0}
+.v8exr .sg{display:flex;gap:3px}
+.v8exr .sg i{flex:1;height:10px;border-radius:3px}
+.v8exr .ch span{display:block;font-size:12px;color:var(--ink3);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v8exr i.ai,.v8exg i.ai{background:#E6E1D3}
+.v8exr i.hu,.v8exg i.hu{background:var(--ink)}
+.v8exr i.gt,.v8exg i.gt{background:var(--amber)}
+.v8exg{display:flex;gap:18px;margin-top:12px;font-size:12.5px;color:var(--ink2)}
+.v8exg span{display:inline-flex;align-items:center;gap:6px}
+.v8exg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.v8ext2{font-size:16px;font-weight:600;letter-spacing:-.01em;margin-right:10px}
+.v8exs{font-size:13px;color:var(--ink3)}
+.v8exl dd:last-of-type,.v8exl dt:last-of-type{border-bottom:none}
+@container pane (max-width: 779px){ .v8exl{grid-template-columns:minmax(0,1fr)} .v8exl dt{border-bottom:none;padding-bottom:0} }
+
+/* chat closed: content card keeps the chat-open width, centred (3 Oct) */
+body.pclosed .v5body{width:100%;max-width:calc(100vw - var(--chatw,400px) - 86px);margin-left:auto;margin-right:auto}
+body.pclosed .v5vt{align-self:center}
+
+/* page menu: delete in red (3 Oct) */
+.gy-mpop .gy-mitem.danger,.gy-mpop .gy-mitem.danger .ti{color:#C23B2B}
+.gy-mpop .gy-mitem.danger:hover{background:#FBEDEA}
+
+/* settings section nav (8 Oct): the side list on the right by default, at any column width.
+   It turns into one sticky row of pills above the cards only when the agent and a drawer are
+   both open, or on a phone. */
+.v8setw{flex-direction:row;gap:48px}
+.v8setc{flex:1;min-width:0;width:auto}
+.v8anc{position:sticky;top:24px;order:0;align-self:flex-start;width:150px;margin:0;padding:0;
+  background:none;border-bottom:none;z-index:auto}
+.v8anc > div{display:block;overflow:visible;-webkit-mask-image:none}
+.v8anc a{display:flex;align-items:flex-start;white-space:normal;border-left:2px solid var(--line);border-radius:0;
+  padding:6px 10px;font-size:13.5px;color:var(--ink3)}
+.v8anc a .ti{margin-top:2px;font-size:15px}
+.v8anc a.on{background:none;color:var(--ink);border-left-color:var(--dark)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8setw{flex-direction:column;gap:0}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8setc,body:not(.pclosed):has(#drawer:not(.hide)) .v8set{width:100%;min-width:0;flex:none}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc{position:sticky;top:-60px;order:-1;align-self:stretch;width:auto;z-index:3;
+  background:var(--card);margin:0 0 22px;padding:14px 0 12px;border-bottom:1px solid var(--line)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc > div{position:static;display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px;
+  overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc > div::-webkit-scrollbar{display:none}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a{flex:none;align-items:center;white-space:nowrap;border-left:none;border-radius:999px;
+  padding:6px 12px;font-size:13px;color:var(--ink2)}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a .ti{margin-top:0;font-size:14px}
+body:not(.pclosed):has(#drawer:not(.hide)) .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
+@media (max-width: 760px){
+body .v8setw{flex-direction:column;gap:0}
+body .v8setc,body .v8set{width:100%;min-width:0;flex:none}
+body .v8anc{position:sticky;top:-60px;order:-1;align-self:stretch;width:auto;z-index:3;
+  background:var(--card);margin:0 0 22px;padding:14px 0 12px;border-bottom:1px solid var(--line)}
+body .v8anc > div{position:static;display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px;
+  overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+body .v8anc > div::-webkit-scrollbar{display:none}
+body .v8anc a{flex:none;align-items:center;white-space:nowrap;border-left:none;border-radius:999px;
+  padding:6px 12px;font-size:13px;color:var(--ink2)}
+body .v8anc a .ti{margin-top:0;font-size:14px}
+body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
+}
+/* tighter padding inside the middle card when it is very narrow, so the cards keep their width */
+.v5panel{container-type:inline-size;container-name:col}
+@container col (max-width: 600px){
+  .v5body{padding:32px 24px}
+  body:not(.pclosed):has(#drawer:not(.hide)) .v8anc{top:-32px}
+}
+@media (max-width: 760px){ @container col (max-width: 600px){ body .v8anc{top:-32px} } }
+
+/* Blueprint agent on the Deliverable shell (8 Oct): agent on the left, Content and
+   Settings tabs, section nav on the right. Honeycomb document parts below are the
+   ones the read-only version used, scoped to .bpdoc. */
+.bpdoc .callout{display:flex;gap:11px;align-items:flex-start;background:#F7F6F3;border:1px solid #EDECE8;border-radius:10px;padding:14px 16px;margin-top:18px;font-size:15.5px;line-height:1.6;color:#37352F}
+.bpdoc .callout .ti{font-size:17px;color:#B78A0E;flex:none;position:relative;top:1px}
+.bpdoc .pblk{margin-top:11px;font-size:16.5px;line-height:1.7;outline:none;border-radius:6px;color:#2A2824}
+.bpdoc .pblk b{font-weight:600}
+.bpdoc .bul{display:flex;gap:11px;align-items:flex-start;margin-top:10px;font-size:16.5px;line-height:1.65;color:#2A2824}
+.bpdoc .bul .dot{color:#9C9A92;flex:none;position:relative;top:1px}
+.bpdoc .todo{display:flex;gap:11px;align-items:flex-start;margin-top:11px;font-size:16.5px;line-height:1.6;color:#2A2824}
+.bpdoc .tbox{width:18px;height:18px;border:1.5px solid #C9C7C0;border-radius:5px;flex:none;position:relative;top:4px;display:flex;align-items:center;justify-content:center}
+.bpdoc .tbox .ti{font-size:13px;color:#fff;opacity:0}
+.bpdoc .dprov{font-size:13px;color:var(--ink3);margin-top:10px}
+.bpdoc .pv{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;margin-left:4px}
+.bpdoc .dnote{display:flex;gap:10px;background:var(--graybg);border-radius:12px;padding:13px 16px;margin-top:14px;font-size:14px;line-height:1.6;color:var(--ink2)}
+.bpdoc .dnote .ti{font-size:17px;color:var(--ink3);flex:none;margin-top:2px}
+.bpdoc .dnote b{color:var(--ink)}
+.bpdoc .dnote.q{background:var(--card);border:1px solid var(--line)}
+.bpdoc .dnote ul{margin:4px 0 0 16px;padding:0}
+.bpdoc .dnote li{margin:3px 0}
+.bpdoc .dtwrap{border:1px solid var(--line);border-radius:12px;overflow:auto;margin-top:14px;background:var(--card)}
+.bpdoc .dtbl{width:100%;border-collapse:collapse;font-size:14px}
+.bpdoc .dtbl th{text-align:left;font-weight:600;color:var(--ink2);font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:none}
+.bpdoc .dtbl td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top;line-height:1.55;font-size:14px;white-space:normal}
+.bpdoc .dtbl tbody tr:hover{background:none}
+.bpdoc .dtbl tr:last-child td{border-bottom:none}
+.bpdoc .dtbl td.mut{color:var(--ink3)}
+.bpdoc .dtbl td.m{font-weight:500;white-space:nowrap}
+.bpdoc .dtbl td .estag{white-space:nowrap}
+.dcap{font-size:14px;line-height:1.6;color:var(--ink2);margin-top:10px}
+.bpdoc .dtbl td .ti{color:var(--ink3);margin-right:7px;font-size:15px}
+.chipx{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);background:var(--graybg);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.fig{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:16px 14px 6px;background:var(--card)}
+.fig svg{width:100%;height:auto;display:block}
+.bpdoc .callout{margin-top:0}
+.bpdoc .v5sec .pblk:first-of-type{margin-top:0}
+.bpdoc .dtwrap:first-child,.bpdoc .fig:first-child,.bpdoc .dnote:first-child{margin-top:0}
+.bpdoc .bul:first-of-type,.bpdoc .todo:first-of-type{margin-top:0}
+.bpdoc .dnote ul{margin:0 0 0 16px;padding:0}
+.bpdoc .dnote li{margin:3px 0}
+.v8setw .v8row.kv .nm{color:var(--ink2);flex:none;width:120px}
+.v8setw .v8row.kv .v{flex:1;min-width:0;color:var(--ink);text-align:right}
+.v8setw .v8row.kv a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+.v8setw .v8row .ic{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:var(--graybg);color:var(--ink3)}
+.v8setw .v8row .ic .ti{font-size:15px}
+.bpav{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;background:#FAEEDA;color:#854F0B;margin-right:8px;vertical-align:middle}
+/* Brand agent (9 Oct): Brand book tab, page list on the left of the document, every page editable in place or through the agent */
+.brdoc{flex:1;min-width:0;max-width:760px}
+
+.brdoc [contenteditable]{outline:none;border-radius:6px;transition:background .6s}
+.brdoc [contenteditable]:hover{background:#FAF9F6}
+.brdoc [contenteditable]:focus{background:none;box-shadow:inset 0 0 0 2px #9FC4E4}
+.brdoc .dtbl td[contenteditable]:focus{box-shadow:inset 0 0 0 2px #9FC4E4;border-radius:0}
+.brdoc .flash,.brdoc .flash:hover{background:#FBF1CF}
+.brdoc .brh{font-family:var(--serif);font-size:21px;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin:30px 0 4px}
+.brdoc .pblk + .pblk{margin-top:14px}
+.brdoc .bul + .pblk,.brdoc .dtwrap + .pblk,.brdoc .dnote + .pblk{margin-top:18px}
+.brdoc .dnote,.brdoc .dtwrap,.brdoc .brsw{margin-top:16px}
+.brdoc .callout{margin-bottom:6px}
+.brsw{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.brsw .c{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.brsw .f{height:74px;padding:10px 12px;display:flex;align-items:flex-end;font-size:13px;font-weight:600}
+.brsw .m{padding:9px 12px 11px;font-size:13px;line-height:1.45;color:var(--ink2)}
+.brsw .m b{display:block;color:var(--ink);font-weight:600;font-size:13.5px}
+.brdoc .dprov{margin-top:34px;padding-top:12px;border-top:1px solid var(--line)}
+.gyq{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.gyq button{font:inherit;font-size:13.5px;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:6px 13px;cursor:pointer;text-align:left}
+.gyq button:hover{background:var(--graybg)}
+.v5say ul.gya{margin:6px 0 0;padding-left:20px}.v5say ul.gya li{margin:3px 0}
+.v5say .gysrc{display:block;margin-top:8px;font-size:13px;color:var(--ink2)}
+.v5say .gysrc a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px;cursor:pointer}
+.brprop{border:1px solid var(--line2);border-radius:12px;background:var(--card);padding:12px 14px;margin:4px 0 14px;font-size:14px;line-height:1.55}
+.brprop .h{display:flex;align-items:center;gap:8px;color:var(--ink2);font-size:13.5px;margin-bottom:8px}
+.brprop .h .ti{font-size:15px;color:var(--ink3)}
+.brprop .h b{color:var(--ink)}
+.brprop .del{background:#FBECEC;color:#7A2525;text-decoration:line-through;border-radius:8px;padding:7px 10px;margin-bottom:6px}
+.brprop .ins{background:#EAF3E2;color:#2C4419;border-radius:8px;padding:7px 10px}
+.brprop .bt{display:flex;gap:8px;margin-top:10px}
+.brprop .bt button{font:inherit;font-size:13.5px;padding:6px 13px;border-radius:9px;cursor:pointer}
+.brprop .bt .ap{background:var(--card);border:1px solid var(--line2);color:var(--ink);font-weight:500}
+.brprop .bt .ap:hover{background:var(--graybg)}
+.brprop .bt .dc{background:none;border:none;color:var(--ink2)}
+.brprop .bt .dc:hover{color:var(--ink)}
+.brprop.done .bt{display:none}
+.brprop .ok{display:none;margin-top:8px;font-size:13px;color:var(--ink2)}
+.brprop.done .ok{display:block}
+
+.brdoc > .v8sec:only-child{margin-top:0;padding-top:0}
+
+/* Layouts: Word document and Slides design systems, previews drawn from gy-brand.js tokens (9 Oct) */
+.brpv{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;padding:20px;background:#ECE9E2;border-radius:12px}
+.brpv.sl{grid-template-columns:repeat(3,1fr);gap:12px}
+.brpv-pg{position:relative;background:#fff;aspect-ratio:640/905;padding:13% 10% 10%;box-sizing:border-box;box-shadow:0 1px 2px rgba(26,12,18,.08),0 8px 20px rgba(26,12,18,.08);line-height:1.55;overflow:hidden}
+.brpv-pg .wm{position:absolute;top:4.5%;right:7%;height:9px}
+.brpv-pg .cov{display:flex;flex-direction:column;height:100%;padding-top:10%}
+.brpv-pg .cvl{width:60px;margin-bottom:32%}
+.brpv-pg .ct{font-size:17px;line-height:1.2}
+.brpv-pg .cs{font-size:12px;margin-top:4px}
+.brpv-pg .cd{margin-top:8px;color:#55514A}
+.brpv-pg .h1{font-size:13px;line-height:1.25;margin-bottom:7px}
+.brpv-pg .h2{font-size:10px;font-weight:500;margin-bottom:5px}
+.brpv-pg p{margin:0 0 7px}
+.brpv-pg table{width:100%;border-collapse:collapse;font-size:.92em}
+.brpv-pg th,.brpv-pg td{border:1px solid #DDD8CC;padding:3px 5px;text-align:left}
+.brpv-pg th{font-weight:600}
+.brpv-pg .pno,.brpv-sl .pno{position:absolute;bottom:4%;right:7%;font-size:8px;color:#77736B}
+.brpv-sl{position:relative;background:#fff;aspect-ratio:16/9;padding:9% 8% 6%;box-sizing:border-box;overflow:hidden;box-shadow:0 1px 2px rgba(26,12,18,.08),0 8px 20px rgba(26,12,18,.08);color:#1C1A17;line-height:1.4}
+.brpv-sl .wm{position:absolute;top:8%;right:6%;height:6px}
+.brpv-sl .wm.inv{filter:brightness(0) invert(1)}
+.brpv-sl .st{font-size:12px;line-height:1.2;margin-bottom:5px;padding-right:28px}
+.brpv-sl p{margin:0 0 6px;font-size:.9em}
+.brpv-sl .stats{display:flex;gap:5px}
+.brpv-sl .stats div{flex:1;border-left:2px solid;background:#F6F4EE;padding:3px 5px;font-size:.8em;border-radius:2px}
+.brpv-sl .stats b{display:block;font-size:10px;font-weight:500;color:#1A0C12}
+.brpv-sl.key{border-top:none}
+.brpv-sl .km{font-size:13px;line-height:1.25;margin-top:12%;max-width:86%}
+.brpv-sl .km em{font-style:normal;border-bottom:2px solid}
+.brpv-sl.cover{padding-top:8%}
+.brpv-sl.cover .cvl{width:24px;margin-bottom:12%;display:block}
+.brpv-sl.cover .st{font-size:12.5px}
+.brpv-sl .pno{bottom:6%;right:6%;font-size:7px}
+.brdot{display:inline-block;width:12px;height:12px;border-radius:4px;border:1px solid rgba(26,12,18,.18);vertical-align:-2px;margin-right:8px}
+.brused{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.brused a{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:10px;padding:8px 12px;font-size:14px;color:var(--ink);text-decoration:none;background:var(--card)}
+.brused a:hover{background:var(--graybg)}
+.brused a .ti{font-size:15px;color:var(--ink3)}
+@container pane (max-width: 620px){ .brpv,.brpv.sl{grid-template-columns:1fr} }
+
+/* Layouts tab is wider; the Slides page shows every deck template, drawn at 960 x 540 and scaled (9 Oct) */
+#pbody.brlay{max-width:none !important}
+#pbody.brlay .v8setc{max-width:none !important;flex:1 1 auto !important}
+#pbody.brlay .pblk,#pbody.brlay .bul,#pbody.brlay .dtwrap,#pbody.brlay .dnote,#pbody.brlay .brused{max-width:780px}
+
+.brgal{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 22px;margin-top:16px;padding:22px;background:#ECE9E2;border-radius:14px}
+.brsl{margin:0}
+.brsl figcaption{font-size:14px;color:var(--ink2);margin-top:9px}
+.brsl-f{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(26,12,18,.08),0 10px 24px rgba(26,12,18,.10)}
+.brsl-f > .c{position:absolute;top:0;left:0;width:960px;height:540px;transform-origin:0 0;box-sizing:border-box;padding:56px 64px;color:#1C1A17;font-family:var(--sans);font-size:19px;line-height:1.45}
+.brsl-f .wm{position:absolute;top:44px;right:56px;height:20px}
+.brsl-f .inv{filter:brightness(0) invert(1)}
+.brsl-f .no{position:absolute;bottom:30px;right:56px;font-size:15px}
+.brsl-f .t{line-height:1.15;letter-spacing:-.01em;margin:0 0 22px;max-width:760px}
+.brsl-f .ch{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;margin-bottom:12px}
+.brsl-f .ch i{width:12px;height:12px;border-radius:50%}
+.brsl-f .c.mid{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.brsl-f .c.mid .t{margin:0;max-width:800px}
+.brsl-f .c.cover{padding:64px 72px}
+.brsl-f .big{width:150px;display:block;margin-bottom:64px}
+.brsl-f .c.mid .big{margin:0 0 30px}
+.brsl-f .t + .sub{margin-top:-8px}
+.brsl-f .sub{font-size:28px}
+.brsl-f .dt{margin-top:20px;color:#3A3732}
+.brsl-f .ag{margin:6px 0 0;padding-left:34px}
+.brsl-f .ag li{margin:0 0 12px;padding-left:8px}
+.brsl-f .km{font-size:50px;line-height:1.15;max-width:780px;margin:36px 0 46px}
+.brsl-f .km em{font-style:normal;border-bottom:6px solid}
+.brsl-f .kr{display:flex;gap:22px}
+.brsl-f .kr span{flex:1;border-top:2px solid;padding-top:12px}
+.brsl-f .kr b{display:block;font-size:1.3em}
+.brsl-f .ld{max-width:720px;margin:0 0 28px;color:#3A3732}
+.brsl-f .stats{display:flex;gap:16px}
+.brsl-f .stats div{flex:1;border-left:6px solid;border-radius:6px;padding:16px 20px}
+.brsl-f .stats b{display:block;font-size:40px;font-weight:500;line-height:1.1}
+.brsl-f .stats span{color:#3A3732}
+.brsl-f .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.brsl-f .cards > div{background:#FBF9F3;border:1px solid #ECE7DB;border-radius:14px;padding:22px}
+.brsl-f .cards .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
+.brsl-f .cards b{display:block;font-size:22px;color:#1A0C12;margin-bottom:6px}
+.brsl-f .cards span{color:#3A3732}
+.brsl-f .data{display:grid;grid-template-columns:1.3fr 1fr;gap:34px;align-items:center}
+.brsl-f .bars{width:100%;display:block}
+.brsl-f .bars text{font:14px var(--sans);fill:#55514A}
+.brsl-f .data ul{margin:0;padding-left:22px}
+.brsl-f .data li{margin:0 0 12px}
+.brsl-f .kpi{display:grid;grid-template-columns:1.5fr 1fr;gap:28px}
+.brsl-f .kpi table{width:100%;border-collapse:collapse;background:#fff}
+.brsl-f .kpi th{text-align:left;font-weight:600;padding:10px 12px;border-bottom:2px solid #1A0C12}
+.brsl-f .kpi td{padding:12px;border-bottom:1px solid #E3DDCD}
+.brsl-f .kpi td i{display:inline-block;width:14px;height:14px;border-radius:50%}
+.brsl-f .kpi .side{display:flex;flex-direction:column;gap:6px;background:#fff;border-radius:10px;padding:18px 20px}
+.brsl-f .kpi .side b{margin-top:8px}
+.brsl-f .team{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:36px;text-align:center}
+.brsl-f .team .av{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#FEFAEC;font-size:36px;font-weight:600}
+.brsl-f .team b{display:block;color:#1A0C12}
+.brsl-f .team span{color:#55514A}
+.brsl-f .qt{font-size:40px;line-height:1.25;max-width:800px;margin-top:64px}
+.brsl-f .qa{margin-top:30px}
+.brsl-f .logos{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:40px}
+.brsl-f .logos div{height:120px;border:1px solid #E3DDCD;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-weight:600;color:#1A0C12}
+@container pane (max-width: 760px){ .brgal{grid-template-columns:1fr} }
+
+/* Layouts full column (9 Oct, Thomas): pages on the grey canvas like a Deliverable Document, no section nav; Word or Slides switched in the tab row */
+body.brlayview .v5body{background:#ECE9E2}
+.brcanvas{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+.brpages{display:flex;flex-direction:column;gap:32px}
+.brgal{grid-template-columns:1fr !important;padding:0 !important;background:none !important;gap:32px !important;margin:0 !important}
+.brsl figcaption{margin-top:10px}
+.brpg-f{position:relative;aspect-ratio:640/905;overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(26,12,18,.08),0 10px 28px rgba(26,12,18,.08)}
+.brpg-f > .c{position:absolute;top:0;left:0;width:640px;height:905px;transform-origin:0 0;box-sizing:border-box;padding:84px 64px 70px;line-height:1.6;font-family:var(--sans)}
+.brpg-f .wm{position:absolute;top:30px;right:40px;height:15px}
+.brpg-f .no{position:absolute;bottom:28px;right:40px;font-size:10.5px;color:#77736B}
+.brpg-f .c.cover{padding-top:0}
+.brpg-f .cov{display:flex;flex-direction:column;height:100%;padding-top:190px;box-sizing:border-box}
+.brpg-f .big{width:150px;margin-bottom:150px}
+.brpg-f .ttl{font-size:27px;letter-spacing:-.01em;line-height:1.2}
+.brpg-f .sub{font-size:18px;margin-top:6px}
+.brpg-f .dt{margin-top:16px;color:#55514A}
+.brpg-f .by{margin-top:70px;line-height:1.7}
+.brpg-f .tt{font-size:20px;margin-bottom:14px}
+.brpg-f .toc{display:flex;gap:6px;align-items:baseline;padding:3px 0}
+.brpg-f .toc.l2{padding-left:16px;color:#3A3732}
+.brpg-f .toc i{flex:1;border-bottom:1px dotted #B9B4A9;transform:translateY(-3px)}
+.brpg-f .h1{font-size:20px;letter-spacing:-.01em;margin:6px 0 10px;line-height:1.25}
+.brpg-f .h2{font-size:15px;font-weight:500;margin:16px 0 6px;font-family:var(--sans)}
+.brpg-f p{margin:0 0 8px}
+.brpg-f ul{margin:0 0 8px;padding-left:18px}
+.brpg-f li{margin:2px 0}
+.brpg-f table{width:100%;border-collapse:collapse;font-size:.92em;margin:4px 0}
+.brpg-f th{text-align:left;font-weight:600;border:1px solid #DDD8CC;padding:5px 7px}
+.brpg-f td{border:1px solid #DDD8CC;padding:5px 7px}
+.brpg-f .cap{font-size:10.5px;color:#55514A;margin:4px 0 12px}
+.brpg-f .fig{border:1px solid #E9E4D8;border-radius:4px;padding:12px 10px 4px;margin:6px 0 4px}
+.brpg-f .fig svg{width:100%;display:block}
+.brpg-f .fig text{font:11px var(--sans);fill:#55514A}
+.brpg-f .src{font-size:10.5px;color:#55514A}
+.brcard{background:var(--card);border-radius:14px;padding:30px 36px 26px;box-shadow:0 1px 2px rgba(26,12,18,.06)}
+.brcard .brh:first-child{margin-top:0}
+.brseg{flex:none;display:inline-flex;gap:2px;background:var(--graybg);border-radius:10px;padding:3px;margin-right:4px}
+.brseg button{font:inherit;font-size:14px;border:none;background:none;padding:6px 14px;border-radius:8px;color:var(--ink2);cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.brseg button .ti{font-size:16px}
+.brseg button:hover{color:var(--ink)}
+.brseg button.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(26,12,18,.10)}
+.brcanvas .brcard{max-width:none;flex:none}
+#pbody.brlay .brcard .pblk,#pbody.brlay .brcard .bul,#pbody.brlay .brcard .dtwrap,#pbody.brlay .brcard .brused{max-width:none}
+
+/* Layouts on white, slides styled like the Deliverable decks (.cspg.nsl, scaled 1.5x to 960): no grey canvas, flat pages (9 Oct, Thomas) */
+body.brlayview .v5body{background:var(--card) !important}
+.brsl-f,.brpg-f{box-shadow:none !important;border:1px solid #E9E4D8;border-radius:0 !important}
+.brsl-f > .c{padding:33px 51px 45px !important;line-height:1.5 !important}
+.brsl-f .wm{top:33px !important;right:51px !important;height:18px !important}
+.brsl-f .no{bottom:18px !important;right:51px !important;font-size:14px !important}
+.brsl-f .t{margin:0 0 18px !important;padding-right:130px}
+.brsl-f .c.mid .t{padding-right:0}
+.brsl-f .ch{font-size:14px !important;gap:9px !important;margin-bottom:9px !important;letter-spacing:.02em}
+.brsl-f .ch i{width:12px !important;height:12px !important}
+.brsl-f .c.cover{padding:51px 60px 33px !important}
+.brsl-f .c.cover .big{width:126px !important;margin-bottom:66px !important}
+.brsl-f .km{font-size:40px !important;margin:30px 0 40px !important}
+.brsl-f .km em{border-bottom-width:4px !important}
+.brsl-f .stats b{font-size:30px !important}
+.brsl-f .stats div{border-left-width:4px !important;border-radius:4px 6px 6px 4px !important;padding:10px 14px !important}
+.brsl-f .cards > div{border-radius:12px !important;padding:16px !important}
+.brsl-f .cards b{font-size:16px !important}
+.brsl-f .cards .ic{width:33px !important;height:33px !important;font-size:19px !important;border-radius:9px !important}
+.brsl-f .qt{font-size:34px !important;margin-top:56px !important}
+.brsl-f .team .av{width:100px !important;height:100px !important;font-size:30px !important}
+.brsl-f .logos div{height:100px !important;border-radius:15px !important}
+.brsl figcaption{font-size:13.5px}
+.brcanvas .brcard{background:none !important;box-shadow:none !important;border-radius:0 !important;padding:28px 0 0 !important;border-top:1px solid var(--line)}
+
+/* Layouts like a Deliverable deck in its flat view (9 Oct, Thomas, from natcap-101-v8): pages flush to the canvas, Slides or Table of Contents list on the right */
+body.brlayview .v5body{padding:0 !important;border-radius:0 0 16px 0 !important;background:var(--bg) !important;box-shadow:none !important}
+body.brlayview .v5panel{padding-top:0 !important;padding-left:2px !important}
+#pbody.brlay{max-width:none !important;margin:0 !important}
+.brdv{display:flex;align-items:flex-start}
+.brdv-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px;padding:0 0 40px}
+.brdv .brgal,.brdv .brpages{display:flex !important;flex-direction:column;gap:20px !important}
+.brdv .brsl,.brdv .brsl-f,.brdv .brpg-f{margin:0}
+.brdv .brsl-f,.brdv .brpg-f{border:none !important;box-shadow:none !important;border-radius:0 !important}
+.brdv .brcard{background:var(--card) !important;padding:30px 40px 28px !important;border-top:none !important}
+.brtoc{flex:none;width:244px;box-sizing:border-box;padding:30px;position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow:auto}
+.brtoc .tt{font-weight:600;font-size:14px;color:var(--ink);padding:0 0 12px}
+.brtoc a{display:flex;align-items:center;gap:9px;border-radius:8px;padding:6px 10px;margin-left:-10px;font-size:13.5px;color:var(--ink3);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brtoc a span{overflow:hidden;text-overflow:ellipsis}
+.brtoc a i{font-size:16px;color:var(--ink3);flex:none}
+.brtoc a:hover{background:#F4F0E6;color:var(--ink)}
+.brtoc a.on{background:#EFEBE1;color:var(--ink);font-weight:600}
+.brtoc a.on i{color:var(--ink)}
+@container pane (max-width: 760px){ .brtoc{display:none} }
+.brdv .brcard{border-radius:0 !important;max-width:none !important;flex:none}
+body.brlayview .v5body{border-left:1px solid var(--line2) !important}
+</style>
+<script src="gy-brand.js?v=4266a1fb"></script>
+</head>
+<body>
+
+<div class="shell">
+<script>window.GYNAV={"active":"library","arts":null,"rail":true};</script>
+<script src="gy-nav.js?v=60372a4e"></script>
+
+<div class="mainc">
+<div class="topbar">
+  <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Show the sidebar"><i class="ti ti-layout-sidebar"></i></button>
+  <div class="crumbs"><span class="cr cur">Brand agent</span></div>
+  <div class="spacer"></div>
+  <button class="btn-out" onclick="gyToast('Sharing is not wired up in this sketch')"><i class="ti ti-users"></i> Share</button>
+  <button class="v5keb" onclick="gyToast('Not wired up in this sketch')">&#8942;</button>
+</div>
+
+<div class="v5tabs" id="tabs"></div>
+
+<div class="v5row">
+
+  <div class="v5chat">
+    <div class="v5grip" id="chatgrip" title="Drag to resize"></div>
+    <div class="v5log" id="chatlog"><div class="v5in" id="chatin"></div></div>
+    <div class="v5comp">
+      <div class="v5box">
+        <input class="v8in" id="ask" placeholder="Ask the agent" onkeydown="if(event.key==='Enter')sendMsg()">
+        <div class="v5tools">
+          <button class="v8plus" onclick="gyToast('Adding sources is not wired up in this sketch')" aria-label="Add source"><i class="ti ti-plus"></i></button>
+          <button class="v5send" onclick="sendMsg()" aria-label="Send"><i class="ti ti-arrow-up"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v5panel" id="panel">
+    <div class="v5body"><div class="v5bin" id="pbody"></div></div>
+  </div>
+
+  <div class="v5dr hide" id="drawer">
+    <div class="v5drh"><span class="v5dri hide" id="dricon"></span><div class="v5drt" id="drtitle"></div>
+      <button class="v5drx" onclick="closeDrawer()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+    <div class="v5drb" id="drbody"></div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
+<script>
+var AGENT_IC = 'ti-palette';
+function closeDrawer(){ document.getElementById('drawer').classList.add('hide'); }
+function head(n,t){ return '<div class="v5ch"><span class="v5chn">'+n+'</span><span class="v5cht">'+t+'</span></div>'; }
+function sec(id,n,t,body){ return '<section class="v5sec v8sec" id="'+id+'">'+head(n,t)+body+'</section>'; }
+function tbl(cols, rows, colw){
+  return '<div class="dtwrap"><table class="dtbl">'+(colw?'<colgroup>'+colw.map(function(w){return '<col style="width:'+w+'%">';}).join('')+'</colgroup>':'')
+    +'<thead><tr>'+cols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>'
+    + rows.map(function(r){ return '<tr>'+r.map(function(c,i){ return '<td'+(i===0?' class="m"':'')+'>'+c+'</td>'; }).join('')+'</tr>'; }).join('')
+    + '</tbody></table></div>';
+}
+function bul(list){ return list.map(function(t){ return '<div class="bul"><span class="dot">&bull;</span><span>'+t+'</span></div>'; }).join(''); }
+function todo(list){ return list.map(function(t){ return '<div class="todo"><span class="tbox"><i class="ti ti-check"></i></span><span>'+t+'</span></div>'; }).join(''); }
+var SETNAV = [], SETICO = {};
+var ANCLOCK = 0;
+function anchorNav(items){
+  return '<nav class="v8anc" id="setnav"><div>' + items.map(function(it,i){
+    return '<a class="'+(i===0?'on':'')+'" data-id="'+it[0]+'" onclick="setJump(\''+it[0]+'\')">'+(it[2]?'<i class="ti '+it[2]+'"></i>':'')+'<span>'+it[1]+'</span></a>';
+  }).join('') + '</div></nav>';
+}
+/* in the narrow layout the nav is a sticky row above the cards, so jumps and the scroll spy clear its height */
+function navRow(){ var nav = document.getElementById('setnav'); return nav && nav.firstChild && getComputedStyle(nav.firstChild).flexDirection === 'row' ? nav : null; }
+function navOff(){ var nav = navRow(); return nav ? nav.offsetHeight : 0; }
+function relTop(el, sc){ return el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop; }
+function setJump(id){
+  var el = document.getElementById(id), sc = document.querySelector('.v5body');
+  if(!el || !sc) return;
+  ANCLOCK = Date.now() + 900;
+  sc.scrollTo({top: Math.max(0, relTop(el, sc) - 32 - navOff()), behavior:'smooth'});
+  setActive(id);
+}
+function setActive(id){
+  var nav = document.getElementById('setnav'); if(!nav) return;
+  [].forEach.call(nav.querySelectorAll('a'), function(a){ a.classList.toggle('on', a.getAttribute('data-id') === id); });
+  var row = navRow(), on = nav.querySelector('a.on');
+  if(row && on){ var box = row.firstChild; box.scrollTo({left: Math.max(0, on.offsetLeft - box.offsetLeft - 24), behavior:'smooth'}); }
+}
+document.addEventListener('scroll', function(e){
+  if(!e.target || !e.target.classList || !e.target.classList.contains('v5body')) return;
+  var nav = document.getElementById('setnav'); if(!nav || Date.now() < ANCLOCK) return;
+  var sc = e.target, ids = [].map.call(nav.querySelectorAll('a'), function(a){ return a.getAttribute('data-id'); }), cur = ids[0];
+  ids.forEach(function(id){ var el = document.getElementById(id); if(el && relTop(el, sc) - 80 - navOff() <= sc.scrollTop) cur = id; });
+  if(sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 4) cur = ids[ids.length-1];
+  setActive(cur);
+}, true);
+
+/* the brand book: every page is data, rendered by renderPage(), edited in place or by the agent */
+var SW8 = [
+ ['Warm Black','#1A0C12','Text, title slides, dramatic statements','#FFFFFF'],
+ ['Yellow','#F9DD5A','Highlights on dark, agendas, culture','#1A0C12'],
+ ['Green','#628147','Advisory, nature projects, positive status','#FFFFFF'],
+ ['Blue','#215274','Capital, strategy and vision','#FFFFFF'],
+ ['Orange','#B75A40','Trade, financial content, quotes','#FFFFFF'],
+ ['Red','#E42A40','Challenges, urgent items, calls to action','#FFFFFF'],
+ ['Purple','#8D4063','Culture, awards, values','#FFFFFF'],
+ ['Warm White','#FEFAEC','Light backgrounds, data-heavy pages','#1A0C12']
+];
+var SRC_BOOK = 'Brand folder: Great Yellow Styleguide, Presentation Guidelines v1.0 (March 2026), About Great Yellow';
+var PAGES0 = [
+ {id:'about', g:'This agent', t:'About this agent', i:'ti-palette', b:[
+  ['callout','The Brand agent keeps GY’s brand book and applies it to everything GY makes. It writes in GY’s voice, builds documents and decks from the approved templates, and checks anything before it leaves GY. A person owns the brand book: the agent proposes changes, the owner approves them.'],
+  ['h','Jobs'],
+  ['tbl',['Job','Gives','Signs off'],[
+   ['Answer brand questions','An answer, with the page it comes from','Nobody, it is read only'],
+   ['Apply the brand','A document, deck or email built from the right template','The Deliverable’s owner'],
+   ['Run the brand gate','A pass, or a list of fixes with the rule each one breaks','Brand owner, for exceptions'],
+   ['Keep the book current','Proposed edits when the same correction shows up twice','Brand owner'],
+   ['Onboard new joiners','A short walk through the book','Nobody']],[26,46,28]],
+  ['h','Guardrails'],
+  ['bul',['Never edits Strategy or Positioning; it reads them from company strategy.','Never changes the brand book without the owner’s approval.','Never makes a one-off exception inside a Deliverable; exceptions go through Governance and are logged.','Drafts for people to send; never sends anything outside GY itself.']],
+  ['h','Open questions'],
+  ['q',['Who owns the brand book, and who backs them up?','Headings: Manner Bold (Presentation Guidelines) or Manner 400 and 500 only (the GY OS rule)?','Body text: IBM Plex Mono (Presentation Guidelines) or IBM Plex Sans (the Fonts folder)?','Green: “Nature Projects” (About Great Yellow) or Advisory (the October 2026 model)?']],
+  ['src',SRC_BOOK]]},
+
+ {id:'strategy', g:'Foundation', t:'Strategy', i:'ti-compass', b:[
+  ['p','Great Yellow makes landscape-scale nature restoration investable and scalable. We bring together the people, processes and capital needed to fund, deliver and verify nature recovery that produces measurable ecological outcomes and long-term returns.'],
+  ['p','The vision is nature as a recognised, investable asset class: not a niche product for specialist funds, but a standard part of how capital flows into the real economy.'],
+  ['note','Read from company strategy. The Brand agent uses this page and never edits it; changes come from the strategy owner.'],
+  ['src','About Great Yellow, Great Yellow Masterplan']]},
+
+ {id:'positioning', g:'Foundation', t:'Positioning', i:'ti-target', b:[
+  ['p','Most players cover one part of the chain: originating projects, brokering credits or advising on finance. GY spans the full lifecycle, from the first conversation with a landowner to the moment an investor sees a return and a buyer retires a verified outcome.'],
+  ['bul',['End to end: we see the whole picture and control quality throughout.','A structured operating model, so programme quality compounds instead of depending on one person.','FCA-regulated, supporting 15 Defra Landscape Recovery projects across roughly 300,000 hectares.']],
+  ['note','Read from company strategy. The Brand agent uses this page and never edits it.'],
+  ['src','About Great Yellow']]},
+
+ {id:'audiences', g:'Foundation', t:'Audiences', i:'ti-users', b:[
+  ['p','Voice shifts with the reader. Most readers are experts in one world, Nature, Finance or Tech, and new to the other two, so define a term the first time it appears.'],
+  ['tbl',['Audience','What they need from us','Tone'],[
+   ['Landowners and farmers','A clear path from idea to income','Warm, practical, no jargon'],
+   ['Investors','Risk, return and evidence they can check','Precise, calm, numbers first'],
+   ['Outcome buyers','Credible, verified outcomes at scale','Confident, specific, sourced'],
+   ['Councils and government','Delivery against policy and targets','Formal, evidence-led'],
+   ['GY team and new joiners','One shared language across the three worlds','Plain, terms defined']],[28,42,30]],
+  ['src','Presentation Guidelines v1.0, In the Weeds “Who this is for”']]},
+
+ {id:'vocabulary', g:'Foundation', t:'Vocabulary', i:'ti-abc', b:[
+  ['p','GY’s own nouns are part of the brand. Use the same word for the same thing everywhere.'],
+  ['tbl',['Say','Not','Why'],[
+   ['Landscape Recovery','LR','Spell out acronyms the first time'],
+   ['Blended Finance Plan','BFP','Same'],
+   ['Deliverable','Artefact','Artefact is retired'],
+   ['Blueprint','Template, recipe','The spec for a Deliverable type; recipe metaphors are retired'],
+   ['Advisory, Capital, Trade','Nature Projects','The three departments, settled October 2026'],
+   ['Discover, Plan, Start, Build, Scale','Stages','The five programme phases'],
+   ['Ecosystem service','Product','What land can sell']],[30,22,48]],
+  ['src','GY document vocabulary, settled model October 2026, Glossary']]},
+
+ {id:'voice', g:'Expression', t:'Voice', i:'ti-message-2', b:[
+  ['p','GY sounds clear, confident and easy to follow. We explain nature restoration, blended finance and landscape-scale investment to people who are new to at least one of them.'],
+  ['bul',['Clear over clever: one idea per sentence, plain words.','Confident, not loud: say the point once and back it with a source.','Humble and collaborative: partners are named, not absorbed.','Specific: numbers, places and dates beat adjectives.','No em dashes. Use a comma, a colon or a full stop.','Sentence case for titles and headings. Never all caps.']],
+  ['p','Our values come from the Great Yellow bumblebee colony: inventiveness, bravery, humility, collaboration and drive.'],
+  ['src','Presentation Guidelines v1.0, About Great Yellow']]},
+
+ {id:'identity', g:'Expression', t:'Identity', i:'ti-fingerprint', b:[
+  ['p','The Great Yellow bumblebee is our symbol. Once widespread across the UK, it now survives only where rich wildflower habitat remains: when nature thrives, so do we.'],
+  ['h','Colour'],
+  ['sw',SW8],
+  ['note','Yellow is never text on a white or light background. On dark backgrounds use White or Warm White text; on Yellow and Warm White use Warm Black.'],
+  ['h','Type'],
+  ['tbl',['Use','Font','Weight'],[
+   ['Headings','Manner','400 or 500, never Black'],
+   ['Body','IBM Plex Mono','Regular'],
+   ['Labels and captions','IBM Plex Mono','Regular, 12 to 14pt'],
+   ['Headings in Google Slides','Spectral','Bold, the closest to Manner']],[34,33,33]],
+  ['src',SRC_BOOK]]},
+
+ {id:'art', g:'Expression', t:'Art direction', i:'ti-photo', b:[
+  ['bul',['GY wildlife photography: the split-frame compositions from the brand library (hare, otter, thistle).','GY watercolour illustrations: the painterly backgrounds (mountains, coastal, cathedral).','Photos are big: half or full frame, never thumbnails scattered around text.','Real headshots in outdoor, natural settings.','Diagrams in GY OS and In the Weeds are technical schematics on a dot grid, never pictorial scenes.']],
+  ['h','Avoid'],
+  ['bul',['Generic stock nature photos; use our library or no image at all.','Clipart, 3D emoji, decorative emoji and memes.','Screenshots of spreadsheets, Notion pages or Slack threads; recreate the key numbers instead.']],
+  ['src','Presentation Guidelines v1.0, In the Weeds house rules']]},
+
+ {id:'tokens', g:'Building blocks', t:'Tokens', i:'ti-color-swatch', b:[
+  ['p','Tokens are the one source every output reads: documents, decks, the website, GY OS and In the Weeds. Change a token once and every future output picks it up.'],
+  ['tbl',['Token','Value','Use'],[
+   ['color.ink','#1A0C12','Text, title slides'],
+   ['color.paper','#FEFAEC','Light backgrounds'],
+   ['color.accent','#F9DD5A','Highlights on dark only'],
+   ['color.advisory','#628147','Advisory, positive status'],
+   ['color.capital','#215274','Capital, strategy'],
+   ['color.trade','#B75A40','Trade, financial content'],
+   ['color.alert','#E42A40','Challenges, blocked'],
+   ['color.culture','#8D4063','Culture, awards'],
+   ['color.programme','#333333','Programme-wide'],
+   ['font.heading','Manner 500','Headings'],
+   ['font.body','IBM Plex Mono 400','Body']],[30,28,42]],
+  ['q',['GY OS, In the Weeds and the brand book each keep their own copy of these today. Move them into one file all three read?']],
+  ['src','GY brand colours (April 2026), Presentation Guidelines v1.0']]},
+
+ {id:'components', g:'Building blocks', t:'Components', i:'ti-components', b:[
+  ['p','Components are the parts outputs are built from. Each one looks the same wherever it appears.'],
+  ['tbl',['Component','Where','Rule'],[
+   ['Speaker badge','Decks','Top right, Warm Black or Red, first name only, one colour per deck'],
+   ['KPI table','Decks, dashboards','Four rows at most'],
+   ['Status dot','Decks, GY OS','Green on track, Yellow at risk, Red blocked, Grey no data'],
+   ['Callout','Documents, In the Weeds','One per section at most'],
+   ['Data table','Documents, GY OS','One line per row, no subtitle under the name'],
+   ['Primary button','GY OS, websites','One dark button per screen']],[24,26,50]],
+  ['src','Presentation Guidelines v1.0, GY OS design system']]},
+
+ {id:'templates', g:'Building blocks', t:'Templates', i:'ti-layout', b:[
+  ['p','A template arranges components for one output type. Every Blueprint points at the template for its output type, so a Deliverable never starts from a blank page.'],
+  ['tbl',['Template','Output type','Limits'],[
+   ['Title slide','Deck','Title, subtitle and date on Warm Black'],
+   ['Section divider','Deck','Section name only, one brand colour'],
+   ['Key message','Deck','30 words'],
+   ['KPI dashboard','Deck','120 words, 3 bullets per sidebar section'],
+   ['Data slide','Deck','One chart, 50 words'],
+   ['Report','Document','Cover, contents, numbered chapters'],
+   ['One-pager','Document','One page, one message'],
+   ['Tender response','Document','GY tender layout']],[28,22,50]],
+  ['src','Presentation Guidelines v1.0, gy-document-designer, gy-tender-response-designer']]},
+
+ {id:'assets', g:'Building blocks', t:'Assets', i:'ti-folder', b:[
+  ['tbl',['Asset','Where'],[
+   ['Logo, stacked and horizontal','Brand / Assets'],
+   ['Backgrounds and watercolours','Brand / Assets / Backgrounds'],
+   ['Colour files','Brand / Assets / Colours'],
+   ['Fonts: Manner, IBM Plex','Brand / Fonts'],
+   ['Styleguide','Brand / Assets / Great Yellow - Styleguide.pdf'],
+   ['Wildlife photography','Brand library, link to add']],[40,60]],
+  ['note','The agent links to assets and never copies them into a Deliverable, so a new logo reaches every output at once.'],
+  ['src','Brand folder']]},
+
+ {id:'docds', g:'Layouts', t:'Word documents', i:'ti-file-text', b:[
+  ['p','The design system every GY report, plan and prospectus is built from. Change a token here and every Deliverable that makes a Word document picks it up the next time it is opened.'],
+  ['preview','doc'],
+  ['h','Tokens'],
+  ['tokens','doc'],
+  ['h','Rules'],
+  ['bul',['Built from the Report or One-pager template.','Numbered chapters, sentence-case headings, a source for every fact.','Exports to Word or PDF; the brand lives in the template, never added at the end.']],
+  ['h','Used by'],
+  ['used',[['Commercial Strategy','commercial-strategy-v8.html'],['Catchment Investment Plan','catchment-investment-plan-v8.html']]],
+  ['src','Great Yellow Styleguide, gy-document-designer']]},
+
+ {id:'slideds', g:'Layouts', t:'Slides', i:'ti-presentation', b:[
+  ['p','The design system every GY deck is built from. Change a token here and every Deliverable that makes slides picks it up the next time it is opened.'],
+  ['preview','slides'],
+  ['h','Tokens'],
+  ['tokens','slides'],
+  ['h','Rules'],
+  ['bul',['One idea per slide; if it needs cramming, it needs another slide.','Two font sizes per slide at most, nothing below 14pt in the exported deck.','One brand colour per background.','Every slide fits one of the deck templates and its word limit.']],
+  ['h','Used by'],
+  ['used',[['NatCap 101','natcap-101-v8.html']]],
+  ['src','Presentation Guidelines v1.0']]},
+
+ {id:'rules', g:'Rules and guidance', t:'Rules', i:'ti-shield-check', b:[
+  ['p','Rules pass or fail. The brand gate checks every one before anything leaves GY.'],
+  ['bul',['Never yellow text on a white or light background, in either theme.','Text never blends into its background; check contrast in light and dark.','Never Manner Black.','No em dashes.','Never all caps; sentence case.','One idea per slide, nothing below 14pt in a presentation.','One background colour per slide, no gradients.','No cookbook, recipe or restaurant metaphors.','Spell out acronyms the first time.','Sensitive things from private conversations never go into shared pages.']],
+  ['src','Presentation Guidelines v1.0, GY house rules']]},
+
+ {id:'guidance', g:'Rules and guidance', t:'Guidance', i:'ti-bulb', b:[
+  ['p','Guidance is judgement: how we usually do it. The agent follows it by default and says so when it doesn’t.'],
+  ['bul',['Whitespace is a feature. A page that breathes says we know what matters.','Consistency over creativity: the established layouts make us look like one company.','Say it, don’t read it: detail goes in the linked page, not on the slide.','A section divider every three or four content slides.','Add a one-sentence plain summary when a page needs specialist knowledge.']],
+  ['src','Presentation Guidelines v1.0']]},
+
+ {id:'cobrand', g:'Rules and guidance', t:'Co-branding', i:'ti-users-group', b:[
+  ['p','Landscape Recovery consortia and joint bids carry a partner’s brand next to ours.'],
+  ['bul',['Partner logos sit beside ours at equal height, never inside our colour blocks.','Our rules apply to anything with our name on it.','Every co-branded output is logged as an exception and approved by the brand owner.']],
+  ['q',['Which partners have agreed co-brand rules with us today?']]]},
+
+ {id:'examples', g:'Rules and guidance', t:'Examples', i:'ti-star', b:[
+  ['tbl',['Example','Why it works'],[
+   ['“Between the Verticals” section divider','Clean, bold, one purpose'],
+   ['“GY’s mission” slide with four pillars','Clear hierarchy, colour-coded, scannable'],
+   ['NatCap 101 deck, Walkham Valley','One idea per slide, visual first']],[44,56]],
+  ['note','When reviews fix the same thing twice, the agent proposes a new rule or example for the owner to approve.'],
+  ['src','Presentation Guidelines v1.0']]},
+
+ {id:'websites', g:'Outputs', t:'Websites', i:'ti-world', b:[
+  ['p','greatyellow.earth and programme microsites.'],
+  ['bul',['Body in IBM Plex Mono, in line with the website evolution.','Photography large and immersive.','Every page passes contrast in light and dark.']]]},
+
+ {id:'products', g:'Outputs', t:'Products', i:'ti-device-desktop', b:[
+  ['p','GY OS and In the Weeds. Their design systems sit downstream of the same tokens.'],
+  ['bul',['One dark button per screen.','Rows are one line, no subtitle under the name.','No subtitle beside a page title, no instructional filler.','Hero illustrations are technical schematics on a dot grid.']],
+  ['src','GY OS design system, In the Weeds design system']]},
+
+ {id:'campaigns', g:'Outputs', t:'Campaigns', i:'ti-speakerphone', b:[
+  ['p','Launches, events and thought leadership.'],
+  ['bul',['One message per campaign, said the same way in every channel.','Built from the Key message template.','Every claim carries a source.']],
+  ['q',['No campaign templates yet. Which campaign comes first?']]]},
+
+ {id:'emails', g:'Outputs', t:'Emails', i:'ti-mail', b:[
+  ['bul',['The subject says what the email is for, in sentence case.','One ask per email, in the first two lines.','Signature from the approved template, no images in the body.','The agent drafts; a person sends.']]]},
+
+ {id:'social', g:'Outputs', t:'Social posts', i:'ti-share', b:[
+  ['bul',['LinkedIn first.','One idea and one image from the GY library.','No memes, no emoji as bullets.','Partners and programmes by their real names.']],
+  ['q',['Who approves posts before they go out?']]]},
+
+ {id:'charts', g:'Outputs', t:'Charts and maps', i:'ti-chart-bar', b:[
+  ['bul',['Department colours mean the same in every chart: Advisory green, Capital blue, Trade orange, Programme grey.','One chart per slide, never a screenshot of a spreadsheet.','Status colours follow the traffic-light rule on Components.','Maps from Kwame use the same palette.']],
+  ['src','GY brand colours, Presentation Guidelines v1.0']]}
+];
+
+/* ── Brand agent settings: the agent card plus the six harness components ── */
+var AG = {
+ title: 'Brand agent',
+ props: [
+  ['Kind','Company-wide agent'],
+  ['Status','Draft v0.1'],
+  ['Manager','To confirm'],
+  ['Signs off','The brand owner, for every change to the brand book'],
+  ['Applies to','Every Blueprint, through its output type'],
+  ['Source','Brand folder']
+ ],
+ color: ['#F3ECDC','#8A6A2A']
+};
+var CONF = [
+ ['Tools','ti-tool','var(--graybg)','#766B62',['Deck builder','Document builder','PDF generator','Contrast checker','Token export']],
+ ['Skills','ti-sparkles','var(--amberbg)','var(--amberd)',['Write in GY voice','Lay out a deck','Lay out a document','Run the brand gate','Co-brand a partner document']],
+ ['Context','ti-books','#F3E8DF','#8A5A3B',['Brand book (these pages)','Great Yellow Styleguide','Presentation Guidelines v1.0','About Great Yellow','Glossary']],
+ ['Governance','ti-shield-check','#E1F5EE','#0F6E56',['Brand owner approves every change to the brand book','Brand gate before anything leaves GY','Exceptions logged, never ad hoc','All edits logged']],
+ ['Memory','ti-history','#EEEAF8','#5B4BA0',['Corrections from reviews','Approved examples','Decisions and why']],
+ ['Connections','ti-plug-connected','var(--bluebg)','var(--blued)',['Google Drive, Brand folder','Notion','Figma','GY OS design system']]
+];
+
+/* ── state: pages, current page, saved edits ── */
+var STORE = 'gyBrandBook.v2';
+var PAGES = JSON.parse(JSON.stringify(PAGES0));
+(function(){
+  try{
+    if(/[?&]reset=1/.test(location.search)) localStorage.removeItem(STORE);
+    var s = JSON.parse(localStorage.getItem(STORE) || 'null');
+    if(s && s.length === PAGES0.length && s.every(function(p,i){ return p.id === PAGES0[i].id; })) PAGES = s;
+  }catch(e){}
+})();
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(PAGES)); }catch(e){} }
+function pg(id){ for(var i=0;i<PAGES.length;i++) if(PAGES[i].id === id) return PAGES[i]; return null; }
+/* tabs = groups of pages; each tab is one scrolling document, its pages are the sections */
+var GROUPS = [
+ ['about','This agent','About','ti-palette'],
+ ['foundation','Foundation','Foundation','ti-compass'],
+ ['expression','Expression','Expression','ti-message-2'],
+ ['blocks','Building blocks','Building blocks','ti-components'],
+ ['layouts','Layouts','Layouts','ti-layout-board'],
+ ['rules','Rules and guidance','Rules','ti-shield-check'],
+ ['outputs','Outputs','Outputs','ti-file-text']
+];
+function groupOf(id){ var p = pg(id); for(var i=0;i<GROUPS.length;i++) if(GROUPS[i][1] === p.g) return GROUPS[i][0]; return 'about'; }
+function groupPages(k){ var g = GROUPS.filter(function(x){ return x[0]===k; })[0]; return PAGES.filter(function(p){ return p.g === g[1]; }); }
+var CUR = (function(){ var m = location.search.match(/[?&]p=([a-z]+)/) || location.hash.match(/^#([a-z]+)/); return (m && pg(m[1])) ? m[1] : 'about'; })();
+
+/* ── rendering ── */
+function ed(attrs){ return ' contenteditable="true" spellcheck="false" '+attrs; }
+function renderBlock(b, k, pid){
+  var d = 'data-p="'+pid+'" data-b="'+k+'"';
+  switch(b[0]){
+    case 'p': return '<div class="pblk"'+ed(d)+'>'+b[1]+'</div>';
+    case 'h': return '<div class="brh"'+ed(d)+'>'+b[1]+'</div>';
+    case 'callout': return '<div class="callout"><i class="ti ti-palette"></i><span'+ed(d)+'>'+b[1]+'</span></div>';
+    case 'note': return '<div class="dnote"><i class="ti ti-info-circle"></i><div'+ed(d)+'>'+b[1]+'</div></div>';
+    case 'src': return '<div class="dprov">Based on <span'+ed(d)+'>'+b[1]+'</span></div>';
+    case 'bul': return b[1].map(function(t,i){ return '<div class="bul"><span class="dot">&bull;</span><span'+ed(d+' data-i="'+i+'"')+'>'+t+'</span></div>'; }).join('');
+    case 'q': return '<div class="dnote q"><i class="ti ti-help-circle"></i><div><ul>'+b[1].map(function(t,i){ return '<li'+ed(d+' data-i="'+i+'"')+'>'+t+'</li>'; }).join('')+'</ul></div></div>';
+    case 'tbl':
+      return '<div class="dtwrap"><table class="dtbl">'+(b[3]?'<colgroup>'+b[3].map(function(w){ return '<col style="width:'+w+'%">'; }).join('')+'</colgroup>':'')
+        + '<thead><tr>'+b[1].map(function(c){ return '<th>'+c+'</th>'; }).join('')+'</tr></thead><tbody>'
+        + b[2].map(function(r,ri){ return '<tr>'+r.map(function(c,ci){ return '<td'+(ci===0?' class="m"':'')+ed(d+' data-r="'+ri+'" data-c="'+ci+'"')+'>'+c+'</td>'; }).join('')+'</tr>'; }).join('')
+        + '</tbody></table></div>';
+    case 'preview': return b[1] === 'doc' ? previewDoc() : previewSlides();
+    case 'tokens': return tokenTable(b[1]);
+    case 'used': return usedBy(b[1]);
+    case 'sw':
+      return '<div class="brsw">'+b[1].map(function(s,i){
+        return '<div class="c"><div class="f" style="background:'+s[1]+';color:'+s[3]+'">'+s[1]+'</div><div class="m"><b>'+s[0]+'</b><span'+ed(d+' data-i="'+i+'" data-k="2"')+'>'+s[2]+'</span></div></div>';
+      }).join('')+'</div>';
+  }
+  return '';
+}
+function renderGroup(k){
+  if(k === 'layouts') return renderLayouts();
+  var g = GROUPS.filter(function(x){ return x[0]===k; })[0], ps = groupPages(k);
+  var blocks = function(p){ return p.b.map(function(b,i){ return renderBlock(b, i, p.id); }).join(''); };
+  if(ps.length === 1){
+    var p = ps[0];
+    return '<div class="brdoc bpdoc"><section class="v5sec v8sec" id="pg-'+p.id+'"><div class="v5dt"'+ed('data-t="1" data-p="'+p.id+'"')+'>'+p.t+'</div>'+blocks(p)+'</section></div>';
+  }
+  var h = '<div class="v5dt">'+g[1]+'</div><div class="v8setw v8docw"><div class="v8setc brdoc bpdoc">';
+  h += ps.map(function(p,i){
+    return '<section class="v5sec v8sec" id="pg-'+p.id+'"><div class="v5ch"><span class="v5chn">'+(i+1)+'</span><span class="v5cht"'+ed('data-t="1" data-p="'+p.id+'"')+'>'+p.t+'</span></div>'+blocks(p)+'</section>';
+  }).join('');
+  return h + '</div>' + anchorNav(ps.map(function(p){ return ['pg-'+p.id, p.t]; })) + '</div>';
+}
+var VIEWS = {
+  settings: function(){
+    var card = function(t,i,bg,fg,n,body){
+      return '<div class="v8card" id="set-'+t.toLowerCase()+'"><div class="v8sh"><span class="t" style="background:'+bg+';color:'+fg+'"><i class="ti '+i+'"></i></span>'
+        + '<b>'+t+'</b><span>'+n+'</span></div>'+body+'</div>';
+    };
+    var kv = function(k,v){ return '<div class="v8row kv"><span class="nm">'+k+'</span><span class="v">'+v+'</span></div>'; };
+    var h = '<div class="v8ttl">Settings</div><div class="v8setw"><div class="v8setc"><div class="v8set">';
+    h += card('Agent', AGENT_IC, AG.color[0], AG.color[1], '', AG.props.map(function(p){ return kv(p[0], p[1]); }).join(''));
+    h += CONF.map(function(c){
+      return card(c[0],c[1],c[2],c[3],String(c[4].length), c[4].map(function(x){
+        return '<div class="v8row"><span class="ic"><i class="ti '+c[1]+'"></i></span><span class="nm">'+x+'</span></div>';
+      }).join(''));
+    }).join('');
+    var nav = [['set-agent','Agent',AGENT_IC]].concat(CONF.map(function(c){ return ['set-'+c[0].toLowerCase(), c[0], c[1]]; }));
+    return h + '</div></div>' + anchorNav(nav) + '</div>';
+  }
+};
+GROUPS.forEach(function(g){ VIEWS[g[0]] = function(){ return renderGroup(g[0]); }; });
+
+/* the section in view is "this page" for the agent */
+var _setActive = setActive;
+setActive = function(id){ _setActive(id); if(id && id.indexOf('pg-') === 0) CUR = id.slice(3); };
+function rerender(){
+  var sc = document.querySelector('.v5body'), top = sc.scrollTop;
+  document.getElementById('pbody').innerHTML = VIEWS[TAB]();
+  sc.scrollTop = top; setActive('pg-'+CUR);
+}
+function openPage(id, keep){
+  if(!pg(id)) return;
+  CUR = id;
+  var g = groupOf(id);
+  if(g === 'layouts'){ var lk = id === 'slideds' ? 'slides' : 'doc'; if(TAB === 'layouts' && LAYOUT === lk && keep) rerender(); else setLayout(lk); return; }
+  if(TAB !== g) openTab(g, true);
+  else if(keep) rerender();
+  if(!keep && groupPages(g).length > 1) setTimeout(function(){ setJump('pg-'+id); }, 30);
+  try{ history.replaceState(null, '', location.pathname + '?p=' + id); }catch(e){}
+}
+
+/* ── editing in place: write the edited element back into the page data ── */
+function locOf(el){ return {b:+el.getAttribute('data-b'), i:el.hasAttribute('data-i')?+el.getAttribute('data-i'):null, r:el.hasAttribute('data-r')?+el.getAttribute('data-r'):null, c:el.hasAttribute('data-c')?+el.getAttribute('data-c'):null, k:el.hasAttribute('data-k')?+el.getAttribute('data-k'):null}; }
+function getAt(p, L){ var b = p.b[L.b]; if(L.r !== null) return b[2][L.r][L.c]; if(L.k !== null) return b[1][L.i][L.k]; if(L.i !== null) return b[1][L.i]; return b[1]; }
+function setAt(p, L, v){ var b = p.b[L.b]; if(L.r !== null) b[2][L.r][L.c] = v; else if(L.k !== null) b[1][L.i][L.k] = v; else if(L.i !== null) b[1][L.i] = v; else b[1] = v; }
+function clean(h){ return h.replace(/<br\s*\/?>\s*$/i,'').replace(/&nbsp;/g,' ').trim(); }
+document.addEventListener('focusin', function(e){ var el = e.target; if(el && el.getAttribute && el.getAttribute('data-p')) CUR = el.getAttribute('data-p'); });
+document.addEventListener('focusout', function(e){
+  var el = e.target; if(!el || !el.getAttribute || !el.getAttribute('data-p')) return;
+  var p = pg(el.getAttribute('data-p')); if(!p) return;
+  if(el.hasAttribute('data-t')){
+    var t = (el.textContent || '').trim();
+    if(t && t !== p.t){ p.t = t; save(); var a = document.querySelector('#setnav a[data-id="pg-'+p.id+'"] span'); if(a) a.textContent = t; gyToast('Page renamed'); }
+    else el.textContent = p.t;
+    return;
+  }
+  if(!el.hasAttribute('data-b')) return;
+  var L = locOf(el), v = clean(el.innerHTML), old = getAt(p, L);
+  if(v === old) return;
+  if(!v && (L.i !== null && L.k === null)){ p.b[L.b][1].splice(L.i, 1); save(); CUR = p.id; rerender(); gyToast('Line removed'); return; }
+  setAt(p, L, v); save(); gyToast('Saved');
+});
+document.addEventListener('keydown', function(e){
+  var el = e.target; if(!el || !el.getAttribute || !el.getAttribute('data-p') || e.key !== 'Enter' || e.shiftKey) return;
+  e.preventDefault();
+  var p = pg(el.getAttribute('data-p'));
+  if(el.hasAttribute('data-b') && el.hasAttribute('data-i') && !el.hasAttribute('data-k') && p.b[+el.getAttribute('data-b')][0] === 'bul'){
+    /* Enter in a bullet starts a new bullet below it */
+    var L = locOf(el); setAt(p, L, clean(el.innerHTML)); p.b[L.b][1].splice(L.i + 1, 0, ''); save();
+    CUR = p.id; rerender();
+    var n = document.querySelector('[data-p="'+p.id+'"][data-b="'+L.b+'"][data-i="'+(L.i+1)+'"]'); if(n) n.focus();
+    return;
+  }
+  el.blur();
+});
+function flash(L, pid){
+  var sel = '[data-p="'+(pid||CUR)+'"][data-b="'+L.b+'"]' + (L.i!==null?'[data-i="'+L.i+'"]':'') + (L.r!==null?'[data-r="'+L.r+'"][data-c="'+L.c+'"]':'');
+  var el = document.querySelector(sel); if(!el) return;
+  el.classList.add('flash'); el.scrollIntoView({block:'center', behavior:'smooth'});
+  setTimeout(function(){ el.classList.remove('flash'); }, 1600);
+}
+
+
+/* ── Layouts: the Word document and Slides design systems (tokens live in gy-brand.js) ── */
+var PAL = [['warm black','#1A0C12'],['warm white','#FEFAEC'],['yellow','#F9DD5A'],['green','#628147'],['blue','#215274'],['orange','#B75A40'],['red','#E42A40'],['purple','#8D4063'],['grey','#333333'],['gray','#333333'],['black','#1A0C12'],['white','#FFFFFF']];
+function colName(h){ h = (h||'').toUpperCase(); for(var i=0;i<PAL.length;i++) if(PAL[i][1] === h){ var n = PAL[i][0]; return n.charAt(0).toUpperCase()+n.slice(1); } return ''; }
+var TOKDEF = {
+  doc: [['headFont','Heading font','font'],['headWeight','Heading weight','weight'],['headColour','Heading colour','colour'],['subColour','Subheading colour','colour'],
+        ['bodyColour','Body text colour','colour'],['bodySize','Body size','size'],['tableHead','Table header fill','colour'],['cover','Cover alignment','align'],
+        ['logo','Logo on pages','onoff'],['pageNumbers','Page numbers','onoff']],
+  slides: [['headFont','Heading font','font'],['headWeight','Heading weight','weight'],['headColour','Heading colour','colour'],['bodySize','Body size','size'],
+        ['bar','Top bar','bar'],['keyBg','Key message background','colour'],['keyText','Key message text','colour'],['highlight','Highlight','colour'],
+        ['coverWash','Cover wash','colour'],['logo','Logo on slides','onoff'],['pageNumbers','Slide numbers','onoff']]
+};
+var SCOPE_NAME = {doc:'Word documents', slides:'Slides'}, SCOPE_PAGE = {doc:'docds', slides:'slideds'};
+function tokDef(scope, key){ return TOKDEF[scope].filter(function(d){ return d[0] === key; })[0]; }
+function fmtVal(type, v){
+  if(type === 'colour' || (type === 'bar' && v !== 'chapter')){ var n = colName(v); return '<span class="brdot" style="background:'+v+'"></span>'+(n ? n+' · ' : '')+v; }
+  if(type === 'bar') return 'Chapter colour';
+  if(type === 'size') return v+' px';
+  if(type === 'onoff') return v === 'on' ? 'Shown' : 'Hidden';
+  if(type === 'align') return v === 'left' ? 'Left' : 'Centred';
+  return String(v);
+}
+function parseVal(type, raw, cur){
+  var t = String(raw).toLowerCase().trim(), m;
+  if(type === 'colour' || type === 'bar'){
+    if(type === 'bar' && /chapter/.test(t)) return 'chapter';
+    if((m = t.match(/#?([0-9a-f]{6})\b/))) return '#'+m[1].toUpperCase();
+    for(var i=0;i<PAL.length;i++) if(new RegExp('\\b'+PAL[i][0]+'\\b').test(t)) return PAL[i][1];
+    return null;
+  }
+  if(type === 'font'){
+    if(/plex ?mono|mono/.test(t)) return 'IBM Plex Mono';
+    if(/plex ?sans/.test(t)) return 'IBM Plex Sans';
+    if(/spectral/.test(t)) return 'Spectral';
+    if(/manner|serif/.test(t)) return 'Manner';
+    if(/sans|system|inter/.test(t)) return 'Sans';
+    return null;
+  }
+  if(type === 'weight'){
+    if(/black|900|heav/.test(t)) return 900;
+    if(/\b500\b|medium|bold|heavier/.test(t)) return 500;
+    if(/\b400\b|regular|light|normal|lighter/.test(t)) return 400;
+    return null;
+  }
+  if(type === 'size'){
+    if((m = t.match(/(\d+(?:\.\d+)?)/))) return Math.round(parseFloat(m[1])*2)/2;
+    if(/bigger|larger|up/.test(t)) return cur + 1;
+    if(/smaller|down/.test(t)) return cur - 1;
+    return null;
+  }
+  if(type === 'onoff'){ if(/hide|off|remove|\bno\b|without|drop/.test(t)) return 'off'; if(/show|\bon\b|add|with|back/.test(t)) return 'on'; return null; }
+  if(type === 'align'){ if(/left/.test(t)) return 'left'; if(/cent/.test(t)) return 'centre'; return null; }
+  return null;
+}
+/* the brand rules a token change must pass; returns a reason to refuse, or '' */
+function validateTok(scope, key, val, t){
+  var d = tokDef(scope, key);
+  if(d[2] === 'weight' && val >= 600) return 'Manner Black is never used in anything for GY. Headings are Manner 400 or 500. ('+pageLink('identity')+')';
+  if(d[2] === 'size' && (val < 9 || val > 18)) return 'Body size stays between 9 and 18 px in the prototype layouts.';
+  var pairs = [];
+  if(scope === 'doc' && /^(headColour|subColour|bodyColour)$/.test(key)) pairs.push([val, '#FFFFFF', 'the white page']);
+  if(scope === 'doc' && key === 'tableHead') pairs.push([t.doc.bodyColour, val, 'the table header']);
+  if(scope === 'slides' && key === 'headColour') pairs.push([val, '#FFFFFF', 'the white slide']);
+  if(scope === 'slides' && key === 'keyText') pairs.push([val, t.slides.keyBg, 'the key message background']);
+  if(scope === 'slides' && key === 'keyBg') pairs.push([t.slides.keyText, val, 'its text']);
+  for(var i=0;i<pairs.length;i++){
+    var c = GY_BRAND.contrast(pairs[i][0], pairs[i][1]);
+    if(c < 4.5){
+      var yl = pairs[i][0].toUpperCase() === '#F9DD5A' && GY_BRAND.contrast(pairs[i][1], '#FFFFFF') < 1.3;
+      return (yl ? 'Yellow text on a light background is never used. ' : 'That text would blend into '+pairs[i][2]+': contrast '+c.toFixed(1)+':1, it needs 4.5:1. ')+'('+pageLink('rules')+')';
+    }
+  }
+  return '';
+}
+
+/* previews: a page and a slide drawn from the current tokens */
+function fontOf(n){ return GY_BRAND.FONTS[n] || GY_BRAND.FONTS.Manner; }
+function previewDoc(){
+  /* the Word document design system as real pages, drawn at 640 x 905 from the tokens and scaled to the column */
+  var d = GY_BRAND.get().doc, hf = fontOf(d.headFont), hw = d.headWeight;
+  var H1 = function(t){ return '<div class="h1" style="font-family:'+hf+';font-weight:'+hw+';color:'+d.headColour+'">'+t+'</div>'; };
+  var H2 = function(t){ return '<div class="h2" style="color:'+d.subColour+'">'+t+'</div>'; };
+  var page = function(inner, n, cls){
+    return '<div class="brpg-f" data-w="640"><div class="c'+(cls?' '+cls:'')+'" style="color:'+d.bodyColour+';font-size:'+d.bodySize+'px">'
+      + (n && d.logo === 'on' ? '<img class="wm" src="gy-logo-wordmark.png" alt="Great Yellow">' : '') + inner
+      + (n && d.pageNumbers === 'on' ? '<div class="no">'+n+'</div>' : '') + '</div></div>';
+  };
+  var th = function(cells){ return '<tr>'+cells.map(function(c){ return '<th style="background:'+d.tableHead+'">'+c+'</th>'; }).join('')+'</tr>'; };
+  var tr = function(cells){ return '<tr>'+cells.map(function(c){ return '<td>'+c+'</td>'; }).join('')+'</tr>'; };
+  var cover = page('<div class="cov" style="align-items:'+(d.cover==='left'?'flex-start':'center')+';text-align:'+(d.cover==='left'?'left':'center')+'">'
+    + '<img class="big" src="gy-logo-stacked.png" alt="Great Yellow">'
+    + '<div class="ttl" style="font-family:'+hf+';font-weight:'+hw+';color:'+d.headColour+'">Commercial Strategy</div>'
+    + '<div class="sub" style="font-family:'+hf+';color:'+d.headColour+'">Upper River Dee</div><div class="dt">October 2026</div>'
+    + '<div class="by">Prepared by: Great Yellow<br>Prepared for: Upper Dee Landscape Recovery partnership</div></div>', 0, 'cover');
+  var toc = page('<div class="tt" style="font-family:'+hf+';font-weight:'+hw+';color:'+d.headColour+'">Contents</div>'
+    + [['Executive summary',3,0],['1. Introduction',4,0],['1.1 Project vision',4,1],['2. Markets',5,0],['2.1 Peatland carbon',5,1],['2.2 Biodiversity net gain',6,1],['3. Finance and governance',7,0],['4. Next steps',8,0]]
+      .map(function(x){ return '<div class="toc'+(x[2]?' l2':'')+'"><span>'+x[0]+'</span><i></i><span>'+x[1]+'</span></div>'; }).join(''), 2);
+  var ch = page(H1('2. Markets') + '<p>Upper Dee can sell peatland carbon and biodiversity units from the same restored land, in a set order. This chapter sizes each market and names the buyers who would buy first.</p>'
+    + H2('2.1 Peatland carbon') + '<p>Buyers in the North West want verified removals close to their operations. Peatland Code units from Upper Dee meet that demand from 2027, once the first condition survey is verified.</p>'
+    + '<table>'+th(['Market','Units','Price range','First sale'])+tr(['Peatland carbon','42,000','£18 to £25','2027'])+tr(['Biodiversity net gain','310','£25k to £35k','2026'])+tr(['Nutrient credits','Not in scope','','']) + '</table>'
+    + '<div class="cap">Table 2.1. Supply by market, from the Customer Demand Mapping.</div>'
+    + H2('2.2 Biodiversity net gain') + '<p>Three local planning authorities have a shortfall of off-site units. Two housebuilders already asked for prices.</p>', 5);
+  var bars = [[46,2027],[78,2028],[104,2029],[132,2030],[150,2031]];
+  var fin = page(H1('3. Finance and governance') + '<p>Revenue builds over five years as carbon units are verified. The table and chart use the central case.</p>'
+    + '<div class="fig"><svg viewBox="0 0 480 190">'+bars.map(function(b,i){ return '<rect x="'+(30+i*88)+'" y="'+(160-b[0])+'" width="54" height="'+b[0]+'" rx="3" fill="'+(i<2?'#628147':'#215274')+'"/><text x="'+(57+i*88)+'" y="178" text-anchor="middle">'+b[1]+'</text>'; }).join('')+'<line x1="16" y1="160" x2="470" y2="160" stroke="#C9C2B2"/></svg></div>'
+    + '<div class="cap">Figure 3.1. Revenue by year, central case.</div>'
+    + H2('3.1 Who decides') + '<ul><li>The partnership board approves the strategy and each sale.</li><li>Great Yellow runs the sales process and reports quarterly.</li><li>An independent verifier checks every unit before it is sold.</li></ul>'
+    + '<p class="src">Source: Upper Dee financial model, central case, October 2026.</p>', 7);
+  TOC = [['dp-0','Cover','ti-file-text'],['dp-1','Contents','ti-list'],['dp-2','2. Markets','ti-chart-pie'],['dp-3','3. Finance and governance','ti-coin']];
+  return '<div class="brpages">'+[cover,toc,ch,fin].map(function(h,i){ return h.replace('<div class="brpg-f"', '<div class="brpg-f" id="dp-'+i+'"'); }).join('')+'</div>';
+}
+/* the Layouts tab: the pages full column on a grey canvas, Word or Slides switched in the tab row */
+var TOC = [];
+var LAYOUT = (function(){ var m = location.search.match(/[?&]p=(slideds|docds)/); return m && m[1] === 'slideds' ? 'slides' : 'doc'; })();
+function renderLayouts(){
+  var p = pg(SCOPE_PAGE[LAYOUT]);
+  var rest = p.b.map(function(b,i){ return (b[0] === 'preview' || (i === 0 && b[0] === 'p')) ? '' : renderBlock(b, i, p.id); }).join('');
+  var pages = LAYOUT === 'doc' ? previewDoc() : previewSlides();
+  var items = TOC.concat([['brtok','Tokens','ti-adjustments']]);
+  return '<div class="brdv" id="pg-'+p.id+'"><div class="brdv-main">' + pages
+    + '<div class="brcard brdoc bpdoc" id="brtok">' + rest + '</div></div>'
+    + '<nav class="brtoc" id="setnav"><div><div class="tt">'+(LAYOUT === 'doc' ? 'Table of Contents' : 'Slides')+'</div>'
+    + items.map(function(it,i){ return '<a class="'+(i===0?'on':'')+'" data-id="'+it[0]+'" onclick="setJump(\''+it[0]+'\')"><i class="ti '+it[2]+'"></i><span>'+it[1]+'</span></a>'; }).join('')
+    + '</div></nav></div>';
+}
+function setLayout(k){
+  LAYOUT = k; CUR = SCOPE_PAGE[k];
+  if(TAB !== 'layouts') openTab('layouts', true);
+  else { paintTabs(); document.getElementById('pbody').innerHTML = VIEWS.layouts(); document.querySelector('.v5body').scrollTop = 0; }
+  try{ history.replaceState(null, '', location.pathname + '?p=' + CUR); }catch(e){}
+}
+
+function previewSlides(){
+  /* every deck template, drawn at 960 x 540 from the slide tokens and scaled to fit */
+  var s = GY_BRAND.get().slides, hf = fontOf(s.headFont), hw = s.headWeight, hc = s.headColour;
+  var bs = Math.round(s.bodySize * 1.5 * 2) / 2, bar = s.bar === 'chapter' ? null : s.bar;
+  var WB = '#1A0C12', WW = '#FEFAEC';
+  var H = function(t, c, size){ return '<div class="t" style="font-family:'+hf+';font-weight:'+hw+';color:'+(c||hc)+';font-size:'+(size||28)+'px">'+t+'</div>'; };
+  var logo = function(dark){ return s.logo === 'on' ? '<img class="wm'+(dark?' inv':'')+'" src="gy-logo-wordmark.png" alt="Great Yellow">' : ''; };
+  var no = function(n, c){ return s.pageNumbers === 'on' ? '<div class="no" style="color:'+(c||'#77736B')+'">'+n+'</div>' : ''; };
+  var chap = function(t, c, tx){ return '<div class="ch" style="color:'+(tx||'#3A3732')+'"><i style="background:'+c+'"></i>'+t+'</div>'; };
+  var top = function(c){ return 'border-top:6px solid '+(bar || c)+';'; };
+  var SL = [
+    ['Title', '<div class="c cover" style="background:linear-gradient(90deg,'+s.coverWash+' 0%,'+s.coverWash+'DB 42%,'+s.coverWash+'2E 78%),url(\'gy-bg-projects.jpg\') center/cover">'
+      + '<img class="big" src="gy-logo-stacked.png" alt="Great Yellow">' + H('Walkham Valley Landscape Recovery', null, 36)
+      + '<div class="sub" style="font-family:'+hf+';color:'+hc+'">Natural Capital Analysis</div><div class="dt" style="font-size:'+bs+'px">October 2026</div></div>'],
+    ['Agenda', '<div class="c" style="background:#F9DD5A;color:'+WB+'">' + logo(false) + H('Agenda', WB)
+      + '<ol class="ag" style="font-size:'+(bs+3)+'px">'+['Where we are','What the land can sell','Who buys it','How it is financed','Next steps'].map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ol>' + no(2, WB) + '</div>'],
+    ['Section divider', '<div class="c mid" style="background:#215274;color:'+WW+'">' + H('Nature markets', WW, 44) + no(3, WW) + '</div>'],
+    ['Key message', '<div class="c" style="background:'+s.keyBg+';color:'+s.keyText+'">' + logo(true) + chap('Why it matters', s.highlight, s.keyText)
+      + '<div class="km" style="font-family:'+hf+';font-weight:'+hw+';color:'+s.keyText+'">Nature becomes an <em style="border-bottom-color:'+s.highlight+'">investable</em> asset class, not a niche product.</div>'
+      + '<div class="kr" style="font-size:'+bs+'px">'+[['15','Landscape Recovery projects'],['300,000','hectares supported'],['FCA','regulated']].map(function(x){ return '<span style="border-top-color:'+s.keyText+'80"><b>'+x[0]+'</b>'+x[1]+'</span>'; }).join('')+'</div>' + no(4, s.keyText) + '</div>'],
+    ['Content and figures', '<div class="c" style="background:#fff;'+top('#628147')+'">' + logo(false) + chap('What the land can sell', '#628147') + H('Three markets, one buyer story')
+      + '<p class="ld" style="font-size:'+(bs+2)+'px">Walkham Valley can sell biodiversity, carbon and water outcomes from the same land, in a set order.</p>'
+      + '<div class="stats">'+[['#628147','1,450','BNG units'],['#215274','42,000','Carbon units'],['#B75A40','£3.1m','Water outcomes']].map(function(x){ return '<div style="border-left-color:'+x[0]+';background:'+x[0]+'14"><b style="font-family:'+hf+';color:'+WB+'">'+x[1]+'</b><span style="font-size:'+(bs-2)+'px">'+x[2]+'</span></div>'; }).join('')+'</div>' + no(5) + '</div>'],
+    ['Three cards', '<div class="c" style="background:#fff;'+top('#215274')+'">' + logo(false) + chap('An ecosystem approach', '#215274') + H('How the services stack')
+      + '<div class="cards">'+[['#628147','ti-plant-2','Biodiversity','Habitat units sold to developers under BNG'],['#215274','ti-cloud','Carbon','Woodland and peatland codes, verified removals'],['#1F6FB2','ti-droplet','Water','Nutrient and flood outcomes for water companies']].map(function(x){ return '<div><span class="ic" style="background:'+x[0]+'22;color:'+x[0]+'"><i class="ti '+x[1]+'"></i></span><b>'+x[2]+'</b><span style="font-size:'+(bs-2)+'px">'+x[3]+'</span></div>'; }).join('')+'</div>' + no(6) + '</div>'],
+    ['Data', '<div class="c" style="background:#fff;'+top('#B75A40')+'">' + logo(false) + chap('Finance', '#B75A40') + H('Revenue by market, 2027 to 2031')
+      + '<div class="data"><svg viewBox="0 0 460 240" class="bars">'+[[60,'#628147',2027],[110,'#628147',2028],[150,'#215274',2029],[190,'#215274',2030],[220,'#B75A40',2031]].map(function(x,i){ return '<rect x="'+(20+i*88)+'" y="'+(220-x[0])+'" width="60" height="'+x[0]+'" rx="4" fill="'+x[1]+'"/><text x="'+(50+i*88)+'" y="238" text-anchor="middle">'+x[2]+'</text>'; }).join('')+'<line x1="10" y1="220" x2="450" y2="220" stroke="#C9C2B2"/></svg>'
+      + '<ul style="font-size:'+bs+'px"><li>Biodiversity carries the first two years.</li><li>Carbon grows as woodland matures.</li><li>Water outcomes start in 2031.</li></ul></div>' + no(7) + '</div>'],
+    ['KPI dashboard', '<div class="c" style="background:'+WW+'">' + logo(false) + H('Advisory, September', null, 26)
+      + '<div class="kpi"><table style="font-size:'+(bs-1)+'px"><tr><th>KPI</th><th>Target</th><th>Now</th><th></th></tr>'
+      + [['Demand maps done','6','5','#628147'],['Blueprints live','4','3','#F9DD5A'],['Tenders won','2','1','#F9DD5A'],['Hours per map','20','34','#E42A40']].map(function(r){ return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td><i style="background:'+r[3]+'"></i></td></tr>'; }).join('')
+      + '</table><div class="side" style="font-size:'+(bs-2)+'px"><b style="color:#628147">Wins and highlights</b><span>Upper Dee map signed off</span><span>CIP Blueprint drafted</span><b style="color:#628147">#1 focus</b><span>Halve the hours per map</span></div></div>' + no(8) + '</div>'],
+    ['Team', '<div class="c" style="background:#fff;'+top('#8D4063')+'">' + logo(false) + H('Welcome to the hive')
+      + '<div class="team">'+[['AB','Name Surname','Advisory'],['CD','Name Surname','Capital'],['EF','Name Surname','Trade'],['GH','Name Surname','Data']].map(function(x,i){ return '<div><span class="av" style="background:'+['#628147','#215274','#B75A40','#8D4063'][i]+'">'+x[0]+'</span><b style="font-size:'+bs+'px">'+x[1]+'</b><span style="font-size:'+(bs-2)+'px">'+x[2]+'</span></div>'; }).join('')+'</div>' + no(9) + '</div>'],
+    ['Quote', '<div class="c" style="background:#B75A40;color:'+WW+'">' + logo(true)
+      + '<div class="qt" style="font-family:'+hf+';font-weight:'+hw+';color:'+WW+'">“When the systems are in place to fund, deliver and verify nature recovery, the investment case becomes self-evident.”</div>'
+      + '<div class="qa" style="font-size:'+bs+'px">About Great Yellow</div>' + no(10, WW) + '</div>'],
+    ['Partners', '<div class="c" style="background:#fff;'+top('#333333')+'">' + logo(false) + chap('Delivered with', '#333333') + H('Partners in the programme')
+      + '<div class="logos">'+['Landowner group','Rivers Trust','National Park','Water company','Local council'].map(function(x){ return '<div style="font-size:'+(bs-1)+'px">'+x+'</div>'; }).join('')+'</div>' + no(11) + '</div>'],
+    ['Culture', '<div class="c mid" style="background:#8D4063;color:'+WW+'">' + H('What made you smile this week?', WW, 38) + no(12, WW) + '</div>'],
+    ['Closing', '<div class="c mid" style="background:'+WB+';color:'+WW+'"><img class="big inv" src="gy-logo-stacked.png" alt="Great Yellow">'
+      + '<div class="sub" style="font-family:'+hf+';color:'+WW+'">Thank you</div></div>']
+  ];
+  var IC = ['ti-presentation','ti-list-numbers','ti-separator-horizontal','ti-sparkles','ti-chart-bar','ti-layout-cards','ti-chart-histogram','ti-gauge','ti-users','ti-quote','ti-building-community','ti-mood-smile','ti-flag'];
+  TOC = SL.map(function(x,i){ return ['sl-'+i, x[0], IC[i]]; });
+  return '<div class="brgal">'+SL.map(function(x,i){ return '<figure class="brsl" id="sl-'+i+'"><div class="brsl-f">'+x[1]+'</div></figure>'; }).join('')+'</div>';
+}
+/* scale each 960 x 540 slide to its frame */
+function fitSlides(){
+  [].forEach.call(document.querySelectorAll('.brsl-f,.brpg-f'), function(f){ var c = f.firstChild; if(c) c.style.transform = 'scale('+(f.clientWidth/(+f.getAttribute('data-w') || 960))+')'; });
+}
+(function(){
+  var pb = document.getElementById('pbody');
+  if(!pb) return;
+  new MutationObserver(function(){ fitSlides(); }).observe(pb, {childList:true, subtree:true});
+  if(window.ResizeObserver) new ResizeObserver(fitSlides).observe(pb);
+  window.addEventListener('resize', fitSlides);
+})();
+
+function tokenTable(scope){
+  var t = GY_BRAND.get()[scope];
+  return '<div class="dtwrap"><table class="dtbl"><colgroup><col style="width:40%"><col style="width:60%"></colgroup><thead><tr><th>Token</th><th>Value</th></tr></thead><tbody>'
+    + TOKDEF[scope].map(function(d){
+      return '<tr><td class="m">'+d[1]+'</td><td contenteditable="true" spellcheck="false" data-tok="'+scope+'.'+d[0]+'">'+fmtVal(d[2], t[d[0]])+'</td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+function usedBy(list){ return '<div class="brused">'+list.map(function(x){ return '<a href="'+x[1]+'" target="_blank" rel="noopener"><i class="ti ti-file-text"></i>'+x[0]+'<i class="ti ti-arrow-up-right"></i></a>'; }).join('')+'</div>'; }
+
+/* editing a token in its table cell */
+document.addEventListener('focusin', function(e){
+  var el = e.target; if(!el || !el.getAttribute || !el.getAttribute('data-tok')) return;
+  var k = el.getAttribute('data-tok').split('.'), d = tokDef(k[0], k[1]), v = GY_BRAND.get()[k[0]][k[1]];
+  el.textContent = d[2] === 'colour' || (d[2] === 'bar' && v !== 'chapter') ? (colName(v) || v) : (d[2] === 'size' ? String(v) : plain(fmtVal(d[2], v)));
+  CUR = SCOPE_PAGE[k[0]];
+});
+document.addEventListener('focusout', function(e){
+  var el = e.target; if(!el || !el.getAttribute || !el.getAttribute('data-tok')) return;
+  var k = el.getAttribute('data-tok').split('.'), d = tokDef(k[0], k[1]), t = GY_BRAND.get(), old = t[k[0]][k[1]];
+  var v = parseVal(d[2], el.textContent, old);
+  if(v === null){ gyToast('Not a value I recognise for '+d[1].toLowerCase()); rerender(); return; }
+  if(v === old){ rerender(); return; }
+  var why = validateTok(k[0], k[1], v, t);
+  if(why){ gyToast(plain(why)); rerender(); return; }
+  GY_BRAND.set(k[0], (function(){ var o = {}; o[k[1]] = v; return o; })());
+  rerender(); gyToast(SCOPE_NAME[k[0]]+' updated');
+});
+
+document.addEventListener('keydown', function(e){ var el = e.target; if(el && el.getAttribute && el.getAttribute('data-tok') && e.key === 'Enter'){ e.preventDefault(); el.blur(); } });
+/* chat: "make slide headings Blue", "hide page numbers in documents", "reset slides" */
+var TOKRE = {
+  doc: [['bodySize',/\bsize\b|bigger|smaller|larger|\d+(\.\d+)?\s*(px|pt)\b/],['subColour',/sub ?head|\bh2\b/],['tableHead',/table/],['cover',/cover/],
+        ['logo',/logo/],['pageNumbers',/number/],['headWeight',/weight|\b[4-9]00\b|manner black|heavier|lighter/],
+        ['headFont',/font|typeface|manner|spectral|plex|\bsans\b|\bmono\b/],['bodyColour',/body|paragraph|text colou?r/],['headColour',/head|title/]],
+  slides: [['bodySize',/\bsize\b|bigger|smaller|larger|\d+(\.\d+)?\s*(px|pt)\b/],['keyText',/key.*(text|words)|text on (the )?key/],['keyBg',/key|message/],
+        ['highlight',/highlight|underline/],['coverWash',/wash|cover/],['bar',/\bbar\b|stripe|top line|accent/],['logo',/logo/],['pageNumbers',/number/],
+        ['headWeight',/weight|\b[4-9]00\b|manner black|heavier|lighter/],['headFont',/font|typeface|manner|spectral|plex|\bsans\b|\bmono\b/],['headColour',/head|title|text/]]
+};
+var PROPS_TOK = [];
+function tokenIntent(raw){
+  var s = raw.toLowerCase();
+  var sc = /slide|deck|presentation|key message|\bwash\b/.test(s) ? 'slides' : /\bdoc|word|report|prospectus|table\b|page number/.test(s) ? 'doc' : (CUR === 'slideds' ? 'slides' : CUR === 'docds' ? 'doc' : null);
+  if(/\b(reset|restore|back to (the )?default)/.test(s) && (sc || /layout|design system/.test(s))){
+    if(!sc) return 'Reset the Word documents or the Slides design system?' + chips(['Reset Word documents','Reset slides']);
+    if(CUR !== SCOPE_PAGE[sc]) openPage(SCOPE_PAGE[sc]);
+    return propose(pg(SCOPE_PAGE[sc]), 'tokreset', {scope:sc}, null, 'Every '+SCOPE_NAME[sc].toLowerCase().replace(/s$/,'')+' token back to the brand book default', 'Reset');
+  }
+  var hasVerb = /\b(make|set|change|use|switch|turn|hide|show|remove|add|put|go|align|bigger|smaller|larger|reset)\b/.test(s);
+  var isQ = /\?$|^(what|which|how)\b/.test(s.trim());
+  if(!sc) return null;
+  var key = null; TOKRE[sc].some(function(r){ if(r[1].test(s)){ key = r[0]; return true; } return false; });
+  if(!key){ if(parseVal('colour', s) && hasVerb) key = 'headColour'; else return null; }
+  var d = tokDef(sc, key), t = GY_BRAND.get(), old = t[sc][key];
+  var tail = s.replace(/^.*?\b(to|into|with)\b\s+/, ' ');
+  var v = parseVal(d[2], key === 'pageNumbers' || key === 'logo' ? s : tail, old);
+  if(v === null) v = parseVal(d[2], s, old);
+  if(!hasVerb && !isQ && v === null) return null;
+  if(CUR !== SCOPE_PAGE[sc]) openPage(SCOPE_PAGE[sc]);
+  if(v === null || isQ && !hasVerb) return SCOPE_NAME[sc]+', '+d[1].toLowerCase()+': <b>'+plain(fmtVal(d[2], old))+'</b>.<span class="gysrc">From '+pageLink(SCOPE_PAGE[sc])+'</span>';
+  if(v === old) return SCOPE_NAME[sc]+' already use '+plain(fmtVal(d[2], old))+' for '+d[1].toLowerCase()+'.';
+  var why = validateTok(sc, key, v, t);
+  if(why) return 'I can’t make that change. '+why;
+  var card = propose(pg(SCOPE_PAGE[sc]), 'tok', {scope:sc, key:key}, d[1]+': '+fmtVal(d[2], old), d[1]+': '+fmtVal(d[2], v), 'Change to');
+  PROPS[PROPS.length-1].val = v;
+  return card;
+}
+
+/* ── tabs ── */
+var TABS = GROUPS.map(function(g){ return [g[0], g[3], g[2]]; }).concat([['settings','ti-settings','Settings']]);
+var TAB = groupOf(CUR);
+function paintTabs(){
+  var shut = document.body.classList.contains('pclosed');
+  document.getElementById('tabs').innerHTML =
+    '<button class="v8agt'+(shut?'':' on')+'" onclick="toggleChat()" title="'+(shut?'Show':'Hide')+' the agent">'
+      + '<span class="v8ava"><i class="ti '+AGENT_IC+'"></i></span>Agent</button>'
+    + '<span class="v5tdiv"></span>'
+    + '<div class="v5tabgrp">' + TABS.map(function(t){
+        return '<button class="v5tab'+(TAB===t[0]?' on':'')+'" onclick="openTab(\''+t[0]+'\')"><i class="ti '+t[1]+'"></i><span class="lb">'+t[2]+'</span></button>';
+      }).join('') + '</div>'
+    + (TAB === 'layouts' ? '<div class="brseg">'+[['doc','ti-file-text','Word'],['slides','ti-presentation','Slides']].map(function(x){ return '<button class="'+(LAYOUT===x[0]?'on':'')+'" onclick="setLayout(\''+x[0]+'\')"><i class="ti '+x[1]+'"></i>'+x[2]+'</button>'; }).join('')+'</div>' : '');
+}
+function openTab(k, keepCur){
+  TAB = k; paintTabs();
+  if(!keepCur && k !== 'settings') CUR = k === 'layouts' ? SCOPE_PAGE[LAYOUT] : groupPages(k)[0].id;
+  document.body.classList.toggle('brlayview', k === 'layouts');
+  var el = document.getElementById('pbody');
+  el.classList.toggle('brlay', k === 'layouts');
+  el.innerHTML = VIEWS[k]();
+  el.parentNode.scrollTop = 0;
+  if(!keepCur && k !== 'settings') try{ history.replaceState(null, '', location.pathname + '?p=' + CUR); }catch(e){}
+}
+function toggleChat(){ document.body.classList.toggle('pclosed'); paintTabs(); }
+
+/* ── chat: scripted, no model. It answers from the pages and proposes edits you apply ── */
+function say(h){ return '<div class="v5say">'+h+'</div>'; }
+function you(h){ return '<div class="v8me"><div class="v5you">'+h+'</div></div>'; }
+function esc(s){ return s.replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function plain(h){ var d = document.createElement('div'); d.innerHTML = h; return (d.textContent || '').replace(/\s+/g,' ').trim(); }
+function chips(list){ return '<div class="gyq">'+list.map(function(q){ return '<button onclick="chip(this)" data-q="'+esc(q)+'">'+esc(q.replace(/:\s*$/,''))+'</button>'; }).join('')+'</div>'; }
+function chip(b){
+  var q = b.getAttribute('data-q'), inp = document.getElementById('ask');
+  if(/:\s*$/.test(q)){ inp.value = q; inp.focus(); return; }
+  inp.value = q; sendMsg();
+}
+function pageLink(id){ var p = pg(id); return '<a onclick="openPage(\''+id+'\')">'+p.t+'</a>'; }
+var DEFAULT_CHIPS = ['Summarise this page','Add a line to this page:','Check a sentence:','What is still open?'];
+var LOG = [
+  say('I keep GY’s brand book and apply it to everything GY makes: documents, decks, emails, the website and GY OS itself.'),
+  say('Edit any page in place, or ask me to change it. I propose the change, you apply it.'),
+  chips(['What are your jobs?','Who manages you?','Check a sentence:','What is still open?'])
+];
+function paintChat(){ document.getElementById('chatin').innerHTML = LOG.join(''); var lg = document.getElementById('chatlog'); lg.scrollTop = lg.scrollHeight; }
+
+/* which page does a message name? */
+var ALIAS = {about:/\b(about|this agent|you)\b/, strategy:/strateg/, positioning:/position/, audiences:/audienc|reader/, vocabulary:/vocab|word list|terms?\b/,
+  voice:/\bvoice|\btone\b/, identity:/identit|colou?r|logo|\btype\b|font|typograph/, art:/art direction|photo|image|illustrat/, tokens:/token/,
+  components:/component/, templates:/template/, assets:/asset/, rules:/\brules?\b/, guidance:/guidance|guideline/, cobrand:/co-?brand|partner/,
+  examples:/example/, docds:/word doc|document|report|bfp|tender|prospectus/, slideds:/\bdecks?\b|slides?\b|presentation/, websites:/website|\bsite\b|web/,
+  products:/product|gy os|in the weeds/, campaigns:/campaign/, emails:/e-?mail/, social:/social|linkedin|post/, charts:/chart|map/};
+function namedPage(s){
+  var m = s.match(/\b(?:to|on|in|from)\s+(?:the\s+)?([a-z][a-z \-]+?)(?:\s+page)?\s*$/);
+  var hay = m ? m[1] : s;
+  for(var id in ALIAS){ if(ALIAS[id].test(hay) && id !== 'about') return id; }
+  return null;
+}
+
+/* find a piece of text on a page */
+function eachSlot(p, fn){
+  p.b.forEach(function(b, bi){
+    if(b[0]==='tbl') b[2].forEach(function(r,ri){ r.forEach(function(c,ci){ fn({b:bi,i:null,r:ri,c:ci,k:null}, c); }); });
+    else if(b[0]==='sw') b[1].forEach(function(s,i){ fn({b:bi,i:i,r:null,c:null,k:2}, s[2]); });
+    else if(/^(preview|tokens|used)$/.test(b[0])) return;
+    else if(b[0]==='bul' || b[0]==='q') b[1].forEach(function(t,i){ fn({b:bi,i:i,r:null,c:null,k:null}, t); });
+    else fn({b:bi,i:null,r:null,c:null,k:null}, b[1]);
+  });
+}
+function findText(needle, prefer){
+  var n = needle.toLowerCase(), hit = null;
+  var order = [pg(prefer || CUR)].concat(PAGES.filter(function(p){ return p.id !== (prefer || CUR); }));
+  order.some(function(p){ eachSlot(p, function(L, v){ if(!hit && plain(v).toLowerCase().indexOf(n) > -1) hit = {p:p, L:L, v:v}; }); return !!hit; });
+  return hit;
+}
+function replaceIn(v, a, b){
+  var re = new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'i');
+  if(re.test(v)) return v.replace(re, b);
+  return plain(v).replace(re, b);
+}
+
+/* proposals: the agent never edits on its own, you apply */
+var PROPS = [];
+function propose(p, kind, L, before, after, note){
+  var n = PROPS.length; PROPS.push({p:p.id, kind:kind, L:L, after:after});
+  var h = '<div class="brprop" id="prop'+n+'"><div class="h"><i class="ti ti-pencil"></i><span>'+(note||'Change to')+' <b>'+p.t+'</b></span></div>'
+    + (before !== null ? '<div class="del">'+before+'</div>' : '')
+    + (after !== null ? '<div class="ins">'+after+'</div>' : '')
+    + '<div class="bt"><button class="ap" onclick="applyProp('+n+')">Apply</button><button class="dc" onclick="dropProp('+n+')">Discard</button></div>'
+    + '<div class="ok" id="propok'+n+'"></div></div>';
+  return h;
+}
+function settle(n, msg){
+  var el = document.getElementById('prop'+n); if(el){ el.classList.add('done'); document.getElementById('propok'+n).textContent = msg; }
+  LOG = [].map.call(document.getElementById('chatin').children, function(c){ return c.outerHTML; });
+}
+function applyProp(n){
+  var x = PROPS[n]; if(!x || x.done) return; x.done = 1;
+  if(x.kind === 'tok' || x.kind === 'tokreset'){
+    var why = x.kind === 'tok' ? validateTok(x.L.scope, x.L.key, x.val, GY_BRAND.get()) : '';
+    if(why){ settle(n, 'Not applied: the brand rules changed since'); return; }
+    if(x.kind === 'tok'){ var o = {}; o[x.L.key] = x.val; GY_BRAND.set(x.L.scope, o); } else GY_BRAND.reset(x.L.scope);
+    settle(n, 'Applied. Every Deliverable with '+(x.L.scope === 'doc' ? 'a Word document' : 'slides')+' picks it up.');
+    openPage(SCOPE_PAGE[x.L.scope], true); gyToast(SCOPE_NAME[x.L.scope]+' updated');
+    return;
+  }
+  var p = pg(x.p), L = x.L;
+  if(x.kind === 'set') setAt(p, L, x.after);
+  else if(x.kind === 'add'){ p.b[L.b][1].push(x.after); L = {b:L.b, i:p.b[L.b][1].length-1, r:null, c:null, k:null}; }
+  else if(x.kind === 'addp'){ p.b.splice(L.b, 0, ['p', x.after]); }
+  else if(x.kind === 'del'){ if(L.i !== null && L.k === null) p.b[L.b][1].splice(L.i, 1); else if(L.r !== null) p.b[L.b][2].splice(L.r, 1); else p.b.splice(L.b, 1); L = null; }
+  save(); settle(n, 'Applied');
+  openPage(p.id, true);
+  if(L) setTimeout(function(){ flash(L, p.id); }, 60);
+  gyToast(p.t+' updated');
+}
+function dropProp(n){ var x = PROPS[n]; if(!x || x.done) return; x.done = 1; settle(n, 'Discarded'); }
+
+/* the brand gate, the part of it a script can check */
+var ACR_OK = /^(GY|OS|BNG|WCC|NFM|FCA|GIS|KPI|ELR|CIP|PDF|UK|CEO|CTO|AI|ES|NSIP|LNRS|SEPA|GYOS|ITT|RFP|HM)$/;
+function brandCheck(t){
+  var out = [];
+  if(/\u2014|\s\u2013\s|\s--\s/.test(t)) out.push('Uses an em dash. Use a comma, a colon or a full stop. ('+pageLink('voice')+')');
+  var caps = (t.match(/\b[A-Z]{4,}\b/g) || []).filter(function(w){ return !ACR_OK.test(w); });
+  if(caps.length) out.push('All caps: <b>'+caps.slice(0,3).join(', ')+'</b>. Use sentence case. ('+pageLink('rules')+')');
+  var acr = (t.match(/\b[A-Z]{2,3}s?\b/g) || []).filter(function(w){ return !ACR_OK.test(w.replace(/s$/,'')); });
+  if(acr.length) out.push('Acronym <b>'+acr[0]+'</b>: spell it out the first time. ('+pageLink('vocabulary')+')');
+  if(/manner black/i.test(t)) out.push('Manner Black is never used. Manner 400 or 500. ('+pageLink('identity')+')');
+  if(/cookbook|recipe|restaurant/i.test(t)) out.push('Retired metaphor: no cookbook, recipe or restaurant. ('+pageLink('rules')+')');
+  if(/\bartefacts?\b|\bartifacts?\b/i.test(t)) out.push('“Artefact” is retired. Say Deliverable or Blueprint. ('+pageLink('vocabulary')+')');
+  if(/!/.test(t)) out.push('Exclamation marks read loud. Keep them for culture slides. ('+pageLink('voice')+')');
+  t.split(/(?<=[.!?])\s+/).forEach(function(s){ if(s.split(/\s+/).length > 30) out.push('A sentence of '+s.split(/\s+/).length+' words. Split it. ('+pageLink('voice')+')'); });
+  return out;
+}
+
+function pageSummary(p){
+  var lines = [];
+  p.b.forEach(function(b){ if(b[0]==='p'||b[0]==='callout') lines.push(plain(b[1]).split(/(?<=\.)\s/)[0]); else if(b[0]==='bul') lines = lines.concat(b[1].slice(0,3).map(plain)); else if(b[0]==='tbl') lines.push(b[2].length+' rows: '+b[2].map(function(r){ return plain(r[0]); }).join(', ')); else if(b[0]==='sw') lines.push(b[1].length+' colours: '+b[1].map(function(x){ return x[0]; }).join(', ')); });
+  return '<b>'+p.t+'</b> in short:<ul class="gya">'+lines.slice(0,5).map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul><span class="gysrc">From '+pageLink(p.id)+'</span>';
+}
+function answer(raw){
+  var s = raw.toLowerCase().trim(), p = pg(CUR), m;
+
+  /* open a page */
+  if((m = s.match(/^(?:open|show|go to|take me to|show me)\s+(?:the\s+)?(.+?)(?:\s+page)?$/))){
+    var id = null; for(var k in ALIAS){ if(ALIAS[k].test(m[1])){ id = k; break; } }
+    if(id){ openPage(id); return 'Here is '+pageLink(id)+'.'; }
+  }
+  /* check a sentence against the rules */
+  if((m = raw.match(/^\s*(?:check|review|brand ?check|gate)\b[:\s]*(.+)$/i)) && m[1].trim().length > 3){
+    var f = brandCheck(m[1]);
+    return f.length ? 'Against the brand rules:<ul class="gya">'+f.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>'
+      : 'Passes the rules I can check. Voice and fit still need a person’s eye.<span class="gysrc">From '+pageLink('rules')+'</span>';
+  }
+  /* layouts: design system tokens for Word documents and slides */
+  var ti = tokenIntent(raw); if(ti) return ti;
+  /* change X to Y */
+  if((m = raw.match(/^\s*(?:change|replace|swap)\s+["“']?(.+?)["”']?\s+(?:to|with|for)\s+["“']?(.+?)["”']?\s*\.?$/i))){
+    if(/^(strategy|positioning)$/.test(p.id) && !namedPage(s)) return 'I read Strategy and Positioning from company strategy and never change them. The strategy owner can.';
+    var hit = findText(m[1]);
+    if(!hit) return 'I cannot find “'+esc(m[1])+'” in the brand book.';
+    if(/^(strategy|positioning)$/.test(hit.p.id)) return 'That is on '+pageLink(hit.p.id)+', which I read from company strategy and never change.';
+    if(hit.p.id !== CUR) openPage(hit.p.id);
+    var nv = replaceIn(hit.v, m[1], esc(m[2]));
+    return propose(hit.p, 'set', hit.L, hit.v, nv);
+  }
+  /* remove a line */
+  if((m = raw.match(/^\s*(?:remove|delete|drop)\s+(?:the\s+)?(?:line\s+|bullet\s+|row\s+)?(?:about\s+|with\s+|saying\s+)?["“']?(.+?)["”']?\s*\.?$/i))){
+    var h2 = findText(m[1]);
+    if(!h2) return 'I cannot find “'+esc(m[1])+'” in the brand book.';
+    if(/^(strategy|positioning)$/.test(h2.p.id)) return 'That is on '+pageLink(h2.p.id)+', which I read from company strategy and never change.';
+    if(h2.p.id !== CUR) openPage(h2.p.id);
+    var before = h2.L.r !== null ? h2.p.b[h2.L.b][2][h2.L.r].join(' · ') : h2.v;
+    return propose(h2.p, 'del', h2.L, before, null, 'Remove from');
+  }
+  /* add a line */
+  if((m = raw.match(/^\s*(?:add|append|include)\b[:\s]*(?:a\s+(?:line|rule|bullet)\s*)?[:\s]*(.+)$/i)) && m[1].trim().length > 3){
+    var text = m[1].trim(), tid = CUR;
+    var to = text.match(/^(.+?)\s+(?:to|on)\s+(?:the\s+)?([a-z][a-z \-]+?)(?:\s+page)?\s*\.?$/i);
+    if(to){ for(var k2 in ALIAS){ if(ALIAS[k2].test(to[2].toLowerCase()) && k2 !== 'about'){ tid = k2; text = to[1]; break; } } }
+    text = text.replace(/^["“']|["”']$/g,'').replace(/\s*\.$/,'');
+    text = esc(text.charAt(0).toUpperCase() + text.slice(1)) + '.';
+    var tp = pg(tid);
+    if(/^(strategy|positioning)$/.test(tid)) return 'I read '+tp.t+' from company strategy and never change it. The strategy owner can.';
+    if(tid !== CUR) openPage(tid);
+    var flags = brandCheck(text);
+    var bi = -1; tp.b.forEach(function(b,i){ if(b[0]==='bul') bi = i; });
+    var head = flags.length ? 'Before you apply: '+flags[0]+'<br><br>' : '';
+    if(bi > -1) return head + propose(tp, 'add', {b:bi,i:null,r:null,c:null,k:null}, null, text, 'Add to');
+    var at = tp.b.length; if(tp.b[at-1] && tp.b[at-1][0]==='src') at--;
+    return head + propose(tp, 'addp', {b:at,i:null,r:null,c:null,k:null}, null, text, 'Add to');
+  }
+  /* summarise */
+  if(/summar|tl;?dr|in short|gist/.test(s)) return pageSummary(p);
+  /* about the agent */
+  if(/who (manages|owns|runs)|manager|\bowner\b|sign(s)? off/.test(s))
+    return 'No manager yet. Whoever owns the brand book manages me and approves every change I propose. It is the first open question on '+pageLink('about')+'.';
+  if(/\b(jobs?|what do you do|what can you do|help|purpose)\b/.test(s)){
+    var jt = pg('about').b.filter(function(b){ return b[0]==='tbl'; })[0];
+    return 'My jobs:<ul class="gya">'+jt[2].map(function(r){ return '<li><b>'+plain(r[0])+'</b>: '+plain(r[1]).charAt(0).toLowerCase()+plain(r[1]).slice(1)+'</li>'; }).join('')+'</ul>'
+      + '<span class="gysrc">To edit: “add ... to Voice”, “change X to Y”, “remove ...”. From '+pageLink('about')+'</span>';
+  }
+  if(/\b(open|unsure|undecided|still open|questions?)\b/.test(s)){
+    var qs = [];
+    PAGES.forEach(function(pp){ pp.b.forEach(function(b){ if(b[0]==='q') b[1].forEach(function(x){ qs.push(plain(x)+' <span class="gysrc" style="display:inline;margin:0">'+pageLink(pp.id)+'</span>'); }); }); });
+    return 'Still open across the brand book:<ul class="gya">'+qs.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>';
+  }
+  /* otherwise: search the book */
+  var words = s.replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(function(w){ return w.length > 3 && !/^(what|which|when|where|does|should|could|would|about|there|their|with|that|this|have|from|they|your|how|tell|show|give|our)$/.test(w); });
+  var best = null;
+  PAGES.forEach(function(pp){
+    eachSlot(pp, function(L, v){
+      var t = ' '+plain(v).toLowerCase()+' ', sc = 0;
+      words.forEach(function(w){ var stem = w.replace(/(ies|es|s|ing|ed)$/,''); if(new RegExp('\\b'+w+'\\b').test(t)) sc += 2; else if(stem.length > 4 && new RegExp('\\b'+stem).test(t)) sc += 1; });
+      if(sc > 0 && (!best || sc > best.sc)) best = {sc:sc, p:pp, v:v, L:L};
+    });
+  });
+  var named = null; for(var a in ALIAS){ if(a !== 'about' && ALIAS[a].test(s)){ named = a; break; } }
+  if(best && best.sc >= 3 || best && best.sc >= 2 && !named){
+    var row = best.L.r !== null ? best.p.b[best.L.b][2][best.L.r].map(plain).join(' \u00b7 ') : plain(best.v);
+    return row + '<span class="gysrc">From '+pageLink(best.p.id)+'</span>';
+  }
+  if(named){ openPage(named); return pageSummary(pg(named)); }
+  return 'That is not in the brand book yet. Add it as an open question for the brand owner?' + chips(['Add a line to this page:']);
+}
+function sendMsg(){
+  var inp = document.getElementById('ask'), v = (inp.value||'').trim(); if(!v) return;
+  inp.value = ''; LOG.push(you(esc(v)));
+  LOG.push(say('<span class="gydots"><i></i><i></i><i></i></span>')); paintChat();
+  setTimeout(function(){
+    LOG.pop();
+    LOG = LOG.filter(function(x){ return x.indexOf('<div class="gyq"') !== 0; });
+    var a = answer(v);
+    LOG.push(say(a));
+    if(!/class="gyq"/.test(a)) LOG.push(chips(CUR === 'slideds' ? ['Make slide headings Blue','Key message background Blue','Hide slide numbers','Reset slides'] : CUR === 'docds' ? ['Make document headings Blue','Align the document cover left','Body size 13 in documents','Reset Word documents'] : DEFAULT_CHIPS));
+    paintChat();
+  }, 450);
+}
+function gyAsk(q){ document.getElementById('ask').value = q; sendMsg(); }
+
+/* chat width, shared with the Deliverable pages */
+var CHAT_MIN = 340, CHAT_MAX = 680;
+(function(){
+  var w = 0;
+  try{ w = parseInt(localStorage.getItem('gyChatW8') || '', 10) || 0; }catch(e){}
+  if(w) document.body.style.setProperty('--chatw', Math.max(CHAT_MIN, Math.min(CHAT_MAX, w)) + 'px');
+  var grip = document.getElementById('chatgrip'), chat = document.querySelector('.v5chat');
+  if(!grip || !chat) return;
+  grip.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    var x0 = e.clientX, w0 = chat.getBoundingClientRect().width;
+    document.body.classList.add('dragging'); grip.setPointerCapture(e.pointerId);
+    function move(ev){
+      var room = document.querySelector('.v5row').getBoundingClientRect().width - 420;
+      document.body.style.setProperty('--chatw', Math.round(Math.max(CHAT_MIN, Math.min(Math.min(CHAT_MAX, room), w0 + (ev.clientX - x0)))) + 'px');
+    }
+    function up(){
+      grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up);
+      document.body.classList.remove('dragging');
+      try{ localStorage.setItem('gyChatW8', String(Math.round(chat.getBoundingClientRect().width))); }catch(e){}
+    }
+    grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up);
+  });
+})();
+
+paintTabs(); openTab(TAB, true); paintChat(); if(CUR !== groupPages(TAB)[0].id) setTimeout(function(){ setJump('pg-'+CUR); }, 60);
+(function(){
+  var q = location.search;
+  if(/[?&]chat=1/.test(q)){ document.body.classList.remove('pclosed'); paintTabs(); setTimeout(function(){ document.getElementById('ask').focus(); }, 50); }
+  var m = q.match(/[?&]ask=([^&]+)/); if(m) setTimeout(function(){ gyAsk(decodeURIComponent(m[1].replace(/\+/g,' '))); }, 200);
+})();
+</script>
+</body>
+</html>

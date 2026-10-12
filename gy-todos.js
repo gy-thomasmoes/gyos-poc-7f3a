@@ -22,7 +22,7 @@
     {k:'sdm-ev', name:'Customer Demand', full:'Customer Demand Mapping', prog:'Evenlode',
      ic:'ti-checkup-list', bg:'var(--tealbg)',  fg:'var(--teald)',  href:'deliverable-sketch-v8.html'},
     {k:'iqa-ev', name:'Investor Q&A',    full:'Investor Q&A pack',      prog:'Evenlode',
-     ic:'ti-checkup-list', bg:'var(--bluebg)',  fg:'var(--blued)',  href:'investor-qa-pack-example.html'},
+     ic:'ti-checkup-list', bg:'var(--bluebg)',  fg:'var(--blued)',  href:null},
     {k:'fm-ev',  name:'Financial model', full:'ELR investment model',  prog:'Evenlode',
      ic:'ti-table',        bg:'var(--greenbg)', fg:'var(--greend)', href:'financial-model-v8.html'},
     {k:'sdm-sh', name:'Customer Demand', full:'Customer Demand Mapping', prog:'Spains Hall',
