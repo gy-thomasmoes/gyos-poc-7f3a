@@ -105,12 +105,13 @@ pre.code .c{color:#8A7F76}
 .prh{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:26px 0 0}
 .prh + .rules{margin-top:10px}
 </style>
+<script src="gy-brand.js?v=4266a1fb"></script>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active":"none"};</script>
-<script src="gy-nav.js?v=60372a4e"></script>
+<script src="gy-nav.js?v=88c18503"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-inventory.js?v=358d8962"></script>
 
@@ -134,6 +135,7 @@ pre.code .c{color:#8A7F76}
     <a href="#type">Typography</a>
     <a href="#layout">Layout</a>
     <a href="#layers">Layers</a>
+    <a href="#brand">Brand tokens</a>
     <a href="#buttons">Buttons</a>
     <a href="#actionbar">Action bar</a>
     <a href="#filters">Filters</a>
@@ -149,6 +151,7 @@ pre.code .c{color:#8A7F76}
     <a href="#pills">Pills</a>
     <a href="#drawer">Drawer</a>
     <a href="#sidebar">Sidebar</a>
+    <a href="#crumbs">Breadcrumbs</a>
     <a href="#empty">Empty states</a>
     <a href="#principles">Principles</a>
     <a href="#rules">Rules</a>
@@ -278,6 +281,26 @@ pre.code .c{color:#8A7F76}
 </section>
 
 <!-- ══ COMPONENTS ═══════════════════════════════════════════════════ -->
+<section class="dsect" id="brand">
+  <h2>Brand tokens</h2>
+  <div class="comp">
+    <h3>Word documents and slides <code>gy-brand.js / GY_BRAND</code></h3>
+    <p class="lead">The Brand agent owns these. Every report and deck Deliverable loads the file and restyles itself from them, live, including tabs that are already open.</p>
+    <div class="demo col">
+      <div class="swatches" id="swDoc"></div>
+      <div class="swatches" id="swSlides" style="margin-top:12px"></div>
+    </div>
+    <div class="spec"><table>
+      <tr><th>Word</th><td><code>--gyd-hf</code> heading font, <code>--gyd-hw</code> weight, <code>--gyd-hc</code> heading colour, <code>--gyd-sub</code> subheadings, <code>--gyd-body</code> body colour, <code>--gyd-size</code> body size, <code>--gyd-th</code> table header fill; switches <code>data-gyd-cover</code>, <code>data-gyd-logo</code>, <code>data-gyd-pno</code> on <code>&lt;html&gt;</code>. Applied to <code>.cspg:not(.nsl)</code>.</td></tr>
+      <tr><th>Slides</th><td><code>--gys-hf</code>, <code>--gys-hw</code>, <code>--gys-hc</code>, <code>--gys-size</code>, <code>--gys-bar</code> top bar (chapter colour or fixed), <code>--gys-keybg</code> and <code>--gys-keytx</code> key message, <code>--gys-hl</code> highlight, <code>--gys-wash</code> cover wash; switches <code>data-gys-bar</code>, <code>data-gys-logo</code>, <code>data-gys-pno</code>. Applied to <code>.cspg.nsl</code>.</td></tr>
+      <tr><th>API</th><td><code>GY_BRAND.get()</code>, <code>set(scope, patch)</code>, <code>reset(scope)</code>, <code>apply()</code>, <code>contrast(a, b)</code>. Stored in <code>localStorage('gyBrandTokens.v1')</code>: per browser, not shared between people yet.</td></tr>
+      <tr><th>Loading</th><td>A script tag before <code>&lt;/head&gt;</code> on every page that renders <code>.cspg</code> pages or slides: commercial-strategy-v8, catchment-investment-plan-v8, natcap-101-v8, agent-brand. A new report or deck page adds the same tag.</td></tr>
+      <tr><th>Refused</th><td>The Brand agent refuses a heading weight of 600 or more (no Manner Black), text under 4.5:1 on its ground, and yellow text on a light ground.</td></tr>
+      <tr><th>Flag</th><td class="no">The default key message pair, cream <code>#FEFAEC</code> on green <code>#628147</code>, is 4.23:1: under the agent's own 4.5:1 rule at the slide's 10.5px labels.</td></tr>
+    </table></div>
+  </div>
+</section>
+
 <section class="dsect" id="buttons">
   <h2>Buttons</h2>
   <div class="comp">
@@ -318,7 +341,7 @@ pre.code .c{color:#8A7F76}
     <div class="spec"><table>
       <tr><th>Order</th><td>Fixed and not negotiable: <b>Search, Filters, page buttons, Actions, primary</b>. A page cannot reorder it, which is what keeps twenty pages recognisable.</td></tr>
       <tr><th>Search</th><td>With a placeholder it inserts its own field under <code>.phead</code>; with <code>onclick</code> it just calls that, for a page whose search is a drawer.</td></tr>
-      <tr><th>Buttons</th><td>Page tools that are neither a filter nor a write action, such as Settings or Find units for buyer.</td></tr>
+      <tr><th>Buttons</th><td>Page tools that are neither a filter nor a write action, such as Settings or Find units for buyer. Give one an <code>id</code> and it carries it, so the page can show or hide its own button without rebuilding the bar.</td></tr>
       <tr><th>Actions</th><td>Single-shot write operations on this object, opened as a <code>gyMenu</code>. Never a read tool.</td></tr>
       <tr><th>Primary</th><td>The one dark button. Usually Add.</td></tr>
       <tr><th>Returns</th><td><code>{filter, pop, clear(), set(group,value)}</code>, so a stat card can drive a filter without poking the DOM.</td></tr>
@@ -611,6 +634,27 @@ host.innerHTML = <span class="k">gySelBar</span>(n, [
       <tr><th>Tooltip</th><td>Dark, to the right of the rail, one line. Set by <code>data-rtip</code>, never <code>data-tip</code>, which would fire the shared tooltip layer as well.</td></tr>
       <tr><th>Memory</th><td><code>localStorage('gyRail')</code> carries the choice across pages.</td></tr>
       <tr><th>Default on</th><td>A page with <code>GYNAV.rail:true</code> always opens on the rail and leaves the global choice alone. Deliverable pages use it.</td></tr>
+      <tr><th>Personal</th><td>Home only, above the workspace switch. To-dos left the rail on 9 Oct 2026; the page and Home's To-dos block remain.</td></tr>
+      <tr><th>View menu</th><td>From the user row: North Star or Simple version, then Product updates and Design system.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="dsect" id="crumbs">
+  <h2>Breadcrumbs</h2>
+  <div class="comp">
+    <h3>Levels inside a page <code>gyCrumbLevels(levels, backToTop)</code></h3>
+    <p class="lead">A page with its own tree inside it, such as Documents and its folders, extends the topbar's trail instead of drawing a second path in the page. The buttons drive this page's own topbar.</p>
+    <div class="demo">
+      <button class="btn-out" onclick="dsCrumbDemo()"><i class="ti ti-folder"></i> Open a folder</button>
+      <button class="btn-out" onclick="gyCrumbLevels([])"><i class="ti ti-arrow-back-up"></i> Back to the page</button>
+    </div>
+    <pre class="code"><span class="k">gyCrumbLevels</span>([[<span class="s">'Programme-wide'</span>, openGroup], [<span class="s">'Strategy'</span>]], backToTop);
+<span class="k">gyCrumbLevels</span>([]);   <span class="c">// the plain trail again</span></pre>
+    <div class="spec"><table>
+      <tr><th>Trail</th><td>Ancestors come from the <code>GY_CRUMB</code> table in gy-nav.js, never hand-written. Levels follow the page's own crumb as <code>.cr.gycr-x</code>.</td></tr>
+      <tr><th>States</th><td>Every level but the last is clickable; the last is the current one at 600. While levels show, the page's own crumb (<code>.gycr-base</code>) loses <code>cur</code> and runs <code>backToTop</code> when clicked.</td></tr>
+      <tr><th>Never</th><td class="no">A second breadcrumb or a path row under the page header.</td></tr>
     </table></div>
   </div>
 </section>
@@ -750,6 +794,12 @@ document.getElementById('swStatus').innerHTML =
    ['Blue','--blue'],['Blue bg','--bluebg'],['Blue ink','--blued'],
    ['Current','--cur'],['Current bg','--curbg'],['Current row','--currow'],
    ['Dark','--dark'],['Yellow','--yellow']].map(function(r){ return swatch(r[0],r[1]); }).join('');
+
+document.getElementById('swDoc').innerHTML =
+  [['Doc heading','--gyd-hc'],['Doc subheading','--gyd-sub'],['Doc body','--gyd-body'],['Doc table head','--gyd-th']].map(function(r){ return swatch(r[0],r[1]); }).join('');
+document.getElementById('swSlides').innerHTML =
+  [['Slide heading','--gys-hc'],['Key message','--gys-keybg'],['Key text','--gys-keytx'],['Highlight','--gys-hl'],['Cover wash','--gys-wash']].map(function(r){ return swatch(r[0],r[1]); }).join('');
+function dsCrumbDemo(){ gyCrumbLevels([['Programme-wide', function(){ gyCrumbLevels([['Programme-wide']], function(){ gyCrumbLevels([]); }); }], ['Strategy']], function(){ gyCrumbLevels([]); }); }
 
 document.getElementById('swEs').innerHTML = Object.keys(GY_ES).map(function(k){
   var e=GY_ES[k];

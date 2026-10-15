@@ -157,6 +157,8 @@ window.gyCartoTiles = function(style){
     +'<div class="sitem'+on('pf-deliverables')+'"'+(active==='pf-deliverables'?'':' onclick="location.href=\'deliverables-portfolio.html\'"')+'><i class="ti ti-hierarchy-2"></i> Deliverables</div>'
     +'<div class="gy-grp">Intelligence</div>'
     +ITEM_MARKETMAP
+    +'<div class="gy-grp">Company</div>'
+    +'<div class="sitem'+on('pf-okrs')+'"'+(active==='pf-okrs'?'':' onclick="location.href=\'okrs.html\'"')+'><i class="ti ti-target-arrow"></i> OKRs</div>'
     +RECORDS;
   }
   function scopeMeta(s){
@@ -186,7 +188,7 @@ window.gyCartoTiles = function(style){
   var mode = 'advanced';
   try{ mode = localStorage.getItem('gyMode') || 'advanced'; }catch(e){}
   var invActive = (active && active.indexOf('inv-')===0) || active==='pf-inventory';
-  if(cfg.scope==='portfolio' || active==='market-map' || active==='outcome-engine' || active==='pf-overview' || active==='pf-reports' || active==='pf-deliverables' || invActive) scope='portfolio';
+  if(cfg.scope==='portfolio' || active==='market-map' || active==='outcome-engine' || active==='pf-overview' || active==='pf-reports' || active==='pf-deliverables' || active==='pf-okrs' || invActive) scope='portfolio';
   else if(cfg.scope==='programme') scope='programme';
   else if(active && active!=='library' && active!=='home' && active!=='inbox' && scope==='portfolio') scope='programme';
   var meta = scopeMeta(scope);
@@ -871,6 +873,7 @@ window.gyCartoTiles = function(style){
     ['Go to','ti-note','Meeting notes','Page','go:meeting-notes.html'],
     ['Go to','ti-activity','Activity','Page','go:activity-overview.html'],
     ['Go to','ti-map-2','Market Map (Kwame)','Page','go:market-map-kwame.html'],
+    ['Go to','ti-target-arrow','OKRs','Page','go:okrs.html'],
     ['Go to','ti-books','Hive Mind','Page','go:hive-mind-v2.html'],
     ['Go to','ti-plug','Connectors','Settings','go:settings-connectors.html'],
 
@@ -1125,6 +1128,7 @@ window.gyCartoTiles = function(style){
     'review-deals.html':                {alt:'portfolio', trail:['Deals']},
     'audit-log.html':                   {alt:'portfolio'},
     'market-map-kwame.html':            {alt:'portfolio', trail:['Intelligence']},
+    'okrs.html':                        {alt:'portfolio', trail:['Company']},
 
     'programme-overview.html':          {alt:'programme'},
     'inventory-overview.html':          {alt:'programme'},
