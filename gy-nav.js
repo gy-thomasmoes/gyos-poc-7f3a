@@ -1091,6 +1091,7 @@ window.gyCartoTiles = function(style){
     'Meeting notes':'meeting-notes.html',
     'Hive Mind':'hive-mind-v2.html',
     'Agents':'hive-mind-v2.html',
+    'Blueprints':'hive-mind-v2.html',
     'Rule books':'es-press-shelf.html',
     'Great Yellow Press':'es-press-shelf.html',
     'Buyer personas':'hive-mind-library.html#personas'
@@ -1114,6 +1115,7 @@ window.gyCartoTiles = function(style){
     'agent-peatland-carbon.html':        {alt:'none', trail:['Hive Mind','Agents']},
     'agent-nutrient.html':               {alt:'none', trail:['Hive Mind','Agents']},
     'agent-flood.html':                  {alt:'none', trail:['Hive Mind','Agents']},
+    'blueprint.html':                    {alt:'none', trail:['Hive Mind','Blueprints']},
     'agent-brand.html':                  {alt:'none', trail:['Hive Mind','Agents']},
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind','Rule books']},
     'es-rulebook.html':                 {alt:'none', trail:['Hive Mind','Rule books']},

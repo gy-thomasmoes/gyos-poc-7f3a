@@ -152,10 +152,8 @@
 .cv .escover{width:100%;display:block;border-radius:2px;box-shadow:0 1px 2px rgba(31,31,29,.10),0 6px 16px rgba(31,31,29,.14);transition:transform .16s}
 .cv:hover .escover{transform:translateY(-3px)}
 .cv span{display:block;font-size:12.5px;line-height:1.3;margin-top:9px;color:var(--ink2)}
-.covtwo{display:grid;grid-template-columns:8fr 9fr;gap:40px}
-.covtwo .covers.c8{grid-template-columns:repeat(4,1fr)}
-.covtwo .covers.c9{grid-template-columns:repeat(5,1fr)}
-@media(max-width:980px){.covtwo{grid-template-columns:1fr}}
+#v-overview > .blk:first-child{margin-top:24px}
+.covone{display:grid;grid-template-columns:1fr;gap:40px}
 
 /* reads from */
 .reads{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
@@ -212,7 +210,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"library","arts":null};</script>
-<script src="gy-nav.js?v=f1473364"></script>
+<script src="gy-nav.js?v=74b786ff"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -224,14 +222,6 @@
   <div class="phead">
     <div class="h1">Hive Mind</div>
   </div>
-
-  <nav class="tabs" id="tabs">
-    <button class="tab on" data-v="overview">Overview</button>
-    <button class="tab" data-v="review">Review <span class="tc need" id="tcRev"></span></button>
-    <button class="tab" data-v="library">Library <span class="tc" id="tcLib"></span></button>
-    <button class="tab" data-v="rules">Rules</button>
-    <button class="tab" data-v="activity">Activity</button>
-  </nav>
 
   <!-- ── Overview ── -->
   <section class="view on" id="v-overview">
@@ -245,26 +235,16 @@
     </div>
 
     <div class="blk">
-      <div class="sh"><h2>Needs review</h2><span class="n" id="revN"></span><span class="act" onclick="showTab('review')">All reviews</span></div>
-      <div class="acc" id="acc"></div>
-    </div>
-
-    <div class="blk">
-      <div class="sh"><h2>Shelves</h2><span class="act" onclick="showTab('library')">Library</span></div>
-      <div class="shelves" id="shelves"></div>
-    </div>
-
-    <div class="blk">
-      <div class="sh"><h2>Agents</h2><span class="n" id="agN"></span><span class="act" onclick="openShelf('agents')">All agent definitions</span></div>
+      <div class="sh"><h2>Agents</h2><span class="n" id="agN"></span></div>
       <div id="agents"></div>
     </div>
 
     <div class="blk">
-      <div class="sh"><h2>Blueprints</h2><span class="n" id="bpN"></span><span class="act" onclick="openShelf('blueprints')">All blueprints</span></div>
+      <div class="sh"><h2>Deliverables</h2><span class="n" id="bpN"></span></div>
       <div id="blueprints"></div>
     </div>
 
-    <div class="blk covtwo">
+    <div class="blk covone">
       <div>
         <div class="sh"><h2>Rule books</h2><span class="n">8</span></div>
         <div class="covers c8" id="books"></div>
@@ -275,38 +255,8 @@
       </div>
     </div>
 
-    <div class="blk">
-      <div class="sh"><h2>Reads from</h2><span class="act" onclick="location.href='settings-connectors.html'">Connectors</span></div>
-      <div class="reads" id="reads"></div>
-    </div>
-
   </section>
 
-  <!-- ── Activity ── -->
-  <section class="view" id="v-activity"><div class="log" id="log"></div></section>
-
-  <!-- ── Review ── -->
-  <section class="view" id="v-review"><div id="reviewGroups"></div></section>
-
-  <!-- ── Library ── -->
-  <section class="view" id="v-library">
-    <div class="gylegend gyhd" style="background:none;padding:0 21px 10px;--cols:minmax(0,2.4fr) 1.1fr 1.3fr 1fr 70px 70px">
-      <span>Name</span><span>Shelf</span><span>Owner</span><span>Status</span><span class="num">Used by</span><span class="num">Checked</span>
-    </div>
-    <div class="gytbl" id="lib" style="--cols:minmax(0,2.4fr) 1.1fr 1.3fr 1fr 70px 70px"></div>
-  </section>
-
-  <!-- ── Rules ── -->
-  <section class="view" id="v-rules">
-    <div class="blk">
-      <div class="sh"><h2>What it owns, what it reads</h2></div>
-      <div class="gytbl" id="truth" style="--cols:minmax(0,1.4fr) 1.3fr 1.6fr"></div>
-    </div>
-    <div class="blk">
-      <div class="sh"><h2>House rules</h2></div>
-      <div class="gytbl" id="hrules" style="--cols:minmax(0,1.6fr) 1.4fr 1fr"></div>
-    </div>
-  </section>
 </div>
 </div>
 </div>
@@ -326,7 +276,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 /* ── people ── */
 var PEOPLE={
  CC:'Caitlin Ciceri', EM:'Emily', AL:'Alex', SO:'Solene', JF:'Josh Fettes', AS:'Asha', HF:'Harry Forman',
- CR:'Charlie Regent', AN:'Andrew, to confirm', CT:'Cat', MI:'Millie', EH:'Ed Hewitt', TO:'Toon'
+ CR:'Charlie Regent', AN:'Andrew, to confirm', CT:'Cat', MI:'Millie', EH:'Ed Hewitt', TO:'Toon', AM:'Al Maltby', AR:'Archie Ruggles-Brise'
 };
 var ME='CC';
 function who(k){
@@ -364,8 +314,8 @@ var ITEMS=[
  {id:'ag-wcc',     n:'Woodland Carbon agent definition v0.1',s:'agents',    o:'SO', st:'draft', u:3, d:'3 Oct',  src:'Agents folder', go:'agent-woodland-carbon.html', about:'The holistic source of truth for woodland carbon. Rule books are only an input. Reads numbers from Databricks, never copies them.', by:['Customer Demand Mapping','Financial Model','Blended Finance Plan']},
  {id:'ag-bp',      n:'Blueprint agent definition v0.1',      s:'agents',    o:'AN', st:'draft', u:3, d:'8 Oct',  src:'Agents folder', go:'agent-blueprint.html', about:'Writes and maintains Blueprints: drafts them from workshops, then proposes changes from Deliverable runs. The Blueprint owner signs off every version.', by:['Customer Demand Mapping','Investor Q&A Log','Tender to Bid']},
  {id:'ag-brand',   n:'Brand agent definition v0.1',          s:'agents',    o:null, st:'draft', u:4, d:'9 Oct',  src:'Agents folder', go:'agent-brand.html', about:'Keeps GY\u2019s brand book and applies it to every output: documents, decks, emails, websites and GY OS. Proposes changes; the brand owner approves.', by:['Every Blueprint']},
- {id:'bp-dm',      n:'Customer Demand Mapping',              s:'blueprints',o:'EM', st:'ok',    u:5, d:'26 Sep', src:'Blueprint schema', about:'Steps, gates, tools allowed and the done-when for a demand map. Five live runs.', by:['Upper Dee','Evenlode','Denton Reserve']},
- {id:'bp-iqa',     n:'Investor Q&A Log',                     s:'blueprints',o:'TBC',st:'draft', u:3, d:'2 Oct',  src:'Blueprint schema', about:'Canonical answers to investor questions, reused across raises.', by:['Evenlode']},
+ {id:'bp-dm',      n:'Customer Demand Mapping',              s:'blueprints',o:'EM', st:'ok',    u:5, d:'26 Sep', src:'Blueprint schema', go:'agent-demand-mapping.html?tab=workflow', about:'Steps, gates, tools allowed and the done-when for a demand map. Five live runs.', by:['Upper Dee','Evenlode','Denton Reserve']},
+ {id:'bp-iqa',     n:'Investor Q&A Log',                     s:'blueprints',o:'TBC',st:'draft', u:3, d:'2 Oct',  src:'Blueprint schema', go:'blueprint.html?bp=iqa', about:'Canonical answers to investor questions, reused across raises.', by:['Evenlode']},
  {id:'sk-card',    n:'Fill an ES Card',                      s:'skills',    o:'CT', st:'ok',    u:6, d:'30 Sep', src:'Skills library', about:'Fills one Ecosystem Service Card with confidence and a source per field. Flags gaps, never guesses.', by:['All ES agents']},
  {id:'sk-q',       n:'Extract questionnaire from client docs',s:'skills',   o:'CT', st:'ok',    u:2, d:'22 Sep', src:'Skills library', about:'Reads what the client sent and lists what is still missing.', by:['Demand Mapping agent','Tender to Bid']},
  {id:'sk-desk',    n:'Desk research',                        s:'skills',    o:'HF', st:'ok',    u:4, d:'15 Sep', src:'Skills library', about:'Searches public sources on a site and its market, with links kept.', by:['Demand Mapping agent','All ES agents']},
@@ -380,8 +330,8 @@ var ITEMS=[
  {id:'cx-pb',      n:'Buyer personas, BNG',                  s:'context',   o:'MI', st:'ok',    u:3, d:'29 Sep', src:'Notion', about:'Ecology firms, planning firms, promoters and housebuilders.', by:['BNG agent','Tender to Bid']},
  {id:'cx-sector',  n:'Sector profiles',                      s:'context',   o:'AL', st:'bad',   u:2, d:'19 Jun', src:'Trade research', about:'Water, infrastructure, retail and finance, with their drivers to buy.', by:['Demand Mapping agent','Tender to Bid']},
  {id:'cx-mp',      n:'Masterplan v2',                        s:'context',   o:'EH', st:'ok',    u:0, d:'29 Apr', src:'Notion', about:'Why GY exists, how it works, the roadmap.', by:[]},
- {id:'sb-mr',      n:'Market Readiness',                     s:'sandbox',   o:'AL', st:'draft', u:0, d:'30 Sep', src:'Blueprint draft, 0 runs', about:'The NatWest report as a recurring deliverable. Promoted after three successful runs.', by:[]},
- {id:'sb-tb',      n:'Tender to Bid',                        s:'sandbox',   o:'AL', st:'draft', u:0, d:'27 Sep', src:'Blueprint draft, 1 run', about:'Turns a tender into a bid with a go or no-go.', by:[]}
+ {id:'sb-mr',      n:'Market Readiness',                     s:'sandbox',   o:'AL', st:'draft', u:0, d:'30 Sep', src:'Blueprint draft, 0 runs', go:'blueprint.html?bp=mra', about:'The NatWest report as a recurring deliverable. Promoted after three successful runs.', by:[]},
+ {id:'sb-tb',      n:'Tender to Bid',                        s:'sandbox',   o:'AL', st:'draft', u:0, d:'27 Sep', src:'Blueprint draft, 1 run', go:'blueprint.html?bp=bid', about:'Turns a tender into a bid with a go or no-go.', by:[]}
 ];
 function item(id){return ITEMS.filter(function(x){return x.id===id})[0]}
 var STL={ok:'Checked',draft:'Draft',bad:'Out of date'};
@@ -424,24 +374,27 @@ var REVIEW=[
 /* ── agents ── */
 var AGENTS=[
  {n:'Demand Mapping',  type:'Coordinator', o:'EM', items:24, st:'draft', i:'ti-target-arrow', c:'#8A6A2A', ref:'ag-dm', go:'agent-demand-mapping.html'},
- {n:'Woodland Carbon', type:'Ecosystem service', o:'SO', items:31, st:'draft', es:'wcc', ref:'ag-wcc', go:'agent-woodland-carbon.html'},
- {n:'BNG',             type:'Ecosystem service', o:'EM', items:18, st:'plan', es:'bng', go:'agent-bng.html'},
- {n:'Peatland Carbon', type:'Ecosystem service', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat', go:'agent-peatland-carbon.html'},
- {n:'Nutrient',        type:'Ecosystem service', o:'TBC',items:9,  st:'plan', es:'nut', go:'agent-nutrient.html'},
- {n:'Flood',           type:'Ecosystem service', o:null, items:4,  st:'plan', es:'nfm', go:'agent-flood.html'},
- {n:'Blueprint',       type:'Process', o:'AN', items:8,  st:'draft', i:'ti-route', c:'#8A6A2A', go:'agent-blueprint.html'},
- {n:'Brand',           type:'Company-wide', o:null, items:24, st:'draft', i:'ti-palette', c:'#8A6A2A', ref:'ag-brand', go:'agent-brand.html'}
+ {n:'Woodland Carbon', type:'Expert', o:'SO', items:31, st:'draft', es:'wcc', ref:'ag-wcc', go:'agent-woodland-carbon.html'},
+ {n:'BNG',             type:'Expert', o:'EM', items:18, st:'plan', es:'bng', go:'agent-bng.html'},
+ {n:'Peatland Carbon', type:'Expert', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat', go:'agent-peatland-carbon.html'},
+ {n:'Nutrient',        type:'Expert', o:'TBC',items:9,  st:'plan', es:'nut', go:'agent-nutrient.html'},
+ {n:'Flood',           type:'Expert', o:null, items:4,  st:'plan', es:'nfm', go:'agent-flood.html'},
+ {n:'Blueprint',       type:'Coordinator', o:'AN', items:8,  st:'draft', i:'ti-route', c:'#8A6A2A', go:'agent-blueprint.html'},
+ {n:'Brand',           type:'Coordinator', o:null, items:24, st:'draft', i:'ti-palette', c:'#8A6A2A', ref:'ag-brand', go:'agent-brand.html'}
 ];
 var AST={live:['live','Live'],draft:['draft','Draft'],plan:['plan','Planned']};
 
 /* ── blueprints ── */
 var BPS=[
- {n:'Customer Demand Mapping', d:'adv', dn:'Advisory', ph:'Discover', o:'EM', runs:5, st:'live', go:'deliverable-sketch-v8.html'},
- {n:'Investor Q&A Log',        d:'cap', dn:'Capital',  ph:'Build',    o:'TBC',runs:3, st:'sand'},
- {n:'Tender to Bid',           d:'trd', dn:'Trade',    ph:'Plan',     o:'AL', runs:1, st:'sand'},
- {n:'Blended Finance Plan',    d:'adv', dn:'Advisory', ph:'Plan',     o:'EM', runs:0, st:'draft'},
- {n:'Financial Model',         d:'cap', dn:'Capital',  ph:'Plan',     o:'TBC',runs:0, st:'draft'},
- {n:'Market Readiness',        d:'trd', dn:'Trade',    ph:'Discover', o:'AL', runs:0, st:'draft'}
+ {n:'Customer Demand Mapping', d:'adv', dn:'Advisory', ph:'Discover', o:'EM', runs:5, st:'live', go:'agent-demand-mapping.html?tab=workflow'},
+ {n:'Commercial Strategy',     d:'adv', dn:'Advisory', ph:'Plan',     o:'EM', runs:1, st:'draft', go:'blueprint.html?bp=comm'},
+ {n:'Catchment Investment Plan',d:'adv',dn:'Advisory', ph:'Plan',     o:'AM', runs:1, st:'draft', go:'blueprint.html?bp=cip'},
+ {n:'NatCap 101',              d:'adv', dn:'Advisory', ph:'Discover', o:'CC', runs:1, st:'draft', go:'blueprint.html?bp=natcap'},
+ {n:'Investor Q&A Log',        d:'cap', dn:'Capital',  ph:'Build',    o:'TBC',runs:3, st:'sand',  go:'blueprint.html?bp=iqa'},
+ {n:'Tender to Bid',           d:'trd', dn:'Trade',    ph:'Plan',     o:'AR', runs:1, st:'sand',  go:'blueprint.html?bp=bid'},
+ {n:'Blended Finance Plan',    d:'adv', dn:'Advisory', ph:'Plan',     o:'EM', runs:0, st:'draft', go:'blueprint.html?bp=bfp'},
+ {n:'Financial Model',         d:'cap', dn:'Capital',  ph:'Plan',     o:'JF', runs:1, st:'live',  go:'blueprint.html?bp=fm'},
+ {n:'Market Readiness',        d:'trd', dn:'Trade',    ph:'Discover', o:'AL', runs:0, st:'draft', go:'blueprint.html?bp=mra'}
 ];
 var BST={live:['live','Live'],sand:['sand','Sandbox'],draft:['draft','Draft']};
 
@@ -499,7 +452,6 @@ function showTab(v){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on', t.getAttribute('data-v')===v)});
   document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('on', s.id==='v-'+v)});
 }
-document.getElementById('tabs').addEventListener('click',function(e){var t=e.target.closest('.tab'); if(t){ BAR.filter={}; renderLib(); showTab(t.getAttribute('data-v')); }});
 function openShelf(k){ BAR.set('Shelf',k); showTab('library'); renderLib(); }
 
 /* ── ask ── scripted answers with provenance */
@@ -587,24 +539,23 @@ function renderShelves(){
 /* ── agents and blueprints ── */
 function renderAgents(){
   document.getElementById('agN').textContent=AGENTS.length;
-  var cols='minmax(0,1.6fr) 1.2fr 1.4fr 80px 90px 44px';
+  var cols='minmax(0,1.6fr) 1.2fr 1.4fr 90px';
   document.getElementById('agents').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
-    +'<div class="gyhd"><span>Agent</span><span>Kind</span><span>Manager</span><span class="num">Items</span><span>Status</span><span></span></div>'
+    +'<div class="gyhd"><span>Name</span><span>Kind</span><span>Manager</span><span>Status</span></div>'
     +AGENTS.map(function(a,i){
       var e=a.es&&window.GY_ES&&GY_ES[a.es];
       var face=e?'<span class="aface '+e.cls+'"><i class="ti '+e.icon+'"></i></span>':'<span class="aface" style="--fc:'+a.c+'"><i class="ti '+a.i+'"></i></span>';
       var s=AST[a.st];
       return '<div class="gyrow" style="cursor:pointer" onclick="'+(a.go?'location.href=\''+a.go+'\'':a.ref?'openItem(\''+a.ref+'\')':'toast(\''+a.n+' agent: definition not written yet\')')+'">'
         +'<span class="nmc">'+face+'<span class="nm">'+a.n+'</span></span><span class="mut">'+a.type+'</span>'+who(a.o)
-        +'<span class="num">'+a.items+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span>'
-        +(a.go?'<span><button class="agtalk" title="Talk to the '+a.n+' agent" onclick="event.stopPropagation();location.href=\''+a.go+'?chat=1\'"><i class="ti ti-message-circle"></i></button></span>':'<span></span>')+'</div>';
+        +'<span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
     }).join('')+'</div>';
 }
 function renderBps(){
   document.getElementById('bpN').textContent=BPS.length;
   var cols='minmax(0,1.8fr) 1fr 0.9fr 1.4fr 60px 90px';
   document.getElementById('blueprints').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
-    +'<div class="gyhd"><span>Blueprint</span><span>Department</span><span>Phase</span><span>Owner</span><span class="num">Runs</span><span>Status</span></div>'
+    +'<div class="gyhd"><span>Name</span><span>Department</span><span>Phase</span><span>Owner</span><span class="num">Runs</span><span>Status</span></div>'
     +BPS.map(function(b){
       var s=BST[b.st];
       return '<div class="gyrow" style="cursor:pointer" onclick="'+(b.go?'location.href=\''+b.go+'\'':'toast(\''+b.n+' is not in this prototype yet\')')+'">'
@@ -702,8 +653,8 @@ function mark(id, st){
   toast(x.n+': '+STL[st].toLowerCase()); renderAll(); openItem(id);
 }
 
-function renderAll(){ paintChip(); renderReview(); renderShelves(); renderAgents(); renderBps(); renderReads(); renderLog(); renderLib(); }
-renderAll(); renderCovers(); renderRules();
+function renderAll(){ renderAgents(); renderBps(); }
+renderAll(); renderCovers();
 </script>
 </body>
 </html>

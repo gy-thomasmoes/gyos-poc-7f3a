@@ -129,15 +129,19 @@
   }
 
   var SUGG = ['What are your jobs?','Who manages you?','What do you never do?','What is still open?'];
+  /* suggestions as the ask card of the Deliverable pages: header band, numbered options (15 Oct) */
   function chips(){
-    return '<div class="gyq">'+SUGG.map(function(s){ return '<button onclick="gyAsk(this.textContent)">'+s+'</button>'; }).join('')+'</div>';
+    return '<div class="v8ask gyqa"><div class="v8askh"><i class="ti ti-message-question" style="font-size:15px;color:var(--blued)"></i><span class="k">Ask me</span></div><div class="v8aopts">'
+      + SUGG.map(function(s, i){
+          return '<button class="v8aopt'+(i===0?' pri':'')+'" onclick="gyAsk(this.querySelector(\'.l\').textContent)"><span class="n">'+(i+1)+'</span><span class="l">'+s+'</span>'+(i===0?'<i class="ti ti-arrow-right"></i>':'')+'</button>';
+        }).join('') + '</div></div>';
   }
 
   var busy = false;
   window.gyAsk = function(v){
     v = (v||'').trim(); if(!v || busy) return;
     busy = true;
-    LOG = LOG.filter(function(x){ return x.indexOf('class="gyq"') < 0; });
+    LOG = LOG.filter(function(x){ return x.indexOf('gyq') < 0; });
     LOG.push(you(esc(v))); LOG.push('<div class="v5say gytyping"><span class="gydots"><i></i><i></i><i></i></span></div>'); paintChat();
     setTimeout(function(){
       LOG.pop(); LOG.push(say(answer(v))); LOG.push(chips()); paintChat(); busy = false;

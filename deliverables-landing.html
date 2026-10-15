@@ -109,6 +109,13 @@ body:not(.gybasic) .basiconly{display:none}
 .cin{width:100%;font:inherit;font-size:14.5px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
 .cin:focus{outline:none;border-color:var(--blue)}
 select.cin{cursor:pointer}
+.cfact{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);margin-top:8px}
+.cfact .ti{font-size:15px;color:var(--ink3)}
+.cteam{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ctr{display:flex;align-items:center;gap:10px;padding:7px 8px 7px 12px;border-top:1px solid var(--line)}
+.ctr:first-child{border-top:none}
+.ctr .rl{flex:none;width:110px;font-size:14px;color:var(--ink2)}
+.ctr .gseat{flex:1;min-width:0}
 .cft{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid var(--line);background:#FBFAF5}
 .cbtn{font:inherit;font-size:14.5px;font-weight:500;padding:9px 15px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .cbtn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink2)}
@@ -215,10 +222,11 @@ select.cin{cursor:pointer}
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=f1473364"></script>
+<script src="gy-nav.js?v=74b786ff"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-docs.js?v=ed032563"></script>
+<script src="gy-blueprints.js?v=f62717e9"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -276,35 +284,19 @@ select.cin{cursor:pointer}
 
 <div class="cmodal" id="cmodal" onclick="if(event.target===this)closeCreate()">
   <div class="cbox2">
-    <div class="chd"><span class="ct2">Create new Deliverable</span><button class="cx" onclick="closeCreate()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+    <div class="chd"><span class="ct2">New Deliverable</span><button class="cx" onclick="closeCreate()" aria-label="Close"><i class="ti ti-x"></i></button></div>
     <div class="cbd">
-      <div class="chint">Sets up a new deliverable from a blueprint and creates its page in the chosen Notion project folder.</div>
-      <label class="cfl">Deliverable name</label>
-      <input class="cin" id="cName" placeholder="e.g. Ock &amp; Thame: Customer Demand Mapping">
-      <label class="cfl">Workflow blueprint</label>
+      <label class="cfl">Blueprint</label>
       <span class="gseat" id="h-cWorkflow"></span>
-      <label class="cfl">Save in project folder (Notion)</label>
-      <span class="gseat" id="h-cFolder"></span>
-      <label class="cfl">Champion</label>
-      <span class="gseat" id="h-cChampion"></span>
-      <label class="cfl">Team members</label>
-      <div class="cms" id="cTeamField" onclick="toggleTeamPanel(event)">
-        <span id="cTeamLabel" class="cms-ph">Select team members</span>
-        <i class="ti ti-chevron-down" style="margin-left:auto;font-size:15px;color:var(--ink3)"></i>
-      </div>
-      <div class="cms-panel" id="cTeamPanel">
-        <label class="cms-opt"><input type="checkbox" value="Caitlin"> Caitlin</label>
-        <label class="cms-opt"><input type="checkbox" value="Harry"> Harry</label>
-        <label class="cms-opt"><input type="checkbox" value="Catia"> Catia</label>
-        <label class="cms-opt"><input type="checkbox" value="Emily"> Emily</label>
-        <label class="cms-opt"><input type="checkbox" value="Josh"> Josh</label>
-        <label class="cms-opt"><input type="checkbox" value="Izzie"> Izzie</label>
-        <label class="cms-opt"><input type="checkbox" value="Trade lead"> Trade lead</label>
-      </div>
+      <div class="cfact" id="cAgent"></div>
+      <label class="cfl">Name</label>
+      <input class="cin" id="cName">
+      <label class="cfl">Team</label>
+      <div class="cteam" id="cTeam"></div>
     </div>
     <div class="cft">
       <button class="cbtn ghost" onclick="closeCreate()">Cancel</button>
-      <button class="cbtn primary" onclick="createDeliverable()"><i class="ti ti-plus" style="font-size:15px"></i> Create Deliverable</button>
+      <button class="cbtn primary" onclick="createDeliverable()"><i class="ti ti-player-play" style="font-size:15px"></i> Start Deliverable</button>
     </div>
   </div>
 </div>
@@ -316,21 +308,8 @@ function toast(msg){
   const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block';
   clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',3600);
 }
-function openCreate(){var m=document.getElementById('cmodal');m.classList.add('open');setTimeout(function(){document.getElementById('cName').focus();},30);}
-function closeCreate(){document.getElementById('cmodal').classList.remove('open');var p=document.getElementById('cTeamPanel');if(p)p.classList.remove('open');}
-function toggleTeamPanel(e){e.stopPropagation();document.getElementById('cTeamPanel').classList.toggle('open');}
-function teamSelected(){return [].slice.call(document.querySelectorAll('#cTeamPanel input:checked')).map(function(i){return i.value;});}
-document.addEventListener('change',function(e){
-  if(e.target&&e.target.closest&&e.target.closest('#cTeamPanel')){
-    var sel=teamSelected(),lb=document.getElementById('cTeamLabel');
-    if(sel.length){lb.textContent=sel.join(', ');lb.classList.remove('cms-ph');}
-    else{lb.textContent='Select team members';lb.classList.add('cms-ph');}
-  }
-});
-document.addEventListener('click',function(e){
-  var p=document.getElementById('cTeamPanel');
-  if(p&&!(e.target.closest&&(e.target.closest('#cTeamPanel')||e.target.closest('#cTeamField'))))p.classList.remove('open');
-});
+function openCreate(){var m=document.getElementById('cmodal');m.classList.add('open');paintCreate();}
+function closeCreate(){document.getElementById('cmodal').classList.remove('open');}
 /* Customer Demand Mapping always opens the newest deliverable sketch in the
    version set (gy-versions.js), so a new sketch version needs no change here. */
 function targetFor(w){
@@ -363,12 +342,13 @@ function renderDeliverables(){
   head.insertAdjacentHTML('afterend', arr.map(deliverableRow).join(''));
 }
 function createDeliverable(){
+  var bp=createBp(), team={};
+  bp.roles.forEach(function(r){ team[r]=gySelGet('cRole_'+r)||''; });
   var d={id:'d'+Date.now(),
-         n:(document.getElementById('cName').value||'').trim()||'Untitled deliverable',
-         w:document.getElementById('cWorkflow').value,
-         f:document.getElementById('cFolder').value,
-         champ:document.getElementById('cChampion').value,
-         team:teamSelected(),
+         n:(document.getElementById('cName').value||'').trim()||(PROG.name+': '+bp.name),
+         w:bp.name, ver:bp.ver, programme:PROG.name,
+         champ:team.champion||'',
+         team:team,
          run:{state:'idle',done:[]}};
   var arr=getDeliverables(); arr.unshift(d);
   try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}
@@ -763,23 +743,44 @@ gyBar('abar', {
             ['ti-file-import','Import blueprint','Import a blueprint from another programme'],
             ['ti-file-export','Export blueprint','Export the definition as JSON'],
             ['ti-history','Audit log','go:audit-log.html']],
-  primary: {icon:'ti-plus', label:'Create new Deliverable', onclick:function(){ openCreate(); }}
+  primary: {icon:'ti-plus', label:'New Deliverable', onclick:function(){ openCreate(); }}
 });
 </script>
 <script>
 /* the one dropdown field, never a native select. The hidden input keeps the
    existing getElementById(...).value reads working. See gySelect in gy-nav.js */
 (function(){
+  var BPS = (window.GYB && GYB.blueprints) ? GYB.blueprints() : [];
   document.getElementById('h-cWorkflow').innerHTML = gySel('cWorkflow',{id:'cWorkflow',width:'100%',
-    options:["Lead Customer Demand Mapping", "Customer Demand Mapping", "Investor Q&A Log"],
-    value:"Lead Customer Demand Mapping"});
-  document.getElementById('h-cFolder').innerHTML = gySel('cFolder',{id:'cFolder',width:'100%',
-    options:["Spains Hall Estate", "Evenlode", "Upper Dee", "Ock & Thame", "The Wash", "+ New project folder…"],
-    value:"Spains Hall Estate"});
-  document.getElementById('h-cChampion').innerHTML = gySel('cChampion',{id:'cChampion',width:'100%',
-    options:["Caitlin", "Kishen", "Josh"],
-    value:"Caitlin"});
+    options:BPS.map(function(b){ return [b.id, b.name+' \u00b7 v'+b.ver]; }),
+    value:'sdm', onchange:function(){ paintCreate(true); }});
 })();
+</script>
+<script>
+/* New Deliverable (15 Oct): the Programme is where you are, the team comes from
+   the Programme's roles, and the agents come with the Blueprint. */
+var PROG = {k:'ev', name:'Evenlode'};
+function createBp(){
+  var id = gySelGet('cWorkflow') || 'sdm', r = null;
+  (GYB.blueprints()).forEach(function(b){ if(b.id===id) r=b; });
+  return r;
+}
+function paintCreate(keepName){
+  var bp = createBp(); if(!bp) return;
+  var pr = (GYB.programmeRoles[PROG.k]) || {}, people = [];
+  Object.keys(pr).forEach(function(k){ if(people.indexOf(pr[k])<0) people.push(pr[k]); });
+  ['Josh','Catia','Kishen'].forEach(function(p){ if(people.indexOf(p)<0) people.push(p); });
+  document.getElementById('cAgent').innerHTML = bp.agent
+    ? '<i class="ti ti-sparkles"></i>Runs with the '+bp.agent+' v'+bp.ver
+    : '<i class="ti ti-sparkles"></i>Agents come with the Blueprint';
+  var nm = document.getElementById('cName');
+  if(!keepName || !nm.dataset.touched) nm.value = PROG.name+': '+bp.name;
+  nm.oninput = function(){ nm.dataset.touched = '1'; };
+  document.getElementById('cTeam').innerHTML = bp.roles.map(function(r){
+    return '<div class="ctr"><span class="rl">'+(GYB.roleNames[r]||r)+'</span><span class="gseat">'
+      + gySel('cRole_'+r,{width:'100%', options:people, value:pr[r]||'', placeholder:'Choose someone'})+'</span></div>';
+  }).join('');
+}
 </script>
 </body>
 </html>

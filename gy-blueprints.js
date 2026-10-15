@@ -108,5 +108,28 @@
     });
   }
 
-  window.GYB = {programmes:PROGRAMMES, depts:DEPTS, rows:rows};
+  /* Roles (15 Oct): a Programme fills its roles once; a new Deliverable takes
+     the people from there, so starting one asks only which Blueprint. The
+     agents come with the Blueprint and are never picked at the start. */
+  var PROGRAMME_ROLES = {
+    ev:{champion:'Caitlin Ciceri', advisory:'Emily Norton', trade:'Izzie Bell', capital:'Parisa', analysis:'Harry Fox'}
+  };
+  var ROLE_NAMES = {champion:'Champion', advisory:'Advisory lead', trade:'Trade', capital:'Capital', analysis:'Analysis'};
+  /* id: [roles the Blueprint uses, coordinator agent] */
+  var BLUEPRINT_ROLES = {
+    sdm:  [['champion','trade','analysis','advisory'], 'Demand Mapping agent'],
+    comm: [['champion','advisory','trade'], ''],
+    fm:   [['champion','capital','analysis'], ''],
+    bfp:  [['champion','capital'], ''],
+    bid:  [['champion','advisory'], ''],
+    cip:  [['champion','advisory','capital'], '']
+  };
+  function blueprints(){
+    return BLUEPRINTS.map(function(r){
+      var br = BLUEPRINT_ROLES[r[0]] || [['champion'], ''];
+      return {id:r[0], name:r[1], dept:r[2], ver:r[3], roles:br[0], agent:br[1]};
+    });
+  }
+  window.GYB = {programmes:PROGRAMMES, depts:DEPTS, rows:rows, blueprints:blueprints,
+                programmeRoles:PROGRAMME_ROLES, roleNames:ROLE_NAMES};
 })();
