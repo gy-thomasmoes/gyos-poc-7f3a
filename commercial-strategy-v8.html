@@ -1512,7 +1512,7 @@ body.docview .v8docw .v8anc .csg.open .csgh .cr{transform:rotate(90deg) !importa
 
 <div class="shell">
 <script>window.GYNAV={"active":"commercial-strategy","arts":"demand","rail":true};</script>
-<script src="gy-nav.js?v=88c18503"></script>
+<script src="gy-nav.js?v=f1473364"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 
 <div class="mainc">
@@ -1611,7 +1611,6 @@ function pageMenu(btn){
     '-',
     ['ti-history','Version history', 'Version history is not wired up in this sketch'],
     ['ti-activity','Activity', function(){ openTab('activity'); }],
-    [FLAT ? 'ti-layout-board' : 'ti-layout-navbar', FLAT ? 'Show paper on canvas' : 'Show full-width document', function(){ openTab('doc'); setFlat(!FLAT); }],
     '-',
     [PAUSED ? 'ti-player-play' : 'ti-player-pause', PAUSED ? 'Resume agent' : 'Pause agent',
       function(){ PAUSED = !PAUSED; gyToast(PAUSED ? 'Agent paused' : 'Agent resumed'); }],
@@ -2595,10 +2594,7 @@ function openComment(id){
   paintTabs();
 }
 document.addEventListener('click', function(e){ var m = e.target.closest && e.target.closest('mark.cscm'); if(m && m.dataset.c) openComment(m.dataset.c); });
-/* layout option: paper on a canvas, or a flat full-width document */
-var FLAT = /[?&]layout=flat/.test(location.search);
-try{ if(localStorage.getItem('gyDocFlat') === '1') FLAT = true; }catch(e){}
-function setFlat(on){ FLAT = on; try{ localStorage.setItem('gyDocFlat', on ? '1' : '0'); }catch(e){} document.body.classList.toggle('flat', FLAT); if(TAB === 'doc') openTab('doc', true); }
+var FLAT = true; /* one layout only: flat full-width document (15 Oct) */
 document.body.classList.toggle('flat', FLAT);
 
 

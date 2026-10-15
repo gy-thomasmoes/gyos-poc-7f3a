@@ -1090,7 +1090,10 @@ window.gyCartoTiles = function(style){
     'Documents':'documents-overview.html',
     'Meeting notes':'meeting-notes.html',
     'Hive Mind':'hive-mind-v2.html',
-    'Agents':'hive-mind-v2.html'
+    'Agents':'hive-mind-v2.html',
+    'Rule books':'es-press-shelf.html',
+    'Great Yellow Press':'es-press-shelf.html',
+    'Buyer personas':'hive-mind-library.html#personas'
   };
   var GY_PF_INV = 'inventory-portfolio-overview.html';
 
@@ -1115,6 +1118,9 @@ window.gyCartoTiles = function(style){
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind','Rule books']},
     'es-rulebook.html':                 {alt:'none', trail:['Hive Mind','Rule books']},
     'carbon-rule-book.html':            {alt:'none', trail:['Hive Mind','Rule books']},
+    'es-press.html':                    {alt:'none', trail:['Hive Mind','Great Yellow Press']},
+    'es-press-shelf.html':              {alt:'none', trail:['Hive Mind','Rule books']},
+    'persona.html':                     {alt:'none', trail:['Hive Mind','Buyer personas']},
 
     'portfolio-overview.html':          {alt:'portfolio'},
     'inventory-portfolio-overview.html':{alt:'portfolio'},
@@ -1165,6 +1171,8 @@ window.gyCartoTiles = function(style){
     'activity-overview.html':           {alt:'programme'},
 
     'object-bar-sketch.html':           {alt:'programme', trail:['Deliverables']},
+    'demand-mapping-canvas-prototype.html': {alt:'programme', trail:['Deliverables']},
+    'customer-demand-mapping-v2-canvas.html': {alt:'programme', trail:['Deliverables']},
     'demand-mapping-intake-poc.html':   {alt:'programme', trail:['Workflows','Customer Demand Mapping']},
   };
 

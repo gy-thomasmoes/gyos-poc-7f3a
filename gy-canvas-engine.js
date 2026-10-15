@@ -79,8 +79,8 @@ function whoIc(sp){
 }
 function svOpenEditor(id){
   const vid=(id==='checklist'||id==='intake')?'questionnaire':id;
-  if(vid==='questionnaire')location.href='questionnaire-editor.html'+(MODE==='design'?'?edit=1':'');
-  else location.href='artefact-editor.html?a='+id+(MODE==='design'?'&edit=1':'');
+  if(vid==='questionnaire')location.href='demand-mapping-intake-poc.html';
+  else if(window.gyToast)gyToast('No editor for this step in the prototype yet');
 }
 function toolChipHtml(id,opts){
   opts=opts||{};
