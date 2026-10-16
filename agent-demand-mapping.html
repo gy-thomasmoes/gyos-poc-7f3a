@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Demand Mapping agent &middot; Great Yellow</title>
+<title>Customer Demand Mapping &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
 <link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
@@ -1408,12 +1408,12 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 
 <div class="shell">
 <script>window.GYNAV={"active":"library","arts":null,"rail":true};</script>
-<script src="gy-nav.js?v=74b786ff"></script>
+<script src="gy-nav.js?v=d93da068"></script>
 
 <div class="mainc">
 <div class="topbar">
   <button class="scollapse exp" id="expandBtn" onclick="toggleNav()" title="Show the sidebar"><i class="ti ti-layout-sidebar"></i></button>
-  <div class="crumbs"><span class="cr cur">Demand Mapping agent</span></div>
+  <div class="crumbs"><span class="cr cur">Customer Demand Mapping</span></div>
   <div class="spacer"></div>
   <button class="btn-out" onclick="gyToast('Sharing is not wired up in this sketch')"><i class="ti ti-users"></i> Share</button>
   <button class="v5keb" onclick="gyToast('Not wired up in this sketch')">&#8942;</button>
@@ -1488,11 +1488,11 @@ var AG = {
   ],
   [
    "Runs",
-   "Customer Demand Mapping Blueprint v2"
+   "Customer Demand Mapping Blueprint v3"
   ],
   [
    "First test",
-   "Upper Dee"
+   "Upper Dee; Walkham Valley test run, 16 Oct 2026"
   ]
  ],
  "flow": {
@@ -1634,14 +1634,7 @@ var AG = {
    [
     [
      "bul",
-     [
-      "Never decides whether to pursue or park; the client and the team do.",
-      "Never owns ecosystem service knowledge; it asks the ES agents.",
-      "Never owns buyers; it reads and writes the shared GY buyer database.",
-      "Drafts emails for a person to send; never sends anything itself.",
-      "Nothing reaches the client without Emily's sign-off.",
-      "Every fact in the document carries its source."
-     ]
+     ["Never decides whether to pursue or park; the client and the team do.", "Never owns ecosystem service knowledge; it asks the ES agents.", "Never owns buyers; it reads and writes the shared GY buyer database.", "Drafts emails for a person to send; never sends anything itself.", "Nothing reaches the client without Emily's sign-off.", "Every fact in the document carries its source, and every cited page has been opened.", "Never fills a gap from general knowledge or another project; marks it [BLANK] or [Comment].", "Screens every buyer against the client's red lines before the Lead sees the list.", "Licensed data inside GPAP (developer contacts) stays internal.", "Keeps personal contact details out of the document."]
     ]
    ]
   ],
@@ -1651,36 +1644,9 @@ var AG = {
    [
     [
      "tbl",
-     [
-      "Eval",
-      "Passes when"
-     ],
-     [
-      [
-       "Baseline test",
-       "Its cards match the cards the team filled by hand in the five live runs"
-      ],
-      [
-       "Upper Dee test",
-       "Its Demand Map for Upper Dee matches the reviewed version, with differences explained"
-      ],
-      [
-       "Question count",
-       "The lead answers fewer questions per run, and none the Blueprint should have answered"
-      ],
-      [
-       "Source check",
-       "Every fact in the document cites a source"
-      ],
-      [
-       "Review edits",
-       "The share of the draft the lead changes falls run by run"
-      ]
-     ],
-     [
-      28,
-      72
-     ]
+     ["Eval","Passes when"],
+     [["Figures match sources", "Every number in the BNG and NFM tables matches the GPAP files when recomputed"], ["Fact check", "A fresh agent checks 30 sampled Chapter 1 claims against the source documents; none is unsupported"], ["Recall", "The buyer list covers the Lead's gold list per service, and every BNG development that meets the filter"], ["Lead rating", "The Lead rates each buyer contact, maybe or drop, and each hook 1 to 5"], ["Gap honesty", "Seeded gaps are marked [BLANK] or [Comment], never filled"], ["Format", "Five columns, one section per service in screen order, working source links, no em dashes"], ["Upper Dee test", "Its Demand Map for Upper Dee matches the reviewed version, with differences explained"]],
+     [28,72]
     ]
    ]
   ],
@@ -1721,7 +1687,8 @@ var AG = {
   "#8A6A2A"
  ]
 };
-AG.conf = [["Tools", "ti-tool", "var(--graybg)", "#766B62", ["Questionnaire", "Email composer", "Pricing calculator", "PDF generator", "GY database save"]], ["Skills", "ti-sparkles", "var(--amberbg)", "var(--amberd)", ["Beneficiary mapping", "Buyer qualification", "Ecosystem Service Card writing", "Summary writing"]], ["Context", "ti-books", "#F3E8DF", "#8A5A3B", ["Customer Demand Mapping Blueprint v2", "ES rule books", "Sector profiles", "Buyer personas"]], ["Governance", "ti-shield-check", "#E1F5EE", "#0F6E56", ["Emily signs off before the client sees it", "Trade reviews every buyer", "Drafts, never sends", "All activity logged"]], ["Memory", "ti-history", "#EEEAF8", "#5B4BA0", ["Past demand maps", "Corrections from reviews", "Decisions and why"]], ["Connections", "ti-plug-connected", "var(--bluebg)", "var(--blued)", ["Notion", "Google Drive", "GPAP planning register", "SEPA abstraction licences", "Peatland ACTION register", "GY buyer database", "GY Data platform"]]];
+AG.md = {"skill:Project context writing": "# Project context writing\n\n## When to use\nStep 1.3, Draft project context. Turns the client's documents into Chapter 1.\n\n## Sections, in order\n- In short: one or two sentences, with sources\n- Project basics: name, host, landowners and partners, nation, location, area and sites, scheme status, timeline, what the client asked GY for\n- Objective, then why now\n- Site description per site: catchment, land use, habitats and condition, designations, pressures, downstream\n- Planned interventions: the project's own names, with area, stage, funding route, year\n- Target habitats and outcomes, then measurable targets\n- Land rights and existing commitments: ownership, commons, tenants, agreements, covenants, prior sales, red lines, governance and finance intent\n- Provisional service screen (see Service screening)\n- Source coverage, constraints, open questions for the client and for GY\n\n## Rules\n- Every claim carries its source in brackets, with page or section.\n- [BLANK] for a missing fact. [Comment: ...] for a conflict between sources (give both values) or a judgement call.\n- Inferences say so: (Inferred: ... Confidence: high, medium or low.)\n- Never use GY's own demand or strategy outputs as a source for this chapter.\n\n## Done when\nEvery section is filled or marked, and the Lead can list the open questions from it.\n\n## Ask a person when\nTwo sources disagree on area, ownership or scope.", "skill:Service screening": "# Service screening\n\n## When to use\nStep 1.4. Decides which of the eight services Chapter 2 researches.\n\n## The eight services\nCarbon: peatland, Carbon: woodland, Carbon: soil, Biodiversity Net Gain, Voluntary biodiversity, Natural flood management, Water quality, Replenish. Add a non-core service only as its own row.\n\n## For each\nSignal (Include, Confirm or Omit), the evidence from the sources, and a confidence rating.\n\n## Rules\n- BNG is statutory only in England; elsewhere it is Confirm at most.\n- Biodiversity outcomes alone do not make Voluntary biodiversity an Include.\n- Revisit the screen after Demand (step 2.7): demand findings can move a service, as Replenish moved at Walkham.", "skill:Beneficiary mapping": "# Beneficiary mapping\n\n## When to use\nSteps 2.1 to 2.4. Finds everyone who benefits from the project's outcomes, before qualifying them as buyers.\n\n## Where to look\nUse Knowledge and Tools per service. No single source covers all eight services:\n- GPAP: BNG demand and flood exposure\n- Kwame: planning applications, abstraction licences, discharge consents, NSIPs\n- Desk research: carbon buyers, brand-led water buyers, voluntary biodiversity funders\n- Public registers: EA abstraction and flood warnings, Natural England gain sites\n\n## Output\nOne section per service in the order of the service screen, each opening with a demand verdict.", "skill:Buyer qualification": "# Buyer qualification\n\n## When to use\nStep 2.4, and whenever a step asks for buyer qualification.\n\n## One row per buyer\n| Buyer | Why relevant | Hook | Relationship status | Source |\n- Why relevant: the specific fact with its figure (target, units needed, asset at risk, past purchase).\n- Hook: what this project offers this buyer, one line.\n- Relationship status: None known, unless a source shows a link; Trade fills it in step 2.8.\n- Source: a link to the page or file opened, with its date.\n\n## Sort and flag\nSort by fit within each service. Put reputational flags inside Why relevant.\n\n## Done when\nThe result says where every fact came from, and how sure we are.\n\n## Ask a person when\nThe sources disagree, or a number is below medium confidence.", "skill:Red-line screening": "# Red-line screening\n\n## When to use\nStep 2.5, before the Lead sees the buyer list.\n\n## How\n- Read the client's red lines from Chapter 1 (for example Walkham: no buyers using credits \"to atone for bad behaviour\").\n- Check each buyer for enforcement records, fines and sector exposure.\n- Flag, never delete: the row stays, with the flag and its source, and the Lead decides.\n\n## Example\nSaputo Dairy UK: 2022 fine for polluting a Tamar tributary. Flagged, likely exclude.", "skill:Ecosystem Service Card writing": "# Ecosystem Service Card writing\n\n## When to use\nChapter 3, Supply. Each Ecosystem Service agent fills one card.\n\n## Done when\nEvery field has a value with a source and a confidence rating, or is marked [BLANK].\n\n## Ask a person when\nA number is below medium confidence. Not yet tested in a run.", "skill:Summary writing": "# Summary writing\n\n## When to use\nChapter 4. No go or no-go: the customer has already committed.\n\n## How\nRank the markets by strength of demand. Caveats first, one paragraph per market, end with the next step. Not yet tested in a run.", "know:Customer Demand Mapping Blueprint v3": "---\ntitle: Customer Demand Mapping Blueprint v3\nowner: Andrew Rubie (Product Lead)\nlead: to confirm (Emily or Caitlin)\nupdated: 16 Oct 2026\nsource: https://claude.ai/code/artifact/ce4873b1-6daf-43ea-a540-daee22dc69ed\n---\n\n# Customer Demand Mapping Blueprint v3\n\n## What changed in v3 (Walkham test run, 16 Oct 2026)\n- Chapter 1 and Chapter 2 have a fixed template.\n- Demand names the Knowledge and Tools per service.\n- Each service section opens with a demand verdict.\n- New steps: red-line screening, and a revisit of the service screen after Demand.\n- The eval is the acceptance test.\n\n## Open decisions for the Lead\n- Who is the Lead: Emily or Caitlin.\n- Run the public funding scan on Defra LR projects too (recommended).\n- Group Chapter 2 by the eight services (recommended) or by outcome type.\n- Keep the published-targets scan (recommended).", "know:Knowledge and Tools per service": "---\ntitle: Knowledge and Tools per service\nowner: each Ecosystem Service expert, to name\nupdated: 16 Oct 2026\nlearned_from: Walkham Valley test run\n---\n\n# Knowledge and Tools per service\n\n## Carbon: peatland\nCouncil and public-body net zero plans, public tenders, peat partnerships. No public register of Peatland Code buyers.\n\n## Carbon: woodland\nDeal announcements, woodland charity partners, council plans. Benchmark: 125 pounds a tonne for premium Dartmoor WCC units (2025).\n\n## Carbon: soil\nMeat, dairy and retail supply-chain programmes; catchment business boards. Insetting, not credits.\n\n## Biodiversity Net Gain\nGPAP LNRS report or Kwame planning layer; Natural England gain sites register for competing supply. Check supply against demand: Devon supply was about 48 times approved demand.\n\n## Voluntary biodiversity\nCorporate nature commitments; funders of wildlife trusts and National Parks (for example Revere).\n\n## Natural flood management\nGPAP flood report; EA flood warnings, FCERM programme; local flood strategy and local levy. Public funders are often the strongest route.\n\n## Water quality\nWater company catchment programmes; Kwame discharge consents; brand provenance claims.\n\n## Replenish\nEA abstraction licensing strategy and register (or Kwame); drought status; companies with replenish targets.", "know:Client red lines": "---\ntitle: Client red lines\nowner: the Lead of each run\nupdated: per run\n---\n\n# Client red lines\n\n## What it covers\nWhat the client will not accept: buyers, sectors, land uses, commitment lengths.\n\n## Where it comes from\nThe kick-off (step 1.1) and Chapter 1, Land rights and existing commitments.\n\n## How the agent uses it\nRead in step 2.5. Flag, never delete.", "tool:GPAP report lookup": "---\nname: GPAP report lookup\nkind: lookup\nreads: GPAP reports from Rebalance Earth (LNRS report, flood zone report)\naccess: read only\ncost: about 1,800 pounds a run, commissioned per project\ngives: BNG demand by application with units, supply against demand, named assets and businesses at flood risk with value\nlicensed: developer names and contacts come from Barbour ABI; keep internal\nused_by: Demand Mapping agent\n---", "tool:Kwame layers lookup": "---\nname: Kwame layers lookup\nkind: lookup\nreads: Kwame, GY's web map\naccess: read only, through the browser\ngives: planning applications with BNG units, LNRS demand split, abstraction licences, discharge consents, NSIPs, substations\ndoes_not_give: flood exposure, developer contacts\nused_by: Demand Mapping agent\n---", "tool:Web search and fetch": "---\nname: Web search and fetch\nkind: lookup\naccess: read only\nrule: open every page you cite; a search snippet is not a source\nused_by: Demand Mapping agent and the Ecosystem Service agents\n---"};
+AG.conf = [["Tools", "ti-tool", "var(--graybg)", "#766B62", ["Questionnaire", "Email composer", "Pricing calculator", "PDF generator", "GY database save", "GPAP report lookup", "Kwame layers lookup", "EA abstraction register lookup", "EA flood warnings lookup", "Natural England gain sites register lookup", "Web search and fetch", "SEPA abstraction licence lookup", "Peatland ACTION register lookup"]], ["Skills", "ti-sparkles", "var(--amberbg)", "var(--amberd)", ["Project context writing", "Service screening", "Beneficiary mapping", "Buyer qualification", "Red-line screening", "Ecosystem Service Card writing", "Summary writing"]], ["Context", "ti-books", "#F3E8DF", "#8A5A3B", ["Customer Demand Mapping Blueprint v3", "Knowledge and Tools per service", "Client red lines", "ES rule books", "Sector profiles", "Buyer personas"]], ["Governance", "ti-shield-check", "#E1F5EE", "#0F6E56", ["Emily signs off before the client sees it", "Trade reviews every buyer", "Drafts, never sends", "All activity logged"]], ["Memory", "ti-history", "#EEEAF8", "#5B4BA0", ["Past demand maps", "Corrections from reviews", "Eval ratings", "Decisions and why"]], ["Connections", "ti-plug-connected", "var(--bluebg)", "var(--blued)", ["Notion", "Google Drive", "GY buyer database", "GY Data platform"]]];
 
 /* the flow diagram: one request along the top, learning along the bottom, the object in the middle */
 function flowSvg(f){
@@ -1873,6 +1840,6 @@ var CHAT_MIN = 340, CHAT_MAX = 680;
 paintTabs(); openTab('content'); paintChat();
 </script>
 <script src="gy-agent-chat.js?v=c31d883c"></script>
-<script src="gy-blueprint-studio.js?v=f25863b0"></script>
+<script src="gy-blueprint-studio.js?v=2ea32138"></script>
 </body>
 </html>

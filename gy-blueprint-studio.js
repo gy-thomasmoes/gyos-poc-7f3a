@@ -39,19 +39,27 @@
              ['dm','Demand Mapping agent','agent'],['es','Ecosystem Service agents','agent']],
       rules:['Write in short, plain sentences. No jargon a land manager would not use.',
              'Never make up a buyer, a figure or a source. If you do not know, say so.',
-             'Draft, never send. A person signs off anything that leaves GY.'],
+             'Every fact carries a linked source. Open every page you cite; a search snippet is not a source.',
+             'Mark a missing fact [BLANK] and a conflict or judgement call [Comment]. Never fill a gap from general knowledge.',
+             'Draft, never send. A person signs off anything that leaves GY.',
+             'British English, no em dashes.'],
       wf:[
         {t:'Project context', s:[
-          {t:'Kick-off meeting', ty:'person', by:'champion', w:'Hold the kick-off with the estates and upload the notes.', r:['inputs'], o:['context']},
-          {t:'Discovery information request', ty:'agent', by:'dm', w:'Read the kick-off notes and list what is missing. Draft one email to the client asking for it.', r:['inputs','context'], o:['context']},
-          {t:'Context complete?', ty:'decision', by:'champion', w:'Recommend in two sentences whether the context is complete enough to start on demand.', r:['context']}]},
+          {t:'Kick-off meeting', ty:'person', by:'champion', w:'Confirm what GY is contracted for, the route (Defra LR or nature finance) and the client\'s red lines. Upload the notes.', r:['inputs'], o:['context']},
+          {t:'Send intake pack', ty:'agent', by:'dm', w:'Read the kick-off notes and list what is missing. Draft one email asking for the questionnaire, data sheet, GIS boundary, agreements and land rights.', r:['inputs','context'], o:['context']},
+          {t:'Draft project context', ty:'agent', by:'dm', w:'Fill the Chapter 1 template from the client\'s documents: in short, project basics, objective, site description, planned interventions, target habitats, land rights, source coverage, constraints and open questions. Cite every fact.', r:['inputs','context'], o:['context']},
+          {t:'Set service screen', ty:'agent', by:'dm', w:'Mark each of the eight services (peatland, woodland and soil carbon, BNG, voluntary biodiversity, NFM, water quality, Replenish) Include, Confirm or Omit, with the evidence and a confidence rating.', r:['context'], o:['context']},
+          {t:'Context complete?', ty:'decision', by:'champion', w:'Recommend in two sentences whether Chapter 1 is complete enough to start on demand, and list the open questions for the client.', r:['context']}]},
         {t:'Demand', s:[
-          {t:'GPAP analysis', ty:'agent', by:'dm', w:'Find planned developments near the site in the GPAP planning register and note who would need offsets.', r:['context'], o:['demand']},
-          {t:'Abstraction licences', ty:'agent', by:'dm', w:'Find who takes water from the catchment and how much, from the SEPA abstraction licences.', r:['context'], o:['demand']},
-          {t:'Public funding scan', ty:'agent', by:'dm', w:'List public funding that fits the planned interventions, with deadlines.', r:['context'], o:['demand']},
-          {t:'Beneficiary map and buyer list', ty:'agent', by:'dm', w:'Match beneficiaries with the GY buyer database. One row per buyer: why relevant, hook, relationship.', r:['demand'], o:['buyers']},
-          {t:'Check with Trade', ty:'person', by:'trade', w:'Confirm the relationship and hook of each buyer. Update the table with what Trade says.', r:['buyers'], o:['buyers']},
-          {t:'Demand complete?', ty:'decision', by:'champion', w:'Recommend whether demand is strong enough to move on to supply.', r:['demand','buyers']}]},
+          {t:'Commission GPAP run', ty:'agent', by:'dm', w:'Draft the brief to Rebalance with the boundary: BNG demand, flood exposure, asset owners, abstraction licences, CSO and treatment capacity.', r:['context'], o:['demand']},
+          {t:'Pull Kwame layers', ty:'agent', by:'dm', w:'For the boundary, pull planning applications with BNG units, abstraction licences, discharge consents, NSIPs and substations.', r:['context'], o:['demand']},
+          {t:'Desk research per service', ty:'agent', by:'es', w:'For each included service, search the Knowledge and Tools listed for it: net zero plans, corporate nature commitments, public funding, water company programmes, public tenders. Open every page cited.', r:['context'], o:['demand']},
+          {t:'Beneficiary map and buyer list', ty:'agent', by:'dm', w:'One section per service, in the order of the service screen. Five columns: Buyer, Why relevant, Hook, Relationship status, Source. Sort by fit; keep rejected candidates in the evidence trail.', r:['demand'], o:['buyers']},
+          {t:'Screen against red lines', ty:'agent', by:'dm', w:'Flag every buyer that clashes with the client\'s red lines or carries reputational risk, such as a recent pollution fine. Show the flag in the row.', r:['buyers','context'], o:['buyers']},
+          {t:'Write demand verdicts', ty:'agent', by:'dm', w:'Open each service section with one or two sentences: the strongest lead, and the market context that changes how to read the list (oversupply, a closed catchment, a drought).', r:['demand','buyers'], o:['buyers']},
+          {t:'Revisit service screen', ty:'decision', by:'champion', w:'Propose changes to the Chapter 1 service screen that the demand findings support, for example Confirm to Include.', r:['context','buyers']},
+          {t:'Check with Trade', ty:'person', by:'trade', w:'Confirm the relationship and hook of each buyer. Replace None known wherever GY already knows the buyer.', r:['buyers'], o:['buyers']},
+          {t:'Demand complete?', ty:'decision', by:'champion', w:'Recommend whether every included service has a section and a verdict, and whether the eval can run.', r:['demand','buyers']}]},
         {t:'Supply', s:[
           {t:'Research ecosystem services', ty:'agent', by:'es', w:'Ask each Ecosystem Service agent what the land can sell. Each fills one Ecosystem Service Card.', r:['context'], o:['cards']},
           {t:'Numbers reliable enough?', ty:'decision', by:'analysis', w:'Flag every number below medium confidence before the decision.', r:['cards']}]},
@@ -63,6 +71,7 @@
           {t:'Gather learnings', ty:'agent', by:'dm', w:'List corrections people made in this run and propose them to the Blueprint agent.', r:['summary']}]}
       ],
       versions:[
+        {v:3, date:'16 Oct 2026', by:'Thomas Moes', note:'Walkham test run: Chapter 1 template and service screen; Chapter 2 one section per service with demand verdicts, red-line screen and the eval', runs:[['Walkham Valley','deliverable-walkham-valley.html']]},
         {v:2, date:'1 Oct 2026', by:'Emily Churchill', note:'One Ecosystem Service agent per service; Trade checks buyers before the decision', runs:[['Upper Dee','deliverable-sketch-v8.html'],['The Wash','']]},
         {v:1, date:'18 Sep 2026', by:'Thomas Moes', note:'First version, from the Notion Blueprint', runs:[['Boothby','']]}
       ]
@@ -340,13 +349,17 @@
   var si = -1; TABS.forEach(function(t, i){ if(t[0] === 'settings') si = i; });
   var add = [];
   if(COORD) add.push(['workflow','ti-hierarchy-2','Workflow']);
-  add.push(['source','ti-file-code','Source']);
+  /* Source merged into Settings (16 Oct): files open in the large drawer */
   if(si >= 0) TABS.splice.apply(TABS, [si, 0].concat(add));
 
   var _paintTabs = window.paintTabs;
   window.paintTabs = function(){
     _paintTabs();
     var tabs = document.getElementById('tabs');
+    /* on a Deliverable the chat is its coordinator: name it, so it is clear the agent lives inside the Deliverable */
+    var b = tabs.querySelector('.v8agt');
+    if(b && COORD && !S.on){ var ca = (D.roles||[]).filter(function(r){ return r[2] === 'agent' && (r[0] === 'coord' || r[0] === 'dm'); })[0];
+      if(ca){ var ic = b.querySelector('.v8ava'); b.innerHTML = (ic ? ic.outerHTML : '') + h(ca[1]); } }
     var w = tabs.querySelector('.v5tab[onclick*="workflow"] .lb');
     if(w && COORD) w.insertAdjacentHTML('afterend', ' <span class="bscount" style="font-size:12px;color:var(--ink3)">'+steps().length+'</span>');
     paintTop();
@@ -354,13 +367,13 @@
   var _openTab = window.openTab;
   window.openTab = function(k){
     document.body.classList.toggle('bssrc', k === 'source');
-    _openTab(k);
+    _openTab(k); markOpen();
   };
-  function repaint(){ var b = document.querySelector('.v5body'), y = b ? b.scrollTop : 0; openTab(window.TAB); if(b) b.scrollTop = y; paintTop(); }
+  function repaint(){ var b = document.querySelector('.v5body'), y = b ? b.scrollTop : 0; openTab(window.TAB); if(b) b.scrollTop = y; paintTop(); markOpen(); }
 
   /* ── Workflow tab ─────────────────────────────────────────────────── */
   VIEWS.workflow = function(){
-    var hh = '<div class="v8ttl">'+h(D.blueprint)+'</div><div class="bswf">';
+    var hh = '<div class="v8ttl bswft"><span>'+h(D.blueprint)+'</span><button class="bssrcb" onclick="bsOpenFile(\'blueprint\')"><i class="ti ti-file-code"></i>Source</button></div><div class="bswf">';
     hh += D.wf.map(function(c, ci){
       return '<section class="bsch"><div class="bschh"><span class="n">'+(ci+1)+'</span><span class="t">'+h(c.t)+'</span></div><div class="bssteps">'
         + c.s.map(function(s, i){
@@ -384,10 +397,11 @@
     document.getElementById('drtitle').textContent = title;
     document.getElementById('drbody').innerHTML = body;
     document.getElementById('dricon').classList.add('hide');
+    drSize(false); S.file = null; markOpen();
     document.getElementById('drawer').classList.remove('hide');
   }
   var _close = window.closeDrawer;
-  window.closeDrawer = function(){ S.sel = null; _close(); if(window.TAB === 'workflow') repaint(); };
+  window.closeDrawer = function(){ S.sel = null; S.file = null; drSize(false); markOpen(); _close(); if(window.TAB === 'workflow') repaint(); };
 
   window.bsStep = function(id){
     var x = find(id); if(!x) return;
@@ -430,6 +444,15 @@
   /* ── Source tab ───────────────────────────────────────────────────── */
   function y(k, v, ind){ return (ind||'') + '<span class="yk">'+k+':</span>' + (v === undefined ? '' : ' '+h(v)); }
   /* [key, label, file name, group, icon] */
+  /* hand-written file contents (AG.md, keyed like files()); headings and yaml keys get the usual colours */
+  function mdHtml(src){
+    return String(src).split('\n').map(function(l){
+      if(/^#/.test(l)) return '<span class="mh">'+h(l)+'</span>';
+      var m = l.match(/^(\s*-?\s*)([a-z_]+):(.*)$/);
+      if(m) return h(m[1])+'<span class="yk">'+m[2]+':</span>'+h(m[3]);
+      return h(l);
+    }).join('\n');
+  }
   function files(){
     var f = [];
     if(COORD){
@@ -439,6 +462,12 @@
     f.push(['agent','Agent','agent.yaml','Agent','ti-adjustments-horizontal']);
     f.push(['prompt','Prompt','prompt.md','Agent','ti-message']);
     (conf.Skills||[]).forEach(function(sk){ f.push(['skill:'+sk, sk, 'skills/'+slug(sk)+'.md','Skills','ti-sparkles']); });
+    (conf.Context||[]).forEach(function(x){ f.push(['know:'+x, tx(x), 'knowledge/'+slug(tx(x))+'.md','Knowledge','ti-book']); });
+    (conf.Memory||[]).forEach(function(x){ f.push(['mem:'+x, tx(x), 'memory/'+slug(tx(x))+'.yaml','Memory','ti-history']); });
+    (conf.Tools||[]).forEach(function(x){ f.push(['tool:'+x, tx(x), 'tools/'+slug(tx(x))+'.yaml','Tools','ti-tool']); });
+    if(AG.conf){ f.push(['gov:dos', 'Do\'s and don\'ts', 'governance/dos-and-donts.yaml','Governance','ti-checklist']);
+      f.push(['gov:audit', 'Audit', 'governance/audit.yaml','Governance','ti-list-check']);
+      f.push(['gov:evals', 'Evals', 'governance/evals.yaml','Governance','ti-flask']); }
     return f;
   }
   function changedFile(k){
@@ -452,6 +481,7 @@
   }
   function body(k){
     if(S.edits[k] != null) return h(S.edits[k]);
+    if(AG.md && AG.md[k]) return mdHtml(AG.md[k]);
     var L = [];
     if(k === 'blueprint'){
       L.push('---', y('id', D.id), y('version', S.changes.length ? nextVer(S.ver) : S.ver) + (S.changes.length ? '  <span class="cm"># draft</span>' : ''), y('title', D.blueprint), y('owner', D.owner), y('coordinator', AG.title));
@@ -477,7 +507,12 @@
         L.push('', (x.s.isNew || chgFor('step:'+x.s.id)) ? '<span class="chg">'+t+'</span>' : t);
       });
     } else if(k === 'agent'){
-      L.push('---', y('name', AG.title), y('kind', COORD ? 'coordinator' : 'expert'), y('model', D.model), y('manager', D.manager || 'none yet'), y('version', S.ver));
+      var pv = function(n){ var x = (AG.props||[]).filter(function(q){ return q[0] === n; })[0]; return x ? tx(x[1]) : ''; };
+      var v0 = D.versions[0];
+      L.push('---', y('name', AG.title), y('kind', COORD ? 'coordinator' : 'expert'), y('manager', D.owner || D.manager || 'none yet'), y('signs_off', pv('Signs off')),
+             y('runs_on'), y('model', D.model, '  '), y('harness', 'GY OS', '  '),
+             COORD ? y('blueprint', D.blueprint+' v'+S.ver, '  ') : y('called_by', pv('Called by'), '  '),
+             y('version', 'v'+S.ver+', '+v0.date, '  '), y('status', pv('Status'), '  '));
       (AG.conf||[]).forEach(function(c){
         var list = conf[c[0]] || [];
         L.push(y(c[0].toLowerCase()));
@@ -493,6 +528,36 @@
       L.push('<span class="mh"># '+h(sk)+'</span>', '', '<span class="mh">## When to use</span>', 'Whenever a step asks for '+h(sk.toLowerCase())+'.', '',
              '<span class="mh">## Done when</span>', 'The result says where every fact came from, and how sure we are.', '',
              '<span class="mh">## Ask a person when</span>', 'The sources disagree, or a number is below medium confidence.');
+    } else if(k.indexOf('know:') === 0){
+      var kn = tx(k.slice(5));
+      L.push('---', y('title', kn), y('owner', D.owner || D.manager || 'none yet'), y('used_by', AG.title), y('updated', D.versions[0].date), '---', '',
+             '<span class="mh"># '+h(kn)+'</span>', '', '<span class="mh">## What it covers</span>', '<span class="cm">Written by the expert who owns it.</span>', '',
+             '<span class="mh">## Where it comes from</span>', '<span class="cm">Each source, with its date.</span>', '',
+             '<span class="mh">## How the agent uses it</span>', 'Read when a step needs '+h(kn.toLowerCase())+'. Quote the source; never guess past it.');
+    } else if(k.indexOf('gov:') === 0 && window.bsGovData){
+      var GD = window.bsGovData(), q = function(x){ return '"'+h(tx(x)).replace(/"/g,'\\"')+'"'; };
+      L.push('---');
+      if(k === 'gov:dos'){ L.push(y('do')); GD.appr.forEach(function(x){ L.push('  - '+q(x)); }); L.push(y('dont')); GD.never.forEach(function(x){ L.push('  - '+q(x)); }); }
+      if(k === 'gov:audit'){ L.push(y('audit')); GD.audit.forEach(function(x){ L.push('  - '+q(x)); }); }
+      if(k === 'gov:evals'){ L.push(y('evals')); GD.evals.forEach(function(e){ L.push('  - '+y('name', e[0]).trim(), y('passes_when', tx(e[1]), '    ')); }); }
+      L.push(y('inherits', 'core-blueprint/governance.yaml') + ' <span class="cm"># rules every agent shares</span>', '---');
+    } else if(k.indexOf('tool:') === 0){
+      var tn = tx(k.slice(5)), lk = /lookup/i.test(tn), calc = /calculator|estimator|check|curve/i.test(tn),
+          kind = lk ? 'lookup' : calc ? 'calculation' : 'action';
+      L.push('---', y('name', tn), y('kind', kind));
+      if(lk) L.push(y('reads', tn.replace(/\s*lookup$/i, '')), y('access', 'read only'), y('cache', 'none, fetched each run'));
+      else if(calc) L.push(y('method', 'from the rule book') + ' <span class="cm"># same input, same answer</span>', y('access', 'no outside calls'));
+      else if(/email|composer/i.test(tn)) L.push(y('access', 'drafts only') + ' <span class="cm"># never sends</span>', y('send', 'false'));
+      else if(/save|database/i.test(tn)) L.push(y('access', 'writes to the GY buyer database'), y('needs', 'sign-off first'));
+      else L.push(y('access', 'creates files in the Deliverable'));
+      L.push(y('inputs') + ' <span class="cm"># filled in when the tool is built</span>', y('outputs'), y('used_by', AG.title), '---');
+    } else if(k.indexOf('mem:') === 0){
+      var mn = tx(k.slice(4)), runs = [];
+      D.versions.forEach(function(v){ (v.runs||[]).forEach(function(r){ runs.push([r[0], v.v]); }); });
+      L.push('---', y('name', mn), y('written_by', 'each run'), y('promoted_to', '[skills, knowledge]'), y('promoted_by', D.owner || D.manager || 'the manager'), y('entries'));
+      if(runs.length) runs.forEach(function(r){ L.push('  - '+y('run', r[0]).trim(), y('blueprint', 'v'+r[1], '    '), y('note', undefined, '    ')+' <span class="cm"># added after the run</span>'); });
+      else L.push('  <span class="cm"># empty until the first run</span>');
+      L.push('---');
     }
     return L.join('\n');
   }
@@ -543,6 +608,39 @@
     var s = document.getElementById('bsFst'); if(s) s.outerHTML = stHtml(k);
     var a = document.querySelector('.bstoc a.on'); if(a && !a.querySelector('.fd')) a.insertAdjacentHTML('beforeend', '<i class="fd"></i>');
     paintTop();
+  };
+
+  /* ── large drawer: the drawer editor (16 Oct) ─────────────────────────
+     Small drawer = previewer, large drawer = editor. The large drawer takes
+     an equal half with the main content; the chat keeps its width. */
+  function drSize(big){
+    var d = document.getElementById('drawer'); if(!d) return;
+    d.classList.toggle('lg', !!big); document.body.classList.toggle('bslg', !!big);
+    var b = document.getElementById('bsDrSz');
+    if(b){ b.innerHTML = '<i class="ti '+(big ? 'ti-arrows-diagonal-minimize-2' : 'ti-arrows-diagonal')+'"></i>'; b.setAttribute('aria-label', big ? 'Smaller drawer' : 'Larger drawer'); }
+  }
+  window.bsDrSize = function(){ var d = document.getElementById('drawer'); drSize(!d.classList.contains('lg')); };
+  function markOpen(){
+    [].forEach.call(document.querySelectorAll('.v8row[data-f],.v8agr[data-f]'), function(r){ r.classList.toggle('sel', !!S.file && r.getAttribute('data-f') === S.file); });
+  }
+  (function(){
+    var x = document.querySelector('#drawer .v5drx');
+    if(x && !document.getElementById('bsDrSz')) x.insertAdjacentHTML('beforebegin', '<button class="v5drx" id="bsDrSz" onclick="bsDrSize()" aria-label="Larger drawer"><i class="ti ti-arrows-diagonal"></i></button>');
+  })();
+  window.bsOpenFile = function(k){
+    var f = files().filter(function(x){ return x[0] === k; })[0]; if(!f) return;
+    S.file = k; S.grp = f[3];
+    var duo = (k === 'blueprint' || k === 'instructions') ? ['blueprint','instructions'] : (k === 'agent' || k === 'prompt') ? ['agent','prompt'] : null;
+    var pair = duo
+      ? '<span class="bsfsw">'+duo.map(function(o){ var g = files().filter(function(x){ return x[0] === o; })[0];
+          return '<button class="'+(o===k?'on':'')+'" onclick="bsOpenFile(\''+o+'\')">'+h(g[2])+'</button>'; }).join('')+'</span>'
+      : '<span class="fn">'+h(f[2])+'</span>';
+    document.getElementById('drtitle').textContent = f[1];
+    document.getElementById('dricon').classList.add('hide');
+    document.getElementById('drbody').innerHTML = '<div class="bsed"><div class="bsfh">'+pair+'</div>'
+      + '<pre class="bscode" id="bsCode" contenteditable="plaintext-only" spellcheck="false" oninput="bsType(this)">'+body(k)+'</pre></div>';
+    document.getElementById('drawer').classList.remove('hide');
+    drSize(true); markOpen();
   };
 
   /* ── version dropdown ─────────────────────────────────────────────── */
@@ -622,7 +720,7 @@
     paintChat(); paintTabs();
     if(!keepPanel){ repaint(); closeDrawerQuiet(); }
   };
-  function closeDrawerQuiet(){ S.sel = null; document.getElementById('drawer').classList.add('hide'); }
+  function closeDrawerQuiet(){ S.sel = null; S.file = null; drSize(false); markOpen(); document.getElementById('drawer').classList.add('hide'); }
   function bsSend(){
     var inp = document.getElementById('ask'), v = (inp.value||'').trim(); if(!v) return;
     inp.value = ''; bsAsk(v);
@@ -734,9 +832,169 @@
     gyToast('Draft discarded');
   };
 
+  /* ── Settings: the GY OS components (16 Oct, v2) ────────────────────
+     People, Context (Skills, Knowledge, Memory), Engine (the agents, as on
+     the Deliverable's Agents card), Tools, Systems, Governance. Reads the
+     page's AG.conf through the live studio copy (conf), so drafts show.
+     Connections are GY's own stores (Systems); outside registers are reached
+     through a lookup Tool, one row each (16 Oct). Guardrails and Evals move here from the Content tab, and
+     Governance is grouped by kind: approvals, limits, audit, evals. */
+  if(AG.conf){
+    var GOV = {guard:[], evals:[]};
+    if(window.SECS && AG.secs){
+      AG.secs.forEach(function(s){
+        if(s[0] === 'c-guard') s[2].forEach(function(b){ if(b[0] === 'bul') GOV.guard = GOV.guard.concat(b[1]); });
+        if(s[0] === 'c-evals') s[2].forEach(function(b){ if(b[0] === 'tbl') GOV.evals = GOV.evals.concat(b[2]); });
+      });
+      for(var gi = SECS.length - 1; gi >= 0; gi--) if(SECS[gi][0] === 'c-guard' || SECS[gi][0] === 'c-evals') SECS.splice(gi, 1);
+    }
+    var st = document.createElement('style'); st.id = 'bsSet7';
+    st.textContent = '.v8setw .v8row.wrap .nm{white-space:normal;overflow:visible;line-height:1.5}'
+      + '.v8setw .v8row.kv.ev .nm{width:150px}'
+      + '.v8setw .v8row.kv.ev .v{text-align:left;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+      + '.v8agr.self{box-shadow:inset 0 0 0 1.5px var(--ink)}'
+      + '.v8agb + .v8sub{margin-top:4px}'
+      + ''
+      + '#drawer.lg{flex:1 1 0;width:auto;min-width:0}'
+      + '#drawer.lg .v5drb{padding:0;display:flex;flex-direction:column}'
+      + '.bsed{flex:1;display:flex;flex-direction:column;min-height:100%}'
+      + '.bsed .bsfh{padding:12px 20px;border-radius:0}'
+      + '.bsed .bsfh .fn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
+      + '#drawer:not(.lg) .bsed .bsadm{display:none}'
+      + '.bsed .bscode{flex:1;min-height:0;padding:20px 20px 80px;font-size:14px;line-height:1.75;border-radius:0 0 16px 16px}'
+      + '.bsfsw{display:inline-flex;gap:4px}'
+      + '.bsfsw button{border:none;background:none;border-radius:8px;padding:5px 9px;font:600 13.5px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink3);cursor:pointer}'
+      + '.bsfsw button.on{background:var(--graybg);color:var(--ink)}'
+      + '.v8setw .v8row.click.sel{background:var(--graybg)}'
+      + '.v8agr.self{cursor:pointer}.v8agr.self.sel{box-shadow:inset 0 0 0 2px var(--ink)}'
+      + '.bswft{display:flex;align-items:center;gap:14px}.bswft span{flex:1;min-width:0}'
+      + '.bssrcb{flex:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:var(--card);border-radius:9px;padding:7px 12px;font:500 13.5px var(--sans);color:var(--ink);cursor:pointer;letter-spacing:0}'
+      + '.bssrcb:hover{background:var(--graybg)}.bssrcb .ti{font-size:16px;color:var(--ink2)}'
+      + '@media (max-width:1200px){body.bslg .v5panel{display:none}body.bslg #drawer.lg{padding-left:16px}}'
+      + '.bsctx .fn{display:flex;align-items:center;gap:7px;font:13px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink2);margin-bottom:10px}'
+      + '.bsctx .fn .ti{font-size:15px;color:var(--ink3)}'
+      + '.bsctx .bscode{min-height:0;padding:14px 16px;font-size:13px;line-height:1.7;border:1px solid var(--line);border-radius:10px;background:#FDFCF8;cursor:auto}'
+      + '.bsctx .bscode:hover{background:#FDFCF8}'
+      + '.bsctx .bsopen{margin-top:14px;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:var(--card);border-radius:9px;padding:7px 12px;font:inherit;font-size:13.5px;color:var(--ink);cursor:pointer}'
+      + '.bsctx .bsopen:hover{background:var(--graybg)}'
+      + '.bsgov .v8sub{padding-left:0;padding-right:0}.bsgov .v8sub:first-child{border-top:none;padding-top:0}'
+      + '.bsgov .v8row{padding:11px 0;align-items:flex-start;font-size:14.5px}'
+      + '.bsgov .v8row .nm{white-space:normal;overflow:visible;line-height:1.5}'
+      + '.bsgov .v8row .ic{margin-top:-1px}'
+      + '.bsgov .v8row.kv .nm{flex:none;width:130px;color:var(--ink2)}'
+      + '.bsgov .v8row.kv .v{flex:1;min-width:0;line-height:1.5;color:var(--ink)}';
+    document.head.appendChild(st);
+
+    var SYS = /notion|google drive|hubspot|^gy /i;
+    var C7 = {people:['People','ti-users'], context:['Context','ti-books'], engine:['Engine','ti-cpu'],
+              tools:['Tools','ti-tool'], systems:['Systems','ti-database'], governance:['Governance','ti-shield-check']};
+    var ORDER = ['people','context','engine','tools','systems','governance'];
+    var LEAD = {f:'agent-demand-mapping.html', n:'Customer Demand Mapping Agent', ic:'ti-map-search'};
+    var ESAG = [
+      {f:'agent-peatland-carbon.html', n:'Peatland carbon Agent', ic:'ti-plant-2', c:'#7A6248', bg:'#EFE9E1'},
+      {f:'agent-woodland-carbon.html', n:'Woodland carbon Agent', ic:'ti-trees', c:'#C67F16', bg:'#FAEEDA'},
+      {f:'agent-bng.html', n:'BNG Agent', ic:'ti-butterfly', c:'#1E8A63', bg:'#E3F2EB'},
+      {f:'agent-nutrient.html', n:'Nutrient Agent', ic:'ti-droplet', c:'#1F6FB2', bg:'#E4EFF8'},
+      {f:'agent-flood.html', n:'Flood Agent', ic:'ti-ripple', c:'#0F6E56', bg:'#E1F5EE'}
+    ];
+    var prop = function(k){ var p = (AG.props||[]).filter(function(x){ return x[0] === k; })[0]; return p ? p[1] : ''; };
+    var kv = function(k,v,cls,tip){ return '<div class="v8row kv'+(cls?' '+cls:'')+'"'+(tip?' title="'+h(tip)+'"':'')+'><span class="nm">'+k+'</span><span class="v">'+v+'</span></div>'; };
+    var row = function(ic,x,cls){ return '<div class="v8row'+(cls?' '+cls:'')+'"><span class="ic"><i class="ti '+ic+'"></i></span><span class="nm">'+x+'</span></div>'; };
+    var sub = function(t){ return '<div class="v8sub">'+t+'</div>'; };
+    var card = function(k, n, body){
+      return '<div class="v8card" id="set-'+k+'"><div class="v8sh"><span class="t" style="color:var(--ink2)"><i class="ti '+C7[k][1]+'"></i></span><b>'+C7[k][0]+'</b><span>'+n+'</span></div>'+body+'</div>';
+    };
+    var ini = function(n){ return n.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase(); };
+    var agRow = function(a, lead){
+      var me = a.f === PAGE;
+      var tile = lead ? '<span class="v8agi" style="background:var(--dark);color:var(--yellow)"><i class="ti '+a.ic+'"></i></span>'
+                      : '<span class="v8agi" style="background:'+a.c+';color:#fff"><i class="ti '+a.ic+'"></i></span>';
+      return '<div class="v8agr'+(me?' self':'')+'"'+(me?' data-f="agent"':'')+' style="--t:'+(lead?'#E2E2E6':a.bg)+'" onclick="'+(me?'bsOpenFile(\'agent\')':'location.href=\''+a.f+'\'')+'">'+tile
+        + '<span class="nm">'+a.n+'</span>' + (me ? '<span class="m">This agent</span>' : '') + '<i class="ti ti-chevron-right ch"></i></div>';
+    };
+
+    var CTXK = [];
+    var crow = function(k, ic, x){
+      var i = CTXK.indexOf(k); if(i < 0){ CTXK.push(k); i = CTXK.length - 1; }
+      return '<div class="v8row click" data-f="'+h(k)+'" onclick="bsCtx('+i+')"><span class="ic"><i class="ti '+ic+'"></i></span><span class="nm">'+x+'</span><i class="ti ti-chevron-right ch"></i></div>';
+    };
+    window.bsCtx = function(i){ bsOpenFile(CTXK[i]); };
+    var GOVD = null;
+    window.bsGovData = function(){ if(!GOVD) VIEWS.settings(); return GOVD; };
+    window.bsGov = function(k){
+      if(!GOVD) return;
+      var li = function(ic, x){ return '<div class="v8row wrap"><span class="ic"><i class="ti '+ic+'"></i></span><span class="nm">'+x+'</span></div>'; };
+      var body = '', t = '';
+      if(k === 'dos'){ t = 'Do\'s and don\'ts';
+        body = sub('Do') + GOVD.appr.map(function(x){ return li('ti-check', x); }).join('')
+             + sub('Don\'t') + GOVD.never.map(function(x){ return li('ti-ban', x); }).join(''); }
+      if(k === 'audit'){ t = 'Audit'; body = GOVD.audit.map(function(x){ return li('ti-list-check', x); }).join(''); }
+      if(k === 'evals'){ t = 'Evals'; body = GOVD.evals.map(function(e){ return '<div class="v8row kv wrap"><span class="nm">'+e[0]+'</span><span class="v">'+e[1]+'</span></div>'; }).join(''); }
+      openDrawer(t, '<div class="v8dr bsgov">'+body+'</div>');
+    };
+    VIEWS.settings = function(){
+      var conn = conf.Connections || [], sys = conn.filter(function(x){ return SYS.test(x); }), regs = conn.filter(function(x){ return !SYS.test(x); });
+      var tools = conf.Tools || [], skills = conf.Skills || [], know = conf.Context || [], mem = conf.Memory || [];
+      var mgr = D.owner || D.manager || '';
+      var lv = {}; ACCESS.forEach(function(a){ lv[a.lvl] = (lv[a.lvl]||0) + 1; });
+      var access = LEVELS.filter(function(l){ return lv[l[0]]; }).map(function(l){ return lv[l[0]]+' '+l[0]; }).join(', ');
+
+      /* People */
+      var roles = (D.roles||[]).filter(function(r){ return r[2] === 'person'; });
+      var ppl = kv(COORD ? 'Owner' : 'Manager', mgr ? '<span class="bpav">'+ini(mgr)+'</span>'+h(mgr) : '<span style="color:var(--amberd)">No manager yet</span>')
+        + kv('Signs off', prop('Signs off'))
+        + (roles.length ? sub('Roles in the workflow') + roles.map(function(r){ return row('ti-user', h(r[1])); }).join('') : '')
+        + sub('Access') + kv('People', access);
+
+      /* Engine: the agents, then what they run on */
+      var v0 = D.versions[0];
+      var eng = '<div class="v8agb"><div class="v8agk">Lead agent</div>' + agRow(LEAD, true)
+        + '<div class="v8agk">Ecosystem Service agents</div>' + ESAG.map(function(a){ return agRow(a, false); }).join('') + '</div>'
+        ;
+
+      /* Governance, grouped so it scans: who approves, what it never does, what is recorded, how it is tested */
+      var all = (conf.Governance||[]).concat(GOV.guard), seen = {};
+      var G = {appr:[], never:[], audit:[]};
+      all.forEach(function(x){
+        var t = x.replace(/<[^>]+>/g,''), key = t.toLowerCase();
+        if(/sign|approv|review/i.test(t)){ if(/sign-off|signs off/i.test(t) && G.appr.some(function(y){ return /sign/i.test(y); })) return; G.appr.push(x); }
+        else if(/log|source/i.test(t)) G.audit.push(x);
+        else if(!seen[key]) G.never.push(x);
+        seen[key] = 1;
+      });
+      /* three bundles, one row each, like the Systems rows; the detail opens in the drawer previewer */
+      GOVD = G; GOVD.evals = GOV.evals;
+      var grow = function(k, ic, t, n){
+        var fk = 'gov:'+k, i = CTXK.indexOf(fk); if(i < 0){ CTXK.push(fk); i = CTXK.length - 1; }
+        return '<div class="v8row click" data-f="'+fk+'" onclick="bsCtx('+i+')"><span class="ic"><i class="ti '+ic+'"></i></span><span class="nm">'+t+'</span>'
+          + '<span class="m">'+n+'</span><i class="ti ti-chevron-right ch"></i></div>';
+      };
+      var gov = grow('dos','ti-checklist','Do\'s and don\'ts', G.appr.length + G.never.length)
+        + grow('audit','ti-list-check','Audit', G.audit.length)
+        + grow('evals','ti-flask','Evals', GOV.evals.length);
+      var nG = 3;
+
+      var html = '<div class="v8ttl">Settings</div><div class="v8setw"><div class="v8setc"><div class="v8set">'
+        + card('people', 2 + roles.length, ppl)
+        + card('context', skills.length+know.length+mem.length, sub('Skills') + skills.map(function(x){ return crow('skill:'+x, 'ti-sparkles', x); }).join('')
+            + sub('Knowledge') + know.map(function(x){ return crow('know:'+x, 'ti-book', x); }).join('')
+            + sub('Memory') + mem.map(function(x){ return crow('mem:'+x, 'ti-history', x); }).join(''))
+        + card('engine', 1 + ESAG.length, eng)
+        + card('tools', tools.length+regs.length, tools.map(function(x){ return crow('tool:'+x, /lookup/i.test(x) ? 'ti-world-search' : 'ti-tool', x); }).join('')
+            + regs.map(function(x){ return row('ti-world-search', x); }).join(''))
+        + card('systems', sys.length, sys.map(function(x){ return row('ti-database', x); }).join(''))
+        + card('governance', nG, gov)
+        + '</div></div>';
+      return html + anchorNav(ORDER.map(function(k){ return ['set-'+k, C7[k][0], C7[k][1]]; })) + '</div>';
+    };
+  }
+
+  S.file = null; /* no file is open until a row opens one in the large drawer */
   /* ── start ────────────────────────────────────────────────────────── */
   paintTabs();
   var qs = location.search;
   if(/[?&]edit=1/.test(qs)) bsEdit(true);
-  var m = qs.match(/[?&]tab=(\w+)/); if(m && VIEWS[m[1]]) openTab(m[1]);
+  var m = qs.match(/[?&]tab=(\w+)/); if(m && m[1] === 'source') m[1] = 'settings'; if(m && VIEWS[m[1]]) openTab(m[1]);
+  var mf = qs.match(/[?&]file=([^&]+)/);
+  if(mf){ var fp = decodeURIComponent(mf[1]); files().forEach(function(f){ if(f[2] === fp){ if(window.TAB !== 'settings' && window.TAB !== 'workflow') openTab('settings'); bsOpenFile(f[0]); } }); }
 })();

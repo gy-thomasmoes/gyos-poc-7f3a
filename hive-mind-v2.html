@@ -210,7 +210,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"library","arts":null};</script>
-<script src="gy-nav.js?v=74b786ff"></script>
+<script src="gy-nav.js?v=d93da068"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -373,14 +373,13 @@ var REVIEW=[
 
 /* ── agents ── */
 var AGENTS=[
- {n:'Demand Mapping',  type:'Coordinator', o:'EM', items:24, st:'draft', i:'ti-target-arrow', c:'#8A6A2A', ref:'ag-dm', go:'agent-demand-mapping.html'},
- {n:'Woodland Carbon', type:'Expert', o:'SO', items:31, st:'draft', es:'wcc', ref:'ag-wcc', go:'agent-woodland-carbon.html'},
- {n:'BNG',             type:'Expert', o:'EM', items:18, st:'plan', es:'bng', go:'agent-bng.html'},
- {n:'Peatland Carbon', type:'Expert', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat', go:'agent-peatland-carbon.html'},
- {n:'Nutrient',        type:'Expert', o:'TBC',items:9,  st:'plan', es:'nut', go:'agent-nutrient.html'},
- {n:'Flood',           type:'Expert', o:null, items:4,  st:'plan', es:'nfm', go:'agent-flood.html'},
- {n:'Blueprint',       type:'Coordinator', o:'AN', items:8,  st:'draft', i:'ti-route', c:'#8A6A2A', go:'agent-blueprint.html'},
- {n:'Brand',           type:'Coordinator', o:null, items:24, st:'draft', i:'ti-palette', c:'#8A6A2A', ref:'ag-brand', go:'agent-brand.html'}
+ {n:'Woodland Carbon', v:'1', type:'Expert', o:'SO', items:31, st:'draft', es:'wcc', ref:'ag-wcc', go:'agent-woodland-carbon.html'},
+ {n:'BNG',             v:'1', type:'Expert', o:'EM', items:18, st:'plan', es:'bng', go:'agent-bng.html'},
+ {n:'Peatland Carbon', v:'1', type:'Expert', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat', go:'agent-peatland-carbon.html'},
+ {n:'Nutrient',        v:'1', type:'Expert', o:'TBC',items:9,  st:'plan', es:'nut', go:'agent-nutrient.html'},
+ {n:'Flood',           v:'1', type:'Expert', o:null, items:4,  st:'plan', es:'nfm', go:'agent-flood.html'},
+ {n:'Blueprint',       v:'0.1', type:'Process', o:'AN', items:8,  st:'draft', i:'ti-route', c:'#8A6A2A', go:'agent-blueprint.html'},
+ {n:'Brand',           v:'0.1', type:'Process', o:null, items:24, st:'draft', i:'ti-palette', c:'#8A6A2A', ref:'ag-brand', go:'agent-brand.html'}
 ];
 var AST={live:['live','Live'],draft:['draft','Draft'],plan:['plan','Planned']};
 
@@ -539,27 +538,27 @@ function renderShelves(){
 /* ── agents and blueprints ── */
 function renderAgents(){
   document.getElementById('agN').textContent=AGENTS.length;
-  var cols='minmax(0,1.6fr) 1.2fr 1.4fr 90px';
+  var cols='minmax(0,1.6fr) 1.1fr 0.7fr 1.4fr 90px';
   document.getElementById('agents').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
-    +'<div class="gyhd"><span>Name</span><span>Kind</span><span>Manager</span><span>Status</span></div>'
+    +'<div class="gyhd"><span>Name</span><span>Kind</span><span>Version</span><span>Manager</span><span>Status</span></div>'
     +AGENTS.map(function(a,i){
       var e=a.es&&window.GY_ES&&GY_ES[a.es];
       var face=e?'<span class="aface '+e.cls+'"><i class="ti '+e.icon+'"></i></span>':'<span class="aface" style="--fc:'+a.c+'"><i class="ti '+a.i+'"></i></span>';
       var s=AST[a.st];
       return '<div class="gyrow" style="cursor:pointer" onclick="'+(a.go?'location.href=\''+a.go+'\'':a.ref?'openItem(\''+a.ref+'\')':'toast(\''+a.n+' agent: definition not written yet\')')+'">'
-        +'<span class="nmc">'+face+'<span class="nm">'+a.n+'</span></span><span class="mut">'+a.type+'</span>'+who(a.o)
+        +'<span class="nmc">'+face+'<span class="nm">'+a.n+'</span></span><span class="mut">'+a.type+'</span><span class="mut" style="font-variant-numeric:tabular-nums">v'+a.v+'</span>'+who(a.o)
         +'<span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
     }).join('')+'</div>';
 }
 function renderBps(){
   document.getElementById('bpN').textContent=BPS.length;
-  var cols='minmax(0,1.8fr) 1fr 0.9fr 1.4fr 60px 90px';
+  var cols='minmax(0,1.8fr) 1fr 1.4fr 60px 90px';
   document.getElementById('blueprints').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
-    +'<div class="gyhd"><span>Name</span><span>Department</span><span>Phase</span><span>Owner</span><span class="num">Runs</span><span>Status</span></div>'
+    +'<div class="gyhd"><span>Name</span><span>Department</span><span>Manager</span><span class="num">Runs</span><span>Status</span></div>'
     +BPS.map(function(b){
       var s=BST[b.st];
       return '<div class="gyrow" style="cursor:pointer" onclick="'+(b.go?'location.href=\''+b.go+'\'':'toast(\''+b.n+' is not in this prototype yet\')')+'">'
-        +'<span class="nmc"><span class="nm">'+b.n+'</span></span><span><span class="dep d-'+b.d+'">'+b.dn+'</span></span><span class="mut">'+b.ph+'</span>'+who(b.o)
+        +'<span class="nmc"><span class="nm">'+b.n+'</span></span><span><span class="dep d-'+b.d+'">'+b.dn+'</span></span>'+who(b.o)
         +'<span class="num">'+b.runs+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
     }).join('')+'</div>';
 }

@@ -55,6 +55,7 @@
      p: folder path. by: owner. on: ISO date behind the upd label, for the Modified filter. */
   var ITEMS = [
     /* ---- Programme-wide ---- */
+    {id:'wvdm', out:[['Buyer list','deliverable-walkham-valley.html'],['Mapping PDF','']], name:'Walkham Valley: Customer Demand Mapping', eq:[], kind:'deliverable', dept:'prog', p:['prog','demand'], by:'Thomas Moes', wf:'Demand Mapping', steps:21, done:12, state:'12 of 21', upd:'Fri 10:00', on:'2026-10-15', href:'deliverable-walkham-valley.html'},
     {id:'sdm', out:[['Mapping PDF',''],['Buyer rows','']],   name:'Customer Demand Mapping',   eq:[], kind:'deliverable', dept:'prog', p:['prog','demand'],   by:'Caitlin Ciceri', wf:'Demand Mapping',            steps:16, done:8,  state:'8 of 16',  upd:'Wed 09:05', on:'2026-09-16', href:'deliverable-sketch-v8.html', todos:'sdm-ev'},
     {id:'esv',   name:'Ecosystem Services Valuation',  eq:[], kind:'deliverable', dept:'prog', p:['prog','finance'],  by:'Harry Fox',      wf:'ES Valuation',              steps:9,  done:3,  state:'3 of 9',   upd:'11 Sep', on:'2026-09-11'},
     {id:'dmp',   name:'Data Management Plan',          eq:[], kind:'deliverable', dept:'prog', p:['prog','data'],     by:'Harry Fox',      wf:'Data Management',           steps:6,  done:2,  state:'2 of 6',   upd:'9 Sep',  on:'2026-09-09'},

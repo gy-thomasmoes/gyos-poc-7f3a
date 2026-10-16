@@ -111,7 +111,7 @@ pre.code .c{color:#8A7F76}
 
 <div class="shell">
 <script>window.GYNAV={"active":"none"};</script>
-<script src="gy-nav.js?v=74b786ff"></script>
+<script src="gy-nav.js?v=d93da068"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-inventory.js?v=358d8962"></script>
 
@@ -615,6 +615,18 @@ host.innerHTML = <span class="k">gySelBar</span>(n, [
       <tr><th>Dismiss</th><td>The X, the backdrop, or Escape. Escape closes the drawer first and the results second, never both at once.</td></tr>
       <tr><th>Form inside</th><td>Numbered sections that number themselves, a labelled field per question, and a footer count that answers as you build.</td></tr>
       <tr><th>Naming</th><td>A <b>drawer editor</b> is editable, a <b>drawer previewer</b> is read only. Use the right word in code and in conversation.</td></tr>
+    </table></div>
+  </div>
+  <div class="comp">
+    <h3>Docked drawer, small and large <code>#drawer / #drawer.lg</code></h3>
+    <p class="lead">The drawer beside the main content on agent and Deliverable pages. Small previews, large edits. Settings on an agent page is the reference: a row opens its file in the large drawer.</p>
+    <div class="spec"><table>
+      <tr><th>Small</th><td>360px, fixed. The drawer previewer: a workflow step, an output, read-only detail.</td></tr>
+      <tr><th>Large</th><td>An equal half with the main content (<code>flex:1 1 0</code> on both); the agent chat keeps its width. The drawer editor: the file editor with path, admins and "Editable / Edited, not saved".</td></tr>
+      <tr><th>Toggle</th><td>One icon in the drawer header, left of the close X: arrows-diagonal to grow, arrows-diagonal-minimize-2 to shrink. A file always opens large; a previewer always opens small.</td></tr>
+      <tr><th>Selected row</th><td>The row whose file is open keeps a <code>--graybg</code> fill until the drawer closes.</td></tr>
+      <tr><th>Narrow</th><td>Below 1200px the large drawer takes the main content's place instead of splitting it.</td></tr>
+      <tr><th>Link</th><td><code>?tab=settings&amp;file=skills/beneficiary-mapping.md</code> opens a page with that file in the large drawer.</td></tr>
     </table></div>
   </div>
 </section>

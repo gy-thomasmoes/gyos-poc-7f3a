@@ -1109,13 +1109,13 @@ window.gyCartoTiles = function(style){
     'hive-mind-library.html':           {alt:'none'},
     'hive-mind-v2.html':                {alt:'none'},
     'agent-blueprint.html':             {alt:'none', trail:['Hive Mind','Agents']},
-    'agent-demand-mapping.html':         {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-demand-mapping.html':         {alt:'none', trail:['Hive Mind',['Deliverables','hive-mind-v2.html']]},
     'agent-woodland-carbon.html':        {alt:'none', trail:['Hive Mind','Agents']},
     'agent-bng.html':                    {alt:'none', trail:['Hive Mind','Agents']},
     'agent-peatland-carbon.html':        {alt:'none', trail:['Hive Mind','Agents']},
     'agent-nutrient.html':               {alt:'none', trail:['Hive Mind','Agents']},
     'agent-flood.html':                  {alt:'none', trail:['Hive Mind','Agents']},
-    'blueprint.html':                    {alt:'none', trail:['Hive Mind','Blueprints']},
+    'blueprint.html':                    {alt:'none', trail:['Hive Mind',['Deliverables','hive-mind-v2.html']]},
     'agent-brand.html':                  {alt:'none', trail:['Hive Mind','Agents']},
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind','Rule books']},
     'es-rulebook.html':                 {alt:'none', trail:['Hive Mind','Rule books']},
@@ -1161,6 +1161,7 @@ window.gyCartoTiles = function(style){
     'deliverable-sketch-v6.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-v7.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-v8.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-walkham-valley.html': {alt:'programme', trail:['Deliverables']},
     'commercial-strategy-v8.html': {alt:'programme', trail:['Deliverables']},
     'natcap-101-v8.html':          {alt:'programme', trail:['Deliverables']},
     'catchment-investment-plan-v8.html': {alt:'programme', trail:['Deliverables']},
@@ -1188,6 +1189,8 @@ window.gyCartoTiles = function(style){
       if(def.alt === 'programme') out.push([meta.name, 'programme-overview.html']);
     }
     (def.trail || []).forEach(function(t){
+      /* a trail item can carry its own link: ['Deliverables','hive-mind-v2.html'] when the label alone points elsewhere */
+      if(Array.isArray(t)){ out.push(t); return; }
       var href = GY_CRUMB_HREF[t] || '';
       if(t === 'Inventory' && def.alt === 'portfolio') href = GY_PF_INV;
       out.push([t, href]);
