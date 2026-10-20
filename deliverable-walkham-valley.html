@@ -6,7 +6,7 @@
 <title>Walkham Valley: Customer Demand Mapping &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<link rel="stylesheet" href="gy-shell.css?v=3dd84ed8">
 <style>
 /* v4-chat, the same deliverable with the assistant in the lead.
    Everything from the document view is still here; it has just swapped
@@ -1457,10 +1457,11 @@ body.docview .v8docw .v8anc > div{overflow:visible !important;-webkit-mask-image
 <body>
 
 <div class="shell">
-<script>window.GYNAV={"active":"deliverables","arts":"demand","rail":true};</script>
-<script src="gy-nav.js?v=d93da068"></script>
+<script>window.GYNAV={"active":"deliverables","arts":"demand","rail":true,"reader":true};</script>
+<script src="gy-nav.js?v=4042c4c7"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-deliverable-walkham.js?v=5be40f2a"></script>
+<script src="gy-bp-cdm.js?v=be46a567"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -1523,9 +1524,9 @@ body.docview .v8docw .v8anc > div{overflow:visible !important;-webkit-mask-image
 
 var TEAM = [
   ['Caitlin Ciceri','CC','#1D9E75','Champion'],
-  ['Harry Fox','HF','#EF9F27','Analysis'],
-  ['Izzie Bell','IB','#7F77DD','Trade'],
-  ['Emily Norton','EN','#378ADD','Team lead']
+  ['Harry Forman','HF','#EF9F27','Analysis'],
+  ['Izzie Milligan','IM','#7F77DD','Trade'],
+  ['Emily Churchill','EC','#378ADD','Team lead']
 ];
 function av(p,cls){
   return '<span class="dlav '+(cls||'')+'" style="background:'+p[2]+'" title="'+p[0]+', '+p[3]+'">'+p[1]+'</span>';
@@ -1661,6 +1662,7 @@ var ESCARD = {
 /* ── the document ───────────────────────────────────────────────────────── */
 /* Walkham Valley content lives in gy-deliverable-walkham.js (test run, 16 Oct 2026) */
 var FIELDS = WV.FIELDS, BUYCOLS = WV.BUYCOLS, MARKETS = WV.MARKETS;
+(function(){ var B = window.GY_BP_CDM; if(B) B.template[0].fields.forEach(function(f){ if(FIELDS[f[0]]){ FIELDS[f[0]].l = f[1]; FIELDS[f[0]].at = f[4]; } }); })();
 function tableHtml(cols, rows){
   return '<div class="v5tw"><table class="v5tbl"><thead><tr>'
     + cols.map(function(c){ return '<th>'+c+'</th>'; }).join('')
@@ -1674,33 +1676,15 @@ function tableHtml(cols, rows){
 }
 
 /* ── the run ──────────────────────────────────────────────────────────── */
-var WF = [
-  {n:'1. Project context', short:'Project context', s:[
-    {k:'1.1',t:'Kick-off meeting',x:'Caitlin Ciceri'},
-    {k:'1.2',t:'Send intake pack',x:'ai'},
-    {k:'1.3',t:'Draft project context',x:'ai'},
-    {k:'1.4',t:'Set service screen',x:'ai'},
-    {k:'1.5',t:'Context complete?',x:'gate',by:'Caitlin Ciceri'}]},
-  {n:'2. Demand', short:'Demand', s:[
-    {k:'2.1',t:'Commission GPAP run',x:'ai'},
-    {k:'2.2',t:'Pull Kwame layers',x:'ai'},
-    {k:'2.3',t:'Desk research per service',x:'ai'},
-    {k:'2.4',t:'Beneficiary map and buyer list',x:'ai'},
-    {k:'2.5',t:'Screen against red lines',x:'ai'},
-    {k:'2.6',t:'Write demand verdicts',x:'ai'},
-    {k:'2.7',t:'Revisit service screen',x:'gate',by:'Caitlin Ciceri'},
-    {k:'2.8',t:'Check with Trade',x:'Izzie Bell'},
-    {k:'2.9',t:'Demand complete?',x:'gate',by:'Caitlin Ciceri'}]},
-  {n:'3. Supply', short:'Supply', s:[
-    {k:'3.1',t:'Research ecosystem services',x:'ai'},
-    {k:'3.2',t:'Numbers reliable enough?',x:'gate',by:'Harry Fox'}]},
-  {n:'4. Summary', short:'Summary', s:[
-    {k:'4.1',t:'Create summary',x:'ai'},
-    {k:'4.2',t:'Generate PDF',x:'ai'},
-    {k:'4.3',t:'Share with customer',x:'Emily Norton'},
-    {k:'4.4',t:'Send to data platform',x:'ai'},
-    {k:'4.5',t:'Gather learnings',x:'ai'}]}
-];
+/* the workflow comes from the Blueprint (gy-bp-cdm.js, 20 Oct); this run casts its roles onto people */
+var CAST = {champion:'Caitlin Ciceri', trade:'Izzie Milligan', analysis:'Harry Forman', advisory:'Emily Churchill'};
+var WF = GY_BP_CDM.wf.map(function(c, ci){
+  return {n:(ci+1)+'. '+c.t, short:c.t, s:c.s.map(function(s, i){
+    var o = {k:(ci+1)+'.'+(i+1), t:s.t, x: s.ty === 'decision' ? 'gate' : s.ty === 'agent' ? 'ai' : CAST[s.by]};
+    if(s.ty === 'decision') o.by = CAST[s.by];
+    return o;
+  })};
+});
 /* a person's part in this run, read from the workflow: the steps they lead and the decisions they make */
 function runRole(p){
   var nm = p[0], lead = [], dec = [];
@@ -1754,18 +1738,18 @@ var S = [
                ['Answered the kick-off questions','Questionnaire &middot; 9 of 20 answered','tool']]},
   {t:'done',k:'1.1'},
   {t:'say', h:'Chapter 1 has two of five fields, both my reading of the call, so they are marked blue. Site and interventions wait for the client\'s documents. One gap matters: the estates said their last peat survey is from <b>2015</b>, and the carbon case leans on it.'},
-  {t:'side', s:'about the blue fields', x:[['Harry Fox','Why are two of the fields blue?','Blue means it is my reading of the call, not the client\'s words. A field turns green once the client confirms it.'],
-                                          ['Harry Fox','Does the client see the blue?','No. The PDF shows the text only.']]},
+  {t:'side', s:'about the blue fields', x:[['Harry Forman','Why are two of the fields blue?','Blue means it is my reading of the call, not the client\'s words. A field turns green once the client confirms it.'],
+                                          ['Harry Forman','Does the client see the blue?','No. The PDF shows the text only.']]},
   {t:'step',k:'1.2'},
   {t:'ask', q:'Shall I draft the information request to the estates? It asks for the land management plan, the tenure map and the peat condition survey.',
-   o:[['Draft the request',[{t:'work',i:[['Drafted the request','Email composer &middot; 3 questions','tool'],['Passed it to Harry Fox to send','Harry owns client contact']]},
+   o:[['Draft the request',[{t:'work',i:[['Drafted the request','Email composer &middot; 3 questions','tool'],['Passed it to Harry Forman to send','Harry owns client contact']]},
                             {t:'made',a:['ti-mail','var(--bluebg)','var(--blued)','Information request to the estates','Email draft &middot; 3 documents']}]],
       ['I will ask them myself',[]]]},
   {t:'work', i:[['Received the land management plan','upper_dee_land_management_plan.pdf &middot; 38 pages'],
                ['Received the tenure map','cairngorms_tenure_map.pdf'],
                ['Received the peat condition survey','peat_condition_survey_2015.pdf &middot; dated 2015'],
                ['Checked chapter 1 against the documents','Questionnaire &middot; 16 of 20 answered','tool']]},
-  {t:'side', keep:'Changed Constraints and dependencies', x:[['Emily Norton','Is Scottish Water already talking to the estates?','Not in the kick-off notes or the documents. I have added it as an open question under Constraints and dependencies.']]},
+  {t:'side', keep:'Changed Constraints and dependencies', x:[['Emily Churchill','Is Scottish Water already talking to the estates?','Not in the kick-off notes or the documents. I have added it as an open question under Constraints and dependencies.']]},
   {t:'done',k:'1.2'},
   {t:'step',k:'1.3'},
   {t:'dec', k:'1.3', q:'Is the project context complete enough to start Demand?',
@@ -1796,7 +1780,7 @@ var S = [
   {t:'ask', q:'Scottish Water shows up in two markets, water quality and biodiversity. Lead with water quality, or keep both open?',
    o:[['Lead with water quality',[{t:'say',h:'Done. Biodiversity keeps Scottish Water as a secondary buyer.'}]],['Keep both open',[]]]},
   {t:'step',k:'2.5'},
-  {t:'wait', who:'Izzie Bell', h:'Sent the list to <b>Izzie Bell</b> for the Trade check. She knows who GY already talks to.',
+  {t:'wait', who:'Izzie Milligan', h:'Sent the list to <b>Izzie Milligan</b> for the Trade check. She knows who GY already talks to.',
    b:'Show Izzie\'s reply',
    r:'Looks right. Hold off on Scottish Power until I have checked what happened at Clyde, their appetite changed in the spring. SSEN is warm, I spoke to them last month.'},
   {t:'work', i:[['Folded Izzie\'s notes into chapter 2','2 relationship statuses updated']]},
@@ -1810,7 +1794,7 @@ var S = [
   {t:'ask', q:'From the planned interventions, four services could sell here: peatland carbon, woodland carbon, voluntary biodiversity and water quality. I would park flood management. Shall I ask the Ecosystem Service agents?',
    o:[['Ask the agents',[]],['Include flood management too',[{t:'say',h:'There is no flood management agent yet, so I have logged it as a gap for the blueprint owner.'}]]]},
   {t:'consult', ids:['peat','wood','bio','water']},
-  {t:'side', s:'about Peatland Code buffers', x:[['Harry Fox','What is the buffer in the Peatland Code?','A share of the units held back in a shared pool, in case restored peat is lost later. It is why the revenue figure is lower than volume times price.']]},
+  {t:'side', s:'about Peatland Code buffers', x:[['Harry Forman','What is the buffer in the Peatland Code?','A share of the units held back in a shared pool, in case restored peat is lost later. It is why the revenue figure is lower than volume times price.']]},
   {t:'done',k:'3.1'},
   {t:'say', h:'All four cards are in chapter 3. Only carbon gets a revenue figure; biodiversity and water quality are mapped without one. The peatland figure is <b>low confidence</b> because it rests on the 2015 survey.'},
   {t:'ask', q:'Shall I flag the 2015 peat data to the Carbon lead, who manages the Peatland carbon Agent? Then the next project does not hit the same gap.',
@@ -1824,7 +1808,7 @@ var S = [
   {t:'work', i:[['Read the three chapters and ranked the markets','Carbon leads; water quality has the clearest single buyer'],
                ['Drafted the summary','4 points']]},
   {t:'done',k:'4.1'},
-  {t:'wait', who:'Emily Norton', h:'Sent the draft to <b>Emily Norton</b> to review before anything goes to the client.',
+  {t:'wait', who:'Emily Churchill', h:'Sent the draft to <b>Emily Churchill</b> to review before anything goes to the client.',
    b:'Show Emily\'s review', r:'Good. Make the 2015 caveat explicit in the first paragraph, then it can go.'},
   {t:'work', i:[['Added the caveat to the summary','Paragraph 1']]},
   {t:'step',k:'4.2'},
@@ -1834,7 +1818,7 @@ var S = [
   {t:'made', a:['ti-file-type-pdf','var(--amberbg)','var(--amberd)','GY Demand Mapping, Upper Dee','PDF &middot; 9 pages']},
   {t:'step',k:'4.3'},
   {t:'ask', q:'Ready for the estates. Emily walks them through it. Send now, or hold until the resurvey is booked?',
-   o:[['Send to the estates',[{t:'work',i:[['Shared with the estates','Emily Norton presents it on Thursday']]}]],
+   o:[['Send to the estates',[{t:'work',i:[['Shared with the estates','Emily Churchill presents it on Thursday']]}]],
       ['Hold for now',[{t:'say',h:'Held. Emily has a reminder for when the resurvey is booked.'}]]]},
   {t:'done',k:'4.3'},
   {t:'step',k:'4.4'},
@@ -2319,6 +2303,10 @@ var VIEWS = {
       var it = SITEMS[k], m = it.meta ? it.meta() : ['',''];
       return row(ico(it.ic), it.n, m[0], m[1], 'openItem(\''+k+'\')');
     };
+    /* Deliverable folder (20 Oct): one Google Drive folder per Deliverable, shaped by the Blueprint */
+    h += card('ti-folder','var(--graybg)','#766B62','Folder', grp('Folder').length+' folders',
+      row(ico('ti-brand-google-drive'), 'Walkham Valley: Customer Demand Mapping', 'Open in Drive', '', 'gyToast(\'Opens the folder in Google Drive\')')
+      + rows(grp('Folder').map(irow)));
     KINDS.forEach(function(kd){
       var ks = grp(kd[0]);
       h += card(kd[1], kd[2], kd[3], kd[0], kd[4] ? kd[4]() : String(ks.length), rows(ks.map(irow)));
@@ -2351,71 +2339,30 @@ var VIEWS = {
 
 
 /* ── what each step consists of, for the Workflow drawer ──────────────── */
-var STEPD = {
- '1.1':{w:'Confirm what GY is contracted for, the route (Defra Landscape Recovery or nature finance) and the client\'s red lines.',
-   t:[['Caitlin Ciceri','Runs the kick-off and uploads the notes'],['ai','Reads the notes and lists what is missing']],
-   a:'The route and red lines are on file. Walkham: Defra Landscape Recovery Round 2, led by DNPA.'},
- '1.2':{w:'Ask the client for what Chapter 1 cannot be written without.',
-   t:[['tool:Email composer','Drafts the intake email: questionnaire, data sheet, GIS boundary, agreements, land rights'],['Harry Fox','Sends it and chases replies']],
-   a:'The client documents are on file.'},
- '1.3':{w:'Fill the Chapter 1 template from the client documents, citing every fact. Gaps are [BLANK], conflicts and judgement calls are [Comment].',
-   t:[['conn:Google Drive','Reads the specification, Carbon Assessment, SLE report and MRF'],['conn:Notion','Reads the pipeline page and portfolio notes'],['ai','Writes the Chapter 1 sections']],
-   a:'Chapter 1 is drafted. Walkham: the area conflict and the missing peat baseline are flagged.'},
- '1.4':{w:'Mark each of the eight services Include, Confirm or Omit, with evidence and a confidence rating.',
-   t:[['ai','Screens the eight services against the interventions']],
-   a:'Walkham: Include peat carbon, voluntary biodiversity, NFM, water quality; Confirm woodland, soil, BNG, Replenish; Omit nutrient neutrality.'},
- '1.5':{w:'A decision: is the project context complete enough to start on demand? Gaps can be carried as open questions.',
-   t:[['ai','Lists what is still blank and recommends'],['Caitlin Ciceri','Decides: proceed or hold']],
-   a:'Demand starts, with the open questions sent to the client.'},
- '2.1':{w:'Brief Rebalance with the boundary for a GPAP run: BNG demand, flood exposure, asset owners.',
-   t:[['conn:GPAP report','LNRS report and flood zone report, about 1,800 pounds a run'],['ai','Recomputes the figures from the files']],
-   a:'Walkham: 19 developers within about 40 km; Devon supply is about 48 times approved demand.'},
- '2.2':{w:'Pull planning applications with BNG units, abstraction licences, discharge consents and NSIPs for the boundary.',
-   t:[['conn:Kwame','Web map layers, read only']],
-   a:'Regulated demand is listed without a second GPAP spend.'},
- '2.3':{w:'Search the Knowledge and Tools listed for each service. Open every page cited.',
-   t:[['ai','Net zero plans, nature commitments, public funding, water company programmes, tenders'],['know:Knowledge and Tools per service','Where to look for each service']],
-   a:'Walkham: carbon and brand-led buyers found by desk research; no public buyer of South West peat units.'},
- '2.4':{w:'One section per service in screen order. Five columns: Buyer, Why relevant, Hook, Relationship status, Source. Sorted by fit.',
-   t:[['ai','Joins GPAP, Kwame and desk research'],['conn:GY buyer database','Adds buyers GY already knows']],
-   a:'Chapter 2 holds eight buyer tables, 86 rows.'},
- '2.5':{w:'Flag every buyer that clashes with the client\'s red lines or carries reputational risk. Flag, never delete.',
-   t:[['ai','Checks enforcement records and sector exposure']],
-   a:'Walkham: Saputo Dairy UK flagged for a 2022 Tamar pollution fine.'},
- '2.6':{w:'Open each service section with one or two sentences: the strongest lead and the market context.',
-   t:[['ai','Writes eight demand verdicts']],
-   a:'Each section reads in one line before the table.'},
- '2.7':{w:'A decision: change the Chapter 1 service screen where the demand findings support it.',
-   t:[['ai','Proposes changes with evidence'],['Caitlin Ciceri','Decides']],
-   a:'Walkham: Replenish moves up, as the EA has closed the Tavy and Meavy to new abstraction.'},
- '2.8':{w:'Trade confirms the relationship and hook for every buyer, replacing None known where GY already knows them.',
-   t:[['Izzie Bell','Reviews each buyer'],['ai','Folds the notes back into Chapter 2']],
-   a:'Nobody is approached blind.'},
- '2.9':{w:'A decision: does every included service have a section and a verdict, and can the eval run?',
-   t:[['ai','Reports gaps and recommends'],['Caitlin Ciceri','Decides: proceed or find more buyers']],
-   a:'Supply starts, and the Lead runs the eval.'},
- '3.1':{w:'Each Ecosystem Service agent writes one card for its service: eligibility, volume, price, revenue, funding and confidence.',
-   t:[['ai','Picks candidate services from the interventions'],['es:peat','Writes the peatland carbon card'],['es:wood','Writes the woodland carbon card'],['es:bio','Writes the biodiversity card'],['es:water','Writes the water quality card']],
-   a:'Chapter 3 holds one Ecosystem Service Card per service.'},
- '3.2':{w:'A decision: are the numbers reliable enough for the summary? Only carbon carries a revenue figure.',
-   t:[['ai','Lists low-confidence figures and recommends'],['Harry Fox','Decides: proceed or bring in an expert']],
-   a:'The summary can be written.'},
- '4.1':{w:'Write what the client reads first, then have the team lead review it.',
-   t:[['ai','Ranks the markets and drafts the summary'],['Emily Norton','Reviews before anything goes out']],
-   a:'Chapter 4 is written and reviewed.'},
- '4.2':{w:'Produce the on-brand document that leaves Great Yellow.',
-   t:[['tool:PDF generator','Renders the GY template'],['ai','Checks every figure against its source']],
-   a:'A dated PDF is logged against this deliverable.'},
- '4.3':{w:'Get the result in front of the estates and record their response.',
-   t:[['Caitlin Ciceri','Approves sending'],['Emily Norton','Walks the estates through it']],
-   a:'The client has it and their reaction is on file.'},
- '4.4':{w:'Push the structured rows out so the rest of GY can use them.',
-   t:[['conn:GY Data platform','Receives the buyer and service rows']],
-   a:'The buyer list is queryable outside this deliverable.'},
- '4.5':{w:'Feed what this run taught back into the blueprint and the Ecosystem Service agents.',
-   t:[['ai','Compares the run with the blueprint'],['Caitlin Ciceri','Chooses which learnings go back']],
-   a:'The next run starts from a better blueprint.'}
+/* each step: the Blueprint's step (what, who does which part, done when) cast onto this run,
+   plus what happened at Walkham. Only RUN is this Deliverable's own. */
+var RUN = {
+ '1.1':'Walkham: Defra Landscape Recovery Round 2, led by DNPA.',
+ '1.3':'Walkham: read the specification, Carbon Assessment, SLE report and MRF; the area conflict and the missing peat baseline are flagged.',
+ '1.4':'Walkham: Include peat carbon, voluntary biodiversity, NFM, water quality; Confirm woodland, soil, BNG, Replenish; Omit nutrient neutrality.',
+ '2.1':'Walkham: LNRS and flood zone reports; 19 developers within about 40 km; Devon supply is about 48 times approved demand.',
+ '2.3':'Walkham: carbon and brand-led buyers found by desk research; no public buyer of South West peat units.',
+ '2.4':'Walkham: eight buyer tables, 86 rows.',
+ '2.5':'Walkham: Saputo Dairy UK flagged for a 2022 Tamar pollution fine.',
+ '2.7':'Walkham: Replenish moves up, as the EA has closed the Tavy and Meavy to new abstraction.'
 };
+var STEPD = {};
+GY_BP_CDM.steps().forEach(function(x){
+  var s = x.s, t = [];
+  (s.parts||[]).forEach(function(p){
+    if(p[0] === 'dm') t.push(['ai', p[1]]);
+    else if(p[0] === 'es') Object.keys(ESA).forEach(function(id){ t.push(['es:'+id, 'Writes the '+ESA[id].s.toLowerCase()+' card']); });
+    else if(CAST[p[0]]) t.push([CAST[p[0]], p[1]]);
+    else t.push(p.slice());
+  });
+  STEPD[x.k] = {w:s.w, t:t, a:s.done + (RUN[x.k] ? ' '+RUN[x.k] : '')};
+});
+
 var STEPSEL = null;
 function nOut(){ return ['1.2','2.4','4.2','4.4','4.5'].filter(isDone).length; }
 function actor(a){
@@ -2541,6 +2488,7 @@ var KINDS = [
   ['Context','ti-book','#F3E8DF','#8A5A3B'],
   ['Connections','ti-plug-connected','var(--bluebg)','var(--blued)'],
   ['Tools','ti-tool','var(--graybg)','#766B62'],
+  ['Governance','ti-shield-check','var(--graybg)','#766B62'],
   ['Inputs','ti-file-text','var(--bluebg)','var(--blued)', function(){ return isDone('1.1') ? '3 of 4 received' : 'None yet'; }],
   ['Outputs','ti-package','var(--greenbg)','var(--greend)', function(){
     var ks = Object.keys(SITEMS).filter(function(k){ return SITEMS[k].kind === 'Outputs'; });
@@ -2561,7 +2509,7 @@ var SITEMS = {
   skbuy:{tag:'Qualifies each buyer', kind:'Skills', n:'Buyer qualification', ic:'ti-user-check', used:['2.4','2.5'],
     what:'How to judge relevance, write the hook and set the relationship status for each buyer.',
     body:[["When to use", "At steps 2.4 and 2.5, on every buyer in the beneficiary map."], ["Steps", ["Score relevance high, medium or low against the sector profile.", "Check the GY buyer database for past contact and status.", "Write a hook: the buyer's need in their own words, tied to this site.", "Set the relationship: new, warm or active.", "Flag the buyers Trade should check first."]], ["Done when", "Trade could pick up the phone from the row alone."], ["Ask a person when", "The buyer is already in a live deal elsewhere at GY."]],
-    det:[['Owner','Izzie Bell'],['Version','v2, updated 16 Sep 2026'],['Stored in','Hive Mind']],
+    det:[['Owner','Izzie Milligan'],['Version','v2, updated 16 Sep 2026'],['Stored in','Hive Mind']],
     lists:[['Reads',['GY buyer database','Sector profiles'],'ti-book']]},
   skesc:{tag:'Writes the service cards', kind:'Skills', n:'Ecosystem Service Card writing', ic:'ti-id-badge-2', used:['3.1'],
     what:'The fields, sources and confidence rules every Ecosystem Service Card follows. Each Ecosystem Service Agent writes its card with it.',
@@ -2571,7 +2519,7 @@ var SITEMS = {
   sksum:{tag:'Writes the client summary', kind:'Skills', n:'Summary writing', ic:'ti-writing', used:['4.1'],
     what:'How to rank the markets and write the summary the client reads first, with caveats up front.',
     body:[["When to use", "At step 4.1, once chapters 2 and 3 are reviewed."], ["Steps", ["Rank the markets by strength of demand.", "Put the caveats first, in plain words.", "Write one paragraph per market: who buys, why, and how sure we are.", "End with the recommended next step.", "Keep it to one page."]], ["Done when", "The landowner understands it without a call."], ["Ask a person when", "The ranking differs from what the client expected at kick-off."]],
-    det:[['Owner','Emily Norton'],['Version','v2, updated 22 Sep 2026'],['Stored in','Hive Mind']]},
+    det:[['Owner','Emily Churchill'],['Version','v2, updated 22 Sep 2026'],['Stored in','Hive Mind']]},
 
   knrb:{tag:'Rules per ecosystem service', kind:'Context', n:'ES rule books', ic:'ti-book-2', used:['3.1'], fresh:['Checked Oct 2025','warn'],
     what:'The rules each ecosystem service transacts under: codes, eligibility, buffers and prices.',
@@ -2589,7 +2537,7 @@ var SITEMS = {
   cnno:{kind:'Connections', n:'Notion', ic:'ti-brand-notion', used:['1.1'], st:['Connected','ok'],
     what:'Project pages and meeting notes the agent reads at kick-off.', det:[['Status','Connected'],['Access','Read only']]},
   cngd:{kind:'Connections', n:'Google Drive', ic:'ti-brand-google-drive', used:['1.1','4.2'], st:['Connected','ok'],
-    what:'Client documents come in here, and the finished PDF goes back.', det:[['Status','Connected'],['Folder','Walkham Valley / Demand Mapping']]},
+    what:'Client documents come in here, and the finished PDF goes back.', det:[['Status','Connected'],['Folder','Walkham Valley: Customer Demand Mapping']]},
   cndp:{kind:'Connections', n:'GY Data platform', ic:'ti-chart-dots-3', used:['4.4'], st:['Connected','ok'],
     what:'Receives the buyer and service rows so the rest of GY can use them.', det:[['Status','Connected'],['Writes','Buyers, services']]},
   cnbuy:{kind:'Connections', n:'GY buyer database', ic:'ti-address-book', used:['2.4','2.5'], st:['Connected','ok'],
@@ -2614,6 +2562,21 @@ var SITEMS = {
   in4:{kind:'Inputs', n:'Peat baseline survey', ic:'ti-file-type-pdf', used:['1.3'], inp:['Outstanding','warn'], miss:1,
     what:'No peat baseline yet, which blocks a Peatland Code valuation before submission.', det:[['From','Not received'],['Asked at','1.2 Send intake pack']]}
   ,
+fd1:{kind:'Folder', n:'01 Client inputs', ic:'ti-folder', used:['1.3'], st:['3 files, 1 missing','warn'],
+    what:'What DNPA sent after the intake email. The agent reads it to draft Chapter 1.',
+    det:[['Filled by','DNPA, via Caitlin Ciceri'],['Asked for at','1.2 Send intake pack'],['Missing','Peat baseline survey']],
+    lists:[['Files',['Specification DNP0030-26.pdf','Carbon Assessment P03.pdf','Muckle SLE report.pdf'],'ti-file-type-pdf']]},
+  fd2:{kind:'Folder', n:'02 Kick-off notes', ic:'ti-folder', used:['1.1','1.3'], st:['1 file',''],
+    what:'Notes from the kick-off with DNPA: route, scope and red lines.',
+    det:[['Filled by','Caitlin Ciceri'],['Filled at','1.1 Kick-off meeting']],
+    lists:[['Files',['Kick-off notes, Walkham Valley.docx'],'ti-file-text']]},
+  fd3:{kind:'Folder', n:'03 Maps and data', ic:'ti-folder', used:['2.1','2.2'], st:['3 files',''],
+    what:'What the agent pulled for the boundary. Developer contacts in the GPAP reports are licensed, so the folder stays internal.',
+    det:[['Filled by','Demand Mapping agent'],['Shared with','GY team only']],
+    lists:[['Files',['GPAP Devon LNRS, 14 Jul 2026.pdf','GPAP Walkham flood zone, 2 Jul 2026.pdf','Kwame export, Walkham boundary.geojson'],'ti-file']]},
+  fd4:{kind:'Folder', n:'04 Outputs', ic:'ti-folder', used:['4.2'], st:function(){ return isDone('4.2') ? ['1 file','ok'] : ['Empty until 4.2','']; },
+    what:'What goes to the client. The agent writes the PDF here at 4.2.',
+    det:[['Filled by','Demand Mapping agent'],['Goes to','DNPA, after Caitlin Ciceri approves']]},
   out1:{kind:'Outputs', n:'GY Demand Mapping, Walkham Valley', ic:'ti-file-type-pdf', used:['4.2'], tag:'The client PDF',
     what:'The finished document the estates receive: four chapters in the GY template.', det:[['Format','PDF, 9 pages'],['Goes to','Google Drive, then DNPA'],['Approved by','Caitlin Ciceri']]},
   out4:{kind:'Outputs', n:'GY database update', ic:'ti-database-export', used:['4.4'], tag:'Updates the GY database',
@@ -2621,12 +2584,49 @@ var SITEMS = {
   out5:{kind:'Outputs', n:'Blueprint learnings', ic:'ti-bulb', used:['4.5'], tag:'Improves the next run',
     what:'What this run taught, sent to the blueprint owner so the next Demand Mapping starts better.', det:[['Format','Note, 2 learnings'],['Goes to','Blueprint owner']]}
 };
+/* Skills, Knowledge, Tools, Connections and Governance come from the Blueprint (gy-bp-cdm.js, 20 Oct);
+   this run keeps only its own status per item (st, det, fresh). Tools for another nation are left out. */
+(function(){
+  var B = window.GY_BP_CDM; if(!B) return;
+  var REN = {'GPAP report':['GPAP report lookup'], 'Kwame':['Kwame layers lookup'],
+             'EA and Natural England registers':['EA abstraction register lookup','EA flood warnings lookup','Natural England gain sites register lookup']};
+  var old = {}, keep = [];
+  Object.keys(SITEMS).forEach(function(k){
+    var it = SITEMS[k];
+    if(/^(Skills|Context|Tools|Connections)$/.test(it.kind)) (REN[it.n] || [it.n]).forEach(function(n){ old[n] = it; });
+    else keep.push(k);
+  });
+  var out = {agent:SITEMS.agent}, n = 0, pre = {Skills:'skill:', Context:'know:', Tools:'tool:', Connections:'conn:'};
+  ['Skills','Context','Connections','Tools'].forEach(function(kind){
+    B.conf[kind].forEach(function(name){
+      var m = B.items[name] || {}, o = old[name] || {};
+      if(m.nation && m.nation !== 'England') return;
+      var it = {kind:kind, n:name, ic:m.ic || o.ic || 'ti-point', tag:m.tag || '', what:m.what || o.what || '', used:B.used(name)};
+      var md = B.md[pre[kind]+name];
+      if(kind === 'Skills' && md) it.body = B.mdBody(md);
+      it.det = kind === 'Skills' ? [['Blueprint', B.name+' v'+B.version], ['Stored in','Hive Mind']]
+             : (o.det || [['Blueprint', B.name+' v'+B.version]]);
+      if(kind === 'Connections') it.st = o.st || ['Connected','ok'];
+      if(kind === 'Context') it.fresh = o.fresh || ['',''];
+      out['bp'+(++n)] = it;
+    });
+  });
+  out.gv1 = {kind:'Governance', n:'Do\'s and don\'ts', ic:'ti-checklist', tag:'Sign-offs and limits', used:[],
+    what:'Who signs off, and what the agent never does on this run.',
+    body:[['Sign-offs', B.conf.Governance], ['Never', B.guard]], det:[['Blueprint', B.name+' v'+B.version]]};
+  out.gv2 = {kind:'Governance', n:'Evals', ic:'ti-flask', tag:'The acceptance test', used:['2.9'],
+    what:'How the Lead tests the run before Supply starts.',
+    body:[['Passes when', B.evals.map(function(e){ return '<b>'+e[0]+'.</b> '+e[1]; })]], det:[['Run by','The Lead, after 2.9'],['Blueprint', B.name+' v'+B.version]]};
+  keep.forEach(function(k){ if(k !== 'agent') out[k] = SITEMS[k]; });
+  SITEMS = out;
+})();
 Object.keys(SITEMS).forEach(function(k){
   var it = SITEMS[k];
   it.meta = function(){
+    if(it.kind === 'Folder') return typeof it.st === 'function' ? it.st() : it.st;
     if(it.kind === 'Skills' || it.kind === 'Context') return [it.tag, ''];
     if(it.kind === 'Connections') return it.st;
-    if(it.kind === 'Tools') return [it.tag, ''];
+    if(it.kind === 'Tools' || it.kind === 'Governance') return [it.tag, ''];
     if(it.kind === 'Outputs') return isDone(it.used[0]) ? ['Ready','ok'] : [it.tag,''];
     if(it.kind === 'Inputs'){ if(it.miss) return it.inp; return isDone('1.1') ? it.inp : ['Not received','warn']; }
     return ['',''];

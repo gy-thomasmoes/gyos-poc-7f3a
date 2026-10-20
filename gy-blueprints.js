@@ -130,6 +130,25 @@
       return {id:r[0], name:r[1], dept:r[2], ver:r[3], roles:br[0], agent:br[1]};
     });
   }
+  /* Deliverable folder (20 Oct): every Deliverable gets one Google Drive folder, made at
+     New Deliverable from its Blueprint's structure and shared with the team. The Blueprint
+     owns the shape; the Deliverable owns the folder. key = the step chip that means this folder. */
+  var FOLDERS = {
+    sdm: [
+      {n:'01 Client inputs', key:'inputs', fill:'Client, via the Champion', what:'Specification, assessments, land rights, GIS boundary', read:['1.3'], write:['1.2']},
+      {n:'02 Kick-off notes', key:'notes', fill:'Champion', what:'Notes and recording from the kick-off', read:['1.3'], write:['1.1']},
+      {n:'03 Maps and data', key:'maps', fill:'Demand Mapping agent', what:'GPAP reports, Kwame exports, register pulls', read:['2.4'], write:['2.1','2.2']},
+      {n:'04 Outputs', key:'pdf', fill:'Demand Mapping agent', what:'The client PDF and anything else handed over', read:['4.3'], write:['4.2']}
+    ],
+    _: [
+      {n:'01 Inputs', key:'inputs', fill:'Team', what:'What the work starts from', read:[], write:[]},
+      {n:'02 Working files', key:'working', fill:'Coordinator agent', what:'Drafts and data while it runs', read:[], write:[]},
+      {n:'03 Outputs', key:'outputs', fill:'Coordinator agent', what:'What the Deliverable hands over', read:[], write:[]}
+    ]
+  };
+  var FOLDER_ALIAS = {'customer-demand-mapping':'sdm'};
+  function folder(id){ return FOLDERS[FOLDER_ALIAS[id] || id] || FOLDERS._; }
   window.GYB = {programmes:PROGRAMMES, depts:DEPTS, rows:rows, blueprints:blueprints,
-                programmeRoles:PROGRAMME_ROLES, roleNames:ROLE_NAMES};
+                programmeRoles:PROGRAMME_ROLES, roleNames:ROLE_NAMES, folder:folder,
+                folderPath:function(prog, name){ return 'GY Programmes / '+prog+' / '+name; }};
 })();

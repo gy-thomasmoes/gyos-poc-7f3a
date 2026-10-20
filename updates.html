@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<link rel="stylesheet" href="gy-shell.css?v=3dd84ed8">
 <style>
 :root{
   --bg:#FCFAF4; --card:#FFFFFF; --line:#E3E1DB; --line2:#CFCDC5;
@@ -78,7 +78,7 @@ a{color:inherit;text-decoration:none}
 
 <div class="shell">
 <script>window.GYNAV={"active":"none"};</script>
-<script src="gy-nav.js?v=d93da068"></script>
+<script src="gy-nav.js?v=4042c4c7"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 
 <div class="mainc">
@@ -100,6 +100,14 @@ a{color:inherit;text-decoration:none}
 /* Newest release first. Featured items get a screenshot (upd-<id>.jpg, flat in this folder so the publish crawl finds it) with the
    main element highlighted; smaller changes go in "also". Add a new release at the top. */
 var RELEASES = [
+  {id:'oct-20', d:'20 October', wd:'Tuesday', items:[
+    {img:'upd-agent-settings.jpg', area:'Agents', title:'Settings, by GY OS component', h:'agent-demand-mapping.html?tab=settings',
+     p:'Every agent and Blueprint page now has one Settings tab, laid out by the parts of GY OS: People, Context, Engine, Tools, Systems and Governance. Engine shows the lead agent and the Ecosystem Service agents it calls, and Governance groups the do\u2019s and don\u2019ts, audit and evals. Every row opens its own file, so you can read the skill, tool or rule behind it.'},
+    {also:[
+      {a:'Hive Mind', i:'ti-brain', t:'Hive Mind simplified: one Agents table with Kind, Manager and Version, and Blueprints listed as Deliverables', h:'hive-mind-v2.html'},
+      {a:'Design system', i:'ti-layout-sidebar-right-expand', t:'Large drawer editor: files open side by side with the page, with a size toggle in the drawer header', h:'agent-demand-mapping.html?tab=settings'}
+    ]}
+  ]},
   {id:'oct-09', d:'9 October', wd:'Friday', items:[
     {img:'upd-catchment-investment-plan.jpg', area:'Deliverables', title:'Catchment Investment Plan for North Norfolk Rivers', h:'catchment-investment-plan-v8.html',
      p:'A fifth Deliverable demo, built from the Catchment Investment Plan Blueprint: fourteen steps and three decisions, ending in a prospectus for Anglian Water. The agent starts with the need, the price and the rate card already filled from the A-WINEP phosphorus pricing, so this catchment uses the same price as the other ten. Outcome modules for phosphorus, water resources, bathing water and flood then build the funding stack, and the finished plan is generated as a PDF.'},

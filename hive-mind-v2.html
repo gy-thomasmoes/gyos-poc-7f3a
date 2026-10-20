@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<link rel="stylesheet" href="gy-shell.css?v=3dd84ed8">
 <style>
 /* Hive Mind v2 (4 Oct 2026). The Hive Mind as the Knowledge part of the GYOS
    harness: what GY builds and owns, loaded by every agent. Agents read it
@@ -210,7 +210,7 @@
 <body>
 <div class="shell">
 <script>window.GYNAV={"active":"library","arts":null};</script>
-<script src="gy-nav.js?v=d93da068"></script>
+<script src="gy-nav.js?v=4042c4c7"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -312,9 +312,10 @@ var ITEMS=[
  {id:'wcc-qbank',  n:'Woodland carbon question bank',        s:'expertise', o:'SO', st:'draft', u:1, d:'3 Oct',  tier:'Silver', src:'Expert interviews', about:'The questions the agent asks a landowner, in order, and why each matters.', by:['Woodland Carbon agent']},
  {id:'ag-dm',      n:'Demand Mapping agent',                 s:'agents',    o:'EM', st:'draft', u:1, d:'1 Oct',  src:'Agents folder', go:'agent-demand-mapping.html', about:'Coordinator. Runs GY\u2019s demand mapping process, calls the ES agents and tools, and routes the document for review.', by:['Customer Demand Mapping']},
  {id:'ag-wcc',     n:'Woodland Carbon agent definition v0.1',s:'agents',    o:'SO', st:'draft', u:3, d:'3 Oct',  src:'Agents folder', go:'agent-woodland-carbon.html', about:'The holistic source of truth for woodland carbon. Rule books are only an input. Reads numbers from Databricks, never copies them.', by:['Customer Demand Mapping','Financial Model','Blended Finance Plan']},
+ {id:'ag-co',      n:'Coordinator agent definition v0.1',    s:'agents',    o:null, st:'draft', u:1, d:'20 Oct', src:'Agents folder', go:'agent-coordinator.html', about:'Runs every Deliverable from its Blueprint: pins a version, calls the Expert agents on its steps and hands expert steps to the Lead. One agent for all Deliverable types.', by:['Customer Demand Mapping']},
  {id:'ag-bp',      n:'Blueprint agent definition v0.1',      s:'agents',    o:'AN', st:'draft', u:3, d:'8 Oct',  src:'Agents folder', go:'agent-blueprint.html', about:'Writes and maintains Blueprints: drafts them from workshops, then proposes changes from Deliverable runs. The Blueprint owner signs off every version.', by:['Customer Demand Mapping','Investor Q&A Log','Tender to Bid']},
  {id:'ag-brand',   n:'Brand agent definition v0.1',          s:'agents',    o:null, st:'draft', u:4, d:'9 Oct',  src:'Agents folder', go:'agent-brand.html', about:'Keeps GY\u2019s brand book and applies it to every output: documents, decks, emails, websites and GY OS. Proposes changes; the brand owner approves.', by:['Every Blueprint']},
- {id:'bp-dm',      n:'Customer Demand Mapping',              s:'blueprints',o:'EM', st:'ok',    u:5, d:'26 Sep', src:'Blueprint schema', go:'agent-demand-mapping.html?tab=workflow', about:'Steps, gates, tools allowed and the done-when for a demand map. Five live runs.', by:['Upper Dee','Evenlode','Denton Reserve']},
+ {id:'bp-dm',      n:'Customer Demand Mapping',              s:'blueprints',o:'EM', st:'ok',    u:5, d:'26 Sep', src:'Blueprint schema', go:'agent-demand-mapping.html', about:'Steps, gates, tools allowed and the done-when for a demand map. Five live runs.', by:['Upper Dee','Evenlode','Denton Reserve']},
  {id:'bp-iqa',     n:'Investor Q&A Log',                     s:'blueprints',o:'TBC',st:'draft', u:3, d:'2 Oct',  src:'Blueprint schema', go:'blueprint.html?bp=iqa', about:'Canonical answers to investor questions, reused across raises.', by:['Evenlode']},
  {id:'sk-card',    n:'Fill an ES Card',                      s:'skills',    o:'CT', st:'ok',    u:6, d:'30 Sep', src:'Skills library', about:'Fills one Ecosystem Service Card with confidence and a source per field. Flags gaps, never guesses.', by:['All ES agents']},
  {id:'sk-q',       n:'Extract questionnaire from client docs',s:'skills',   o:'CT', st:'ok',    u:2, d:'22 Sep', src:'Skills library', about:'Reads what the client sent and lists what is still missing.', by:['Demand Mapping agent','Tender to Bid']},
@@ -378,6 +379,7 @@ var AGENTS=[
  {n:'Peatland Carbon', v:'1', type:'Expert', o:null, items:6,  st:'plan', i:'ti-plant', c:'#5E4B3C', ref:'peat-cat', go:'agent-peatland-carbon.html'},
  {n:'Nutrient',        v:'1', type:'Expert', o:'TBC',items:9,  st:'plan', es:'nut', go:'agent-nutrient.html'},
  {n:'Flood',           v:'1', type:'Expert', o:null, items:4,  st:'plan', es:'nfm', go:'agent-flood.html'},
+ {n:'Coordinator',     v:'0.1', type:'Process', o:null, items:28, st:'draft', i:'ti-hierarchy', c:'#8A6A2A', go:'agent-coordinator.html'},
  {n:'Blueprint',       v:'0.1', type:'Process', o:'AN', items:8,  st:'draft', i:'ti-route', c:'#8A6A2A', go:'agent-blueprint.html'},
  {n:'Brand',           v:'0.1', type:'Process', o:null, items:24, st:'draft', i:'ti-palette', c:'#8A6A2A', ref:'ag-brand', go:'agent-brand.html'}
 ];
@@ -385,7 +387,7 @@ var AST={live:['live','Live'],draft:['draft','Draft'],plan:['plan','Planned']};
 
 /* ── blueprints ── */
 var BPS=[
- {n:'Customer Demand Mapping', d:'adv', dn:'Advisory', ph:'Discover', o:'EM', runs:5, st:'live', go:'agent-demand-mapping.html?tab=workflow'},
+ {n:'Customer Demand Mapping', d:'adv', dn:'Advisory', ph:'Discover', o:'EM', runs:5, st:'live', go:'agent-demand-mapping.html'},
  {n:'Commercial Strategy',     d:'adv', dn:'Advisory', ph:'Plan',     o:'EM', runs:1, st:'draft', go:'blueprint.html?bp=comm'},
  {n:'Catchment Investment Plan',d:'adv',dn:'Advisory', ph:'Plan',     o:'AM', runs:1, st:'draft', go:'blueprint.html?bp=cip'},
  {n:'NatCap 101',              d:'adv', dn:'Advisory', ph:'Discover', o:'CC', runs:1, st:'draft', go:'blueprint.html?bp=natcap'},

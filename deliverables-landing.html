@@ -112,6 +112,15 @@ select.cin{cursor:pointer}
 .cfact{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);margin-top:8px}
 .cfact .ti{font-size:15px;color:var(--ink3)}
 .cteam{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+/* New Deliverable makes its Google Drive folder from the Blueprint's structure (20 Oct) */
+.cfold{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.cfold .fh{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink)}
+.cfold .fh .ti{font-size:18px;color:var(--ink2)}
+.cfold .fh b{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cfold .fp{font-size:12.5px;color:var(--ink2);margin:3px 0 0 28px}
+.cfold .fs{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 0 28px}
+.cfold .fs span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;background:var(--graybg);color:var(--ink);border-radius:999px;padding:3px 9px}
+.cfold .fs .ti{font-size:13px;color:var(--ink2)}
 .ctr{display:flex;align-items:center;gap:10px;padding:7px 8px 7px 12px;border-top:1px solid var(--line)}
 .ctr:first-child{border-top:none}
 .ctr .rl{flex:none;width:110px;font-size:14px;color:var(--ink2)}
@@ -222,11 +231,11 @@ select.cin{cursor:pointer}
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=d93da068"></script>
+<script src="gy-nav.js?v=4042c4c7"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-docs.js?v=daf7a2f3"></script>
-<script src="gy-blueprints.js?v=f62717e9"></script>
+<script src="gy-blueprints.js?v=376a606b"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -293,6 +302,8 @@ select.cin{cursor:pointer}
       <input class="cin" id="cName">
       <label class="cfl">Team</label>
       <div class="cteam" id="cTeam"></div>
+      <label class="cfl">Folder</label>
+      <div class="cfold" id="cFolder"></div>
     </div>
     <div class="cft">
       <button class="cbtn ghost" onclick="closeCreate()">Cancel</button>
@@ -341,6 +352,13 @@ function renderDeliverables(){
   var arr=getDeliverables(); if(!arr.length)return;
   head.insertAdjacentHTML('afterend', arr.map(deliverableRow).join(''));
 }
+function paintFolder(bp){
+  var el = document.getElementById('cFolder'); if(!el || !GYB.folder) return;
+  var name = (document.getElementById('cName').value||'').trim() || (PROG.name+': '+bp.name);
+  el.innerHTML = '<div class="fh"><i class="ti ti-brand-google-drive"></i><b>'+name.replace(/</g,'&lt;')+'</b></div>'
+    + '<div class="fp">New Google Drive folder in GY Programmes / '+PROG.name+', shared with the team</div>'
+    + '<div class="fs">'+GYB.folder(bp.id).map(function(f){ return '<span><i class="ti ti-folder"></i>'+f.n+'</span>'; }).join('')+'</div>';
+}
 function createDeliverable(){
   var bp=createBp(), team={};
   bp.roles.forEach(function(r){ team[r]=gySelGet('cRole_'+r)||''; });
@@ -350,6 +368,7 @@ function createDeliverable(){
          champ:team.champion||'',
          team:team,
          run:{state:'idle',done:[]}};
+  d.folder=GYB.folder ? GYB.folderPath(PROG.name, d.n) : '';
   var arr=getDeliverables(); arr.unshift(d);
   try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}
   closeCreate();
@@ -775,7 +794,8 @@ function paintCreate(keepName){
     : '<i class="ti ti-sparkles"></i>Agents come with the Blueprint';
   var nm = document.getElementById('cName');
   if(!keepName || !nm.dataset.touched) nm.value = PROG.name+': '+bp.name;
-  nm.oninput = function(){ nm.dataset.touched = '1'; };
+  nm.oninput = function(){ nm.dataset.touched = '1'; paintFolder(bp); };
+  paintFolder(bp);
   document.getElementById('cTeam').innerHTML = bp.roles.map(function(r){
     return '<div class="ctr"><span class="rl">'+(GYB.roleNames[r]||r)+'</span><span class="gseat">'
       + gySel('cRole_'+r,{width:'100%', options:people, value:pr[r]||'', placeholder:'Choose someone'})+'</span></div>';

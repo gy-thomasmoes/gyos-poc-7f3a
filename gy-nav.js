@@ -1109,6 +1109,7 @@ window.gyCartoTiles = function(style){
     'hive-mind-library.html':           {alt:'none'},
     'hive-mind-v2.html':                {alt:'none'},
     'agent-blueprint.html':             {alt:'none', trail:['Hive Mind','Agents']},
+    'agent-coordinator.html':           {alt:'none', trail:['Hive Mind','Agents']},
     'agent-demand-mapping.html':         {alt:'none', trail:['Hive Mind',['Deliverables','hive-mind-v2.html']]},
     'agent-woodland-carbon.html':        {alt:'none', trail:['Hive Mind','Agents']},
     'agent-bng.html':                    {alt:'none', trail:['Hive Mind','Agents']},
@@ -1725,5 +1726,76 @@ window.gyCartoTiles = function(style){
   if(document.readyState === 'loading') window.addEventListener('DOMContentLoaded', gyRenderCrumbs);
   else gyRenderCrumbs();
 
+
+
+  /* ── Reader layout (20 Oct) ────────────────────────────────────────────
+     Opt in with GYNAV.reader (Deliverable pages) or gyReaderOn() (Blueprint pages).
+     Watches #pbody and wraps whatever a tab renders in the reader frame
+     (.v8setw.v8docw > .v8setc + nav.v8anc); styles live in gy-shell.css.
+     Settings keeps its own section nav, Workflow gets its stages, a tab with
+     neither gets an empty nav so the white column stays the same width.
+     Tabs with their own full layout (paged documents, the model sheet) are left alone. */
+  function gyReaderWrap(el){
+    var b = document.body;
+    if(el.querySelector('.cspages,.fmv')){ b.classList.remove('reader'); return; }
+    b.classList.add('reader');
+    var kids = [].slice.call(el.children);
+    var w = kids.filter(function(k){ return k.classList.contains('v8setw'); })[0];
+    if(w && kids.length === 1 && w.classList.contains('v8docw') && w.querySelector(':scope > .v8anc')) return;
+    var c;
+    if(w){
+      w.classList.add('v8docw');
+      c = w.querySelector(':scope > .v8setc');
+      if(!c){ c = document.createElement('div'); c.className = 'v8setc'; while(w.firstChild) c.appendChild(w.firstChild); w.appendChild(c); }
+      var at = kids.indexOf(w);
+      kids.slice(0, at).reverse().forEach(function(k){ c.insertBefore(k, c.firstChild); });
+      kids.slice(at + 1).forEach(function(k){ if(k.classList.contains('v8anc')) w.appendChild(k); else c.appendChild(k); });
+      var inner = c.querySelector(':scope > .v8anc'); if(inner) w.appendChild(inner);
+    } else {
+      w = document.createElement('div'); w.className = 'v8setw v8docw';
+      c = document.createElement('div'); c.className = 'v8setc';
+      kids.forEach(function(k){ c.appendChild(k); });
+      w.appendChild(c); el.appendChild(w);
+    }
+    if(!w.querySelector(':scope > .v8anc')) w.insertAdjacentHTML('beforeend', gyReaderNav(c));
+  }
+  /* Workflow stages as the nav: number, name and the done count */
+  function gyReaderNav(c){
+    var chs = [].slice.call(c.querySelectorAll('.v8wch,.bsch'));
+    if(!chs.length) return '<nav class="v8anc rnav empty" aria-hidden="true"></nav>';
+    return '<nav class="v8anc rnav"><div><div class="csnavt">Stages</div>' + chs.map(function(ch, i){
+      ch.id = ch.id || 'rstage-' + (i + 1);
+      var nm = ch.querySelector('.v8wchh .nm,.bschh .t'), ct = ch.querySelector('.v8wchh .ct');
+      return '<a class="' + (i === 0 ? 'on' : '') + '" data-rid="' + ch.id + '" onclick="gyReaderJump(\'' + ch.id + '\')">'
+        + '<span class="rn">' + (i + 1) + '</span><span>' + (nm ? nm.textContent : 'Stage ' + (i + 1)) + '</span>'
+        + (ct ? '<span class="rc">' + ct.textContent.replace(/\s*of\s*/, '/') + '</span>' : '') + '</a>';
+    }).join('') + '</div></nav>';
+  }
+  var RLOCK = 0;
+  function gyReaderMark(id){ [].forEach.call(document.querySelectorAll('.rnav a'), function(a){ a.classList.toggle('on', a.getAttribute('data-rid') === id); }); }
+  window.gyReaderJump = function(id){
+    var el = document.getElementById(id), sc = document.querySelector('.v5body'); if(!el || !sc) return;
+    RLOCK = Date.now() + 900;
+    sc.scrollTo({top: Math.max(0, el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 32), behavior: 'smooth'});
+    gyReaderMark(id);
+  };
+  window.gyReaderOn = function(){
+    var el = document.getElementById('pbody'); if(!el || el._gyReader) return;
+    el._gyReader = true;
+    var mo = new MutationObserver(function(){ mo.disconnect(); gyReaderWrap(el); mo.observe(el, {childList: true}); });
+    gyReaderWrap(el); mo.observe(el, {childList: true});
+    var sc = document.querySelector('.v5body');
+    if(sc) sc.addEventListener('scroll', function(){
+      if(Date.now() < RLOCK) return;
+      var links = document.querySelectorAll('.rnav a'); if(!links.length) return;
+      var top = sc.getBoundingClientRect().top + 80, cur = links[0].getAttribute('data-rid');
+      [].forEach.call(links, function(a){ var t = document.getElementById(a.getAttribute('data-rid')); if(t && t.getBoundingClientRect().top <= top) cur = a.getAttribute('data-rid'); });
+      gyReaderMark(cur);
+    }, {passive: true});
+  };
+  if(window.GYNAV && GYNAV.reader){
+    if(document.readyState === 'loading') window.addEventListener('DOMContentLoaded', gyReaderOn);
+    else gyReaderOn();
+  }
 
 })();

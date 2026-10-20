@@ -6,7 +6,7 @@
 <title>Blueprint agent &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=dd4e9861">
+<link rel="stylesheet" href="gy-shell.css?v=3dd84ed8">
 <style>
 /* Shell CSS copied from deliverable-sketch-v8.html (8 Oct) so this page matches the Deliverable pages. */
 
@@ -1407,8 +1407,8 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 <body>
 
 <div class="shell">
-<script>window.GYNAV={"active":"library","arts":null,"rail":true};</script>
-<script src="gy-nav.js?v=d93da068"></script>
+<script>window.GYNAV={"active":"library","arts":null,"rail":true,"reader":true};</script>
+<script src="gy-nav.js?v=4042c4c7"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -1468,7 +1468,7 @@ function todo(list){ return list.map(function(t){ return '<div class="todo"><spa
 var SVG = '<svg viewBox="0 0 760 360" role="img" aria-label="Every run sharpens the Blueprint, only the owner publishes" font-family="-apple-system,system-ui,Inter,sans-serif" font-size="13">         <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#A79E8D"/></marker></defs>         <text x="24" y="22" font-size="11.5" fill="#766B62">Author mode</text>         <text x="24" y="352" font-size="11.5" fill="#766B62">Maintain mode</text>         <g fill="none" stroke="#A79E8D" stroke-width="1.25">           <path d="M184 60H208" marker-end="url(#ar)"/><path d="M368 60H392" marker-end="url(#ar)"/><path d="M552 60H576" marker-end="url(#ar)"/>           <path d="M472 84V106H288V84" marker-end="url(#ar)"/>           <path d="M656 84V162H490" marker-end="url(#ar)"/>           <path d="M270 174H104V280" marker-end="url(#ar)"/>           <path d="M184 304H208" marker-end="url(#ar)"/><path d="M368 304H392" marker-end="url(#ar)"/><path d="M552 304H576" marker-end="url(#ar)"/>           <path d="M656 280V186H490" marker-end="url(#ar)"/>         </g>         <g fill="#FFFFFF" stroke="#DED8CA" stroke-width="1.25">           <rect x="24" y="36" width="160" height="48" rx="8"/><rect x="208" y="36" width="160" height="48" rx="8"/><rect x="392" y="36" width="160" height="48" rx="8"/><rect x="576" y="36" width="160" height="48" rx="8"/>           <rect x="24" y="280" width="160" height="48" rx="8"/><rect x="208" y="280" width="160" height="48" rx="8"/><rect x="392" y="280" width="160" height="48" rx="8"/><rect x="576" y="280" width="160" height="48" rx="8"/>         </g>         <rect x="270" y="150" width="220" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="2"/>         <g text-anchor="middle" fill="#1A0C12">           <text x="104" y="64">New type requested</text><text x="288" y="64">Agent drafts</text><text x="472" y="64">Experts workshop</text><text x="656" y="64">Owner signs off</text>           <text x="380" y="178" font-weight="600">Blueprint live, versioned</text>           <text x="104" y="308">Deliverable runs</text><text x="288" y="308">Corrections logged</text><text x="472" y="308">Agent proposes diff</text><text x="656" y="308">Owner approves</text>         </g>         <g font-size="11.5" fill="#766B62">           <text x="380" y="124" text-anchor="middle">gaps left: redraft</text>           <text x="664" y="128">publish v1</text>           <text x="664" y="240">new version</text>           <text x="187" y="166" text-anchor="middle">each run pins a version</text>         </g>       </svg>';
 
 var SECS = [
-  ['c-where','Where it sits', '<div class="pblk">A Blueprint is the spec: mostly a Skill, plus pointers to the Context it reads, the Tools it may use and the Governance gates that apply. A Deliverable is one instance of it in a programme. Lead agents such as Demand Mapping run Deliverables and call Ecosystem Service agents; the Blueprint agent works one level up, on the spec they all run from.</div>'],
+  ['c-where','Where it sits', '<div class="pblk">A Blueprint is the spec: mostly a Skill, plus pointers to the Context it reads, the Tools it may use and the Governance gates that apply. A Deliverable is one instance of it in a programme. The Coordinator agent runs Deliverables and calls the Expert agents; the Blueprint agent works one level up, on the spec they all run from.</div>'],
   ['c-why','Why it matters', '<div class="pblk">Mapping a Deliverable today takes long expert sessions, and what is learned in a run stays in people\'s heads or single Claude threads. The Blueprint is the asset in progress; this agent is how it gets sharper with every programme.</div>'],
   ['c-how','How it works', '<div class="fig">'+SVG+'</div><div class="dcap">Author mode loops between draft and workshop until the owner signs off. Maintain mode turns corrections seen in at least two runs into a proposed diff; the owner\'s approval creates the next version, which new Deliverables pin.</div>'],
   ['c-jobs','Jobs', tbl(['Job','Mode','Question it answers','Gives','Signs off'],[
