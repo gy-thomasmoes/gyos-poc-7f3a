@@ -107,7 +107,9 @@
   function nextVer(v){ var p = String(v).split('.'); p[p.length-1] = String(+p[p.length-1] + 1); return p.join('.'); }
   var COORD = D.kind === 'coordinator';
   var conf = {}; (AG.conf || []).forEach(function(c){ conf[c[0]] = c[4].slice(); });
-  var SAVED = JSON.stringify({wf:D.wf, conf:conf, prompt:AG.purpose});
+  var SAVED = JSON.stringify({wf:D.wf, conf:conf, prompt:AG.purpose, access:ACCESS, owner:D.owner, manager:D.manager});
+  /* People are edited in Blueprint Studio with gySel: load it on pages that do not (20 Oct) */
+  if(!window.gySel){ var gs = document.createElement('script'); gs.src = 'gy-select.js'; document.head.appendChild(gs); }
 
   /* ── state ────────────────────────────────────────────────────────── */
   var S = {
@@ -121,19 +123,17 @@
   /* ── styles ───────────────────────────────────────────────────────── */
   var css = ''
     /* right side of the tab bar: version dropdown, Edit Blueprint, and in the studio the draft controls */
-    /* beside the page title: version chip and a quiet Edit; on the right of the topbar the studio controls */
-    + '.bstitle{display:inline-flex;align-items:center;gap:0;margin-left:14px;flex:none}'
+    /* right of the tab bar: version and Edit as two buttons; on the right of the topbar the studio controls */
+    + '.bstitle{display:inline-flex;align-items:center;gap:8px;margin-left:auto;flex:none}'
     + '.bsverc,.bsedit{display:inline-flex;align-items:center;gap:6px;height:31px;box-sizing:border-box;border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:0 12px;'
     +   'font:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;white-space:nowrap}'
     + '.bsverc:hover,.bsedit:hover{border-color:var(--ink3)}'
-    + '.bsverc{border-radius:10px 0 0 10px}.bsedit{border-radius:0 10px 10px 0;margin-left:-1px}'
-    + 'body.bson .bsverc{border-radius:10px}'
     + '.bsverc:hover,.bsedit:hover{position:relative;z-index:1;background:var(--graybg)}'
     + '.bsverc{padding:0 9px 0 12px;font-variant-numeric:tabular-nums}'
     + '.bsverc .ti{font-size:14px;color:var(--ink3)}'
     + '.bsedit .ti{font-size:16px;color:var(--ink2)}'
-    + '.bsctl{display:none;align-items:center;gap:8px;margin-right:10px}'
-    + 'body.bson .bsctl{display:inline-flex}'
+    + '.bsctl{display:none;align-items:center;gap:8px}'
+    + 'body.bsdraft .bsctl,body.bsold .bsctl{display:inline-flex}'
     + '.bspill{display:inline-flex;align-items:center;gap:7px;border:none;background:var(--card);color:var(--amberd);border-radius:999px;'
     +   'padding:6px 12px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}'
     + '.bspill i.d{width:7px;height:7px;border-radius:50%;background:var(--amber)}'
@@ -153,15 +153,36 @@
     + '.bsstudio .sep{color:var(--ink3)}'
     + '.bsstudio b{font-weight:600}'
     /* Blueprint Studio: only the topbar turns GY yellow; everything on it is ink */
-    + 'body.bson .topbar{background:var(--yellow);border-bottom-color:#E3C64A}'
-    + 'body.bson .topbar .cr,body.bson .topbar .crumbs,body.bson .topbar .bsstudio .sep{color:var(--ink)}'
-    + 'body.bson .bsverc{border-color:rgba(26,12,18,.35);color:var(--ink)}'
-    + 'body.bson .bsverc:hover{background:rgba(255,255,255,.45)}'
-    + 'body.bson .bsav{box-shadow:0 0 0 2px var(--yellow)}'
-    + 'body.bson .bsav.more{background:rgba(255,255,255,.6);color:var(--ink)}'
-    + 'body.bson .bspile:hover{background:rgba(26,12,18,.08)}'
-    + 'body.bson .topbar .v5keb,body.bson .topbar .scollapse{color:var(--ink)}'
-    + '@media(max-width:760px){.bsstudio,.bsedit,.bspill{display:none!important}}'
+    /* 20 Oct: the tab bar (not the topbar) turns GY yellow and holds Done / Save; everything on it is ink */
+    + 'body.bsdraft .v5tabs{background:var(--yellow);border-bottom-color:#E3C64A}'
+    + 'body.bsdraft .topbar{border-bottom-color:#E3C64A}'
+    + 'body.bsdraft .v5tabs .v5tab,body.bsdraft .v5tabs .v5tab .ti,body.bsdraft .v5tabs .v8agt{color:var(--ink)}'
+    + 'body.bsdraft .v5tabs .v5tab:hover,body.bsdraft .v5tabs .v5tab.on,body.bsdraft .v5tabs .v8agt.on{background:rgba(255,255,255,.55);border-color:transparent}'
+    + 'body.bsdraft .v5tabs .v5tdiv{background:rgba(26,12,18,.18)}'
+    + 'body.bsdraft .v5tabs .bscount{color:var(--ink2)!important}'
+    + 'body.bsdraft .bsverc{border-color:rgba(26,12,18,.35);color:var(--ink)}'
+    + 'body.bsdraft .bsverc .ti{color:var(--ink2)}'
+    /* an old version is read only: the tab bar goes grey and says so */
+    + 'body.bsold .v5tabs{background:var(--graybg)}'
+    + 'body.bsold .v5tabs .v5tab.on,body.bsold .v5tabs .v8agt.on{background:var(--card)}'
+    + '.bsrol{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink2);white-space:nowrap}'
+    + '.bsrol .ti{font-size:15px}'
+    /* always editable for Admins and Editors: controls stay quiet until you point at them */
+    + 'body.bson .bsch:not(:hover) .bsadd{opacity:0}'
+    + '.bsadd{transition:opacity .12s}'
+    + '.bsprow:not(:hover) .bspsel .gyselbtn{border-color:transparent;background:none}'
+    + '.bsprow:not(:hover) .bspsel .gyselcar{visibility:hidden}'
+    + '.bsprow .bspsel .gyselbtn{justify-content:flex-end;text-align:right}'
+    + '.bsvi.pick{cursor:pointer}.bsvi.pick:hover{background:var(--bg)}'
+    + '.bspubh{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--ink);padding:8px 10px 2px}'
+    + '.bspubs{font-size:13.5px;color:var(--ink2);line-height:1.5;padding:0 10px 6px}'
+    + '.bspubg{padding:0 10px}'
+    + '.bspubg .w{font-size:12.5px;font-weight:600;color:var(--ink3);padding:8px 0 0}'
+    + '.bspubn{display:block;width:calc(100% - 20px);margin:2px 10px 0;box-sizing:border-box;min-height:64px;resize:vertical;border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font:inherit;font-size:14px;color:var(--ink);background:var(--card)}'
+    + '.bspubn:focus{outline:none;border-color:var(--ink3)}'
+    + '.bspuba{display:flex;justify-content:flex-end;gap:8px;padding:12px 10px 8px}'
+    + '.bspuba .bsbtn.out{border-color:var(--line2)}'
+    + '@media(max-width:760px){.bsstudio,.bstitle,.bspill{display:none!important}}'
     /* version dropdown */
     + '.bsvpop{position:fixed;z-index:1400;width:360px;max-width:calc(100vw - 24px);max-height:70vh;overflow:auto;background:var(--card);'
     +   'border:1px solid var(--line2);border-radius:13px;box-shadow:0 16px 44px rgba(31,31,29,.18);padding:8px}'
@@ -317,32 +338,35 @@
   /* ── topbar: version and Edit beside the title; studio controls before Share; the topbar turns yellow in the studio ── */
   var top = document.querySelector('.topbar');
   var crumbs = top && top.querySelector('.crumbs');
-  if(crumbs) crumbs.insertAdjacentHTML('afterend', '<span class="bstitle" id="bsTitle"></span>');
   function avh(p, cls){ return '<span class="bsav'+(cls?' '+cls:'')+'" style="background:'+p.c+'" data-tip="'+h(p.name)+', '+p.lvl+'">'+p.ini+'</span>'; }
   var shareBtn = top && top.querySelector('.btn-out');
   if(shareBtn){
     var shown = ACCESS.slice(0, 4), rest = ACCESS.length - shown.length;
-    shareBtn.classList.add('bsoff');
-    shareBtn.insertAdjacentHTML('beforebegin', '<span class="bsctl" id="bsCtl"></span><button class="bspile" id="bsPile" onclick="bsAccess(this)" title="Who has access">'
+    shareBtn.insertAdjacentHTML('beforebegin', '<button class="bspile" id="bsPile" onclick="bsAccess(this)" title="Who has access">'
       + shown.map(function(p){ return avh(p); }).join('') + (rest > 0 ? '<span class="bsav more">+'+rest+'</span>' : '') + '</button>');
   }
 
   function titleHtml(){
-    return '<button class="bsverc" id="bsVerB" onclick="bsVersions(this)" title="Version history">v'+S.ver+'<i class="ti ti-chevron-down"></i></button>'
-      + '<button class="bsedit bsoff" onclick="bsEdit(true)" title="Edit the Blueprint"><i class="ti ti-pencil"></i>Edit</button>';
+    return '<button class="bsverc" id="bsVerB" onclick="bsVersions(this)" title="Version history">v'+(S.view||S.ver)+'<i class="ti ti-chevron-down"></i></button>'
+      + '<span class="bsctl" id="bsCtl"></span>';
   }
   function ctlHtml(){
+    /* an old version: read only, with a way back and a way to restore it as a draft */
+    if(S.view) return '<span class="bsrol"><i class="ti ti-lock"></i>Version '+h(S.view)+', read only</span>'
+      + '<button class="bsbtn out" onclick="bsView(null)">Back to v'+S.ver+'</button>'
+      + (S.on || canEdit() ? '<button class="bsbtn dark" onclick="bsRestore()"><i class="ti ti-history"></i>Restore as draft</button>' : '');
     validate();
     var n = S.changes.length, pill = '';
     if(S.fix.length) pill = '<button class="bspill fix" onclick="bsVersions(this)"><i class="d"></i>'+S.fix.length+' to fix</button>';
-    else if(n) pill = '<button class="bspill" onclick="bsVersions(this)"><i class="d"></i>'+n+' change'+(n>1?'s':'')+' not saved</button>';
+    else if(n) pill = '<button class="bspill" onclick="bsVersions(this)"><i class="d"></i>'+n+' unpublished change'+(n>1?'s':'')+'</button>';
     return pill
-      + '<button class="bsbtn out" onclick="bsEdit(false)">Done</button>'
-      + '<button class="bsbtn dark" onclick="bsSave()"'+(n?'':' disabled')+'><i class="ti ti-device-floppy"></i>Save version '+nextVer(S.ver)+'</button>';
+      + '<button class="bsbtn dark bspubb" onclick="bsPublish(this)"'+(n?'':' disabled')+'><i class="ti ti-upload"></i>Publish version '+nextVer(S.ver)+'</button>';
   }
   function paintTop(){
     var t = document.getElementById('bsTitle'); if(t) t.innerHTML = titleHtml();
     var c = document.getElementById('bsCtl'); if(c) c.innerHTML = ctlHtml();
+    document.body.classList.toggle('bsdraft', !S.view && !!(S.changes.length || S.fix.length));
+    document.body.classList.toggle('bsold', !!S.view);
   }
 
   /* ── tabs: Content, Workflow, Source, Settings ────────────────────── */
@@ -358,15 +382,19 @@
     var tabs = document.getElementById('tabs');
     /* on a Deliverable the chat is its coordinator: name it, so it is clear the agent lives inside the Deliverable */
     var b = tabs.querySelector('.v8agt');
-    if(b && COORD && !S.on){ var ca = (D.roles||[]).filter(function(r){ return r[2] === 'agent' && (r[0] === 'coord' || r[0] === 'dm'); })[0];
-      if(ca){ var ic = b.querySelector('.v8ava'); b.innerHTML = (ic ? ic.outerHTML : '') + h(ca[1]); } }
+    /* in Hive Mind the chat is always the Blueprint Agent; you talk to the coordinator inside a Deliverable (20 Oct) */
+    if(b){ var ic = b.querySelector('.v8ava'); b.innerHTML = (ic ? ic.outerHTML : '') + 'Blueprint Agent'; }
     var w = tabs.querySelector('.v5tab[onclick*="workflow"] .lb');
     if(w && COORD) w.insertAdjacentHTML('afterend', ' <span class="bscount" style="font-size:12px;color:var(--ink3)">'+steps().length+'</span>');
+    /* version and Edit: two separate buttons, right-aligned on the tab bar (20 Oct) */
+    tabs.insertAdjacentHTML('beforeend', '<span class="bstitle" id="bsTitle"></span>');
     paintTop();
   };
   var _openTab = window.openTab;
   window.openTab = function(k){
     document.body.classList.toggle('bssrc', k === 'source');
+    /* switching tab closes the drawer: it belongs to the tab it was opened from (20 Oct) */
+    if(k !== window.TAB) closeDrawerQuiet();
     _openTab(k); markOpen();
   };
   function repaint(){ var b = document.querySelector('.v5body'), y = b ? b.scrollTop : 0; openTab(window.TAB); if(b) b.scrollTop = y; paintTop(); markOpen(); }
@@ -586,7 +614,7 @@
     return '<div class="bssrcw"><div class="bssheet">'
       + '<div class="bsfh"><i class="ti ti-file-code" style="color:var(--ink3);font-size:17px"></i><span class="fn">'+h(cur[2])+'</span><span class="sp"></span>'+admins()+stHtml(cur[0])+'</div>'
       + sel
-      + '<pre class="bscode" id="bsCode" contenteditable="plaintext-only" spellcheck="false" oninput="bsType(this)">'+body(cur[0])+'</pre>'
+      + '<pre class="bscode" id="bsCode"'+(S.on?' contenteditable="plaintext-only" spellcheck="false" oninput="bsType(this)"':'')+'>'+body(cur[0])+'</pre>'
       + '</div>' + toc + '</div>';
   };
   window.bsFile = function(k){
@@ -603,7 +631,7 @@
     var k = S.file, name = '';
     files().forEach(function(f){ if(f[0] === k) name = f[2]; });
     S.edits[k] = el.innerText;
-    if(!S.on) bsEdit(true, true);
+    if(!S.on) return;
     addChange('file:'+k, 'Changed', name+' edited by hand', 'Source');
     var s = document.getElementById('bsFst'); if(s) s.outerHTML = stHtml(k);
     var a = document.querySelector('.bstoc a.on'); if(a && !a.querySelector('.fd')) a.insertAdjacentHTML('beforeend', '<i class="fd"></i>');
@@ -638,7 +666,7 @@
     document.getElementById('drtitle').textContent = f[1];
     document.getElementById('dricon').classList.add('hide');
     document.getElementById('drbody').innerHTML = '<div class="bsed"><div class="bsfh">'+pair+'</div>'
-      + '<pre class="bscode" id="bsCode" contenteditable="plaintext-only" spellcheck="false" oninput="bsType(this)">'+body(k)+'</pre></div>';
+      + '<pre class="bscode" id="bsCode"'+(S.on?' contenteditable="plaintext-only" spellcheck="false" oninput="bsType(this)"':'')+'>'+body(k)+'</pre></div>';
     document.getElementById('drawer').classList.remove('hide');
     drSize(true); markOpen();
   };
@@ -646,13 +674,13 @@
   /* ── version dropdown ─────────────────────────────────────────────── */
   var VPOP = null;
   function vClose(){ if(VPOP){ VPOP.remove(); VPOP = null; document.removeEventListener('click', vOut, true); } }
-  function vOut(e){ if(VPOP && !VPOP.contains(e.target) && !(e.target.closest && e.target.closest('#bsVerB,.bspill,#bsPile'))) vClose(); }
+  function vOut(e){ if(VPOP && !VPOP.contains(e.target) && !(e.target.closest && e.target.closest('#bsVerB,.bspill,#bsPile,.bspubb'))) vClose(); }
   window.bsVersions = function(anchor){
     if(VPOP){ var was = VPOP._k; vClose(); if(was === 'ver') return; }
     validate();
     var b = '';
-    if(S.on && (S.changes.length || S.fix.length)){
-      b += '<div class="lbl">Draft</div><div class="bsvi draft"><div class="h">Version '+nextVer(S.ver)+'<span class="dt">Not saved</span></div>'
+    if(S.changes.length || S.fix.length){
+      b += '<div class="lbl">Draft</div><div class="bsvi draft"><div class="h">Version '+nextVer(S.ver)+'<span class="dt">Not published</span></div>'
         + S.changes.map(function(c){
             return '<div class="bschg"><span class="bstag'+(c.kind==='New'?' new':'')+'">'+c.kind+'</span><div>'+h(c.text)+(c.where?'<div class="w">'+h(c.where)+'</div>':'')+'</div></div>';
           }).join('')
@@ -660,7 +688,8 @@
         + '<div class="acts"><button class="bsbtn out" onclick="bsDiscard()">Discard</button></div></div>';
     }
     b += '<div class="lbl">Versions</div>' + D.versions.map(function(v, i){
-      return '<div class="bsvi"><div class="h">Version '+v.v+(i===0?' <span class="bstag">Current</span>':'')+'<span class="dt">'+h(v.date)+'</span></div>'
+      var cur = String(S.view || S.ver) === String(v.v), go = i === 0 ? (S.view ? 'bsView(null)' : '') : (cur ? '' : 'bsView(\''+v.v+'\')');
+      return '<div class="bsvi'+(go?' pick':'')+'"'+(go?' onclick="'+go+'"':'')+'><div class="h">Version '+v.v+(i===0?' <span class="bstag">Current</span>':'')+(S.view && cur?' <span class="bstag">Viewing</span>':'')+'<span class="dt">'+h(v.date)+'</span></div>'
         + '<div class="nt">'+h(v.note)+'</div><div class="by">'+h(v.by)+'</div>'
         + (v.runs.length ? '<div class="runs">'+v.runs.map(function(r){ return r[1] ? '<a href="'+r[1]+'">'+h(r[0])+'</a>' : '<span>'+h(r[0])+'</span>'; }).join('')+'</div>' : '')
         + '</div>';
@@ -698,27 +727,37 @@
     : ['Make the prompt shorter.', 'Add a skill for stacking rules.', 'Which steps use this agent?'];
   function chips(){ return gyAskCard('Ask the Blueprint agent', CHIPS, 'bsAsk'); }
   var _send = window.sendMsg;
-  window.bsEdit = function(on, keepPanel){
-    if(on === S.on) return;
-    S.on = on; vClose();
-    document.body.classList.toggle('bson', on);
-    document.body.classList.remove('pclosed');
-    if(on){
-      S.agentLog = LOG.slice();
-      if(!S.bpLog) S.bpLog = [say('I am the Blueprint agent. Ask me to change '+(COORD?'this Blueprint: add a check, split a step or tighten the instructions.':'this agent: its prompt, skills or tools.')+' Every change goes into a draft you see on the page, and nothing is live until you save a new version.'), chips()];
-      LOG.length = 0; S.bpLog.forEach(function(x){ LOG.push(x); });
-      document.getElementById('ask').placeholder = 'Ask the Blueprint agent';
-      window.sendMsg = bsSend;
-      if(!keepPanel && COORD && window.TAB === 'content') openTab('workflow');
-    } else {
-      S.bpLog = LOG.slice();
-      LOG.length = 0; S.agentLog.forEach(function(x){ LOG.push(x); });
-      document.getElementById('ask').placeholder = 'Ask the agent';
-      window.sendMsg = _send;
-      if(S.changes.length) gyToast('Your draft is kept. Edit Blueprint picks it up again.');
-    }
-    paintChat(); paintTabs();
-    if(!keepPanel){ repaint(); closeDrawerQuiet(); }
+  /* No Edit mode (20 Oct): Admins and Editors can always edit, Viewers never can. The first change starts
+     a draft (the tab bar turns yellow) and nothing is live until it is published. ?as=viewer|editor|admin previews a role. */
+  var ME = 'Thomas Moes';
+  var asM = location.search.match(/[?&]as=(admin|editor|viewer)/i);
+  function myLevel(){
+    if(asM) return asM[1].charAt(0).toUpperCase() + asM[1].slice(1).toLowerCase();
+    var a = ACCESS.filter(function(x){ return x.name === ME; })[0]; return a ? a.lvl : 'Viewer';
+  }
+  function canEdit(){ var l = myLevel(); return l === 'Admin' || l === 'Editor'; }
+  function setEdit(){ S.on = canEdit() && !S.view; document.body.classList.toggle('bson', S.on); }
+  window.bsEdit = function(){ setEdit(); paintTabs(); repaint(); };
+  function chatToBlueprint(){
+    LOG.length = 0;
+    LOG.push(say(canEdit()
+      ? 'I am the Blueprint Agent. Ask me to change '+(COORD?'this Blueprint: add a check, split a step or tighten the instructions.':'this agent: its prompt, skills or tools.')+' Changes go into a draft you see on the page. Nothing changes for anyone until you publish a new version.'
+      : 'I am the Blueprint Agent. Ask me how this '+(COORD?'Blueprint':'agent')+' works. You have view access, so I can explain it but not change it.'));
+    LOG.push(chips());
+    var a = document.getElementById('ask'); if(a) a.placeholder = 'Ask the Blueprint Agent';
+    window.sendMsg = bsSend; paintChat();
+  }
+  window.bsView = function(v){
+    vClose();
+    S.view = (v && String(v) !== String(S.ver)) ? String(v) : null;
+    setEdit(); closeDrawerQuiet(); paintTabs(); repaint();
+  };
+  window.bsRestore = function(){
+    var v = S.view; if(!v) return;
+    S.view = null; setEdit();
+    addChange('restore:'+v, 'Changed', 'Restored from version '+v, 'Whole '+(COORD?'Blueprint':'agent'));
+    paintTabs(); repaint();
+    gyToast('Version '+v+' is now your draft. Publish it to make it current.');
   };
   function closeDrawerQuiet(){ S.sel = null; S.file = null; drSize(false); markOpen(); document.getElementById('drawer').classList.add('hide'); }
   function bsSend(){
@@ -728,6 +767,11 @@
   window.bsAsk = function(q){
     for(var i = LOG.length - 1; i >= 0; i--) if(LOG[i].indexOf('gyqa') >= 0 || LOG[i].indexOf('class="gyq"') >= 0) LOG.splice(i, 1);
     LOG.push(you(esc(q))); paintChat();
+    if(!S.on){
+      var ro = S.view ? 'You are looking at version '+S.view+', which is read only. Go back to v'+S.ver+' or restore this version as a draft to change it.'
+                      : 'You have view access, so I can explain this '+(COORD?'Blueprint':'agent')+' but not change it. An Admin can give you Editor access.';
+      setTimeout(function(){ LOG.push(say(ro)); paintChat(); }, 650); return;
+    }
     setTimeout(function(){ LOG.push(say(answer(q))); LOG.push(chips()); paintChat(); paintTabs(); repaint(); }, 650);
   };
   function answer(q){
@@ -811,22 +855,52 @@
     }
     return 'I can add, split or move steps, change who does a step, or tighten the instructions.';
   }
-  window.bsSave = function(){
-    validate(); vClose();
-    if(S.fix.length){ gyToast('Fix '+S.fix.length+' thing'+(S.fix.length>1?'s':'')+' before you save'); bsVersions(document.getElementById('bsVerB')); return; }
-    if(!S.changes.length) return;
+  /* Publish (20 Oct): with everything editable, publishing is the deliberate step, so it shows what changes first */
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  window.bsPublish = function(anchor){
+    if(VPOP){ var was = VPOP._k; vClose(); if(was === 'pub') return; }
+    validate();
+    var nv = nextVer(S.ver), groups = {}, order = [];
+    S.changes.forEach(function(c){ var w = c.where || 'Other'; if(!groups[w]){ groups[w] = []; order.push(w); } groups[w].push(c); });
+    var b = '<div class="bspubh">Publish version '+nv+'</div>'
+      + '<div class="bspubs">New Deliverables start on version '+nv+'. Running Deliverables stay on the version they started with.</div>'
+      + '<div class="lbl">'+S.changes.length+' change'+(S.changes.length>1?'s':'')+'</div>'
+      + order.map(function(w){
+          return '<div class="bspubg"><div class="w">'+h(w)+'</div>' + groups[w].map(function(c){
+            return '<div class="bschg"><span class="bstag'+(c.kind==='New'?' new':'')+'">'+c.kind+'</span><div>'+h(c.text)+'</div></div>';
+          }).join('') + '</div>';
+        }).join('')
+      + (S.fix.length ? '<div class="bspubg">'+S.fix.map(function(f){ return '<div class="bsfixn"><i class="ti ti-alert-circle"></i><span>'+h(f)+'</span></div>'; }).join('')+'</div>' : '')
+      + '<div class="lbl">Note</div><textarea class="bspubn" id="bsPubN" placeholder="What changed and why, for the version history"></textarea>'
+      + '<div class="bspuba"><button class="bsbtn out" onclick="bsPubClose()">Cancel</button>'
+      + '<button class="bsbtn dark" onclick="bsPublishNow()"'+(S.fix.length?' disabled':'')+'><i class="ti ti-upload"></i>Publish version '+nv+'</button></div>';
+    VPOP = document.createElement('div'); VPOP.className = 'bsvpop bspub'; VPOP._k = 'pub'; VPOP.innerHTML = b;
+    document.body.appendChild(VPOP);
+    var r = anchor.getBoundingClientRect(), w = VPOP.offsetWidth;
+    VPOP.style.left = Math.max(12, Math.min(r.right - w, window.innerWidth - w - 12)) + 'px';
+    VPOP.style.top = (r.bottom + 6) + 'px';
+    setTimeout(function(){ document.addEventListener('click', vOut, true); var t = document.getElementById('bsPubN'); if(t) t.focus(); }, 0);
+  };
+  window.bsPubClose = function(){ vClose(); };
+  window.bsPublishNow = function(){
+    validate();
+    if(S.fix.length || !S.changes.length) return;
+    var t = document.getElementById('bsPubN'), note = t && t.value.trim();
+    var d = new Date();
     S.ver = nextVer(S.ver);
-    D.versions.unshift({v:S.ver, date:'15 Oct 2026', by:'You', note:S.changes.map(function(c){ return c.text; }).join('; '), runs:[]});
+    D.versions.unshift({v:S.ver, date:d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear(), by:'You', note:note || S.changes.map(function(c){ return c.text; }).join('; '), runs:[]});
     steps().forEach(function(x){ delete x.s.isNew; });
     S.changes = [];
-    SAVED = JSON.stringify({wf:D.wf, conf:conf, prompt:S.prompt, edits:S.edits});
+    SAVED = JSON.stringify({wf:D.wf, conf:conf, prompt:S.prompt, edits:S.edits, access:ACCESS, owner:D.owner, manager:D.manager});
     AG.purpose = S.prompt;
-    bsEdit(false);
-    gyToast('Saved as version '+S.ver+'. Running Deliverables stay on the version they started with.');
+    vClose(); paintTabs(); repaint();
+    gyToast('Published version '+S.ver+'. Running Deliverables stay on the version they started with.');
   };
+  window.bsSave = function(){ var b = document.querySelector('.bspubb'); if(b) bsPublish(b); };
   window.bsDiscard = function(){
     var o = JSON.parse(SAVED);
     D.wf = o.wf; conf = o.conf; S.prompt = o.prompt; S.edits = o.edits || {}; S.changes = [];
+    if(o.access){ ACCESS = o.access; D.owner = o.owner; D.manager = o.manager; }
     if(D.wf){ uid = 0; D.wf.forEach(function(c){ c.s.forEach(function(s){ s.id = 's'+(++uid); }); }); }
     vClose(); closeDrawerQuiet(); paintTabs(); repaint();
     gyToast('Draft discarded');
@@ -882,7 +956,13 @@
       + '.bsgov .v8row .nm{white-space:normal;overflow:visible;line-height:1.5}'
       + '.bsgov .v8row .ic{margin-top:-1px}'
       + '.bsgov .v8row.kv .nm{flex:none;width:130px;color:var(--ink2)}'
-      + '.bsgov .v8row.kv .v{flex:1;min-width:0;line-height:1.5;color:var(--ink)}';
+      + '.bsgov .v8row.kv .v{flex:1;min-width:0;line-height:1.5;color:var(--ink)}'
+      + '.bsprow .bsav{margin-left:0;box-shadow:none}'
+      + '.bsprow .nm{font-size:14.5px;color:var(--ink)}'
+      + '.bsprow .lv{flex:none;font-size:13.5px;color:var(--ink2)}'
+      + '.bsprow .bspsel{flex:none}.bsprow .bspsel .gyselbtn{padding:6px 10px;font-size:13.5px}'
+      + '.bsprow.add .bspsel .gyselbtn{border-style:dashed}'
+      + '.bsav.plus{background:var(--graybg);color:var(--ink2);font-size:15px}';
     document.head.appendChild(st);
 
     var SYS = /notion|google drive|hubspot|^gy /i;
@@ -932,6 +1012,29 @@
       if(k === 'evals'){ t = 'Evals'; body = GOVD.evals.map(function(e){ return '<div class="v8row kv wrap"><span class="nm">'+e[0]+'</span><span class="v">'+e[1]+'</span></div>'; }).join(''); }
       openDrawer(t, '<div class="v8dr bsgov">'+body+'</div>');
     };
+    /* People edits in Blueprint Studio: level, make owner, remove, add; each is a draft change (20 Oct) */
+    window.bsPerson = function(who, v){
+      var log = function(key, text){ var c = chgFor(key); if(c) c.text = text; else addChange(key, 'Changed', text, 'People'); };
+      if(v === 'add'){
+        var q = P[who]; if(!q) return;
+        ACCESS = ACCESS.concat([{name:q[0], ini:q[1], c:q[2], lvl:'Viewer'}]);
+        log('people:'+q[0], 'People: '+q[0]+' added as Viewer');
+      } else if(v === 'remove'){
+        ACCESS = ACCESS.filter(function(a){ return a.name !== who; });
+        log('people:'+who, 'People: '+who+' removed');
+      } else if(v === 'owner'){
+        var was = D.owner || D.manager;
+        if(D.manager && !D.owner) D.manager = who; else D.owner = who;
+        ACCESS = ACCESS.map(function(a){ return a.name === who ? {name:a.name, ini:a.ini, c:a.c, lvl:'Admin'} : a; });
+        if(was && !ACCESS.some(function(a){ return a.name === was; })){ var q2 = null; Object.keys(P).forEach(function(k){ if(P[k][0] === was) q2 = P[k]; });
+          if(q2) ACCESS = ACCESS.concat([{name:was, ini:q2[1], c:q2[2], lvl:'Admin'}]); }
+        log('people:owner', 'People: '+who+' is now '+(COORD?'owner':'manager'));
+      } else {
+        ACCESS = ACCESS.map(function(a){ return a.name === who ? {name:a.name, ini:a.ini, c:a.c, lvl:v} : a; });
+        log('people:'+who, 'People: '+who+' now '+v);
+      }
+      repaint();
+    };
     VIEWS.settings = function(){
       var conn = conf.Connections || [], sys = conn.filter(function(x){ return SYS.test(x); }), regs = conn.filter(function(x){ return !SYS.test(x); });
       var tools = conf.Tools || [], skills = conf.Skills || [], know = conf.Context || [], mem = conf.Memory || [];
@@ -941,10 +1044,28 @@
 
       /* People */
       var roles = (D.roles||[]).filter(function(r){ return r[2] === 'person'; });
-      var ppl = kv(COORD ? 'Owner' : 'Manager', mgr ? '<span class="bpav">'+ini(mgr)+'</span>'+h(mgr) : '<span style="color:var(--amberd)">No manager yet</span>')
-        + kv('Signs off', prop('Signs off'))
-        + (roles.length ? sub('Roles in the workflow') + roles.map(function(r){ return row('ti-user', h(r[1])); }).join('') : '')
-        + sub('Access') + kv('People', access);
+      /* People (20 Oct): just faces and names; the owner first, then everyone with access and their level */
+      var byName = {}; Object.keys(P).forEach(function(k){ byName[P[k][0]] = P[k]; });
+      var edit = S.on && window.gySel, PS = window.bsPpl = [];
+      var pRow = function(name, lvl, isOwner){
+        var q = byName[name], a = ACCESS.filter(function(x){ return x.name === name; })[0];
+        var av = '<span class="bsav" style="background:'+(a ? a.c : q ? q[2] : '#766B62')+'">'+(a ? a.ini : q ? q[1] : ini(name))+'</span>';
+        var right = '<span class="lv">'+lvl+'</span>';
+        if(edit && !isOwner){
+          PS.push(name);
+          right = gySel('bsp'+PS.length, {value:lvl, width:'150px', cls:'bspsel',
+            options:[['Admin','Admin'],['Editor','Editor'],['Viewer','Viewer'],['owner','Make '+(COORD?'owner':'manager')],['remove','Remove']],
+            onchange:(function(n){ return function(v){ bsPerson(n, v); }; })(name)});
+        }
+        return '<div class="v8row bsprow">'+av+'<span class="nm">'+h(name)+'</span>'+right+'</div>';
+      };
+      var pList = (mgr ? [pRow(mgr, COORD ? 'Owner' : 'Manager', true)] : [])
+        .concat(ACCESS.filter(function(a){ return a.name !== mgr; }).map(function(a){ return pRow(a.name, a.lvl); }));
+      var inList = function(n){ return n === mgr || ACCESS.some(function(a){ return a.name === n; }); };
+      var addable = Object.keys(P).filter(function(k){ return !inList(P[k][0]); }).map(function(k){ return [k, P[k][0]]; });
+      var addRow = (edit && addable.length) ? '<div class="v8row bsprow add"><span class="bsav plus"><i class="ti ti-plus"></i></span>'
+        + gySel('bspadd', {value:'', placeholder:'Add person', width:'220px', cls:'bspsel', options:addable, onchange:function(k){ if(k) bsPerson(k, 'add'); }}) + '</div>' : '';
+      var ppl = (mgr ? '' : kv(COORD ? 'Owner' : 'Manager', '<span style="color:var(--amberd)">No manager yet</span>')) + pList.join('') + addRow;
 
       /* Engine: the agents, then what they run on */
       var v0 = D.versions[0];
@@ -975,7 +1096,7 @@
       var nG = 3;
 
       var html = '<div class="v8ttl">Settings</div><div class="v8setw"><div class="v8setc"><div class="v8set">'
-        + card('people', 2 + roles.length, ppl)
+        + card('people', pList.length, ppl)
         + card('context', skills.length+know.length+mem.length, sub('Skills') + skills.map(function(x){ return crow('skill:'+x, 'ti-sparkles', x); }).join('')
             + sub('Knowledge') + know.map(function(x){ return crow('know:'+x, 'ti-book', x); }).join('')
             + sub('Memory') + mem.map(function(x){ return crow('mem:'+x, 'ti-history', x); }).join(''))
@@ -993,7 +1114,7 @@
   /* ── start ────────────────────────────────────────────────────────── */
   paintTabs();
   var qs = location.search;
-  if(/[?&]edit=1/.test(qs)) bsEdit(true);
+  setEdit(); chatToBlueprint(); repaint();
   var m = qs.match(/[?&]tab=(\w+)/); if(m && m[1] === 'source') m[1] = 'settings'; if(m && VIEWS[m[1]]) openTab(m[1]);
   var mf = qs.match(/[?&]file=([^&]+)/);
   if(mf){ var fp = decodeURIComponent(mf[1]); files().forEach(function(f){ if(f[2] === fp){ if(window.TAB !== 'settings' && window.TAB !== 'workflow') openTab('settings'); bsOpenFile(f[0]); } }); }

@@ -1376,6 +1376,82 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 .v8docw .v5inp ul{margin:6px 0 0;padding-left:20px}.v8docw .v5inp li{margin:3px 0}
 .v8docw .v5inp p{margin:0 0 8px}.v8docw .v5inp p:last-child{margin:0}
 .v8docw .v5tbl a{color:var(--blued);text-decoration:underline;text-underline-offset:2px}
+
+/* Reader view (16 Oct): the data document as a full-bleed white page from the topbar down, the Table of Contents
+   floating on the grey gutter to its right, as in Commercial Strategy */
+body.docview .v5panel{padding-top:0 !important;padding-bottom:0 !important;padding-right:0 !important}
+body.docview .v5body{padding:0 !important;border-radius:0 !important;background:var(--bg) !important;box-shadow:none !important}
+body.pclosed.docview .v5body{max-width:none !important;margin-left:0 !important;margin-right:0 !important}
+body.pclosed.docview .v5panel{padding-left:0 !important}
+body.docview #pbody{max-width:none !important;margin:0 !important;min-height:100%;display:flex;flex-direction:column}
+body.docview .v8docw{flex:1;display:flex !important;flex-direction:row !important;align-items:stretch !important;gap:0 !important;max-width:none !important;margin:0 !important}
+body.docview .v8docw .v8setc{flex:1 1 auto !important;width:auto !important;max-width:none !important;min-width:0;background:var(--card);
+  border:1px solid var(--line);border-top:none;border-bottom:none;padding:56px 40px 110px}
+body.docview .v8docw .v5tw{overflow-x:auto}
+body.docview .v8docw .v8setc > *{max-width:880px}
+/* Table of Contents: see "identical to Commercial Strategy" below */
+@container pane (max-width: 880px){
+  body.docview .v8docw .v8anc{display:none !important}
+  body.docview .v8docw .v8setc{border-right:none;padding:40px 32px 110px}
+}
+
+/* Honeycomb house table (design-system.html #table) for the data tables: one bordered card, grey caps header,
+   hairline rows, warm hover. Cells keep their full text, since these rows are sourced findings (16 Oct) */
+.v5tw{border:1px solid var(--line) !important;border-radius:16px !important;overflow-x:auto !important;background:var(--card) !important;box-shadow:none !important;padding:0 !important}
+.v5tbl{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}
+.v5tbl th{background:var(--graybg) !important;font-size:11.5px !important;font-weight:600 !important;letter-spacing:.06em !important;text-transform:uppercase;
+  color:var(--ink2) !important;padding:13px 20px !important;border-bottom:1px solid var(--line) !important;text-align:left;vertical-align:bottom;white-space:nowrap}
+.v5tbl td{padding:13px 20px !important;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink2);vertical-align:top;min-width:190px}
+.v5tbl td.k{font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--ink);min-width:170px}
+.v5tbl tr:last-child td{border-bottom:none}
+.v5tbl tbody tr:hover td{background:#FBF8EF}
+.v5tbl td a{white-space:nowrap}
+.v5fbody .v5tw{margin:0}
+body.docview .v8docw .v5tw.wide{border-right:none !important;border-radius:16px 0 0 16px !important}
+
+
+/* Table of Contents identical to Commercial Strategy (16 Oct): rules copied verbatim from commercial-strategy-v8.html */
+body.docview .v8docw .v8anc{display:block !important;position:sticky !important;top:-40px !important;left:auto !important;bottom:auto !important;width:184px !important;padding-top:64px !important;flex:none !important;margin-left:64px !important}
+body.docview .v8docw .v8anc > div{display:flex !important;flex-direction:column !important;flex-wrap:nowrap !important;gap:0 !important;position:static !important}
+body.docview .v8docw .v8anc .csnavt{font-weight:600;font-size:14px;color:var(--ink);padding:0 0 12px 0}
+body.docview .v8docw .v8anc a{display:flex !important;align-items:center;gap:9px;border-radius:8px !important;background:none !important;padding:6px 10px !important;margin-left:-10px;font-size:13.5px !important;white-space:nowrap !important;border-left:none !important}
+body.docview .v8docw .v8anc a i{font-size:16px;color:var(--ink3);flex:none}
+body.docview .v8docw .v8anc a:hover{background:#E3DFD5 !important}
+body.docview .v8docw .v8anc a.on{background:#fff !important;color:var(--ink);font-weight:600}
+body.docview .v8docw .v8anc a.on i{color:var(--ink)}
+body.docview .v8docw .v8anc .csgh{display:flex;align-items:center;gap:9px;width:100%;border:none;background:none;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink3);padding:12px 10px 4px;margin-left:-10px;cursor:pointer;text-align:left}
+body.docview .v8docw .v8anc .csgh .ti{font-size:14px;transition:transform .15s;flex:none;width:16px}
+body.docview .v8docw .v8anc .csgh:hover,body.docview .v8docw .v8anc .csg.has .csgh{color:var(--ink)}
+body.docview .v8docw .v8anc .csg.open .csgh .ti{transform:rotate(90deg)}
+body.docview .v8docw .v8anc .csg:not(.open) .csgb{display:none}
+body.docview .v8docw .v8anc .csm:not(.cur) a.l2{display:none !important}
+body.docview .v8docw .v8anc a.l2{padding-left:35px !important;font-size:13px !important}
+
+/* group icons, chevron on the right, children indented (Thomas, 8 Oct) */
+body.docview .v8docw .v8anc .csgh{font-size:13.5px !important;font-weight:600;color:var(--ink2);padding:6px 10px !important;margin-top:6px}
+body.docview .v8docw .v8anc .csgh .gi{font-size:16px !important;width:16px;transform:none !important}
+body.docview .v8docw .v8anc .csgh .cv{margin-left:auto;font-size:14px;width:14px;color:var(--ink3)}
+body.docview .v8docw .v8anc .csg.open .csgh .gi{transform:none !important}
+body.docview .v8docw .v8anc .csg.open .csgh .cv{transform:rotate(90deg)}
+body.docview .v8docw .v8anc .csgb a{padding-left:30px !important}
+body.docview .v8docw .v8anc .csgb a.l2{padding-left:55px !important}
+/* no indent under the group rows (Thomas, 8 Oct): chapters line up with the group rows; sections line up with the chapter text, same size */
+body.docview .v8docw .v8anc .csgb a{padding-left:10px !important}
+body.docview .v8docw .v8anc .csgb a.l2{padding-left:35px !important;font-size:13.5px !important}
+/* sections get an L icon in the chapter icon column; long names truncate (Thomas, 8 Oct) */
+body.docview .v8docw .v8anc a,body.docview .v8docw .v8anc .csgh{min-width:0;max-width:100%;overflow:hidden}
+body.docview .v8docw .v8anc a span,body.docview .v8docw .v8anc .csgh span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.docview .v8docw .v8anc .csgb a.l2{padding-left:10px !important}
+body.docview .v8docw .v8anc a.l2 i{color:var(--ink3);opacity:.7}
+/* group rows: a filled triangle in the icon column instead of an icon plus chevron (Thomas, 8 Oct) */
+body.docview .v8docw .v8anc .csgh .cr{font-size:14px !important;width:16px;text-align:center;color:var(--ink3);transform:none;transition:transform .15s}
+body.docview .v8docw .v8anc .csg.open .csgh .cr{transform:rotate(90deg) !important}
+body.docview .v8docw .v8anc{margin-right:40px !important}
+body.docview .v8docw .v8anc a:hover{background:#F4F0E6 !important}
+body.docview .v8docw .v8anc a.on{background:#EFEBE1 !important}
+/* neutralise this page's older nav rules (drawer row, narrow row) inside the document */
+body.docview .v8docw .v8anc{order:0 !important;align-self:flex-start !important;background:none !important;border:none !important;z-index:auto !important;margin-bottom:0 !important;margin-right:40px !important}
+body.docview .v8docw .v8anc > div{overflow:visible !important;-webkit-mask-image:none !important}
 </style>
 </head>
 <body>
@@ -2045,9 +2121,12 @@ function fieldHtml(k){
       + '</div>'
       + '<div class="v5inp empty" data-ph="Written at '+f.at+' '+stepByKey(f.at).t+'"></div></div>';
   }
-  return '<div class="v5f"><div class="v5flab"><span class="v5fl">'+f.l+'</span>'
+  var tbl = /class="v5tw"/.test(f.t);
+  return '<div class="v5f" id="f-'+k+'"><div class="v5flab"><span class="v5fl">'+f.l+'</span>'
     + '<span class="v5dot '+f.cf[0]+'" tabindex="0" data-tip="'+f.cf[1]+' · from '+f.by+'"></span></div>'
-    + '<div class="v5inp'+(JUST===f.at?' just':'')+'" contenteditable="true" spellcheck="false">'+f.t+'</div></div>';
+    + (tbl /* a table is its own box: no input card around it (16 Oct) */
+        ? '<div class="v5fbody'+(JUST===f.at?' just':'')+'">'+f.t+'</div></div>'
+        : '<div class="v5inp'+(JUST===f.at?' just':'')+'" contenteditable="true" spellcheck="false">'+f.t+'</div></div>');
 }
 function drec(k){
   var s = stepByKey(k), d = DEC[k];
@@ -2076,8 +2155,8 @@ function head(n,t,tip){
 
 var VIEWS = {
   doc: function(){
-    var h = '<div class="v5dt" contenteditable="true" spellcheck="false">Walkham Valley: Customer Demand Mapping</div>'
-      + '<div class="v8setw v8docw"><div class="v8setc">';
+    var h = '<div class="v8setw v8docw"><div class="v8setc">'
+      + '<div class="v5dt" contenteditable="true" spellcheck="false">Walkham Valley: Customer Demand Mapping</div>';
     h += '<section class="v5sec v8sec" id="sec-1">'
       + head(1,'Project context','The project\'s essentials from onboarding. It sets the scene; nothing is analysed here.')
       + Object.keys(FIELDS).map(fieldHtml).join('') + drec('1.5') + '</section>';
@@ -2085,13 +2164,13 @@ var VIEWS = {
       + head(2,'Demand','Who would buy, one section per service in the order of the service screen, with a demand verdict and a linked source on every row. Trade checks relationships at 2.8.')
       + (isDone('2.4')
           ? '<div class="v5inp wvin">'+WV.DEMAND_INTRO+'</div>'
-            + MARKETS.map(function(m,i){ return '<div class="v5sh">'+(i+1)+'. '+m[0]+'</div><p class="wvverd">'+m[1]+'</p>'+tableHtml(BUYCOLS, m[2]); }).join('')
+            + MARKETS.map(function(m,i){ return '<div class="v5sh" id="m-'+i+'">'+(i+1)+'. '+m[0]+'</div><p class="wvverd">'+m[1]+'</p>'+tableHtml(BUYCOLS, m[2]); }).join('')
           : skDemand())
       + drec('2.9') + '</section>';
     h += '<section class="v5sec v8sec" id="sec-3">'
       + head(3,'Supply','One Ecosystem Service Card per service, each written by that service\'s agent.')
       + (Object.keys(ESDONE).length
-          ? Object.keys(ESA).filter(function(id){ return ESDONE[id]; }).map(esCard).join('')
+          ? Object.keys(ESA).filter(function(id){ return ESDONE[id]; }).map(function(id){ return esCard(id).replace('<div class="v8es', '<div id="es-'+id+'" class="v8es'); }).join('')
           : skSupply())
       + drec('3.2') + '</section>';
     h += '<section class="v5sec v8sec" id="sec-4">'
@@ -2104,7 +2183,7 @@ var VIEWS = {
             + '<li><b>Woodland carbon</b> is sized once the estates agree a planting area.</li></ul></div>'
           : skSummary())
       + '</section>';
-    return h + '</div>' + anchorNav([['sec-1','Project context'],['sec-2','Demand'],['sec-3','Supply'],['sec-4','Summary']]) + '</div>';
+    return h + '</div>' + docToc() + '</div>';
   },
   activity: function(){
     var h = '<div class="v8ttl">Activity</div>';
@@ -2373,6 +2452,51 @@ function openStep(k){
 }
 function closeStep(){ if(DR === 'step') closeDrawer(); }
 
+/* Table of Contents for the document (16 Oct, as in Commercial Strategy): numbered chapters; the chapter you are
+   reading shows its sections, taken from the page's own data (fields, markets, Ecosystem Service Cards) */
+var TOCG = 'sec-1';
+function docToc(){
+  var A = function(id, t, ic, cls){ return '<a class="'+(cls||'')+'" data-id="'+id+'" title="'+t+'" onclick="setJump(\''+id+'\')">'+(ic ? '<i class="ti '+ic+'"></i>' : '')+'<span>'+t+'</span></a>'; };
+  var G = function(g, t, body){ return '<div class="csg'+(TOCG === g ? ' open' : '')+'" data-g="'+g+'"><button class="csgh" onclick="toggleGroup(\''+g+'\')"><i class="ti ti-caret-right-filled cr"></i><span>'+t+'</span></button><div class="csgb">'+body+'</div></div>'; };
+  var FIC = {a0:'ti-file-description', a1:'ti-id', a2:'ti-target', a3:'ti-map-2', a4:'ti-shovel', a5:'ti-file-certificate',
+             a6:'ti-filter', a7:'ti-books', a8:'ti-alert-triangle', a9:'ti-help-circle'};
+  var MIC = ['ti-mountain', GY_ES.wcc.icon, GY_ES.soc.icon, GY_ES.bng.icon, 'ti-butterfly', GY_ES.nfm.icon, GY_ES.nut.icon, 'ti-droplet-half-2'];
+  var subs = {
+    'sec-1': Object.keys(FIELDS).filter(function(k){ return isDone(FIELDS[k].at); }).map(function(k){ return A('f-'+k, FIELDS[k].l, FIC[k] || 'ti-point'); }),
+    'sec-2': isDone('2.4') ? MARKETS.map(function(m,i){ return A('m-'+i, m[0], MIC[i] || 'ti-point'); }) : [],
+    'sec-3': Object.keys(ESA).filter(function(id){ return ESDONE[id]; }).map(function(id){ return A('es-'+id, ESA[id].s, ESA[id].ic); }),
+    'sec-4': []
+  };
+  var ch = [['sec-1','Project context','ti-flag'],['sec-2','Demand','ti-users'],['sec-3','Supply','ti-leaf'],['sec-4','Summary','ti-file-text']];
+  return '<nav class="v8anc" id="setnav"><div><div class="csnavt">Table of Contents</div>'
+    + ch.map(function(c,i){ var t = (i+1)+'. '+c[1];
+        return subs[c[0]].length ? G(c[0], t, subs[c[0]].join('')) : A(c[0], t, c[2]); }).join('')
+    + '</div></nav>';
+}
+function toggleGroup(g){
+  TOCG = TOCG === g ? null : g;
+  [].forEach.call(document.querySelectorAll('#setnav .csg'), function(el){ el.classList.toggle('open', el.dataset.g === TOCG); });
+}
+function tocFollow(nav){
+  var on = nav.querySelector('a.on'); if(!on || !nav.querySelector('.csg')) return;
+  [].forEach.call(nav.querySelectorAll('.csg'), function(g){ g.classList.toggle('has', g.contains(on)); });
+  var g = on.closest('.csg');
+  if(g && TOCG !== g.dataset.g){ TOCG = g.dataset.g; [].forEach.call(nav.querySelectorAll('.csg'), function(el){ el.classList.toggle('open', el.dataset.g === TOCG); }); }
+}
+/* a table wider than the page loses the page's right padding and scrolls right (16 Oct) */
+function fitTables(){
+  if(TAB !== 'doc') return;
+  [].forEach.call(document.querySelectorAll('.v8docw .v5tw'), function(tw){
+    tw.classList.remove('wide'); tw.style.marginRight = '';
+    var t = tw.querySelector('table'); if(!t || t.scrollWidth <= tw.clientWidth + 1) return;
+    var sheet = tw.closest('.v8setc'); if(!sheet) return;
+    var edge = sheet.getBoundingClientRect().right - parseFloat(getComputedStyle(sheet).borderRightWidth || 0);
+    tw.classList.add('wide');
+    tw.style.marginRight = -(edge - tw.getBoundingClientRect().right) + 'px';
+  });
+}
+if(window.ResizeObserver) document.addEventListener('DOMContentLoaded', function(){ var b = document.querySelector('.v5body'); if(b) new ResizeObserver(fitTables).observe(b); });
+window.addEventListener('resize', fitTables);
 var SETNAV = [], SETICO = {};
 var ANCLOCK = 0;
 function anchorNav(items){
@@ -2396,6 +2520,7 @@ function setActive(id){
   [].forEach.call(nav.querySelectorAll('a'), function(a){ a.classList.toggle('on', a.getAttribute('data-id') === id); });
   var row = navRow(), on = nav.querySelector('a.on');
   if(row && on){ var box = row.firstChild; box.scrollTo({left: Math.max(0, on.offsetLeft - box.offsetLeft - 24), behavior:'smooth'}); }
+  tocFollow(nav);
 }
 document.addEventListener('scroll', function(e){
   if(!e.target || !e.target.classList || !e.target.classList.contains('v5body')) return;
@@ -2604,11 +2729,13 @@ function paintTabs(){
 function openTab(k, keep){
   if(k !== 'workflow' && DR === 'step') closeDrawer();
   TAB = k; paintTabs();
+  document.body.classList.toggle('docview', k === 'doc');
   var el = document.getElementById('pbody');
   var sc = el.parentNode.scrollTop;
   el.classList.remove('wide');
   el.innerHTML = VIEWS[k]();
   el.parentNode.scrollTop = keep ? sc : 0;
+  if(k === 'doc'){ fitTables(); if(!keep){ var n0 = document.querySelector('#setnav a'); if(n0) setActive(n0.getAttribute('data-id')); } }
 }
 function paintAll(){ paintTabs(); paintProg(); openTab(TAB, true);
   if(DR === 'outputs') document.getElementById('drbody').innerHTML = VIEWS.outputs(); }
