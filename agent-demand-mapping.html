@@ -1453,7 +1453,7 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 </div>
 
 <script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
-<script src="gy-bp-cdm.js?v=be46a567"></script>
+<script src="gy-bp-cdm.js?v=bf1a7266"></script>
 <script>
 var AGENT_IC = 'ti-target-arrow';
 function closeDrawer(){ document.getElementById('drawer').classList.add('hide'); }
@@ -1469,8 +1469,8 @@ function bul(list){ return list.map(function(t){ return '<div class="bul"><span 
 function todo(list){ return list.map(function(t){ return '<div class="todo"><span class="tbox"><i class="ti ti-check"></i></span><span>'+t+'</span></div>'; }).join(''); }
 /* this agent's page content */
 var AG = {
- "title": "Demand Mapping agent",
- "purpose": "The Demand Mapping agent runs GY's Customer Demand Mapping. It reads the client's documents, asks each Ecosystem Service agent what the land can sell, finds the buyers, and fills the document step by step until the team lead signs it off. It runs on GY OS, the one shared harness, as a configuration like every other agent.",
+ "title": "Coordinator agent",
+ "purpose": "The Coordinator agent runs GY's Customer Demand Mapping. It reads the client's documents, asks each Ecosystem Service agent what the land can sell, finds the buyers, and fills the document step by step until the team lead signs it off. It runs on GY OS, the one shared harness, as a configuration like every other agent.",
  "props": [
   [
    "Kind",
@@ -1526,7 +1526,7 @@ var AG = {
    [
     [
      "p",
-     "A Deliverable is one run of a Blueprint in a programme. The Demand Mapping agent runs the Customer Demand Mapping Deliverable: it is the lead, the one agent the team talks to. It calls the Ecosystem Service agents as specialists and uses tools for the steps that give the same answer every time."
+     "A Deliverable is one run of a Blueprint in a programme. The Coordinator agent runs the Customer Demand Mapping Deliverable: it is the lead, the one agent the team talks to. It calls the Ecosystem Service agents as specialists and uses tools for the steps that give the same answer every time."
     ]
    ]
   ],
@@ -1707,7 +1707,7 @@ AG.conf = [["Tools", "ti-tool", "var(--graybg)", "#766B62", ["Questionnaire", "E
     if(c.shape) b.push(['bul', c.shape]);
     if(c.cols) b.push(['tbl', [c.id === 'ch2' ? 'Column' : 'Field', 'What goes in'], pair(c.cols), [26,74]]);
     if(c.terms) b.push(['tbl', ['Term','Means'], pair(c.terms), [26,74]]);
-    if(c.id === 'ch2') b.push(['tbl', ['Service','Where demand shows up'], B.services.map(function(sv){ return [sv, where[sv] || '[BLANK]']; }), [26,74]]);
+    /* where demand shows up per service is Knowledge (Settings > Context), not the template (20 Oct) */
     if(c.eg) b.push(['note', c.eg]);
     if(c.untested) b.push(['note', 'Not yet tested in a run.']);
     return ['c-'+c.id, c.t, b];
@@ -1869,7 +1869,7 @@ var CHAT_MIN = 340, CHAT_MAX = 680;
 paintTabs(); openTab('content'); paintChat();
 </script>
 <script src="gy-agent-chat.js?v=c31d883c"></script>
-<script src="gy-blueprints.js?v=376a606b"></script>
-<script src="gy-blueprint-studio.js?v=9042d7b7"></script>
+<script src="gy-blueprints.js?v=04385dee"></script>
+<script src="gy-blueprint-studio.js?v=40c09170"></script>
 </body>
 </html>

@@ -1432,7 +1432,7 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 <script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
 <script>
 /* ── v8: the agentic version ──────────────────────────────────────────────
-   Built on v4-chat. The Demand Mapping agent leads: it does the work, then
+   Built on v4-chat. The Coordinator agent leads: it does the work, then
    asks one short question in context. The document starts empty and fills in
    as steps finish. Decisions look like decisions. Ecosystem Service agents
    are visible where they contribute, each with the expert who manages them.
@@ -1454,7 +1454,7 @@ function avName(n){
 }
 function paintPile(){ document.getElementById('pile').innerHTML = TEAM.map(function(p){
   return '<span class="v5av" style="background:'+p[2]+'" data-tip="'+p[0]+', '+p[3]+'" tabindex="0">'+p[1]+'</span>'; }).join('')
-  + '<span class="v5av" style="background:var(--dark);color:var(--yellow)" data-tip="Demand Mapping agent" tabindex="0"><i class="ti ti-map-search" style="font-size:15px"></i></span>'; }
+  + '<span class="v5av" style="background:var(--dark);color:var(--yellow)" data-tip="Coordinator agent" tabindex="0"><i class="ti ti-map-search" style="font-size:15px"></i></span>'; }
 paintPile();
 /* people who can be added to this deliverable's team from Settings */
 var CANDIDATES = [['Millie','MI','#C2557A','Valuation'],['Archie','AR','#2F8F9D','Bid and tender'],
@@ -1507,7 +1507,7 @@ function addMember(i){
   gyToast(p[0]+' added to the team');
 }
 
-var AGENT = 'Demand Mapping agent';
+var AGENT = 'Coordinator agent';
 var AGENT_IC = 'ti-map-search';
 function agAv(cls){ return '<span class="v8ava '+(cls||'')+'"><i class="ti '+AGENT_IC+'"></i></span>'; }
 
@@ -2245,7 +2245,7 @@ var VIEWS = {
     };
     h += card('ti-map-search','var(--dark)','var(--yellow)','Agents','',
       '<div class="v8agb"><div class="v8agk">Lead agent</div>'
-      + agRow(agTile(AGENT_IC,'var(--dark)','var(--yellow)'), '#E2E2E6', 'Customer Demand Mapping Agent', '', 'openItem(\'agent\')')
+      + agRow(agTile(AGENT_IC,'var(--dark)','var(--yellow)'), '#E2E2E6', 'Coordinator agent', '', 'openItem(\'agent\')')
       + '<div class="v8agk">Ecosystem Service Agents</div>'
       + Object.keys(ESA).map(function(id){
           var a = ESA[id];
@@ -2424,7 +2424,7 @@ var KINDS = [
     return n ? n+' of '+ks.length+' ready' : 'None yet'; }]
 ];
 var SITEMS = {
-  agent:{kind:'Agent', n:'Customer Demand Mapping Agent', ic:'ti-map-search', dark:1,
+  agent:{kind:'Agent', n:'Coordinator agent', ic:'ti-map-search', dark:1,
     what:'The coordinator. It runs the Customer Demand Mapping steps, hands each ecosystem service to its expert agent, and puts the answers together into one deliverable. It asks the team when a person needs to decide.',
     det:[['Follows','Customer Demand Mapping v2']],
     used:[]},

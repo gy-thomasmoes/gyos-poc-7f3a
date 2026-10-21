@@ -117,7 +117,7 @@
   var ROLE_NAMES = {champion:'Champion', advisory:'Advisory lead', trade:'Trade', capital:'Capital', analysis:'Analysis'};
   /* id: [roles the Blueprint uses, coordinator agent] */
   var BLUEPRINT_ROLES = {
-    sdm:  [['champion','trade','analysis','advisory'], 'Demand Mapping agent'],
+    sdm:  [['champion','trade','analysis','advisory'], 'Coordinator agent'],
     comm: [['champion','advisory','trade'], ''],
     fm:   [['champion','capital','analysis'], ''],
     bfp:  [['champion','capital'], ''],
@@ -137,8 +137,8 @@
     sdm: [
       {n:'01 Client inputs', key:'inputs', fill:'Client, via the Champion', what:'Specification, assessments, land rights, GIS boundary', read:['1.3'], write:['1.2']},
       {n:'02 Kick-off notes', key:'notes', fill:'Champion', what:'Notes and recording from the kick-off', read:['1.3'], write:['1.1']},
-      {n:'03 Maps and data', key:'maps', fill:'Demand Mapping agent', what:'GPAP reports, Kwame exports, register pulls', read:['2.4'], write:['2.1','2.2']},
-      {n:'04 Outputs', key:'pdf', fill:'Demand Mapping agent', what:'The client PDF and anything else handed over', read:['4.3'], write:['4.2']}
+      {n:'03 Maps and data', key:'maps', fill:'Coordinator agent', what:'GPAP reports, Kwame exports, register pulls', read:['2.4'], write:['2.1','2.2']},
+      {n:'04 Outputs', key:'pdf', fill:'Coordinator agent', what:'The client PDF and anything else handed over', read:['4.3'], write:['4.2']}
     ],
     _: [
       {n:'01 Inputs', key:'inputs', fill:'Team', what:'What the work starts from', read:[], write:[]},

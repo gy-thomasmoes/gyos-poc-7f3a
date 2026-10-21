@@ -1461,7 +1461,7 @@ body.docview .v8docw .v8anc > div{overflow:visible !important;-webkit-mask-image
 <script src="gy-nav.js?v=4042c4c7"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-deliverable-walkham.js?v=5be40f2a"></script>
-<script src="gy-bp-cdm.js?v=be46a567"></script>
+<script src="gy-bp-cdm.js?v=bf1a7266"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -1516,7 +1516,7 @@ body.docview .v8docw .v8anc > div{overflow:visible !important;-webkit-mask-image
 <script>if(!window.toggleNav)window.toggleNav=function(){document.body.classList.toggle('navhid');};</script>
 <script>
 /* ── v8: the agentic version ──────────────────────────────────────────────
-   Built on v4-chat. The Demand Mapping agent leads: it does the work, then
+   Built on v4-chat. The Coordinator agent leads: it does the work, then
    asks one short question in context. The document starts empty and fills in
    as steps finish. Decisions look like decisions. Ecosystem Service agents
    are visible where they contribute, each with the expert who manages them.
@@ -1538,7 +1538,7 @@ function avName(n){
 }
 function paintPile(){ document.getElementById('pile').innerHTML = TEAM.map(function(p){
   return '<span class="v5av" style="background:'+p[2]+'" data-tip="'+p[0]+', '+p[3]+'" tabindex="0">'+p[1]+'</span>'; }).join('')
-  + '<span class="v5av" style="background:var(--dark);color:var(--yellow)" data-tip="Demand Mapping agent" tabindex="0"><i class="ti ti-map-search" style="font-size:15px"></i></span>'; }
+  + '<span class="v5av" style="background:var(--dark);color:var(--yellow)" data-tip="Coordinator agent" tabindex="0"><i class="ti ti-map-search" style="font-size:15px"></i></span>'; }
 paintPile();
 /* people who can be added to this deliverable's team from Settings */
 var CANDIDATES = [['Millie','MI','#C2557A','Valuation'],['Archie','AR','#2F8F9D','Bid and tender'],
@@ -1591,7 +1591,7 @@ function addMember(i){
   gyToast(p[0]+' added to the team');
 }
 
-var AGENT = 'Demand Mapping agent';
+var AGENT = 'Coordinator agent';
 var AGENT_IC = 'ti-map-search';
 function agAv(cls){ return '<span class="v8ava '+(cls||'')+'"><i class="ti '+AGENT_IC+'"></i></span>'; }
 
@@ -2292,7 +2292,7 @@ var VIEWS = {
     };
     h += card('ti-map-search','var(--dark)','var(--yellow)','Agents','',
       '<div class="v8agb"><div class="v8agk">Lead agent</div>'
-      + agRow(agTile(AGENT_IC,'var(--dark)','var(--yellow)'), '#E2E2E6', 'Customer Demand Mapping Agent', '', 'openItem(\'agent\')')
+      + agRow(agTile(AGENT_IC,'var(--dark)','var(--yellow)'), '#E2E2E6', 'Coordinator agent', '', 'openItem(\'agent\')')
       + '<div class="v8agk">Ecosystem Service Agents</div>'
       + Object.keys(ESA).map(function(id){
           var a = ESA[id];
@@ -2496,7 +2496,7 @@ var KINDS = [
     return n ? n+' of '+ks.length+' ready' : 'None yet'; }]
 ];
 var SITEMS = {
-  agent:{kind:'Agent', n:'Customer Demand Mapping Agent', ic:'ti-map-search', dark:1,
+  agent:{kind:'Agent', n:'Coordinator agent', ic:'ti-map-search', dark:1,
     what:'The coordinator. It runs the Customer Demand Mapping steps, hands each ecosystem service to its expert agent, and puts the answers together into one deliverable. It asks the team when a person needs to decide.',
     det:[['Follows','Customer Demand Mapping v3']],
     used:[]},
@@ -2572,11 +2572,11 @@ fd1:{kind:'Folder', n:'01 Client inputs', ic:'ti-folder', used:['1.3'], st:['3 f
     lists:[['Files',['Kick-off notes, Walkham Valley.docx'],'ti-file-text']]},
   fd3:{kind:'Folder', n:'03 Maps and data', ic:'ti-folder', used:['2.1','2.2'], st:['3 files',''],
     what:'What the agent pulled for the boundary. Developer contacts in the GPAP reports are licensed, so the folder stays internal.',
-    det:[['Filled by','Demand Mapping agent'],['Shared with','GY team only']],
+    det:[['Filled by','Coordinator agent'],['Shared with','GY team only']],
     lists:[['Files',['GPAP Devon LNRS, 14 Jul 2026.pdf','GPAP Walkham flood zone, 2 Jul 2026.pdf','Kwame export, Walkham boundary.geojson'],'ti-file']]},
   fd4:{kind:'Folder', n:'04 Outputs', ic:'ti-folder', used:['4.2'], st:function(){ return isDone('4.2') ? ['1 file','ok'] : ['Empty until 4.2','']; },
     what:'What goes to the client. The agent writes the PDF here at 4.2.',
-    det:[['Filled by','Demand Mapping agent'],['Goes to','DNPA, after Caitlin Ciceri approves']]},
+    det:[['Filled by','Coordinator agent'],['Goes to','DNPA, after Caitlin Ciceri approves']]},
   out1:{kind:'Outputs', n:'GY Demand Mapping, Walkham Valley', ic:'ti-file-type-pdf', used:['4.2'], tag:'The client PDF',
     what:'The finished document the estates receive: four chapters in the GY template.', det:[['Format','PDF, 9 pages'],['Goes to','Google Drive, then DNPA'],['Approved by','Caitlin Ciceri']]},
   out4:{kind:'Outputs', n:'GY database update', ic:'ti-database-export', used:['4.4'], tag:'Updates the GY database',

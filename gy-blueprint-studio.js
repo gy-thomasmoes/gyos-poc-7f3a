@@ -232,15 +232,12 @@
     + '.bsqm .qt{color:var(--ink2);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}'
     + '.v5you .bsqm{margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(26,12,18,.08)}'
     + 'mark.bsflash{background:var(--greenbg);color:inherit;border-radius:3px}'
-    + '.bsgen{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink3);margin:-4px 0 12px}'
-    + '.callout + .bsgen{margin:8px 0 0}'
-    + '.bsgen .ti{font-size:14px}.bsgen a{color:var(--blued);cursor:pointer;text-decoration:none}.bsgen a:hover{text-decoration:underline}'
-    /* editable sections: no box around them (it doubled up with tables); a bar in the left margin instead */
-    + 'body.bson .bsrdm,.bslive[contenteditable=true]{margin-left:-14px;padding-left:12px;border-left:2px solid transparent;transition:border-color .12s}'
-    + 'body.bson .bsrdm:hover,.bslive[contenteditable=true]:hover{border-left-color:var(--line2)}'
-    + 'body.bson .bsrdm:focus,.bslive[contenteditable=true]:focus{outline:none;border-left-color:var(--ink3)}'
-    + '.bslive .todo{cursor:text}.bslive .tbox{cursor:pointer}.bslive .todo.done > span:last-child{color:var(--ink3);text-decoration:line-through}'
-    + '.bslive .todo.done .tbox{background:var(--green);border-color:var(--green);color:#fff}'
+    /* Content is a read view (20 Oct): every block opens its file in the drawer editor */
+    + '.bpdoc .bsclk{position:relative;cursor:pointer;border-radius:14px;margin:-16px -18px;padding:16px 18px;transition:background .12s}'
+    + '.bpdoc .bsclk:hover{background:#F4F0E6}'
+    + '.bpdoc .bsclk.sel{background:#EFEBE1}'
+    + '.bpdoc .bsclk .dtwrap,.bpdoc .bsclk .callout{background:var(--card)}'
+    + '.bscode .bsln.bshl{background:#EFEBE1;box-shadow:-12px 0 0 #EFEBE1,12px 0 0 #EFEBE1}'
     + '.bsstepv{padding:22px 24px 80px;max-width:760px}'
     + '.bsstepv .bsta{min-height:280px}'
     + '.bsstepv .bsro{white-space:pre-wrap}'
@@ -403,48 +400,118 @@
     _openTab(k); markOpen();
     if(k === 'content') decorateContent();
   };
-  /* Content tab (20 Oct): three kinds of section. Facts that live in the agent's files are generated
-     and read only here; the explanation is README.md, edited in place and published with the rest;
-     open questions and next steps are live notes, saved at once and not versioned. */
-  var GEN = {'c-purpose':['prompt.md','agent'], 'c-where':['agent.yaml','agent'], 'c-data':['Systems and Tools','settings']};
+  /* Content tab (20 Oct, v2): a read view. Each section is a section of a file: the Deliverable
+     template (template.md), the agent's own files for generated sections, and the Blueprint change log
+     for open questions and next steps. Clicking a section opens that file in the drawer editor at the
+     section; what is typed there re-renders here, and publishes with the rest. */
+  var GEN = {'c-purpose':'prompt', 'c-where':'agent', 'c-data':'settings'};
   var LIVE = {'c-open':1, 'c-next':1};
-  function liveKey(id){ return 'gyLive:'+PAGE+':'+id; }
-  function decorateContent(){
-    [].forEach.call(document.querySelectorAll('section.v8sec'), function(sec){
-      var id = sec.id, hd = sec.querySelector('.v5ch'), call = sec.querySelector('.callout');
-      if(GEN[id]){
-        var g = GEN[id], lnk = '<div class="bsgen"><i class="ti ti-link"></i>From '+g[0]+' &middot; <a onclick="'+(g[1]==='agent'?'openTab(\'settings\');bsOpenFile(\''+(id==='c-purpose'?'prompt':'agent')+'\')':'openTab(\'settings\')')+'">Edit in Settings</a></div>';
-        (hd || call).insertAdjacentHTML('afterend', lnk);
-        return;
-      }
-      var kids = [].slice.call(sec.children).filter(function(c){ return c !== hd && !c.classList.contains('bsgen'); });
-      if(!kids.length) return;
-      var wrap = document.createElement('div');
-      kids[0].parentNode.insertBefore(wrap, kids[0]);
-      kids.forEach(function(c){ wrap.appendChild(c); });
-      if(LIVE[id]){
-        wrap.className = 'bslive';
-        try { var sv = localStorage.getItem(liveKey(id)); if(sv) wrap.innerHTML = sv; } catch(e){}
-        if(hd) hd.insertAdjacentHTML('afterend', '<div class="bsgen"><i class="ti ti-bolt"></i>Live notes &middot; '+(canEdit()?'saved as you type, ':'')+'not versioned</div>');
-        if(canEdit()){
-          wrap.contentEditable = 'true';
-          wrap.addEventListener('input', function(){ try { localStorage.setItem(liveKey(id), wrap.innerHTML); } catch(e){} });
-          wrap.addEventListener('click', function(e){ var b = e.target.closest && e.target.closest('.tbox'); if(!b) return; b.parentNode.classList.toggle('done'); try { localStorage.setItem(liveKey(id), wrap.innerHTML); } catch(e){} });
-        }
-        return;
-      }
-      wrap.className = 'bsrdm';
-      if(S.readme[id] != null) wrap.innerHTML = S.readme[id];
-      if(S.on){
-        wrap.contentEditable = 'true';
-        wrap.addEventListener('input', function(){
-          S.readme[id] = wrap.innerHTML;
-          var t = hd ? (hd.querySelector('.v5cht')||hd).textContent : id;
-          if(!chgFor('readme:'+id)) addChange('readme:'+id, 'Changed', 'README: '+t, 'README.md');
-          paintTop();
-        });
-      }
+  var LOGK = 'know:Blueprint change log';
+  function hasFile(k){ return files().some(function(f){ return f[0] === k; }); }
+  function secTitle(sec){ if(sec.id === 'c-bp') return 'Purpose'; var t = sec.querySelector('.v5cht'); return t ? t.textContent.trim() : ''; }
+  function secFile(id){ if(GEN[id]) return GEN[id]; if(LIVE[id] && hasFile(LOGK)) return LOGK; return 'template'; }
+  /* page HTML to markdown, for template.md */
+  function toMd(html){
+    var d = document.createElement('div'); d.innerHTML = html; var out = [];
+    var cell = function(el){ return tx(el.innerHTML).replace(/\s+/g, ' ').replace(/\|/g, '/').trim(); };
+    [].forEach.call(d.children, function(el){
+      if(el.classList.contains('v5ch') || el.classList.contains('bsgen')) return;
+      var tb = el.querySelector && (el.tagName === 'TABLE' ? el : el.querySelector('table'));
+      if(tb){
+        var hd = [].map.call(tb.querySelectorAll('thead th'), cell), rows = [].map.call(tb.querySelectorAll('tbody tr'), function(r){ return [].map.call(r.children, cell); });
+        out.push(['| '+hd.join(' | ')+' |', '|'+hd.map(function(){ return ' --- '; }).join('|')+'|'].concat(rows.map(function(r){ return '| '+r.join(' | ')+' |'; })).join('\n'));
+      } else if(el.classList.contains('bul') || el.classList.contains('todo')){
+        var it = el.querySelector('span:last-child'); var ln = '- '+(el.classList.contains('todo') ? '[ ] ' : '')+cell(it || el);
+        if(out.length && /^- /.test(out[out.length-1].split('\n').pop())) out[out.length-1] += '\n'+ln; else out.push(ln);
+      } else if(el.classList.contains('dnote')){
+        var li = el.querySelectorAll('li');
+        if(li.length) out.push([].map.call(li, function(x){ return '- '+cell(x); }).join('\n'));
+        else out.push('> '+cell(el));
+      } else if(el.classList.contains('fig')){ out.push('(diagram)'); }
+      else if(el.classList.contains('callout')){ out.push(cell(el.querySelector('span') || el).replace(/^Purpose\.\s*/, '')); }
+      else { var s = cell(el); if(s) out.push(s); }
     });
+    return out.join('\n\n');
+  }
+  function templateMd(){
+    var L = ['# '+(D.blueprint || AG.title)];
+    if(AG.bpPurpose) L.push('', '## Purpose', '', tx(AG.bpPurpose));
+    (window.SECS||[]).forEach(function(sx){
+      if(GEN[sx[0]] || (LIVE[sx[0]] && hasFile(LOGK))) return;
+      L.push('', '## '+tx(sx[1]), '', toMd(sx[2]));
+    });
+    return L.join('\n');
+  }
+  /* markdown back to page HTML, for a file edited in the drawer */
+  function inl(s){ return h(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
+  function fromMd(src){
+    return String(src).replace(/\r/g, '').split(/\n{2,}/).map(function(bk){
+      var ls = bk.split('\n').filter(function(l){ return l.trim(); }); if(!ls.length) return '';
+      if(/^\|/.test(ls[0])){
+        var rw = ls.filter(function(l){ return !/^\|\s*-{2,}/.test(l); }).map(function(l){ return l.replace(/^\||\|\s*$/g, '').split('|').map(function(c){ return inl(c.trim()); }); });
+        return window.tbl ? tbl(rw[0], rw.slice(1)) : '';
+      }
+      if(ls.every(function(l){ return /^- \[[ x]\] /.test(l); })) return window.todo ? todo(ls.map(function(l){ return inl(l.replace(/^- \[[ x]\] /, '')); })) : '';
+      if(ls.every(function(l){ return /^- /.test(l); })) return window.bul ? bul(ls.map(function(l){ return inl(l.slice(2)); })) : '';
+      if(/^> /.test(ls[0])) return '<div class="dnote"><i class="ti ti-info-circle"></i><div>'+inl(ls.map(function(l){ return l.replace(/^> ?/, ''); }).join(' '))+'</div></div>';
+      if(ls[0] === '(diagram)') return '';
+      return '<div class="pblk">'+inl(ls.join(' '))+'</div>';
+    }).join('');
+  }
+  function mdSecs(src){
+    var o = {}, cur = null;
+    String(src).replace(/\r/g, '').split('\n').forEach(function(l){
+      var m = l.match(/^##\s+(.+?)\s*$/);
+      if(m){ cur = m[1].toLowerCase(); o[cur] = []; return; }
+      if(cur != null && !/^#\s/.test(l)) o[cur].push(l);
+    });
+    Object.keys(o).forEach(function(k){ o[k] = o[k].join('\n').trim(); });
+    return o;
+  }
+  function fileText(k){ return S.edits[k] != null ? S.edits[k] : (k === 'template' ? templateMd() : tx((AG.md||{})[k] || '')); }
+  function decorateContent(){
+    [].forEach.call(document.querySelectorAll('.bpdoc section.v8sec'), function(sec){
+      var id = sec.id, k = secFile(id), title = secTitle(sec);
+      sec.classList.add('bsclk'); sec.setAttribute('data-f', k); sec.setAttribute('data-t', title);
+      sec.onclick = function(e){
+        if(e.target.closest && e.target.closest('a,button,input')) return;
+        if(String(window.getSelection && window.getSelection()) ) return;
+        if(k === 'settings'){ openTab('settings'); return; }
+        bsOpenAt(k, title);
+      };
+      /* a file edited in the drawer shows here as typed */
+      if(S.edits[k] == null || k === 'prompt' || k === 'agent' || k === 'settings') return;
+      var body = mdSecs(S.edits[k])[title.toLowerCase()];
+      if(body == null) return;
+      if(id === 'c-bp'){ var sp = sec.querySelector('.callout > span'); if(sp) sp.innerHTML = '<b>Purpose.</b> '+inl(body.replace(/\n+/g, ' ')); return; }
+      var hd = sec.querySelector('.v5ch');
+      [].slice.call(sec.children).forEach(function(c){ if(c !== hd) c.remove(); });
+      sec.insertAdjacentHTML('beforeend', fromMd(LIVE[id] && !/^- \[/m.test(body) && id === 'c-next' ? body.replace(/^- /gm, '- [ ] ') : body));
+    });
+    markOpen();
+  }
+  window.bsOpenAt = function(k, title){
+    bsOpenFile(k); S.at = title; markOpen();
+    var want = '## '+String(title||'').toLowerCase(), on = false, first = null;
+    [].forEach.call(document.querySelectorAll('#drbody .bscode .bsln'), function(l){
+      var t = l.textContent.replace(/​/g, '').trim().toLowerCase();
+      if(/^##\s/.test(t)) on = (t === want);
+      else if(/^#\s/.test(t)) on = false;
+      l.classList.toggle('bshl', on);
+      if(on && !first) first = l;
+    });
+    if(!first) return;
+    var sc = first.parentNode; while(sc && sc !== document.body){ var o = getComputedStyle(sc).overflowY; if((o === 'auto' || o === 'scroll') && sc.scrollHeight > sc.clientHeight) break; sc = sc.parentNode; }
+    if(sc && sc !== document.body) var hd = document.querySelector('#drbody .bsfh'); sc.scrollTop += first.getBoundingClientRect().top - sc.getBoundingClientRect().top - 16 - (hd && getComputedStyle(hd).position === 'sticky' ? hd.offsetHeight : 0);
+  };
+  var CTIM = 0;
+  function contentFollow(){
+    clearTimeout(CTIM);
+    CTIM = setTimeout(function(){
+      if(window.TAB !== 'content') return;
+      var b = document.querySelector('.v5body'), y = b ? b.scrollTop : 0;
+      _openTab('content'); decorateContent(); if(b) b.scrollTop = y;
+    }, 250);
   }
   function repaint(){ var b = document.querySelector('.v5body'), y = b ? b.scrollTop : 0; openTab(window.TAB); if(b) b.scrollTop = y; paintTop(); markOpen(); }
 
@@ -544,11 +611,12 @@
     if(COORD){
       f.push(['blueprint','Structure','blueprint.yaml','Blueprint','ti-hierarchy-2']);
       f.push(['instructions','Instructions','instructions.md','Blueprint','ti-list-details']);
+      if(AG.secs) f.push(['template','Template','template.md','Blueprint','ti-layout-list']);
       /* one file per step (20 Oct); the order lives in blueprint.yaml, so the file name has no number */
       steps().forEach(function(x){ f.push(['step:'+x.s.id, x.k+' '+(x.s.t||'Untitled step'), stepPath(x.s), 'Steps', IC[x.s.ty]]); });
     }
     f.push(['agent','Agent','agent.yaml','Agent','ti-adjustments-horizontal']);
-    if(AG.secs) f.push(['readme','README','README.md','Agent','ti-file-text']);
+    if(AG.secs && !COORD) f.push(['template','Template','template.md','Agent','ti-layout-list']);
     f.push(['prompt','Prompt','prompt.md','Agent','ti-message']);
     (conf.Skills||[]).forEach(function(sk){ f.push(['skill:'+sk, sk, 'skills/'+slug(sk)+'.md','Skills','ti-sparkles']); });
     (conf.Context||[]).forEach(function(x){ f.push(['know:'+x, tx(x), 'knowledge/'+slug(tx(x))+'.md','Knowledge','ti-book']); });
@@ -564,7 +632,6 @@
     if(S.edits[k] != null && chgFor('file:'+k)) return true;
     if(!S.changes.length) return false;
     if(k.indexOf('step:') === 0) return !!(chgFor('step:'+k.slice(5)) || chgFor('new:'+k.slice(5)));
-    if(k === 'readme') return S.changes.some(function(c){ return /^readme:/.test(c.key); });
     if(k === 'blueprint') return S.changes.some(function(c){ return /^new:/.test(c.key); });
     if(k === 'instructions') return false;
     if(k === 'prompt') return !!chgFor('prompt');
@@ -593,14 +660,8 @@
       L.push('<span class="mh"># How to work</span>', '');
       D.rules.forEach(function(r){ L.push('- '+h(r)); });
       L.push('', '<span class="cm"># Each step\'s own instructions live in steps/</span>');
-    } else if(k === 'readme'){
-      var plain = function(html){ return tx(String(html).replace(/<svg[\s\S]*?<\/svg>/gi, '\n(diagram)\n').replace(/<\/(div|p|tr|li)>|<br\s*\/?>/gi, '\n').replace(/<\/t[dh]>/gi, '  ')).replace(/\n{3,}/g, '\n\n').trim(); };
-      L.push('<span class="mh"># '+h(AG.title)+'</span>');
-      (window.SECS||[]).forEach(function(sx){
-        if(GEN[sx[0]] || LIVE[sx[0]]) return;
-        var t = '<span class="mh">## '+h(sx[1])+'</span>\n\n'+h(plain(S.readme[sx[0]] != null ? S.readme[sx[0]] : sx[2]));
-        L.push('', chgFor('readme:'+sx[0]) ? '<span class="chg">'+t+'</span>' : t);
-      });
+    } else if(k === 'template'){
+      L.push(mdHtml(templateMd()));
     } else if(k.indexOf('step:') === 0){
       var sx = find(k.slice(5));
       if(sx){
@@ -739,7 +800,7 @@
     addChange('file:'+k, 'Changed', name+' edited by hand', 'Source');
     var s = document.getElementById('bsFst'); if(s) s.outerHTML = stHtml(k);
     var a = document.querySelector('.bstoc a.on'); if(a && !a.querySelector('.fd')) a.insertAdjacentHTML('beforeend', '<i class="fd"></i>');
-    paintTop();
+    paintTop(); contentFollow();
   };
 
   /* a step file typed by hand: read its header and body back into the step, so the
@@ -793,6 +854,7 @@
   }
   window.bsDrSize = function(){ var d = document.getElementById('drawer'); drSize(!d.classList.contains('lg')); };
   function markOpen(){
+    [].forEach.call(document.querySelectorAll('.bsclk[data-f]'), function(r){ r.classList.toggle('sel', !!S.file && r.getAttribute('data-f') === S.file && r.getAttribute('data-t') === S.at); });
     [].forEach.call(document.querySelectorAll('.v8row[data-f],.v8agr[data-f]'), function(r){ r.classList.toggle('sel', !!S.file && r.getAttribute('data-f') === S.file); });
   }
   (function(){
@@ -801,7 +863,7 @@
   window.bsOpenFile = function(k){
     if(k.indexOf('step:') === 0){ bsStep(k.slice(5), 'source'); return; }
     var f = files().filter(function(x){ return x[0] === k; })[0]; if(!f) return;
-    S.file = k; S.grp = f[3];
+    S.file = k; S.grp = f[3]; S.at = null;
     var duo = (k === 'blueprint' || k === 'instructions') ? ['blueprint','instructions'] : (k === 'agent' || k === 'prompt') ? ['agent','prompt'] : null;
     var pair = duo
       ? '<span class="bsfsw">'+duo.map(function(o){ var g = files().filter(function(x){ return x[0] === o; })[0];
@@ -1230,6 +1292,7 @@
       + '.v8setw .v8row.kv.ev .nm{width:150px}'
       + '.v8setw .v8row.kv.ev .v{text-align:left;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
       + '.v8agr.self{box-shadow:inset 0 0 0 1.5px var(--ink)}'
+      + '.v8agb.solo .v8agr.self{box-shadow:none}'
       + '.v8agb + .v8sub{margin-top:4px}'
       + ''
       + '#drawer.lg{flex:1 1 0;width:auto;min-width:0}'
@@ -1292,7 +1355,7 @@
     var C7 = {people:['People','ti-users'], context:['Context','ti-books'], engine:['Engine','ti-cpu'],
               tools:['Tools','ti-tool'], systems:['Systems','ti-database'], governance:['Governance','ti-shield-check']};
     var ORDER = ['people','context','engine','tools','systems','governance'];
-    var LEAD = {f:'agent-demand-mapping.html', n:'Demand Mapping agent', ic:'ti-map-search'};
+    var LEAD = {f:'agent-demand-mapping.html', n:'Coordinator agent', ic:'ti-map-search'};
     var ESAG = [
       {f:'agent-peatland-carbon.html', n:'Peatland carbon agent', ic:'ti-plant-2', c:'#7A6248', bg:'#EFE9E1'},
       {f:'agent-woodland-carbon.html', n:'Woodland carbon agent', ic:'ti-trees', c:'#C67F16', bg:'#FAEEDA'},
@@ -1333,6 +1396,15 @@
         + '<button class="bsopen" onclick="bsLeave(this, \''+a.f+'\')"><i class="ti ti-external-link"></i>Open agent page</button>'
         + '</div>';
       openDrawer(a.n, body); S.file = 'ag:'+f; markOpen();
+    };
+    window.bsUseOpen = function(i){
+      var u = (D.usedIn||[])[i]; if(!u) return;
+      var body = '<div class="v8dr bsctx">'
+        + '<div class="bsk">Called at</div><div class="bsro">Step '+h(u.step)+'</div>'
+        + '<div class="bsk">Version it uses</div><div class="bsro">v'+h(D.versions[0].v)+'. A newer version of this agent reaches '+h(u.bp)+' only when the Blueprint moves to it.</div>'
+        + '<button class="bsopen" onclick="bsLeave(this, \''+u.href+'?tab=workflow\')"><i class="ti ti-external-link"></i>Open the Blueprint</button>'
+        + '</div>';
+      openDrawer(u.bp+' v'+u.v, body); S.file = 'use:'+i; markOpen();
     };
     window.bsLeave = function(b, f){
       var n = S.changes.length;
@@ -1426,9 +1498,19 @@
 
       /* Engine: the agents, then what they run on */
       var v0 = D.versions[0];
-      var eng = '<div class="v8agb"><div class="v8agk">Coordinator agent</div>' + agRow(LEAD, true)
-        + '<div class="v8agk">Expert agents</div>' + ESAG.map(function(a){ return agRow(a, false); }).join('') + '</div>'
-        ;
+      /* Expert agent pages (20 Oct): Engine is this agent only; where it is used is one quiet row per Blueprint.
+         The Coordinator plus Expert agents team stays on Blueprint and Deliverable pages. */
+      var me = ESAG.filter(function(a){ return a.f === PAGE; })[0];
+      var eng = COORD || !me
+        ? '<div class="v8agb"><div class="v8agk">Coordinator agent</div>' + agRow(LEAD, true)
+          + '<div class="v8agk">Expert agents</div>' + ESAG.map(function(a){ return agRow(a, false); }).join('') + '</div>'
+        : '<div class="v8agb solo">' + agRow(me, false) + '</div>'
+          + kv('Model', h(D.model || 'Claude Sonnet 5.5')) + kv('Runs on', 'GYOS') + kv('Version', 'v'+v0.v+', '+h(v0.date))
+          + sub('Used in') + (D.usedIn||[]).map(function(u, i){
+              return '<div class="v8row click" data-f="use:'+i+'" onclick="bsUseOpen('+i+')"><span class="ic"><i class="ti ti-link"></i></span>'
+                + '<span class="nm">'+h(u.bp)+' v'+u.v+'</span><span class="m">Step '+h(u.step.split(' ')[0])+'</span><i class="ti ti-chevron-right ch"></i></div>';
+            }).join('');
+      var nEng = COORD || !me ? 1 + ESAG.length : 1;
 
       /* Governance, grouped so it scans: who approves, what it never does, what is recorded, how it is tested */
       var all = (conf.Governance||[]).concat(GOV.guard), seen = {};
@@ -1457,7 +1539,7 @@
         + card('context', skills.length+know.length+mem.length, sub('Skills') + skills.map(function(x){ return crow('skill:'+x, 'ti-sparkles', x); }).join('')
             + sub('Knowledge') + know.map(function(x){ return crow('know:'+x, 'ti-book', x); }).join('')
             + sub('Memory') + mem.map(function(x){ return crow('mem:'+x, 'ti-history', x); }).join(''))
-        + card('engine', 1 + ESAG.length, eng)
+        + card('engine', nEng, eng)
         + card('tools', tools.length+regs.length, tools.map(function(x){ return crow('tool:'+x, /lookup/i.test(x) ? 'ti-world-search' : 'ti-tool', x); }).join('')
             + regs.map(function(x){ return row('ti-world-search', x); }).join(''))
         + (function(){
