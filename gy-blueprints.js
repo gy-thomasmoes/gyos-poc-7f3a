@@ -94,12 +94,27 @@
     return c;
   }
 
+  /* Notion is the source (29 Oct): a Blueprint that exists in the Notion Blueprints
+     database (snapshot in gy-notion-blueprints.js) takes its version, stage and link
+     from there. Only those can start a New Deliverable; the rest are illustrative. */
+  function notionRow(name){
+    var N = window.GY_NOTION_BP, hit = null;
+    if(N) N.rows.forEach(function(x){ if(x.n===name) hit = x; });
+    return hit;
+  }
+  function overlay(b){
+    var n = notionRow(b.name);
+    if(n){ b.ver = n.v.replace(/^v/,''); b.notion = n.notion; b.stage = n.stage; b.go = n.go; }
+    return b;
+  }
+
   function rows(){
     return BLUEPRINTS.map(function(r){
-      var b = {id:r[0], name:r[1], dept:r[2], ver:r[3], ev:r[4], cells:{}};
+      var b = overlay({id:r[0], name:r[1], dept:r[2], ver:r[3], ev:r[4], cells:{}});
       var ev = evCell(b), lead = LEAD[b.id] || ev.lead || '';
       PROGRAMMES.forEach(function(p){
         var c = p.k==='ev' ? ev : parse(r[5][p.k], b.ver);
+        if(b.notion) c.pin = b.ver;
         c.lead = lead;
         c.behind = c.kind!=='none' && c.kind!=='final' && c.pin !== b.ver;
         b.cells[p.k] = c;
@@ -127,8 +142,13 @@
   function blueprints(){
     return BLUEPRINTS.map(function(r){
       var br = BLUEPRINT_ROLES[r[0]] || [['champion'], ''];
-      return {id:r[0], name:r[1], dept:r[2], ver:r[3], roles:br[0], agent:br[1]};
+      return overlay({id:r[0], name:r[1], dept:r[2], ver:r[3], roles:br[0], agent:br[1]});
     });
+  }
+  /* the Blueprints a New Deliverable can start from: the ones in Notion */
+  function liveBlueprints(){
+    var all = blueprints(), live = all.filter(function(b){ return b.notion; });
+    return live.length ? live : all;
   }
   /* Deliverable folder (20 Oct): every Deliverable gets one Google Drive folder, made at
      New Deliverable from its Blueprint's structure and shared with the team. The Blueprint
@@ -148,7 +168,7 @@
   };
   var FOLDER_ALIAS = {'customer-demand-mapping':'sdm'};
   function folder(id){ return FOLDERS[FOLDER_ALIAS[id] || id] || FOLDERS._; }
-  window.GYB = {programmes:PROGRAMMES, depts:DEPTS, rows:rows, blueprints:blueprints,
+  window.GYB = {programmes:PROGRAMMES, depts:DEPTS, rows:rows, blueprints:blueprints, liveBlueprints:liveBlueprints,
                 programmeRoles:PROGRAMME_ROLES, roleNames:ROLE_NAMES, folder:folder,
                 folderPath:function(prog, name){ return 'GY Programmes / '+prog+' / '+name; }};
 })();

@@ -9,10 +9,10 @@ window.GY_NOTION_BP = {
   url: 'https://app.notion.com/p/5f914b230158469e801fdd92c8c300e4',
   rows: [
     {n:'Customer Demand Mapping',   stage:'2 What good looks like', v:'v0.4', o:null, runs:4, oq:11, type:'Document',
-     notion:'https://app.notion.com/p/4078a14ed56a81bf824fc1873c0c10c5', go:'agent-demand-mapping.html'},
-    {n:'Commercial Strategy',       stage:'1 Requirements',         v:'v0.1', o:'FB', runs:0, oq:2,  type:'Document',
-     notion:'https://app.notion.com/p/4088a14ed56a81769b44e22f0e33aa76', go:'blueprint.html?bp=comm'},
-    {n:'Catchment Investment Plan', stage:'1 Requirements',         v:'v0.1', o:'AM', runs:0, oq:3,  type:'Document',
-     notion:'https://app.notion.com/p/4068a14ed56a815abec2e8052b4a3f57', go:'blueprint.html?bp=cip'}
+     notion:'https://app.notion.com/p/4078a14ed56a81bf824fc1873c0c10c5', go:'blueprint-notion.html?bp=cdm'},
+    {n:'Commercial Strategy',       stage:'1 Requirements',         v:'v0.2', o:'FB', runs:0, oq:2,  type:'Document',
+     notion:'https://app.notion.com/p/4088a14ed56a81769b44e22f0e33aa76', go:'blueprint-notion.html?bp=comm'},
+    {n:'Catchment Investment Plan', stage:'1 Requirements',         v:'v0.1', o:'AM', runs:0, oq:7,  type:'Document',
+     notion:'https://app.notion.com/p/4068a14ed56a815abec2e8052b4a3f57', go:'blueprint-notion.html?bp=cip'}
   ]
 };

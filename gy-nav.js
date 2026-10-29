@@ -1117,6 +1117,7 @@ window.gyCartoTiles = function(style){
     'agent-nutrient.html':               {alt:'none', trail:['Hive Mind','Agents']},
     'agent-flood.html':                  {alt:'none', trail:['Hive Mind','Agents']},
     'blueprint.html':                    {alt:'none', trail:['Hive Mind',['Deliverables','hive-mind-v2.html']]},
+    'blueprint-notion.html':             {alt:'none', trail:['Hive Mind',['Deliverables','hive-mind-v2.html']]},
     'agent-brand.html':                  {alt:'none', trail:['Hive Mind','Agents']},
     'es-rule-book.html':                {alt:'none', trail:['Hive Mind','Rule books']},
     'es-rulebook.html':                 {alt:'none', trail:['Hive Mind','Rule books']},

@@ -281,11 +281,12 @@ select.cin{cursor:pointer}
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=5e6cab3d"></script>
+<script src="gy-nav.js?v=9d5b5620"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-docs.js?v=daf7a2f3"></script>
-<script src="gy-blueprints.js?v=04385dee"></script>
+<script src="gy-notion-blueprints.js?v=35690c64"></script>
+<script src="gy-blueprints.js?v=89bc5072"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -385,7 +386,10 @@ function targetFor(w){
   if(w==='Customer Demand Mapping' && window.gyLatestSketch){ var l=gyLatestSketch('Deliverable'); if(l) return l; }
   return CANVAS_FOR[w]||'deliverable-sketch-v8.html';
 }
-var CANVAS_FOR={'Customer Demand Mapping':'deliverable-sketch-v8.html'};
+/* each Blueprint opens its own Deliverable page (29 Oct); before, everything fell back to the Demand Mapping sketch */
+var CANVAS_FOR={'Customer Demand Mapping':'deliverable-sketch-v8.html',
+                'Commercial Strategy':'commercial-strategy-v8.html',
+                'Catchment Investment Plan':'catchment-investment-plan-v8.html'};
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/'/g,'&#39;');}
 function runLabel(d){
   var r=d.run||{}, n=(r.done||[]).length;
@@ -887,7 +891,7 @@ gyBar('abar', {
 /* the one dropdown field, never a native select. The hidden input keeps the
    existing getElementById(...).value reads working. See gySelect in gy-nav.js */
 (function(){
-  var BPS = (window.GYB && GYB.blueprints) ? GYB.blueprints() : [];
+  var BPS = (window.GYB && GYB.liveBlueprints) ? GYB.liveBlueprints() : [];
   document.getElementById('h-cWorkflow').innerHTML = gySel('cWorkflow',{id:'cWorkflow',width:'100%',
     options:BPS.map(function(b){ return [b.id, b.name+' \u00b7 v'+b.ver]; }),
     value:'sdm', onchange:function(){ paintCreate(true); }});
@@ -899,7 +903,7 @@ gyBar('abar', {
 var PROG = {k:'ev', name:'Evenlode'};
 function createBp(){
   var id = gySelGet('cWorkflow') || 'sdm', r = null;
-  (GYB.blueprints()).forEach(function(b){ if(b.id===id) r=b; });
+  (GYB.liveBlueprints()).forEach(function(b){ if(b.id===id) r=b; });
   return r;
 }
 var CTEAM = {}, CPEOPLE = [], CEXTRA = [];
