@@ -98,7 +98,7 @@ body.gybasic .advonly{display:none}
 body:not(.gybasic) .basiconly{display:none}
 .cmodal{position:fixed;inset:0;background:rgba(26,12,18,.4);display:none;align-items:center;justify-content:center;z-index:80}
 .cmodal.open{display:flex}
-.cbox2{width:460px;max-width:92vw;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(26,12,18,.22);overflow:hidden}
+.cbox2{width:520px;max-width:92vw;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(26,12,18,.22);overflow:hidden}
 .chd{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
 .ct2{font-size:16px;font-weight:600;letter-spacing:-.01em}
 .cx{margin-left:auto;width:30px;height:30px;border:none;background:transparent;border-radius:8px;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -111,7 +111,57 @@ body:not(.gybasic) .basiconly{display:none}
 select.cin{cursor:pointer}
 .cfact{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);margin-top:8px}
 .cfact .ti{font-size:15px;color:var(--ink3)}
-.cteam{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cteam{display:flex;flex-wrap:wrap;gap:6px}
+/* Team (29 Oct): one chip per role, person and role on one line; click a chip to swap the person */
+.cchip{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 10px 0 4px;border:1px solid var(--line);border-radius:999px;background:var(--card);
+  font:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;white-space:nowrap}
+.cchip:hover{border-color:var(--line2);background:#FBF8EF}
+.cchip .av{width:24px;height:24px;border-radius:50%;background:var(--graybg);color:var(--ink2);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:600}
+.cchip .rl{color:var(--ink3)}
+.cchip.none .av{background:none;border:1px dashed var(--line2)}
+.cchip.none .nm{color:var(--ink3)}
+.cchip.add{width:32px;padding:0;justify-content:center;color:var(--ink2);font-size:16px}
+/* Folder (29 Oct): one settings-style row with the path written out; click to edit it */
+.cfrow{display:flex;align-items:center;gap:11px;min-height:46px;padding:0 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.cfrow:hover{background:#FBF8EF}
+.cfrow > .ti{font-size:18px;color:var(--ink2);flex:none}
+.cfrow .path{flex:1;min-width:0;display:flex;font-size:14px;color:var(--ink3);white-space:nowrap}
+.cfrow .path .pp{min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+.cfrow .path b{font-weight:500;color:var(--ink);min-width:0;max-width:70%;overflow:hidden;text-overflow:ellipsis;flex:0 0 auto}
+.cfrow .path .sl{margin:0 5px;color:var(--line2)}
+.cfrow .st{flex:none;font-size:13px;color:var(--ink3)}
+.cfrow .ed{flex:none;font-size:16px;color:var(--ink3)}
+.cfrow.edit{cursor:default;background:var(--card)}
+.cfrow.edit input{flex:1;min-width:0;font:inherit;font-size:14px;border:none;outline:none;background:none;color:var(--ink);padding:0}
+/* Drive picker (29 Oct, a mock): choose where the Deliverable's folder goes */
+.dpk{position:fixed;inset:0;background:rgba(26,12,18,.25);display:none;align-items:center;justify-content:center;z-index:90}
+.dpk.open{display:flex}
+.dpkb{width:560px;max-width:94vw;max-height:calc(100vh - 64px);background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 70px rgba(26,12,18,.28);display:flex;flex-direction:column;overflow:hidden}
+.dpkh{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dpkh .ti-brand-google-drive{font-size:20px;color:var(--ink2)}
+.dpkh .t{font-size:16px;font-weight:600}
+.dpkc{display:flex;align-items:center;flex-wrap:wrap;gap:2px;padding:12px 18px 8px;font-size:14px}
+.dpkc button{font:inherit;border:none;background:none;color:var(--ink3);padding:3px 6px;border-radius:6px;cursor:pointer}
+.dpkc button:hover{background:var(--graybg);color:var(--ink)}
+.dpkc button.on{color:var(--ink);font-weight:600;cursor:default;background:none}
+.dpkc .sl{color:var(--line2)}
+.dpkl{flex:1;min-height:180px;overflow:auto;padding:4px 10px 10px}
+.dpkr{display:flex;align-items:center;gap:11px;height:42px;padding:0 10px;border-radius:9px;cursor:pointer;font-size:14.5px;color:var(--ink)}
+.dpkr:hover{background:#FBF8EF}
+.dpkr > .ti{font-size:18px;color:var(--ink3)}
+.dpkr .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dpkr .m{font-size:12.5px;color:var(--ink3)}
+.dpkr.new{color:var(--ink2)}
+.dpke{padding:24px 10px;font-size:14px;color:var(--ink3)}
+.dpkn{display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid var(--line)}
+.dpkn label{font-size:12.5px;font-weight:600;color:var(--ink3);flex:none}
+.dpkn input{flex:1;min-width:0;font:inherit;font-size:14.5px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink)}
+.dpkn input:focus{outline:none;border-color:var(--blue)}
+.dpkf{display:flex;align-items:center;gap:8px;padding:14px 18px;border-top:1px solid var(--line);background:#FBFAF5}
+.dpkf .w{flex:1;min-width:0;font-size:13px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* the modal never runs past the window: header and footer stay, the middle scrolls */
+.cbox2{max-height:calc(100vh - 48px);display:flex;flex-direction:column}
+.cbox2 .cbd{overflow:auto;min-height:0}
 /* New Deliverable makes its Google Drive folder from the Blueprint's structure (20 Oct) */
 .cfold{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .cfold .fh{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink)}
@@ -231,7 +281,7 @@ select.cin{cursor:pointer}
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=4042c4c7"></script>
+<script src="gy-nav.js?v=5e6cab3d"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
 <script src="gy-docs.js?v=daf7a2f3"></script>
@@ -295,9 +345,8 @@ select.cin{cursor:pointer}
   <div class="cbox2">
     <div class="chd"><span class="ct2">New Deliverable</span><button class="cx" onclick="closeCreate()" aria-label="Close"><i class="ti ti-x"></i></button></div>
     <div class="cbd">
-      <label class="cfl">Blueprint</label>
+      <label class="cfl">Deliverable</label>
       <span class="gseat" id="h-cWorkflow"></span>
-      <div class="cfact" id="cAgent"></div>
       <label class="cfl">Name</label>
       <input class="cin" id="cName">
       <label class="cfl">Team</label>
@@ -309,6 +358,15 @@ select.cin{cursor:pointer}
       <button class="cbtn ghost" onclick="closeCreate()">Cancel</button>
       <button class="cbtn primary" onclick="createDeliverable()"><i class="ti ti-player-play" style="font-size:15px"></i> Start Deliverable</button>
     </div>
+  </div>
+</div>
+<div class="dpk" id="dpk" onclick="if(event.target===this)closeDrive()">
+  <div class="dpkb" role="dialog" aria-label="Choose a Google Drive folder">
+    <div class="dpkh"><i class="ti ti-brand-google-drive"></i><span class="t">Choose a folder</span><button class="cx" onclick="closeDrive()" aria-label="Close"><i class="ti ti-x"></i></button></div>
+    <div class="dpkc" id="dpkc"></div>
+    <div class="dpkl" id="dpkl"></div>
+    <div class="dpkn"><label for="dpkName">New folder</label><input id="dpkName"></div>
+    <div class="dpkf"><span class="w" id="dpkw"></span><button class="cbtn ghost" onclick="closeDrive()">Cancel</button><button class="cbtn primary" onclick="pickDrive()">Use this folder</button></div>
   </div>
 </div>
 <div class="rmenu" id="rmenu"></div>
@@ -352,23 +410,83 @@ function renderDeliverables(){
   var arr=getDeliverables(); if(!arr.length)return;
   head.insertAdjacentHTML('afterend', arr.map(deliverableRow).join(''));
 }
+var CFOLDER = null; /* the path when someone edited it; otherwise it follows the name */
+function folderPath(bp){
+  var name = (document.getElementById('cName').value||'').trim() || (PROG.name+': '+bp.name);
+  return CFOLDER || GYB.folderPath(PROG.name, name);
+}
+function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
 function paintFolder(bp){
   var el = document.getElementById('cFolder'); if(!el || !GYB.folder) return;
-  var name = (document.getElementById('cName').value||'').trim() || (PROG.name+': '+bp.name);
-  el.innerHTML = '<div class="fh"><i class="ti ti-brand-google-drive"></i><b>'+name.replace(/</g,'&lt;')+'</b></div>'
-    + '<div class="fp">New Google Drive folder in GY Programmes / '+PROG.name+', shared with the team</div>'
-    + '<div class="fs">'+GYB.folder(bp.id).map(function(f){ return '<span><i class="ti ti-folder"></i>'+f.n+'</span>'; }).join('')+'</div>';
+  var parts = folderPath(bp).split(/\s*\/\s*/);
+  el.className = 'cfrow';
+  el.onclick = function(){ editFolder(bp); };
+  el.setAttribute('data-tip', 'New Google Drive folder, shared with the team. Click to change where it goes');
+  /* the parents give way first, so the folder's own name stays readable */
+  el.innerHTML = '<i class="ti ti-brand-google-drive"></i><span class="path"><span class="pp">'
+    + parts.slice(0,-1).map(function(p){ return esc(p)+'<span class="sl">/</span>'; }).join('')
+    + '</span><b>'+esc(parts[parts.length-1])+'</b></span><i class="ti ti-pencil ed"></i>';
 }
+function editFolder(bp){ openDrive(bp); }
+/* A mock of the Google Drive folder picker (29 Oct): browse to where the folder goes, name it, use it.
+   The tree is made up for the prototype. */
+var DRIVE = {'Shared drives':{
+  'GY Programmes':{
+    'Evenlode':{'Walkham Valley: Customer Demand Mapping':{}, 'ELR investor pack':{}, 'Commercial Strategy':{}, 'Admin':{}},
+    'Ernest Cook Trust':{'Little Dalby':{}, 'Cotswold Estates and Slimbridge':{}, 'Hartwell':{}, 'Low Beckside':{}, 'Trent':{}},
+    'North Norfolk Rivers':{'Catchment Investment Plan':{}},
+    'Upper Dee':{'Commercial Strategy':{}, 'Customer Demand Mapping':{}}},
+  'GY Templates':{'Deliverable folders':{}},
+  'Hive Mind':{'Blueprints':{}, 'Rule books':{}}}};
+var DPK = {path:[], bp:null};
+function dNode(path){ var n = DRIVE; path.forEach(function(p){ n = n && n[p]; }); return n || {}; }
+function openDrive(bp){
+  DPK.bp = bp;
+  var cur = folderPath(bp).split(/\s*\/\s*/), name = cur.pop();
+  DPK.path = ['Shared drives'].concat(cur);
+  if(!Object.keys(DRIVE['Shared drives']).length || !dNode(DPK.path)) DPK.path = ['Shared drives'];
+  document.getElementById('dpkName').value = name;
+  document.getElementById('dpkName').oninput = paintDriveWhere;
+  document.getElementById('dpk').classList.add('open');
+  paintDrive();
+}
+function closeDrive(){ document.getElementById('dpk').classList.remove('open'); }
+function driveTo(i){ DPK.path = DPK.path.slice(0, i+1); paintDrive(); }
+function driveIn(n){ DPK.path.push(n); paintDrive(); }
+function paintDrive(){
+  document.getElementById('dpkc').innerHTML = DPK.path.map(function(p, i){
+    return (i ? '<span class="sl">/</span>' : '') + '<button class="'+(i === DPK.path.length-1 ? 'on' : '')+'" onclick="driveTo('+i+')">'+esc(p)+'</button>';
+  }).join('');
+  var node = dNode(DPK.path), kids = Object.keys(node);
+  document.getElementById('dpkl').innerHTML = kids.length ? kids.map(function(k){
+    var n = Object.keys(node[k]).length;
+    return '<div class="dpkr" onclick="driveIn(\''+k.replace(/'/g,"\\'")+'\')"><i class="ti '+(DPK.path.length === 1 ? 'ti-folders' : 'ti-folder')+'"></i><span class="n">'+esc(k)+'</span>'
+      + (n ? '<span class="m">'+n+' folder'+(n === 1 ? '' : 's')+'</span>' : '') + '<i class="ti ti-chevron-right" style="font-size:15px;color:var(--ink3)"></i></div>';
+  }).join('') : '<div class="dpke">No folders yet</div>';
+  paintDriveWhere();
+}
+function paintDriveWhere(){
+  var nm = document.getElementById('dpkName').value.trim() || 'Untitled folder';
+  document.getElementById('dpkw').textContent = DPK.path.slice(1).concat([nm]).join(' / ');
+}
+function pickDrive(){
+  if(DPK.path.length < 2){ if(window.gyToast) gyToast('Choose a shared drive first'); return; }
+  var nm = document.getElementById('dpkName').value.trim() || 'Untitled folder';
+  CFOLDER = DPK.path.slice(1).concat([nm]).join(' / ');
+  closeDrive(); paintFolder(DPK.bp);
+}
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.getElementById('dpk').classList.contains('open')){ e.stopPropagation(); closeDrive(); } }, true);
 function createDeliverable(){
   var bp=createBp(), team={};
-  bp.roles.forEach(function(r){ team[r]=gySelGet('cRole_'+r)||''; });
+  bp.roles.forEach(function(r){ team[r]=CTEAM[r]||''; });
   var d={id:'d'+Date.now(),
          n:(document.getElementById('cName').value||'').trim()||(PROG.name+': '+bp.name),
          w:bp.name, ver:bp.ver, programme:PROG.name,
          champ:team.champion||'',
          team:team,
          run:{state:'idle',done:[]}};
-  d.folder=GYB.folder ? GYB.folderPath(PROG.name, d.n) : '';
+  d.folder=CFOLDER || (GYB.folder ? GYB.folderPath(PROG.name, d.n) : '');
+  if(CEXTRA.length) d.team.members = CEXTRA.slice();
   var arr=getDeliverables(); arr.unshift(d);
   try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}
   closeCreate();
@@ -784,22 +902,51 @@ function createBp(){
   (GYB.blueprints()).forEach(function(b){ if(b.id===id) r=b; });
   return r;
 }
+var CTEAM = {}, CPEOPLE = [], CEXTRA = [];
+function cInit(n){ return n ? n.split(/\s+/).map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase() : ''; }
+function paintTeam(bp){
+  document.getElementById('cTeam').innerHTML = bp.roles.map(function(r){
+    var n = CTEAM[r], first = n ? n.split(' ')[0] : 'Choose';
+    return '<button type="button" class="cchip'+(n?'':' none')+'" onclick="pickRole(this,\''+r+'\')" data-tip="'+(n ? n+', '+(GYB.roleNames[r]||r)+'. Click to change' : 'Choose a '+(GYB.roleNames[r]||r))+'">'
+      + '<span class="av">'+cInit(n)+'</span><span class="nm">'+first+'</span><span class="rl">'+(GYB.roleNames[r]||r)+'</span></button>';
+  }).join('')
+  + CEXTRA.map(function(n, i){
+    return '<button type="button" class="cchip" onclick="pickExtra(this,'+i+')" data-tip="'+n+', on the team. Click to remove">'
+      + '<span class="av">'+cInit(n)+'</span><span class="nm">'+n.split(' ')[0]+'</span><span class="rl">Team</span></button>';
+  }).join('')
+  + '<button type="button" class="cchip add" onclick="addColleague(this)" data-tip="Add a colleague" aria-label="Add a colleague"><i class="ti ti-plus"></i></button>';
+}
+/* a colleague without a role: on the team, with access to the folder */
+function addColleague(btn){
+  var bp = createBp(), inTeam = Object.keys(CTEAM).map(function(k){ return CTEAM[k]; }).concat(CEXTRA);
+  var rest = CPEOPLE.filter(function(p){ return inTeam.indexOf(p) < 0; });
+  gyMenu(btn, [['label','Add to the team']].concat(rest.length ? rest.map(function(p){
+    return ['ti-user-plus', p, function(){ CEXTRA.push(p); paintTeam(bp); }];
+  }) : [['ti-users','Everyone is on the team already','Everyone is on the team already']]));
+}
+function pickExtra(btn, i){
+  var bp = createBp();
+  gyMenu(btn, [['ti-user-minus','Remove '+CEXTRA[i].split(' ')[0], function(){ CEXTRA.splice(i,1); paintTeam(bp); }]]);
+}
+function pickRole(btn, r){
+  var bp = createBp();
+  gyMenu(btn, [['label', GYB.roleNames[r]||r]].concat(CPEOPLE.map(function(p){
+    return [CTEAM[r] === p ? 'ti-check' : 'ti-user', p, function(){ CTEAM[r] = p; paintTeam(bp); }];
+  })));
+}
 function paintCreate(keepName){
   var bp = createBp(); if(!bp) return;
   var pr = (GYB.programmeRoles[PROG.k]) || {}, people = [];
   Object.keys(pr).forEach(function(k){ if(people.indexOf(pr[k])<0) people.push(pr[k]); });
   ['Josh','Catia','Kishen'].forEach(function(p){ if(people.indexOf(p)<0) people.push(p); });
-  document.getElementById('cAgent').innerHTML = bp.agent
-    ? '<i class="ti ti-sparkles"></i>Runs with the '+bp.agent+' v'+bp.ver
-    : '<i class="ti ti-sparkles"></i>Agents come with the Blueprint';
   var nm = document.getElementById('cName');
   if(!keepName || !nm.dataset.touched) nm.value = PROG.name+': '+bp.name;
   nm.oninput = function(){ nm.dataset.touched = '1'; paintFolder(bp); };
   paintFolder(bp);
-  document.getElementById('cTeam').innerHTML = bp.roles.map(function(r){
-    return '<div class="ctr"><span class="rl">'+(GYB.roleNames[r]||r)+'</span><span class="gseat">'
-      + gySel('cRole_'+r,{width:'100%', options:people, value:pr[r]||'', placeholder:'Choose someone'})+'</span></div>';
-  }).join('');
+  CTEAM = {}; bp.roles.forEach(function(r){ CTEAM[r] = pr[r] || ''; });
+  if(!keepName){ CEXTRA = []; CFOLDER = null; }
+  CPEOPLE = people;
+  paintTeam(bp);
 }
 </script>
 </body>

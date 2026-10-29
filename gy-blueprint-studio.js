@@ -15,7 +15,7 @@
      Settings   the six components (the page's own view)
 
    Beside the page title: the version dropdown and a quiet Edit.
-   Edit turns the page into Blueprint Studio: the topbar turns GY
+   Edit turns the page into Blueprint Editor: the topbar turns GY
    yellow, the chat becomes the Blueprint agent, every change is a draft, and
    Save makes the next version. Typing in Source starts the studio too.
 
@@ -80,7 +80,7 @@
   (D.wf||[]).forEach(function(c){ c.s.forEach(function(st){ if(!st.sk) st.sk = (SKILLS.steps[st.t] || []).slice(); }); });
   function skillUse(sk){ var u = []; (D.wf||[]).forEach(function(c, ci){ c.s.forEach(function(st, i){ if((st.sk||[]).indexOf(sk) >= 0) u.push((ci+1)+'.'+(i+1)+' '+st.t); }); }); return u; }
   var SAVED = JSON.stringify({wf:D.wf, conf:conf, prompt:AG.purpose, access:ACCESS, owner:D.owner, manager:D.manager, readme:{}});
-  /* People are edited in Blueprint Studio with gySel: load it on pages that do not (20 Oct) */
+  /* People are edited in Blueprint Editor with gySel: load it on pages that do not (20 Oct) */
   if(!window.gySel){ var gs = document.createElement('script'); gs.src = 'gy-select.js'; gs.onload = function(){ if(window.TAB === 'settings') repaint(); }; document.head.appendChild(gs); }
 
   /* ── state ────────────────────────────────────────────────────────── */
@@ -127,7 +127,7 @@
     + 'body:not(.bson) .bsonly{display:none!important}'
     + '.bsstudio .sep{color:var(--ink3)}'
     + '.bsstudio b{font-weight:600}'
-    /* Blueprint Studio: only the topbar turns GY yellow; everything on it is ink */
+    /* Blueprint Editor: only the topbar turns GY yellow; everything on it is ink */
     /* 20 Oct: the tab bar (not the topbar) turns GY yellow and holds Done / Save; everything on it is ink */
     /* an old version is read only: the tab bar goes grey and says so */
     + 'body.bsold .v5tabs{background:var(--graybg)}'
@@ -929,7 +929,7 @@
   window.addEventListener('resize', vClose);
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') vClose(); });
 
-  /* ── Blueprint Studio mode ────────────────────────────────────────── */
+  /* ── Blueprint Editor mode ────────────────────────────────────────── */
   var CHIPS = COORD
     ? ['Where could a person check the work?', 'Add a step after 2.4 where Trade checks the buyer list', 'Make the instructions shorter']
     : ['Make the prompt shorter', 'Add a skill for stacking rules', 'Which steps use this agent?'];
@@ -1439,7 +1439,7 @@
       if(k === 'evals'){ t = 'Evals'; body = GOVD.evals.map(function(e){ return '<div class="v8row kv wrap"><span class="nm">'+e[0]+'</span><span class="v">'+e[1]+'</span></div>'; }).join(''); }
       openDrawer(t, '<div class="v8dr bsgov">'+body+'</div>');
     };
-    /* People edits in Blueprint Studio: level, make owner, remove, add; each is a draft change (20 Oct) */
+    /* People edits in Blueprint Editor: level, make owner, remove, add; each is a draft change (20 Oct) */
     window.bsPerson = function(who, v){
       var log = function(key, text){ var c = chgFor(key); if(c) c.text = text; else addChange(key, 'Changed', text, 'People'); };
       if(v === 'add'){

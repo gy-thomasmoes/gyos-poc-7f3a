@@ -297,7 +297,7 @@
     return s.w + '\n\n## Who does what\n' + (s.parts||[]).map(function(p){ return '- ' + B.actorName(p[0]) + ': ' + p[1]; }).join('\n')
       + '\n\n## Done when\n' + s.done;
   };
-  /* the workflow as Blueprint Studio edits it (a copy, so drafts never touch the source) */
+  /* the workflow as Blueprint Editor edits it (a copy, so drafts never touch the source) */
   B.studioWf = function(){
     return B.wf.map(function(c){ return {t:c.t, s:c.s.map(function(s){
       return {t:s.t, ty:s.ty, by:s.by, w:B.stepText(s), r:(s.r||[]).slice(), o:(s.o||[]).slice(), sk:(s.sk||[]).slice(), uses:(s.uses||[]).slice()};

@@ -6,7 +6,7 @@
 <title>Upper Dee: Customer Demand Mapping &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=3dd84ed8">
+<link rel="stylesheet" href="gy-shell.css?v=15d3d7fd">
 <style>
 /* v4-chat, the same deliverable with the assistant in the lead.
    Everything from the document view is still here; it has just swapped
@@ -1371,13 +1371,14 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 .v8ws .mk{cursor:pointer;transition:box-shadow .12s}
 .v8ws .mk:hover{box-shadow:0 0 0 4px rgba(26,12,18,.12)}
 </style>
+<script>document.documentElement.classList.add('datadoc')</script>
 </head>
 <body>
 
 <div class="shell">
 <script>window.GYNAV={"active":"deliverables","arts":"demand","rail":true,"reader":true};</script>
-<script src="gy-nav.js?v=4042c4c7"></script>
-<script src="gy-versions.js?v=30654df5"></script>
+<script src="gy-nav.js?v=5e6cab3d"></script>
+<!-- version pill removed 29 Oct: v8 is the current sketch -->
 
 <div class="mainc">
 <div class="topbar">
@@ -1688,8 +1689,9 @@ function conHtml(id, state){
    or a person's step, and waits there. */
 var S = [
   {t:'step',k:'1.1'},
-  {t:'ask', q:'To start, add the kick-off meeting notes. They hold the recording and the transcript.',
-   o:[['Add kick-off notes',[]]]},
+  {t:'ask', q:'I found the kick-off call in Meeting notes: <b>Upper Dee kick-off</b>, 12 Sep 2026, 52 min, with the recording and transcript. Shall I use it?',
+   o:[['Use these notes',[]],
+      ['Choose other notes',[], {menu:['Upper Dee estates walkover · 19 Sep','Dee Rivers Trust intro call · 3 Sep','Atlantic Salmon Trust catch-up · 28 Aug']}]]},
   {t:'work', i:[['Read the kick-off notes','Recording and transcript &middot; 52 min'],
                ['Answered the kick-off questions','Questionnaire &middot; 9 of 20 answered','tool']]},
   {t:'done',k:'1.1'},
@@ -1843,13 +1845,19 @@ function run(){
     paintAll(); return;
   }
 }
-function answer(i){
+/* an option with a menu (29 Oct) asks which one first, e.g. which meeting's notes to use */
+function answer(i, btn, pick){
   var b = Q; if(!b) return;
-  Q = null;
   var o = b.o[i];
-  act('Caitlin Ciceri','ask','Answered: '+o[0], CUR);
+  if(o[2] && o[2].menu && !pick){
+    var anc = btn || document.querySelectorAll('.v8aopt')[i];
+    gyMenu(anc, [['label','Meeting notes']].concat(o[2].menu.map(function(m){ return ['ti-notes', m, function(){ answer(i, anc, m); }]; })));
+    return;
+  }
+  Q = null;
+  act('Caitlin Ciceri','ask','Answered: '+(pick || o[0]), CUR);
   LOG.push(say(b.q));
-  LOG.push(you(o[0]));
+  LOG.push(you(pick ? 'Use '+pick : o[0]));
   S.splice.apply(S, [BI, 0].concat(o[1]));
   paintChat(); next();
 }
@@ -1912,7 +1920,7 @@ function askHtml(b){
     + '</div>'
     + '<div class="q">'+b.q+'</div><div class="v8aopts">'
     + b.o.map(function(o,i){
-        return '<button class="v8aopt'+(i===0?' pri':'')+'" onclick="answer('+i+')"><span class="n">'+(i+1)+'</span>'
+        return '<button class="v8aopt'+(i===0?' pri':'')+'" onclick="answer('+i+',this)"><span class="n">'+(i+1)+'</span>'
           + '<span class="l">'+o[0]+'</span>'+(i===0?'<i class="ti ti-arrow-right"></i>':'')+'</button>';
       }).join('')
     + '</div></div>';
@@ -2093,7 +2101,7 @@ function head(n,t,tip){
 var VIEWS = {
   doc: function(){
     var h = '<div class="v5dt" contenteditable="true" spellcheck="false">Customer Demand Mapping</div>'
-      + '<div class="v8setw v8docw"><div class="v8setc">';
+      + '<div class="v8setw v8docw"><div class="v8setc">' + gyDocBar.html();
     h += '<section class="v5sec v8sec" id="sec-1">'
       + head(1,'Project context','The project\'s essentials from onboarding. It sets the scene; nothing is analysed here.')
       + ['a0','a1','a2','a3','a4'].map(fieldHtml).join('') + drec('1.3') + '</section>';
@@ -2397,6 +2405,7 @@ function setActive(id){
   [].forEach.call(nav.querySelectorAll('a'), function(a){ a.classList.toggle('on', a.getAttribute('data-id') === id); });
   var row = navRow(), on = nav.querySelector('a.on');
   if(row && on){ var box = row.firstChild; box.scrollTo({left: Math.max(0, on.offsetLeft - box.offsetLeft - 24), behavior:'smooth'}); }
+  gyDocBar.update();
 }
 document.addEventListener('scroll', function(e){
   if(!e.target || !e.target.classList || !e.target.classList.contains('v5body')) return;
@@ -2610,6 +2619,7 @@ function openTab(k, keep){
   el.classList.remove('wide');
   el.innerHTML = VIEWS[k]();
   el.parentNode.scrollTop = keep ? sc : 0;
+  if(k === 'doc') setTimeout(gyDocBar.update, 0);
 }
 function paintAll(){ paintTabs(); paintProg(); openTab(TAB, true);
   if(DR === 'outputs') document.getElementById('drbody').innerHTML = VIEWS.outputs(); }

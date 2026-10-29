@@ -1346,6 +1346,12 @@ window.gyCartoTiles = function(style){
     var left = Math.min(Math.max(8, b.left + b.width/2 - w/2), window.innerWidth - w - 8);
     var top  = b.top - h - 8;
     if(top < 8) top = b.bottom + 8;
+    /* an element whose top is hidden under the sticky document bar (or scrolled out of its pane) gets its tip
+       just inside the visible part, never floating over the bar (29 Oct) */
+    var bar = document.querySelector('#gydbar.show .in'), sc = el.closest('.v5body'), vis = -Infinity;
+    if(bar && !bar.contains(el)) vis = bar.getBoundingClientRect().bottom;
+    if(sc) vis = Math.max(vis, sc.getBoundingClientRect().top);
+    if(b.top < vis && b.bottom > vis) top = vis + 8;
     gyTipEl.style.left = Math.round(left) + 'px';
     gyTipEl.style.top  = Math.round(top) + 'px';
   }
@@ -1741,7 +1747,7 @@ window.gyCartoTiles = function(style){
     b.classList.add('reader');
     var kids = [].slice.call(el.children);
     var w = kids.filter(function(k){ return k.classList.contains('v8setw'); })[0];
-    if(w && kids.length === 1 && w.classList.contains('v8docw') && w.querySelector(':scope > .v8anc')) return;
+    if(w && kids.length === 1 && w.classList.contains('v8docw') && w.querySelector(':scope > .v8anc')){ gyTocPolish(w); return; }
     var c;
     if(w){
       w.classList.add('v8docw');
@@ -1758,6 +1764,31 @@ window.gyCartoTiles = function(style){
       w.appendChild(c); el.appendChild(w);
     }
     if(!w.querySelector(':scope > .v8anc')) w.insertAdjacentHTML('beforeend', gyReaderNav(c));
+    gyTocPolish(w);
+  }
+  /* Table of Contents rule (22 Oct): every right-hand nav is titled "Table of Contents", every entry has an
+     icon, and an entry whose section is numbered in the page carries that number ("1. Where it sits") */
+  var GY_TOC_IC = [['purpose','ti-target-arrow'],['where it sits','ti-map-pin'],['why','ti-bulb'],['how it works','ti-settings-automation'],
+    ['job','ti-briefcase'],['schema','ti-schema'],['guardrail','ti-shield-check'],['eval','ti-flask'],['open question','ti-help-circle'],
+    ['next step','ti-list-check'],['project context','ti-flag'],['demand','ti-users'],['supply','ti-leaf'],['summary','ti-file-text'],
+    ['chapter','ti-books'],['role','ti-users-group'],['done when','ti-circle-check'],['agent','ti-robot'],['tool','ti-tool'],
+    ['skill','ti-sparkles'],['context','ti-books'],['knowledge','ti-book'],['governance','ti-shield-check'],['memory','ti-history'],
+    ['connection','ti-plug-connected'],['people','ti-users'],['engine','ti-engine'],['system','ti-server'],['who','ti-users'],
+    ['frame','ti-frame'],['analyse','ti-chart-dots'],['draft','ti-pencil'],['decide','ti-arrows-split-2'],['kick','ti-flag']];
+  function gyTocIcon(label){ var l = String(label).toLowerCase(), ic = 'ti-point'; GY_TOC_IC.some(function(p){ if(l.indexOf(p[0]) >= 0){ ic = p[1]; return true; } }); return ic; }
+  function gyTocPolish(w){
+    var nav = w.querySelector(':scope > .v8anc'); if(!nav || nav.classList.contains('empty')) return;
+    var box = nav.firstElementChild; if(!box) return;
+    var t = box.querySelector('.csnavt');
+    if(t) t.textContent = 'Table of Contents'; else box.insertAdjacentHTML('afterbegin', '<div class="csnavt">Table of Contents</div>');
+    [].forEach.call(box.querySelectorAll('a'), function(a){
+      var sp = a.querySelector('span:not(.rn):not(.rc)'), label = sp ? sp.textContent : a.textContent;
+      if(!a.querySelector('i.ti')) a.insertAdjacentHTML('afterbegin', '<i class="ti '+gyTocIcon(label)+'"></i>');
+      var rn = a.querySelector('.rn'); if(rn && /^\d+$/.test(rn.textContent)) rn.textContent += '.';
+      if(a.querySelector('.rn') || !sp || /^\d+\.\s/.test(sp.textContent)) return;
+      var sec = document.getElementById(a.getAttribute('data-id') || ''), n = sec && sec.querySelector('.v5chn');
+      if(n && /^\d+$/.test(n.textContent.trim())) sp.textContent = n.textContent.trim()+'. '+sp.textContent;
+    });
   }
   /* Workflow stages as the nav: number, name and the done count */
   function gyReaderNav(c){
@@ -1798,4 +1829,119 @@ window.gyCartoTiles = function(style){
     else gyReaderOn();
   }
 
+})();
+
+/* Document bar (28 Oct): on long data, document and presentation pages, a sticky bar at the top of the content
+   column appears once the title (or cover) has scrolled away. It names the chapter and the block being read
+   from the Table of Contents; the chapter jumps back to its start; the button shows the document full screen.
+   A page puts gyDocBar.html() first in its .v8setc and calls gyDocBar.update() from setActive. */
+window.gyDocBar = (function(){
+  var PREV = null;
+  function q(s){ return document.querySelector(s); }
+  function title(){ return q('.v8docw .v5dt') || document.getElementById('sec-cover') || document.getElementById('sl-cover') || q('.v8docw .cspg'); }
+  function html(){
+    return '<div class="gydbar" id="gydbar"><div class="in"><button class="ch" onclick="gyDocBar.chap()"></button><span class="sep">/</span><span class="t"></span>'
+      + '<button class="fs" onclick="gyDocBar.full()" data-tip="Full screen" aria-label="Full screen"><i class="ti ti-arrows-maximize"></i></button></div></div>';
+  }
+  function update(){
+    var bar = document.getElementById('gydbar'), nav = document.getElementById('setnav'); if(!bar) return;
+    var on = nav && nav.querySelector('a.on'), g = on && on.closest('.csg'), gh = g && g.querySelector('.csgh span');
+    var ch = bar.querySelector('.ch');
+    ch.textContent = gh ? gh.textContent : ''; ch.style.display = gh ? '' : 'none';
+    bar.querySelector('.sep').style.display = gh ? '' : 'none';
+    bar.querySelector('.t').textContent = on ? on.textContent : '';
+    bar.dataset.g = g ? (g.dataset.g || '') : '';
+    var col = bar.parentNode, cs = getComputedStyle(col), inn = bar.firstChild, sc = q('.v5body'), t = title();
+    /* span the column inside its own borders, and draw the divider where the column meets the panel beside it */
+    var cr = col.getBoundingClientRect(), br = bar.getBoundingClientRect(), bl = col.clientLeft, brw = parseFloat(cs.borderRightWidth) || 0;
+    var pl = parseFloat(cs.paddingLeft) || 0;
+    inn.style.left = (cr.left + bl - br.left) + 'px'; inn.style.right = (br.right - (cr.right - brw)) + 'px';
+    inn.style.paddingLeft = Math.max(pl, 24) + 'px';
+    /* divider lines on both sides whenever the column runs edge to edge (not when it floats inside a padded pane) */
+    var sr = sc ? sc.getBoundingClientRect() : null, scs = sc ? getComputedStyle(sc) : null;
+    var flush = sr && (parseFloat(scs.paddingLeft) || 0) < 2;
+    inn.style.borderLeft = (!bl && sr && Math.abs(cr.left - sr.left) < 2) ? '1px solid var(--line)' : 'none';
+    inn.style.borderRight = (!brw && flush) ? '1px solid var(--line)' : 'none';
+    if(sc) bar.style.top = -(parseFloat(getComputedStyle(sc).paddingTop) || 0) + 'px'; /* stick to the very top of the scroll area */
+    bar.classList.toggle('show', !!(sc && t && t.getBoundingClientRect().bottom < sc.getBoundingClientRect().top + 8));
+    var fi = bar.querySelector('.fs i'); if(fi) fi.className = 'ti ' + (document.body.classList.contains('docfull') ? 'ti-arrows-minimize' : 'ti-arrows-maximize');
+  }
+  function chap(){
+    var bar = document.getElementById('gydbar'), sc = q('.v5body'); if(!bar || !sc) return;
+    var el = bar.dataset.g && document.getElementById(bar.dataset.g);
+    if(!el){ var a = q('#setnav .csg[data-g="'+bar.dataset.g+'"] .csgb a'); el = a && document.getElementById(a.getAttribute('data-id')); }
+    if(!el) return;
+    sc.scrollTo({top: Math.max(0, el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 70), behavior:'smooth'});
+  }
+  function refit(){ ['paintTabs','fitTables','fitPages'].forEach(function(f){ if(typeof window[f] === 'function') try{ window[f](); }catch(e){} }); update(); }
+  function full(){
+    var b = document.body;
+    if(!b.classList.contains('docfull')){
+      PREV = {nav:b.classList.contains('navhid'), chat:b.classList.contains('pclosed')};
+      b.classList.add('docfull','navhid','pclosed');
+      try{ if(document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(function(){}); }catch(e){}
+    } else {
+      b.classList.remove('docfull');
+      if(PREV){ b.classList.toggle('navhid', PREV.nav); b.classList.toggle('pclosed', PREV.chat); }
+      try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+    }
+    refit();
+  }
+  document.addEventListener('scroll', function(e){ if(e.target && e.target.classList && e.target.classList.contains('v5body')) update(); }, true);
+  document.addEventListener('fullscreenchange', function(){ if(!document.fullscreenElement && document.body.classList.contains('docfull')) full(); });
+  window.addEventListener('resize', update);
+  return {html:html, update:update, chap:chap, full:full};
+})();
+
+/* Collapsible Table of Contents (29 Oct): every right-hand Table of Contents gets a button beside its title that
+   folds it into a rail of dashes, as in Notion. One dash per entry (chapters longer, the one being read in ink);
+   hovering the rail shows the full list as a floating card. The choice is remembered across pages. */
+(function(){
+  var KEY = 'gyTocCol', RAF = 0;
+  function isCol(){ try{ return localStorage.getItem(KEY) === '1'; }catch(e){ return false; } }
+  function setCls(el, c, on){ if(el.classList.contains(c) !== !!on) el.classList.toggle(c, !!on); }
+  function btnHtml(col){
+    return '<button class="gytoc-btn" onclick="event.stopPropagation();gyTocToggle()" data-tip="'+(col ? 'Keep the Table of Contents open' : 'Collapse the Table of Contents')+'" aria-label="'+(col ? 'Expand' : 'Collapse')+' Table of Contents">'
+      + '<i class="ti '+(col ? 'ti-layout-sidebar-right-expand' : 'ti-layout-sidebar-right-collapse')+'"></i></button>';
+  }
+  function enhance(nav, col){
+    var box = nav.firstElementChild; if(!box || nav.classList.contains('empty') || nav.classList.contains('rnav')) return;
+    var t = box.querySelector('.csnavt');
+    /* a right-hand nav without a title (e.g. a Settings tab) gets "Table of Contents", so it is the same component everywhere;
+       not when the nav has folded into a row of chips on a narrow screen */
+    if(!t && box.querySelector('a') && getComputedStyle(box).flexDirection !== 'row' && getComputedStyle(nav).display !== 'none'){
+      box.insertAdjacentHTML('afterbegin', '<div class="csnavt">Table of Contents</div>'); t = box.firstElementChild;
+    }
+    if(!t) return;
+    var b = t.querySelector('.gytoc-btn'), ic = col ? 'ti-layout-sidebar-right-expand' : 'ti-layout-sidebar-right-collapse';
+    if(!b) t.insertAdjacentHTML('beforeend', btnHtml(col));
+    else if(!b.querySelector('i.' + ic)) b.outerHTML = btnHtml(col);
+    setCls(nav, 'gytoc', true); var changed = nav.classList.contains('gytoc-col') !== col; setCls(nav, 'gytoc-col', col);
+    var d = nav.querySelector(':scope > .gytoc-dash');
+    if(!d){ d = document.createElement('span'); d.className = 'gytoc-dash'; /* a span, so page rules for the nav's div leave it alone */ d.setAttribute('aria-hidden', 'true'); nav.appendChild(d); }
+    var sig = [].map.call(box.querySelectorAll('a, .csgh'), function(x){
+      return (x.closest('.csgb') ? 's' : 'h') + (x.classList.contains('on') ? '1' : '0');
+    }).join('');
+    if(d.dataset.sig !== sig){
+      d.dataset.sig = sig;
+      d.innerHTML = sig.match(/../g) ? sig.match(/../g).map(function(p){ return '<i class="' + (p[0] === 'h' ? 'h' : '') + (p[1] === '1' ? ' on' : '') + '"></i>'; }).join('') : '';
+    }
+    return changed;
+  }
+  /* the content column takes the room the Table of Contents gives up */
+  function refit(){
+    ['fitPages','fitTables'].forEach(function(f){ if(typeof window[f] === 'function') try{ window[f](); }catch(e){} });
+    if(window.gyDocBar) gyDocBar.update();
+  }
+  function scan(){ var col = isCol(), ch = false; [].forEach.call(document.querySelectorAll('nav.v8anc'), function(n){ if(enhance(n, col)) ch = true; }); if(ch) refit(); }
+  window.gyTocToggle = function(){
+    var col = !isCol(); try{ localStorage.setItem(KEY, col ? '1' : '0'); }catch(e){}
+    scan();
+  };
+  function later(){ if(RAF) return; RAF = requestAnimationFrame(function(){ RAF = 0; scan(); }); }
+  function start(){
+    scan();
+    new MutationObserver(later).observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

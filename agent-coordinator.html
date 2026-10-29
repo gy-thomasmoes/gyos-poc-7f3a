@@ -6,7 +6,7 @@
 <title>Coordinator agent &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=3dd84ed8">
+<link rel="stylesheet" href="gy-shell.css?v=15d3d7fd">
 <style>
 /* Shell CSS copied from deliverable-sketch-v8.html (8 Oct) so this page matches the Deliverable pages. */
 
@@ -1408,7 +1408,7 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 
 <div class="shell">
 <script>window.GYNAV={"active":"library","arts":null,"rail":true,"reader":true};</script>
-<script src="gy-nav.js?v=4042c4c7"></script>
+<script src="gy-nav.js?v=5e6cab3d"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -1489,14 +1489,14 @@ var SVG = '<svg viewBox="0 0 760 360" role="img" aria-label="Each run pins one B
  + '</g></svg>';
 
 var SECS = [
-  ['c-where','Where it sits', '<p>The Coordinator agent runs Deliverables. It is one agent for every Deliverable type: what changes per Deliverable is the Blueprint it reads, not the agent. It calls Expert agents on Blueprint steps, hands expert steps to the Deliverable\'s Lead, and logs corrections for the Blueprint agent.</p>'
+  ['c-where','Where it sits', '<div class="pblk">The Coordinator agent runs Deliverables. It is one agent for every Deliverable type: what changes per Deliverable is the Blueprint it reads, not the agent. It calls Expert agents on Blueprint steps, hands expert steps to the Deliverable\'s Lead, and logs corrections for the Blueprint agent.</div>'
     + tbl(['Who','Role in a run'],[
       ['Coordinator agent','Runs the pinned Blueprint, step by step'],
       ['Expert agents','Answer the questions on their ecosystem service'],
       ['Deliverable Lead','Does the expert steps and signs off'],
       ['Blueprint agent','Turns corrections into the next Blueprint version']])],
-  ['c-why','Why it matters', '<p>One coordinator means one place to improve how GY runs work, instead of a lead agent per Deliverable that drift apart. Anything specific to a Deliverable lives in its Blueprint, so writing a Blueprint is all it takes to make a new Deliverable runnable.</p>'],
-  ['c-how','How it works', '<div class="fig">'+SVG+'</div><p>Each run pins one Blueprint version. The agent works step by step, checks each step against its "done when" and redoes it when it fails. Corrections from the run go to the Blueprint agent, which proposes the next version.</p>'],
+  ['c-why','Why it matters', '<div class="pblk">One coordinator means one place to improve how GY runs work, instead of a lead agent per Deliverable that drift apart. Anything specific to a Deliverable lives in its Blueprint, so writing a Blueprint is all it takes to make a new Deliverable runnable.</div>'],
+  ['c-how','How it works', '<div class="fig">'+SVG+'</div><div class="dcap">Each run pins one Blueprint version. The agent works step by step, checks each step against its "done when" and redoes it when it fails. Corrections from the run go to the Blueprint agent, which proposes the next version.</div>'],
   ['c-jobs','Jobs', tbl(['Job','Question it answers','Gives','Signs off'],[
     ['Start a run','Which Blueprint, which version, which programme?','A run plan with steps and owners','Deliverable Lead'],
     ['Run steps','What does this step need, and who has it?','Step output with a source and confidence','Step owner'],

@@ -173,7 +173,7 @@ body.reader .v8docw .v8setc{flex:1 1 auto !important;width:auto !important;max-w
   border:1px solid var(--line);border-top:none;border-bottom:none;padding:56px 40px 110px}
 body.reader .v8docw .v8setc > *{max-width:880px}
 body.reader .v8docw .v8anc{display:block !important;position:sticky !important;top:-40px !important;left:auto !important;bottom:auto !important;
-  width:184px !important;padding-top:64px !important;flex:none !important;margin:0 40px 0 64px !important;order:0 !important;align-self:flex-start !important;
+  width:184px !important;padding-top:64px !important;flex:none !important;margin:0 40px 0 40px !important;order:0 !important;align-self:flex-start !important;
   background:none !important;border:none !important;z-index:auto !important}
 body.reader .v8docw .v8anc > div{display:flex !important;flex-direction:column !important;flex-wrap:nowrap !important;gap:0 !important;position:static !important;overflow:visible !important;-webkit-mask-image:none !important}
 body.reader .v8docw .v8anc .csnavt{font-weight:600;font-size:14px;color:var(--ink);padding:0 0 12px 0}
@@ -192,3 +192,66 @@ body.reader .v8docw .v8anc a.on i,body.reader .v8docw .v8anc a.on .rn{color:var(
 }
 /* the drawer sat flush against the white column once the panel lost its right padding: give it its own gap (20 Oct) */
 body.reader .v5dr{padding-left:16px !important}
+
+/* Document bar (28 Oct), see gyDocBar in gy-nav.js: sticky at the top of the content column once the title has gone */
+.gydbar{position:sticky;top:0;height:0;z-index:6;max-width:none !important;margin:0 !important;padding:0 !important}
+.gydbar .in{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;gap:8px;padding:0 16px 0 24px;
+  background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 6px 14px -12px rgba(31,31,29,.35);
+  opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .15s,transform .15s;font-family:var(--sans);zoom:1}
+.gydbar.show .in{opacity:1;transform:none;pointer-events:auto}
+.gydbar .ch{font:inherit;font-size:14px;color:var(--ink3);white-space:nowrap;flex:none;border:none;background:none;padding:4px 6px;margin-left:-6px;border-radius:6px;cursor:pointer}
+.gydbar .ch:hover{color:var(--ink);background:var(--graybg)}
+.gydbar .sep{color:var(--ink3);font-size:14px;flex:none}
+.gydbar .t{font-size:14px;font-weight:500;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gydbar .fs{margin-left:auto;flex:none;width:34px;height:34px;border:none;background:none;border-radius:8px;color:var(--ink2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px}
+.gydbar .fs:hover{background:var(--graybg);color:var(--ink)}
+/* Table of Contents indent (28 Oct): one rule for every page with chapter groups. Chapters and single entries line up;
+   the entries inside a chapter are indented by the same amount everywhere */
+.v8docw .v8anc#setnav > div > a,.v8docw .v8anc#setnav .csgh{padding-left:10px !important;margin-left:-10px !important}
+.v8docw .v8anc#setnav .csgb a{padding-left:32px !important;margin-left:-10px !important}
+
+/* Collapsible Table of Contents (29 Oct), see gyTocToggle in gy-nav.js */
+.v8anc .csnavt{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;color:var(--ink);padding:0 0 12px 0;border:none;white-space:nowrap}
+.gytoc-btn{margin-left:auto;flex:none;width:28px;height:28px;padding:0;border:none;background:none;border-radius:7px;color:var(--ink3);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:400}
+.gytoc-btn:hover{background:var(--graybg);color:var(--ink)}
+.gytoc-dash{display:none}
+html body :is(nav#gytocx,nav).v8anc.gytoc-col{width:30px !important;min-width:0 !important;min-height:0 !important;padding:64px 0 0 !important;margin-left:14px !important;margin-right:22px !important;
+  background:none !important;border:none !important;box-shadow:none !important;z-index:7 !important;overflow:visible !important}
+html body :is(nav#gytocx,nav).v8anc.gytoc-col > div{display:none !important}
+html body :is(nav#gytocx,nav).v8anc.gytoc-col > .gytoc-dash{display:flex;flex-direction:column;align-items:flex-end;gap:11px;padding:8px 0}
+.gytoc-dash i{display:block;flex:none;width:12px;height:2px;border-radius:2px;background:var(--line2);transition:background .12s}
+.gytoc-dash i.h{width:18px}
+.gytoc-dash i.on{background:var(--ink)}
+html body :is(nav#gytocx,nav).v8anc.gytoc-col:hover > .gytoc-dash i{background:var(--line)}
+html body :is(nav#gytocx,nav).v8anc.gytoc-col:hover > div{display:flex !important;flex-direction:column !important;flex-wrap:nowrap !important;position:absolute !important;top:36px !important;right:-6px !important;left:auto !important;
+  width:290px !important;max-height:calc(100vh - 200px);overflow:auto !important;background:var(--card) !important;border:1px solid var(--line) !important;border-radius:14px !important;
+  box-shadow:0 16px 36px -14px rgba(31,31,29,.30) !important;padding:16px 14px 12px 22px !important;gap:0 !important;-webkit-mask-image:none !important;mask-image:none !important;z-index:8}
+/* the hover card shows every chapter opened, so the whole document is visible at once (29 Oct) */
+html body :is(nav#gytocx,nav).v8anc.gytoc-col:hover > div .csgb{display:block !important}
+html body :is(nav#gytocx,nav).v8anc.gytoc-col:hover > div .csgh .cr{transform:rotate(90deg) !important}
+/* entries in the hover card keep their height; the card scrolls instead of squeezing them (29 Oct) */
+html body :is(nav#gytocx,nav).v8anc.gytoc-col:hover > div > *{flex:none !important}
+
+/* Data documents (29 Oct): one look for every data Deliverable (Walkham, the Customer Demand Mapping sketch, any new one).
+   A page opts in with the class "datadoc" on <html>. */
+/* Document view, 28 Oct: titles that scan, a sticky bar once the page title has scrolled away,
+   text before a table in its own card, and indented sub-entries in the Table of Contents */
+html.datadoc .v8docw .v5cht{font-size:30px;letter-spacing:-.015em}
+html.datadoc .v8docw .v5ch{margin-bottom:34px}
+html.datadoc .v8docw .v5sec{margin-top:72px}
+html.datadoc .v8docw .v5f{margin-bottom:44px}
+html.datadoc .v8docw .v5flab{margin-bottom:12px}
+html.datadoc .v8docw .v5fl{font-family:var(--serif);font-size:21px;font-weight:500;letter-spacing:-.01em;text-transform:none;color:var(--ink);line-height:1.25}
+html.datadoc .v8docw .v5sh{font-family:var(--serif);font-size:21px;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin:52px 0 10px}
+html.datadoc .v5fbody > .v5inp + .v5tw,html.datadoc .v5fbody > .v5tw + .v5inp{margin-top:14px}
+/* Document view, 29 Oct: the chapter number is plain text in the title's size, and written body text sits on the
+   page without a box (empty fields keep their dashed frame, tables keep theirs) */
+html.datadoc .v8docw .v5ch .v5chn{width:auto;height:auto;background:none;border-radius:0;color:var(--ink);
+  font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.015em;line-height:inherit}
+html.datadoc .v8docw .v5ch .v5chn:after{content:"."}
+html.datadoc .v8docw .v5ch{gap:10px}
+html.datadoc .v8docw .v5inp:not(.empty){border-color:transparent;background:none;box-shadow:none;padding:0;border-radius:6px}
+html.datadoc .v8docw .v5inp:not(.empty):hover{border-color:transparent;box-shadow:none}
+html.datadoc .v8docw .v5inp:not(.empty):focus{box-shadow:0 0 0 6px var(--card),0 0 0 7px #9FC4E4}
