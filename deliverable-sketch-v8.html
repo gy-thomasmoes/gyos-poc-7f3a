@@ -6,7 +6,7 @@
 <title>Upper Dee: Customer Demand Mapping &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=15d3d7fd">
+<link rel="stylesheet" href="gy-shell.css?v=aa2e119c">
 <style>
 /* v4-chat, the same deliverable with the assistant in the lead.
    Everything from the document view is still here; it has just swapped
@@ -1885,9 +1885,7 @@ function decHtml(b, done){
     + '<span class="v8dk">Decision &middot; '+b.k+'</span></div>'
     + '<div class="v8dq">'+b.q+'</div>';
   if(!done){
-    h += '<div class="v8rec">'+agAv('sm')+'<div>'+b.rec+'</div></div>'
-      + '<div class="v8by">'+avName(s.by)+s.by+' decides</div>'
-      + '<div class="v8dopts">' + b.o.map(function(o,i){
+    h += '<div class="v8dopts">' + b.o.map(function(o,i){
           return '<button class="v8dopt'+(i===0?' pri':'')+'" onclick="decide('+i+')"><i class="ti '+o[1]+'"></i>'+o[0]+'</button>';
         }).join('') + '</div>';
   } else {

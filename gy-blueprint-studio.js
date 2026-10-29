@@ -234,7 +234,6 @@
     + 'mark.bsflash{background:var(--greenbg);color:inherit;border-radius:3px}'
     /* Content is a read view (20 Oct): every block opens its file in the drawer editor */
     + '.bpdoc .bsclk{position:relative;cursor:pointer;border-radius:14px;margin:-16px -18px;padding:16px 18px;transition:background .12s}'
-    + '.bpdoc .bsclk:hover{background:#F4F0E6}'
     + '.bpdoc .bsclk.sel{background:#EFEBE1}'
     + '.bpdoc .bsclk .dtwrap,.bpdoc .bsclk .callout{background:var(--card)}'
     + '.bscode .bsln.bshl{background:#EFEBE1;box-shadow:-12px 0 0 #EFEBE1,12px 0 0 #EFEBE1}'

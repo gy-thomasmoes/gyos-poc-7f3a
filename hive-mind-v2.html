@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=15d3d7fd">
+<link rel="stylesheet" href="gy-shell.css?v=aa2e119c">
 <style>
 /* Hive Mind v2 (4 Oct 2026). The Hive Mind as the Knowledge part of the GYOS
    harness: what GY builds and owns, loaded by every agent. Agents read it
@@ -46,6 +46,12 @@
 .sh .n{font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
 .sh .act{margin-left:auto;font-size:13.5px;color:var(--ink2);cursor:pointer}
 .sh .act:hover{color:var(--ink)}
+.sh .seg{margin-left:auto;align-self:center}
+.sh .seg button{padding:4px 11px;font-size:13px}
+.st.wait{background:var(--amberbg);color:var(--amberd)}
+.bpsrc{margin:9px 2px 0;font-size:12.5px;color:var(--ink3)}
+.bpsrc a{color:var(--blued);text-decoration:none}
+.bpsrc a:hover{text-decoration:underline}
 .sbtn{font-size:13px;font-weight:500;padding:5px 11px;border-radius:9px;border:1px solid var(--line2);background:var(--card);color:var(--ink2);cursor:pointer;font-family:inherit;white-space:nowrap}
 .sbtn:hover{color:var(--ink);border-color:var(--ink3)}
 .sbtn.blue{background:var(--pri);border-color:var(--pri);color:#fff}
@@ -269,6 +275,7 @@
 <script src="gy-personas.js?v=2f13de21"></script>
 <script src="gy-persona-covers.js?v=37895c2e"></script>
 <script src="gy-versions.js?v=30654df5"></script>
+<script src="gy-notion-blueprints.js?v=4030f7b8"></script>
 <script>
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},3000)}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
@@ -276,7 +283,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 /* ── people ── */
 var PEOPLE={
  CC:'Caitlin Ciceri', EM:'Emily', AL:'Alex', SO:'Solene', JF:'Josh Fettes', AS:'Asha', HF:'Harry Forman',
- CR:'Charlie Regent', AN:'Andrew, to confirm', CT:'Cat', MI:'Millie', EH:'Ed Hewitt', TO:'Toon', AM:'Al Maltby', AR:'Archie Ruggles-Brise'
+ CR:'Charlie Regent', AN:'Andrew, to confirm', CT:'Cat', MI:'Millie', EH:'Ed Hewitt', TO:'Toon', AM:'Al Maltby', AR:'Archie Ruggles-Brise', FB:'Fran Brosnahan'
 };
 var ME='CC';
 function who(k){
@@ -551,17 +558,46 @@ function renderAgents(){
         +'<span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
     }).join('')+'</div>';
 }
+var BPTAB='active';
+function bpTab(k){ BPTAB=k; renderBps(); }
 function renderBps(){
-  document.getElementById('bpN').textContent=BPS.length;
-  var cols='minmax(0,1.8fr) 1fr 1.4fr 60px 90px';
-  document.getElementById('blueprints').innerHTML='<div class="gytbl" style="--cols:'+cols+'">'
-    +'<div class="gyhd"><span>Name</span><span>Department</span><span>Manager</span><span class="num">Runs</span><span>Status</span></div>'
-    +BPS.map(function(b){
-      var s=BST[b.st];
-      return '<div class="gyrow" style="cursor:pointer" onclick="'+(b.go?'location.href=\''+b.go+'\'':'toast(\''+b.n+' is not in this prototype yet\')')+'">'
-        +'<span class="nmc"><span class="nm">'+b.n+'</span></span><span><span class="dep d-'+b.d+'">'+b.dn+'</span></span>'+who(b.o)
-        +'<span class="num">'+b.runs+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
-    }).join('')+'</div>';
+  var N=window.GY_NOTION_BP, act=N?N.rows:[], names={};
+  act.forEach(function(r){ names[r.n]=1; });
+  var ina=BPS.filter(function(b){ return !names[b.n]; });
+  if(!N){ act=null; }
+  document.getElementById('bpN').textContent='';
+  var seg='<div class="seg"><button class="'+(BPTAB==='active'?'on':'')+'" onclick="bpTab(\'active\')">Active '+(act?act.length:BPS.length)+'</button>'
+    +'<button class="'+(BPTAB==='inactive'?'on':'')+'" onclick="bpTab(\'inactive\')">Inactive '+(act?ina.length:0)+'</button></div>';
+  var sh=document.getElementById('bpN').parentNode, old=sh.querySelector('.seg'); if(old) old.remove();
+  sh.insertAdjacentHTML('beforeend', seg);
+  var go=function(b){ return b.go?'location.href=\''+b.go+'\'':'toast(\''+b.n+' is not in this prototype yet\')'; };
+  var h;
+  if(act && BPTAB==='active'){
+    var cols='minmax(0,1.8fr) 1.3fr 64px 1.3fr 54px 124px';
+    h='<div class="gytbl" style="--cols:'+cols+'">'
+      +'<div class="gyhd"><span>Name</span><span>Stage</span><span>Version</span><span>Owner</span><span class="num">Runs</span><span class="num">Open questions</span></div>'
+      +act.map(function(b){
+        var amber=b.stage==='Ready for owner';
+        return '<div class="gyrow" style="cursor:pointer" onclick="'+go(b)+'">'
+          +'<span class="nmc"><span class="nm">'+esc(b.n)+'</span></span>'
+          +'<span><span class="st '+(amber?'wait':'draft')+'">'+esc(b.stage)+'</span></span>'
+          +'<span class="mut" style="font-variant-numeric:tabular-nums">'+esc(b.v)+'</span>'+who(b.o)
+          +'<span class="num">'+b.runs+'</span><span class="num">'+b.oq+'</span></div>';
+      }).join('')+'</div>'
+      +'<div class="bpsrc">From <a href="'+N.url+'" target="_blank" rel="noopener">Notion Blueprints</a> · synced '+new Date(N.synced).toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</div>';
+  } else {
+    var list=act?ina:BPS, cols2='minmax(0,1.8fr) 1fr 1.4fr 60px 90px';
+    h='<div class="gytbl" style="--cols:'+cols2+'">'
+      +'<div class="gyhd"><span>Name</span><span>Department</span><span>Manager</span><span class="num">Runs</span><span>Status</span></div>'
+      +list.map(function(b){
+        var s=BST[b.st];
+        return '<div class="gyrow" style="cursor:pointer" onclick="'+go(b)+'">'
+          +'<span class="nmc"><span class="nm">'+b.n+'</span></span><span><span class="dep d-'+b.d+'">'+b.dn+'</span></span>'+who(b.o)
+          +'<span class="num">'+b.runs+'</span><span><span class="st '+s[0]+'">'+s[1]+'</span></span></div>';
+      }).join('')+'</div>';
+    if(act) h+='<div class="bpsrc">Not in Notion Blueprints</div>';
+  }
+  document.getElementById('blueprints').innerHTML=h;
 }
 
 /* ── covers ── */

@@ -255,3 +255,17 @@ html.datadoc .v8docw .v5ch{gap:10px}
 html.datadoc .v8docw .v5inp:not(.empty){border-color:transparent;background:none;box-shadow:none;padding:0;border-radius:6px}
 html.datadoc .v8docw .v5inp:not(.empty):hover{border-color:transparent;box-shadow:none}
 html.datadoc .v8docw .v5inp:not(.empty):focus{box-shadow:0 0 0 6px var(--card),0 0 0 7px #9FC4E4}
+
+/* Decision (29 Oct): smaller and quieter. The question and the choices only; the recommendation and "decides" line
+   are gone. A thin amber edge still says a person is needed */
+html body .v8dec{background:var(--card);border:1px solid var(--line);border-left:3px solid #E2C46A;border-radius:12px;padding:12px 14px;margin:10px 0;box-shadow:none}
+html body .v8dec .v8dh{gap:8px}
+html body .v8dec .v8dia{width:16px;height:16px;border-radius:4px}
+html body .v8dec .v8dia .ti{font-size:10px}
+html body .v8dec .v8dk{font-size:11px}
+html body .v8dec .v8dq{font-family:var(--sans);font-size:14.5px;font-weight:600;line-height:1.4;margin:8px 0 10px}
+html body .v8dec .v8dopts{gap:6px;margin-top:0}
+html body .v8dec .v8dopt{padding:8px 11px;border-radius:9px;font-size:13.5px;border-color:var(--line)}
+html body .v8dec .v8dopt:hover{border-color:var(--line2)}
+html body .v8dec .v8dopt.pri{border-color:var(--blue)}
+html body .v8dec .v8dopt .ti{font-size:14px}
