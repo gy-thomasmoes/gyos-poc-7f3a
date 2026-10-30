@@ -6,7 +6,7 @@
 <title>Upper Dee: Customer Demand Mapping &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=37561f66">
+<link rel="stylesheet" href="gy-shell.css?v=cfc4e767">
 <style>
 /* v4-chat, the same deliverable with the assistant in the lead.
    Everything from the document view is still here; it has just swapped
@@ -1377,7 +1377,9 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
 
 <div class="shell">
 <script>window.GYNAV={"active":"deliverables","arts":"demand","rail":true,"reader":true};</script>
-<script src="gy-nav.js?v=9d5b5620"></script>
+<script src="gy-nav.js?v=e1bbcbfe"></script>
+<script src="gy-docs.js?v=913e52c6"></script>
+<script src="gy-ect-context.js?v=ed0c974d"></script>
 <!-- version pill removed 29 Oct: v8 is the current sketch -->
 
 <div class="mainc">
@@ -1439,6 +1441,16 @@ body .v8anc a.on{background:var(--graybg);color:var(--ink);border-left:none}
    are visible where they contribute, each with the expert who manages them.
    State is in memory only, so a reload is a fresh run. */
 
+/* 30 Oct: ?d=<id> opens one of a programme's own Deliverables (Ernest Cook Trust's five estates),
+   made from this Blueprint and not started yet. The run below is the Upper Dee demo script, so an
+   empty Deliverable shows the Blueprint's empty document and does not play it. */
+var EMPTY = (function(){ try{ var d = new URLSearchParams(location.search).get('d'); return (d && window.GYD && GYD.byId(d)) || null; }catch(e){ return null; } })();
+var PLACE = EMPTY ? (EMPTY.estate || EMPTY.prog) : 'Upper Dee';
+var PLACELOC = EMPTY ? PLACE+', '+EMPTY.prog : 'Upper Dee, Cairngorms';
+if(EMPTY){
+  document.title = EMPTY.name+' \u00b7 Great Yellow';
+  var crl = document.querySelector('.crumbs .cr:last-child'); if(crl) crl.textContent = EMPTY.name;
+}
 var TEAM = [
   ['Caitlin Ciceri','CC','#1D9E75','Champion'],
   ['Harry Fox','HF','#EF9F27','Analysis'],
@@ -1466,7 +1478,7 @@ function toggleAdd(){ ADDOPEN = !ADDOPEN; openTab('settings', true); }
 /* ── page options menu (3 Oct) ── */
 var FAV = false, PAUSED = false;
 function pageMenu(btn){
-  var pdf = 'GY_DemandMapping_Upper-Dee_2026-09.pdf';
+  var pdf = 'GY_DemandMapping_'+PLACE.replace(/ /g,'-')+'_2026-09.pdf';
   gyMenu(btn, [
     ['ti-link','Copy link', function(){ try{ navigator.clipboard.writeText(location.href); }catch(e){} gyToast('Link copied'); }],
     ['ti-copy','Duplicate', 'Duplicating is not wired up in this sketch'],
@@ -1589,6 +1601,15 @@ var FIELDS = {
   a4:{l:'Constraints and dependencies', by:'Discovery information request', cf:['ai',"Agent's reading"], at:'1.2',
       t:'Peatland condition data dates from 2015, so a new survey is needed before the carbon case can be relied on. Open questions: is a total economic valuation needed before buyers are approached, and is Scottish Water already in touch with the estates.'}
 };
+/* 30 Oct: an ECT estate has a Chapter 1 draft (gy-ect-context.js). A field the sources do not cover stays blank. */
+var CTX = EMPTY && window.GY_ECT_CTX ? GY_ECT_CTX[EMPTY.id] : null;
+if(CTX) ['a0','a1','a2','a3','a4'].forEach(function(k){ FIELDS[k].t = CTX[k] || ''; FIELDS[k].cf = ['ai','Agent draft, not checked']; FIELDS[k].by = 'meeting notes and Fran\'s draft strategy'; });
+function ctxBlock(kind){
+  if(!CTX) return '';
+  if(kind === 'short') return '<div class="v5f"><div class="v5flab"><span class="v5fl">In short</span></div><div class="v5inp" contenteditable="true" spellcheck="false">'+CTX.inshort+'</div></div>';
+  return '<div class="v5f"><div class="v5flab"><span class="v5fl">Open questions</span></div><div class="v5inp" contenteditable="true" spellcheck="false"><ul style="margin:0;padding-left:20px">'
+    + CTX.q.map(function(x){ return '<li>'+x+'</li>'; }).join('') + '</ul></div></div>';
+}
 var BUYCOLS = ['Buyer','Why relevant','Hook','Relationship'];
 var MARKETS = [
   ['Carbon', [
@@ -1908,6 +1929,7 @@ function startHtml(){
 }
 function startDeliverable(){
   if(!Q || Q.t !== 'start') return;
+  if(EMPTY){ gyToast('The agent run for '+PLACE+' is not scripted in this prototype yet. The Upper Dee Demand Mapping shows a full run.'); return; }
   act('Caitlin Ciceri','step','Started the deliverable');
   CUR = '1.1'; LOG.push(lab('1.1')); BI = 1;
   Q = S[1]; BI = 2;
@@ -2062,7 +2084,11 @@ function ghost(label, n){
 }
 function fieldHtml(k){
   var f = FIELDS[k];
-  if(!isDone(f.at)){
+  if(CTX && !f.t){
+    return '<div class="v5f"><div class="v5flab"><span class="v5fl">'+f.l+'</span></div>'
+      + '<div class="v5inp empty" contenteditable="true" spellcheck="false" data-ph="Not in the sources yet. See the open questions."></div></div>';
+  }
+  if(!isDone(f.at) && !CTX){
     return '<div class="v5f"><div class="v5flab"><span class="v5fl">'+f.l+'</span>'
       + '</div>'
       + '<div class="v5inp empty" data-ph="Written at '+f.at+' '+stepByKey(f.at).t+'"></div></div>';
@@ -2102,7 +2128,7 @@ var VIEWS = {
       + '<div class="v8setw v8docw"><div class="v8setc">' + gyDocBar.html();
     h += '<section class="v5sec v8sec" id="sec-1">'
       + head(1,'Project context','The project\'s essentials from onboarding. It sets the scene; nothing is analysed here.')
-      + ['a0','a1','a2','a3','a4'].map(fieldHtml).join('') + drec('1.3') + '</section>';
+      + ctxBlock('short') + ['a0','a1','a2','a3','a4'].map(fieldHtml).join('') + ctxBlock('q') + drec('1.3') + '</section>';
     h += '<section class="v5sec v8sec" id="sec-2">'
       + head(2,'Demand','Who would buy, found through planning, licences, funding and the GY buyer database, then checked by Trade.')
       + (isDone('2.4')
@@ -2229,8 +2255,8 @@ var VIEWS = {
       +   '<span class="bt"><span class="bk">Blueprint</span><span class="bn">Customer Demand Mapping <em>v2</em></span></span>'
       +   '<span class="bo">Open blueprint<i class="ti ti-chevron-right"></i></span></div>'
       + '<div class="v8exb">'
-      +   '<div class="v8ext">Upper Dee: Customer Demand Mapping</div>'
-      +   '<p class="v8exp-why">Finds who would pay for Upper Dee\'s nature outcomes and what the land can supply, then turns it into a summary for the client.</p>'
+      +   '<div class="v8ext">'+PLACE+': Customer Demand Mapping</div>'
+      +   '<p class="v8exp-why">Finds who would pay for '+PLACE+'\'s nature outcomes and what the land can supply, then turns it into a summary for the client.</p>'
       +   '<div class="v8exk">Team</div>'
       + '<div class="ptm">' + TEAM.map(function(p){
           return '<div class="pp">'+av(p)+'<div><b>'+p[0]+'</b><span>'+p[3]+'</span></div></div>';
@@ -2241,7 +2267,7 @@ var VIEWS = {
           return '<button onclick="addMember('+i+')">'+av(p)+'<b>'+p[0]+'</b><span>'+p[3]+'</span><i class="ti ti-plus"></i></button>';
         }).join('') + '</div>' : '')
       + '</div>'
-      + '<div class="v8exc"><span><i class="ti ti-map-pin"></i>Upper Dee, Cairngorms</span><span><i class="ti ti-calendar"></i>Started 14 Jul 2026</span><span><i class="ti ti-map-2"></i>River Dee catchment</span></div>'
+      + '<div class="v8exc"><span><i class="ti ti-map-pin"></i>'+PLACELOC+'</span><span><i class="ti ti-calendar"></i>'+(EMPTY ? 'Created 30 Oct 2026' : 'Started 14 Jul 2026')+'</span>'+(EMPTY ? '' : '<span><i class="ti ti-map-2"></i>River Dee catchment</span>')+'</div>'
       + '</div>';
     var ESFOR = {peat:'Writes the peatland card', wood:'Writes the woodland card', bio:'Writes the biodiversity card', water:'Writes the water quality card'};
     var agTile = function(icn, bg, fg){ return '<span class="v8agi" style="background:'+bg+';color:'+fg+'"><i class="ti '+icn+'"></i></span>'; };
@@ -2275,7 +2301,7 @@ var VIEWS = {
         + '<div class="tx">PDF will be generated once the document is complete</div></div></div>'
       : '<div class="v8out"><div class="pg live cov" onclick="window.open(\'GY_DemandMapping_Upper-Dee_2026-09.pdf\',\'_blank\')">'
         + '<img src="pdf-cover-upper-dee.jpg" alt="Upper Dee, Customer Demand Mapping cover"></div>'
-        + '<div class="nm">GY Demand Mapping, Upper Dee</div>'
+        + '<div class="nm">GY Demand Mapping, '+PLACE+'</div>'
         + '<div class="mt">PDF &middot; 9 pages &middot; created just now</div>'
         + '<button class="v8flag" style="margin-top:14px" onclick="window.open(\'GY_DemandMapping_Upper-Dee_2026-09.pdf\',\'_blank\')"><i class="ti ti-download"></i>Download</button></div>';
     var ks = Object.keys(SITEMS).filter(function(k){ return SITEMS[k].kind === 'Outputs'; });
@@ -2472,7 +2498,7 @@ var SITEMS = {
   cnno:{kind:'Connections', n:'Notion', ic:'ti-brand-notion', used:['1.1'], st:['Connected','ok'],
     what:'Project pages and meeting notes the agent reads at kick-off.', det:[['Status','Connected'],['Access','Read only']]},
   cngd:{kind:'Connections', n:'Google Drive', ic:'ti-brand-google-drive', used:['1.1','4.2'], st:['Connected','ok'],
-    what:'Client documents come in here, and the finished PDF goes back.', det:[['Status','Connected'],['Folder','Upper Dee / Demand Mapping']]},
+    what:'Client documents come in here, and the finished PDF goes back.', det:[['Status','Connected'],['Folder',(EMPTY ? EMPTY.prog+' / '+PLACE : 'Upper Dee')+' / Demand Mapping']]},
   cndp:{kind:'Connections', n:'GY Data platform', ic:'ti-chart-dots-3', used:['4.4'], st:['Connected','ok'],
     what:'Receives the buyer and service rows so the rest of GY can use them.', det:[['Status','Connected'],['Writes','Buyers, services']]},
   cnbuy:{kind:'Connections', n:'GY buyer database', ic:'ti-address-book', used:['2.4','2.5'], st:['Connected','ok'],
@@ -2488,7 +2514,7 @@ var SITEMS = {
   tlpdf:{kind:'Tools', n:'PDF generator', ic:'ti-file-type-pdf', used:['4.2'], tag:'Makes the client PDF',
     what:'Renders the four chapters into the Great Yellow template.', det:[['Type','Built by GY'],['Template','GY report, 2026']]},
 
-  in1:{kind:'Inputs', n:'Kick-off notes, Upper Dee', ic:'ti-microphone', used:['1.1'], inp:['Received','ok'],
+  in1:{kind:'Inputs', n:'Kick-off notes, '+PLACE, ic:'ti-microphone', used:['1.1'], inp:EMPTY ? ['Not yet','warn'] : ['Received','ok'],
     what:'Meeting notes of the kick-off call with the estates, with the recording and transcript.', det:[['From','Kick-off meeting, 14 Jul'],['Length','52 min'],['Holds','Recording, transcript']]},
   in2:{kind:'Inputs', n:'upper_dee_land_management_plan.pdf', ic:'ti-file-type-pdf', used:['1.2'], inp:['Received','ok'],
     what:'The estates\' land management plan: site, interventions and outcomes.', det:[['From','Client, after the 1.2 request'],['Pages','38']]},
@@ -2497,7 +2523,7 @@ var SITEMS = {
   in4:{kind:'Inputs', n:'tev_valuation.xlsx', ic:'ti-file-spreadsheet', used:['1.2'], inp:['Outstanding','warn'], miss:1,
     what:'Total economic valuation, if the client commissions one.', det:[['From','Not received'],['Asked at','1.2 Discovery information request']]}
   ,
-  out1:{kind:'Outputs', n:'GY Demand Mapping, Upper Dee', ic:'ti-file-type-pdf', used:['4.2'], tag:'The client PDF',
+  out1:{kind:'Outputs', n:'GY Demand Mapping, '+PLACE, ic:'ti-file-type-pdf', used:['4.2'], tag:'The client PDF',
     what:'The finished document the estates receive: four chapters in the GY template.', det:[['Format','PDF, 9 pages'],['Goes to','Google Drive, then the estates'],['Approved by','Caitlin Ciceri']]},
   out4:{kind:'Outputs', n:'GY database update', ic:'ti-database-export', used:['4.4'], tag:'Updates the GY database',
     what:'Writes the buyers and ecosystem services to the GY database, so other deliverables can use them.', det:[['Format','Rows in the GY Data platform'],['Read by','Commercial Strategy, Financial Model']]},
@@ -2706,8 +2732,8 @@ var CHAT_MIN = 340, CHAT_MAX = 680;
 /* the sidebar opens on the collapsed icon rail here: GYNAV.rail in gy-nav.js */
 
 /* opening state: the agent introduces itself and asks the first question */
-act('Caitlin Ciceri','start','Created the deliverable from Customer Demand Mapping v2');
-LOG.push(say('I am set up for <b>Upper Dee</b> from the Customer Demand Mapping blueprint: four chapters, sixteen steps, three decisions. The document on the right is empty and fills in as we go.'));
+act(EMPTY ? EMPTY.by : 'Caitlin Ciceri','start','Created the deliverable from Customer Demand Mapping '+(EMPTY ? EMPTY.bpv : 'v2'));
+LOG.push(say('I am set up for <b>'+PLACE+'</b>'+(EMPTY ? ', one of five '+EMPTY.prog+' estates,' : '')+' from the Customer Demand Mapping blueprint: four chapters, sixteen steps, three decisions. '+(CTX ? 'I drafted Chapter 1, Project context, from the ECT meeting notes in Notion and Fran\'s draft strategy, using the Blueprint\'s Chapter 1 prompt. Anything the sources do not cover is left blank and listed under Open questions.' : 'The document on the right is empty and fills in as we go.')));
 BI = 0;
 Q = {t:'start'};
 paintTabs(); paintProg(); openTab('doc'); paintChat();
@@ -2716,6 +2742,7 @@ paintTabs(); paintProg(); openTab('doc'); paintChat();
 var FF = null, FFSP = null;
 function ffTo(k){
   if(FF) return;
+  if(EMPTY){ gyToast('This Deliverable has not started yet'); return; }
   if(isDone(k)){ gyToast('Step '+k+' is already done. Restart the run from the page menu to go back.'); return; }
   FF = k; FFSP = {say:SP.say, item:SP.item, settle:SP.settle, con:SP.con};
   SP.say = SP.item = SP.settle = SP.con = 0;

@@ -46,13 +46,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -86,7 +86,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "13 steps in 4 chapters, 3 of them decisions a person makes."
+       "13 steps in 4 phases, 3 of them decisions a person makes."
       ]
      ]
     ],
@@ -429,13 +429,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -469,7 +469,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "14 steps in 4 chapters, 3 of them decisions a person makes."
+       "14 steps in 4 phases, 3 of them decisions a person makes."
       ]
      ]
     ],
@@ -834,13 +834,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -874,7 +874,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "14 steps in 4 chapters, 3 of them decisions a person makes."
+       "14 steps in 4 phases, 3 of them decisions a person makes."
       ]
      ]
     ],
@@ -1239,13 +1239,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -1284,7 +1284,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "17 steps in 5 chapters, 2 of them decisions a person makes."
+       "17 steps in 5 phases, 2 of them decisions a person makes."
       ]
      ]
     ],
@@ -1672,13 +1672,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -1712,7 +1712,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "12 steps in 4 chapters, 4 of them decisions a person makes."
+       "12 steps in 4 phases, 4 of them decisions a person makes."
       ]
      ]
     ],
@@ -2058,13 +2058,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -2093,7 +2093,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "7 steps in 3 chapters, 1 of them decisions a person makes."
+       "7 steps in 3 phases, 1 of them decisions a person makes."
       ]
      ]
     ],
@@ -2381,13 +2381,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -2416,7 +2416,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "8 steps in 3 chapters, 2 of them decisions a person makes."
+       "8 steps in 3 phases, 2 of them decisions a person makes."
       ]
      ]
     ],
@@ -2726,13 +2726,13 @@ window.GY_BP_PAGES = {
      ]
     ],
     [
-     "c-chapters",
-     "Chapters",
+     "c-phases",
+     "Phases",
      [
       [
        "tbl",
        [
-        "Chapter",
+        "Phase",
         "Steps",
         "Decisions"
        ],
@@ -2761,7 +2761,7 @@ window.GY_BP_PAGES = {
       ],
       [
        "p",
-       "7 steps in 3 chapters, 1 of them decisions a person makes."
+       "7 steps in 3 phases, 1 of them decisions a person makes."
       ]
      ]
     ],

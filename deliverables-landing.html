@@ -281,12 +281,12 @@ select.cin{cursor:pointer}
 
 <div class="shell">
 <script>window.GYNAV={"active": "deliverables", "arts": "demand"};</script>
-<script src="gy-nav.js?v=9d5b5620"></script>
+<script src="gy-nav.js?v=e1bbcbfe"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-select.js?v=8aa301ed"></script>
-<script src="gy-docs.js?v=daf7a2f3"></script>
+<script src="gy-docs.js?v=913e52c6"></script>
 <script src="gy-notion-blueprints.js?v=d9027465"></script>
-<script src="gy-blueprints.js?v=89bc5072"></script>
+<script src="gy-blueprints.js?v=5c0987c7"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -298,7 +298,7 @@ select.cin{cursor:pointer}
   </div>
 </div>
 
-<div class="wrap">
+<div class="wrap gylist">
   <div class="phead">
     <div class="h1">Deliverables</div>
     <div class="acts">
@@ -324,7 +324,7 @@ select.cin{cursor:pointer}
 
   <div class="kb wfhide" id="kbWrap"></div>
 
-  <div class="advonly" id="foldedWrap" style="--cols:minmax(0,2.5fr) 1.1fr .75fr .85fr 1.1fr">
+  <div class="advonly" id="foldedWrap" hidden style="--cols:minmax(0,2.5fr) 1.1fr .75fr .85fr 1.1fr">
   <div class="group acc closed" style="margin-top:22px" onclick="toggleAcc(this,'accArch')"><i class="ti ti-chevron-down accarr"></i> Archive <span class="count">1</span></div>
   <div class="accbody closed" id="accArch">
   <div class="gytbl">
@@ -411,7 +411,7 @@ function deliverableRow(d){
 function getDeliverables(){var arr=[];try{arr=JSON.parse(localStorage.getItem('gyDeliverables')||'[]');}catch(e){}var ch=false;arr.forEach(function(d,i){if(!d.id){d.id='d'+Date.now()+'_'+i;ch=true;}});if(ch){try{localStorage.setItem('gyDeliverables',JSON.stringify(arr));}catch(e){}}return arr;}
 function renderDeliverables(){
   var head=document.querySelector('#delGrp'); if(!head)return;
-  var arr=getDeliverables(); if(!arr.length)return;
+  var arr=getDeliverables().filter(function(d){ return (d.programme||'Evenlode')===(window.GY_PROG||{name:'Evenlode'}).name; }); if(!arr.length)return;
   head.insertAdjacentHTML('afterend', arr.map(deliverableRow).join(''));
 }
 var CFOLDER = null; /* the path when someone edited it; otherwise it follows the name */
@@ -733,9 +733,9 @@ function ownerCell(by){
     if(!window.GYD) return;
     var el=document.getElementById('draftDocs'); if(!el) return;
     /* only the newer, built-out deliverables stay in the list (8 Oct); the rest go to Archive */
-    var NEWER={wvdm:1, sdm:1, comm:1, fm:1, nc101:1, cip:1};
+    /* Evenlode (30 Oct): only this programme's Deliverables; every other one, and the old Archive, is on the Portfolio */
     var all=GYD.deliverables();
-    var rows=all.filter(function(x){ return NEWER[x.id]; }), old=all.filter(function(x){ return !NEWER[x.id]; });
+    var rows=all.filter(function(x){ return x.prog===(window.GY_PROG||{name:'Evenlode'}).name; }), old=[];
     var rowHtml=function(x, arch){
       var d=GYD.dept(x.dept);
       var es=x.es?(window.GY_ES||{})[x.es]:null;
@@ -754,7 +754,7 @@ function ownerCell(by){
              + '</div>';
       }
       return '<div class="gyrow click'+(arch?' arch moved':'')+'"'+(x.id==='sdm'?' id="dmRow"':'')
-        +' data-type="'+(arch?'archive':'deliverable')+'" data-state="'+state+'" data-dept="'+(x.dept||'')+'" onclick="'+go+'">'
+        +' data-type="'+(arch?'archive':'deliverable')+'" data-state="'+state+'" data-dept="'+(x.dept||'')+'" data-prog="'+(x.prog||'')+'" onclick="'+go+'">'
         +'<div class="name">'
           +'<div class="tile" style="background:'+d.bg+';color:'+d.fg+'"><i class="ti ti-topology-star-3"></i></div>'
           +'<div class="nm">'+x.name
@@ -900,7 +900,7 @@ gyBar('abar', {
 <script>
 /* New Deliverable (15 Oct): the Programme is where you are, the team comes from
    the Programme's roles, and the agents come with the Blueprint. */
-var PROG = {k:'ev', name:'Evenlode'};
+var PROG = (window.GY_PROG && {k:GY_PROG.k, name:GY_PROG.name}) || {k:'ev', name:'Evenlode'};
 function createBp(){
   var id = gySelGet('cWorkflow') || 'sdm', r = null;
   (GYB.liveBlueprints()).forEach(function(b){ if(b.id===id) r=b; });

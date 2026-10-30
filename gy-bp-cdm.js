@@ -7,7 +7,7 @@
    content, buyer rows and run state. Everything here is the same for every run.
 
    template  what good looks like: the four chapters and what each section holds
-   wf        chapters and steps: what, who does which part, what it uses, done when
+   wf        phases and steps: what, who does which part, what it uses, done when
    items     one line per skill, knowledge item, tool and connection
    conf      the lists per component, as Settings shows them
    md        the hand-written files (skills, knowledge, tools) */

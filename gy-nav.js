@@ -138,6 +138,10 @@ window.gyCartoTiles = function(style){
     +'<div class="sitem'+on('audit')+'"'+(active==='audit'?'':' onclick="location.href=\'audit-log.html\'"')+'><i class="ti ti-lock"></i> Audit log</div>';
 
   function progPanel(){
+    /* a programme that only has Deliverables in this prototype shows just that */
+    if(!GY_PROGS[progK].full) return ''
+    +'<div class="gy-grp">Manage</div>'
+    +ITEM_WORKFLOWS;
     return ''
     +'<div class="sitem'+on('overview')+'"'+(active==='overview'?'':' onclick="location.href=\'programme-overview.html\'"')+'><i class="ti ti-layout-dashboard"></i> Overview</div>'
     +'<div class="gy-grp">Manage</div>'
@@ -161,10 +165,23 @@ window.gyCartoTiles = function(style){
     +'<div class="sitem'+on('pf-okrs')+'"'+(active==='pf-okrs'?'':' onclick="location.href=\'okrs.html\'"')+'><i class="ti ti-target-arrow"></i> OKRs</div>'
     +RECORDS;
   }
+  /* 30 Oct: more than one programme can be opened. localStorage gyProg picks which one;
+     a programme without an Overview of its own lands on its Deliverables. */
+  var GY_PROGS = {
+    ev:  {k:'ev',  name:'Evenlode',          ini:'EV', cls:'gy-ws-ev',  home:'programme-overview.html', full:true},
+    ect: {k:'ect', name:'Ernest Cook Trust', ini:'EC', cls:'gy-ws-ect', home:'deliverables-landing.html'}
+  };
+  var progK = 'ev';
+  try{ progK = localStorage.getItem('gyProg') || 'ev'; }catch(e){}
+  /* a Deliverable opened from its programme (?d=ect-...) puts you in that programme */
+  try{ var qd = (new URLSearchParams(location.search)).get('d')||''; if(qd.indexOf('ect-')===0){ progK='ect'; localStorage.setItem('gyProg','ect'); } }catch(e){}
+  if(!GY_PROGS[progK]) progK = 'ev';
+  window.GY_PROG = GY_PROGS[progK];
   function scopeMeta(s){
+    var P = GY_PROGS[progK];
     return s==='portfolio'
       ? {eye:'Portfolio', name:'Portfolio', ini:'GY', cls:'gy-ws-gy'}
-      : {eye:'Programme', name:'Evenlode', ini:'EV', cls:'gy-ws-ev'};
+      : {eye:'Programme', name:P.name, ini:P.ini, cls:P.cls, home:P.home};
   }
   function wsTile(ini,cls){
     return '<span class="gy-wstile '+cls+'">'+ini+'</span>';
@@ -178,9 +195,14 @@ window.gyCartoTiles = function(style){
       +'<div class="gy-pk" onclick="gyGoPortfolio()">'+wsTile('GY','gy-ws-gy')+'Portfolio'+ck('portfolio')+'</div>'
       +'<div class="gy-pkdiv"></div>'
       +'<div class="gy-pkhead">Programmes</div>'
-      +'<div class="gy-pk" onclick="gyGoProg()">'+wsTile('EV','gy-ws-ev')+'Evenlode'+ck('programme')+'</div>'
+      +'<div class="gy-pk" onclick="gyGoProg(\'ev\')">'+wsTile('EV','gy-ws-ev')+'Evenlode'+(progK==='ev'?ck('programme'):'')+'</div>'
+      +'<div class="gy-pk" onclick="gyGoProg(\'ect\')">'+wsTile('EC','gy-ws-ect')+'Ernest Cook Trust'+(progK==='ect'?ck('programme'):'')+'</div>'
       +'<div class="gy-pk" onclick="gyToast(\'Spains Hall is not in this prototype yet\')">'+wsTile('SH','gy-ws-sh')+'Spains Hall</div>'
-      +'<div class="gy-pk" onclick="gyToast(\'Boothby is not in this prototype yet\')">'+wsTile('BO','gy-ws-bo')+'Boothby</div>';
+      +'<div class="gy-pk" onclick="gyToast(\'Boothby is not in this prototype yet\')">'+wsTile('BO','gy-ws-bo')+'Boothby</div>'
+      /* 30 Oct: programmes with example Deliverables; listed, not yet a workspace you can open */
+      +'<div class="gy-pk gy-pk-off">'+wsTile('WV','gy-ws-wv')+'Walkham Valley</div>'
+      +'<div class="gy-pk gy-pk-off">'+wsTile('UD','gy-ws-ud')+'Upper Dee</div>'
+      +'<div class="gy-pk gy-pk-off">'+wsTile('NN','gy-ws-nn')+'North Norfolk Rivers</div>';
   }
 
   var scope = 'programme';
@@ -241,6 +263,10 @@ window.gyCartoTiles = function(style){
    +'.gy-ws-ev{background:#EAF1DE;color:#3F5A2B}'
    +'.gy-ws-sh{background:#E6F1FB;color:#185FA5}'
    +'.gy-ws-bo{background:#F7E7DE;color:#8A3F28}'
+   +'.gy-ws-ect{background:#F6EAD0;color:#7A5410}body.gydark .gy-ws-ect{background:#3D3220;color:#E8CD94}'
+   +'.gy-ws-wv{background:#E8F0E1;color:#4E7D3A}.gy-ws-ud{background:#E6EEF6;color:#2F5E9E}.gy-ws-nn{background:#F3E8DF;color:#8A5A3B}'
+   +'.gy-pk.gy-pk-off{cursor:default}.gy-pk.gy-pk-off:hover{background:none}'
+   +'body.gydark .gy-ws-wv{background:#2E3B26;color:#C4D8AC}body.gydark .gy-ws-ud{background:#1F3149;color:#A8C7E6}body.gydark .gy-ws-nn{background:#3B2B23;color:#E2B79F}'
    +'body.gydark .gy-wstile{background:#33323A;color:#ECEAE4}'
    +'body.gydark .gy-ws-gy{background:#F9DD5A;color:#1A0C12}'
    +'body.gydark .gy-ws-ev{background:#2E3B26;color:#C4D8AC}'
@@ -458,6 +484,8 @@ window.gyCartoTiles = function(style){
       /* the canonical data table: the Sites page idiom, defined once here because
       not every page links gy-shell.css. A table declares its own columns with
       --cols on the container; everything else comes from these rules. */
+      /* 30 Oct: list pages (class gylist on .wrap) grow with the window on big screens, 1080px up to 1440px */
+   +'.wrap.gylist{max-width:clamp(1080px, calc(100vw - 560px), 1440px)}'
    +'.gytbl{border:1px solid #ECE7DB;border-radius:16px;overflow:hidden;background:#fff}'
    +'.gyhd,.gyrow{display:grid;grid-template-columns:var(--cols,1fr);align-items:center;gap:14px;padding:13px 20px}'
    +'.gyhd{background:#F3EFE1;border-bottom:1px solid #ECE7DB;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#766B62}'
@@ -772,10 +800,12 @@ window.gyCartoTiles = function(style){
     var dir = s==='portfolio' ? 'gy-anim-out' : 'gy-anim-in';
     [nav].forEach(function(e){ if(!e)return; e.classList.remove('gy-anim-in','gy-anim-out'); void e.offsetWidth; e.classList.add(dir); });
   };
-  window.gyGoProg = function(){
-    try{ localStorage.setItem('gyScope', 'programme'); }catch(e){}
+  window.gyGoProg = function(k){
+    k = k || progK;
+    try{ localStorage.setItem('gyScope', 'programme'); localStorage.setItem('gyProg', k); }catch(e){}
+    if(k !== progK){ location.href = GY_PROGS[k].home; return; }
     if(active==='overview'){ gyScope('programme'); var pk=document.getElementById('gyPicker'); if(pk)pk.style.display='none'; return; }
-    location.href='programme-overview.html';
+    location.href=GY_PROGS[k].home;
   };
   window.gyGoPortfolio = function(){
     try{ localStorage.setItem('gyScope', 'portfolio'); }catch(e){}
@@ -1162,11 +1192,11 @@ window.gyCartoTiles = function(style){
     'deliverable-sketch-v5.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-v6.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-v7.html': {alt:'programme', trail:['Deliverables']},
-    'deliverable-sketch-v8.html': {alt:'programme', trail:['Deliverables']},
-    'deliverable-walkham-valley.html': {alt:'programme', trail:['Deliverables']},
-    'commercial-strategy-v8.html': {alt:'programme', trail:['Deliverables']},
-    'natcap-101-v8.html':          {alt:'programme', trail:['Deliverables']},
-    'catchment-investment-plan-v8.html': {alt:'programme', trail:['Deliverables']},
+    'deliverable-sketch-v8.html': {alt:'portfolio', trail:[['Upper Dee',''],['Deliverables','deliverables-portfolio.html']]}, /* 30 Oct: its own programme, no overview page yet */
+    'deliverable-walkham-valley.html': {alt:'portfolio', trail:[['Walkham Valley',''],['Deliverables','deliverables-portfolio.html']]}, /* 30 Oct: its own programme, no overview page yet */
+    'commercial-strategy-v8.html': {alt:'portfolio', trail:[['Upper Dee',''],['Deliverables','deliverables-portfolio.html']]}, /* 30 Oct: its own programme, no overview page yet */
+    'natcap-101-v8.html': {alt:'portfolio', trail:[['Walkham Valley',''],['Deliverables','deliverables-portfolio.html']]}, /* 30 Oct: its own programme, no overview page yet */
+    'catchment-investment-plan-v8.html': {alt:'portfolio', trail:[['North Norfolk Rivers',''],['Deliverables','deliverables-portfolio.html']]}, /* 30 Oct: its own programme, no overview page yet */
     'financial-model-v8.html':     {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-document.html': {alt:'programme', trail:['Deliverables']},
     'deliverable-sketch-workflow.html': {alt:'programme', trail:['Deliverables']},
@@ -1184,11 +1214,13 @@ window.gyCartoTiles = function(style){
   function gyCrumbTrail(){
     var file = (location.pathname.split('/').pop() || '').toLowerCase();
     var def = GY_CRUMB[file];
+    /* a programme's own Deliverable (?d=ect-...) sits under that programme's Deliverables */
+    try{ if(/^ect-/.test((new URLSearchParams(location.search)).get('d')||'')) def = {alt:'programme', trail:[['Deliverables','deliverables-landing.html']]}; }catch(e){}
     if(!def) return null;
     var out = [];
     if(def.alt === 'portfolio' || def.alt === 'programme'){
       out.push(['Portfolio', 'portfolio-overview.html']);
-      if(def.alt === 'programme') out.push([meta.name, 'programme-overview.html']);
+      if(def.alt === 'programme') out.push([meta.name, meta.home || 'programme-overview.html']);
     }
     (def.trail || []).forEach(function(t){
       /* a trail item can carry its own link: ['Deliverables','hive-mind-v2.html'] when the label alone points elsewhere */
@@ -1772,7 +1804,7 @@ window.gyCartoTiles = function(style){
   var GY_TOC_IC = [['purpose','ti-target-arrow'],['where it sits','ti-map-pin'],['why','ti-bulb'],['how it works','ti-settings-automation'],
     ['job','ti-briefcase'],['schema','ti-schema'],['guardrail','ti-shield-check'],['eval','ti-flask'],['open question','ti-help-circle'],
     ['next step','ti-list-check'],['project context','ti-flag'],['demand','ti-users'],['supply','ti-leaf'],['summary','ti-file-text'],
-    ['chapter','ti-books'],['role','ti-users-group'],['done when','ti-circle-check'],['agent','ti-robot'],['tool','ti-tool'],
+    ['chapter','ti-books'],['phase','ti-stack-2'],['role','ti-users-group'],['done when','ti-circle-check'],['agent','ti-robot'],['tool','ti-tool'],
     ['skill','ti-sparkles'],['context','ti-books'],['knowledge','ti-book'],['governance','ti-shield-check'],['memory','ti-history'],
     ['connection','ti-plug-connected'],['people','ti-users'],['engine','ti-engine'],['system','ti-server'],['who','ti-users'],
     ['frame','ti-frame'],['analyse','ti-chart-dots'],['draft','ti-pencil'],['decide','ti-arrows-split-2'],['kick','ti-flag']];
@@ -1858,11 +1890,10 @@ window.gyDocBar = (function(){
     var pl = parseFloat(cs.paddingLeft) || 0;
     inn.style.left = (cr.left + bl - br.left) + 'px'; inn.style.right = (br.right - (cr.right - brw)) + 'px';
     inn.style.paddingLeft = Math.max(pl, 24) + 'px';
-    /* divider lines on both sides whenever the column runs edge to edge (not when it floats inside a padded pane) */
-    var sr = sc ? sc.getBoundingClientRect() : null, scs = sc ? getComputedStyle(sc) : null;
-    var flush = sr && (parseFloat(scs.paddingLeft) || 0) < 2;
-    inn.style.borderLeft = (!bl && sr && Math.abs(cr.left - sr.left) < 2) ? '1px solid var(--line)' : 'none';
-    inn.style.borderRight = (!brw && flush) ? '1px solid var(--line)' : 'none';
+    /* divider lines on both sides, always (30 Oct): where the column has its own border the bar sits inside it,
+       otherwise the bar draws the line itself, flush or centred */
+    inn.style.borderLeft = bl ? 'none' : '1px solid var(--line)';
+    inn.style.borderRight = brw ? 'none' : '1px solid var(--line)';
     if(sc) bar.style.top = -(parseFloat(getComputedStyle(sc).paddingTop) || 0) + 'px'; /* stick to the very top of the scroll area */
     bar.classList.toggle('show', !!(sc && t && t.getBoundingClientRect().bottom < sc.getBoundingClientRect().top + 8));
     var fi = bar.querySelector('.fs i'); if(fi) fi.className = 'ti ' + (document.body.classList.contains('docfull') ? 'ti-arrows-minimize' : 'ti-arrows-maximize');
@@ -1920,6 +1951,8 @@ window.gyDocBar = (function(){
     setCls(nav, 'gytoc', true); var changed = nav.classList.contains('gytoc-col') !== col; setCls(nav, 'gytoc-col', col);
     var d = nav.querySelector(':scope > .gytoc-dash');
     if(!d){ d = document.createElement('span'); d.className = 'gytoc-dash'; /* a span, so page rules for the nav's div leave it alone */ d.setAttribute('aria-hidden', 'true'); nav.appendChild(d); }
+    /* each title carries its own text, so gy-shell.css can reserve its bold width and the nav keeps one width while you scroll */
+    [].forEach.call(box.querySelectorAll('a > span, .csgh > span'), function(sp){ if(sp.dataset.t !== sp.textContent) sp.dataset.t = sp.textContent; });
     var sig = [].map.call(box.querySelectorAll('a, .csgh'), function(x){
       return (x.closest('.csgb') ? 's' : 'h') + (x.classList.contains('on') ? '1' : '0');
     }).join('');
@@ -1944,5 +1977,31 @@ window.gyDocBar = (function(){
     scan();
     new MutationObserver(later).observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
   }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+
+/* Wide tables (30 Oct): when a table scrolls sideways, the edge with more content fades out, so it is clear there is
+   more; the fade goes once that edge is reached. Works for every .v5tw table, wherever it is rendered */
+(function(){
+  var RAF = 0;
+  function mark(tw){
+    var more = tw.scrollWidth - tw.clientWidth > 2;
+    var r = more && tw.scrollLeft + tw.clientWidth < tw.scrollWidth - 2, l = more && tw.scrollLeft > 2;
+    if(tw.classList.contains('gyfade-r') !== r) tw.classList.toggle('gyfade-r', r);
+    if(tw.classList.contains('gyfade-l') !== l) tw.classList.toggle('gyfade-l', l);
+    if(!more && !tw.querySelector(':scope > .gyshd')) return;
+    /* two shadow strips that ride along with the scroll, pinned to the visible edges */
+    var sl = tw.querySelector(':scope > .gyshd.l'), sr = tw.querySelector(':scope > .gyshd.r');
+    if(!sl){ sl = document.createElement('span'); sl.className = 'gyshd l'; tw.appendChild(sl); }
+    if(!sr){ sr = document.createElement('span'); sr.className = 'gyshd r'; tw.appendChild(sr); }
+    var h = tw.scrollHeight + 'px';
+    sl.style.left = tw.scrollLeft + 'px'; sl.style.height = h;
+    sr.style.left = (tw.scrollLeft + tw.clientWidth - 36) + 'px'; sr.style.height = h;
+  }
+  function all(){ RAF = 0; [].forEach.call(document.querySelectorAll('.v5tw'), mark); }
+  function later(){ if(!RAF) RAF = requestAnimationFrame(all); }
+  document.addEventListener('scroll', function(e){ var t = e.target; if(t && t.classList && t.classList.contains('v5tw')) mark(t); }, true);
+  window.addEventListener('resize', later);
+  function start(){ all(); new MutationObserver(later).observe(document.body, {childList:true, subtree:true}); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

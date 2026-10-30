@@ -277,5 +277,29 @@ body:is(.reader,.docview) .v8docw .v8setc > :not(.gydbar){--gyside:max(0px, calc
 body:is(.reader,.docview) .v8docw .v8setc > .bsclk{margin-left:calc(var(--gyside) - 18px) !important;margin-right:calc(var(--gyside) - 18px) !important}
 /* 30 Oct: opening a drawer (Outputs, a step) never moves the Table of Contents to the left of the document */
 html body:is(.docview,.reader) .v8docw > .v8setc{order:1 !important}
-html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col){order:2 !important;background:none !important;box-shadow:none !important}
-html body:is(.docview,.reader) .v8docw > .v8anc.gytoc-col{order:2 !important}
+html body:is(.docview,.reader) .v8docw > .v8anc{order:2 !important}
+html body:is(.docview,.reader):has(#drawer:not(.hide)) .v8docw > .v8anc:not(.gytoc-col){background:none !important;box-shadow:none !important}
+/* 30 Oct: on big screens the Table of Contents grows with the window (184px up to 280px), so titles stop cutting off;
+   a width someone set by dragging (--tocw) still wins */
+html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col){width:var(--tocw, clamp(184px, calc(184px + (100vw - 1600px) / 4), 280px)) !important}
+/* 30 Oct: on really large screens (1600px+) the Table of Contents takes the width of its longest title (184px to 320px), so titles are always readable */
+@media (min-width:1600px){
+  html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col):not(:has(.tocgrip)){width:var(--tocw, max-content) !important;min-width:184px !important;max-width:320px !important;padding-right:12px !important}
+  /* every title reserves the width it takes when bold (selected), so the nav does not wobble as the selection moves; data-t is set in gy-nav.js */
+  html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col):not(:has(.tocgrip)) :is(a,.csgh) > span[data-t]{display:inline-flex;flex-direction:column}
+  html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col):not(:has(.tocgrip)) :is(a,.csgh) > span[data-t]::after{content:attr(data-t);font-weight:600;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
+}
+/* a resizable sidebar (the Slides one, with a grip) keeps its own default of 244px, growing to 300px on big screens */
+html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col):has(.tocgrip){width:var(--tocw, clamp(244px, calc(244px + (100vw - 1600px) / 4), 300px)) !important}
+/* 30 Oct: Table of Contents entries reach as far right as they overhang on the left, so the hover pill sits evenly in its gutter */
+.v8docw .v8anc#setnav > div > a,.v8docw .v8anc#setnav .csgh,.v8docw .v8anc#setnav .csgb a{margin-right:-10px !important;max-width:none !important;width:auto !important}
+html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col):not(:has(.tocgrip)){margin-right:40px !important}
+/* 30 Oct: the Table of Contents starts where it stays once sticky, so it does not jump up when you scroll */
+html body:is(.docview,.reader) .v8docw > .v8anc:not(:has(.tocgrip)){top:0 !important;padding-top:40px !important}
+html body :is(nav#gytocx,nav).v8anc.gytoc-col.gytoc-col{top:0 !important;padding-top:40px !important}
+/* Wide tables (30 Oct), see gy-nav.js: a soft shadow on the side that has more to scroll to */
+.v5tw{position:relative}
+.v5tw > .gyshd{position:absolute;top:0;width:36px;pointer-events:none;z-index:3;opacity:0;transition:opacity .15s}
+.v5tw > .gyshd.r{background:linear-gradient(to left,color-mix(in srgb,var(--ink3) 22%,transparent),transparent)} /* warm grey from the palette, not black */
+.v5tw > .gyshd.l{background:linear-gradient(to right,color-mix(in srgb,var(--ink3) 22%,transparent),transparent)}
+.v5tw.gyfade-r > .gyshd.r,.v5tw.gyfade-l > .gyshd.l{opacity:1}

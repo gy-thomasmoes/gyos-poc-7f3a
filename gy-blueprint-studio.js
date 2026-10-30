@@ -6,7 +6,7 @@
    gets the same tabs, and the Blueprint is edited on the agent's own page:
 
      Content    the agent definition (the page's own view)
-     Workflow   chapters and steps, coordinator agents only
+     Workflow   phases and steps, coordinator agents only
      Source     what the platform stores: blueprint.yaml, instructions.md,
                 agent.yaml, prompt.md and one file per skill. Laid out like
                 the Deliverable Document view: one sheet with a 1px border,
@@ -646,7 +646,7 @@
       L.push('---', y('id', D.id), y('version', S.changes.length ? nextVer(S.ver) : S.ver) + (S.changes.length ? '  <span class="cm"># draft</span>' : ''), y('title', D.blueprint), y('owner', D.owner), y('coordinator', AG.title));
       L.push(y('roles'));
       D.roles.forEach(function(r){ L.push('  - '+y('id', r[0]).trim(), y('title', r[1], '    '), y('kind', r[2], '    ')); });
-      L.push(y('chapters'));
+      L.push(y('phases'));
       D.wf.forEach(function(c, ci){
         L.push('  - '+y('title', c.t).trim(), y('steps', undefined, '    '));
         c.s.forEach(function(s, i){
@@ -1117,7 +1117,7 @@
       if((m = l.match(/(after|before)\s+(?:step\s+)?(\d+)\.(\d+)/))){
         var ref = stepAt(+m[2], +m[3]); if(!ref) return 'There is no step '+m[2]+'.'+m[3]+'.';
         ci = ref.ci; at = m[1] === 'after' ? ref.si + 1 : ref.si;
-      } else if((m = l.match(/(?:chapter|in)\s+(\d+)\b/)) && D.wf[+m[1]-1]){ ci = +m[1]-1; at = D.wf[ci].s.length; }
+      } else if((m = l.match(/(?:phase|chapter|in)\s+(\d+)\b/)) && D.wf[+m[1]-1]){ ci = +m[1]-1; at = D.wf[ci].s.length; }
       var roles = D.roles || [], who = null;
       roles.forEach(function(r){ if(!who && l.indexOf(r[1].toLowerCase()) >= 0) who = r; });
       var ty = /decid|decision|approve|sign.?off|go or no/.test(l) ? 'decision' : (who && who[2] === 'person') || /person|review|by hand/.test(l) ? 'person' : 'agent';
@@ -1200,7 +1200,7 @@
         addChange('new:'+s.id, 'New', 'Person step: Review before it goes out', last.t);
         return 'In <b>'+h(last.t)+'</b> the agent works straight through to the end. I added a person step, <b>Review before it goes out</b>, for '+h(who[1])+', before <b>'+h(last.s[at+1].t)+'</b>. It is in the draft; see it in Workflow and Source.';
       }
-      return 'Every chapter already has a person or a decision before its end.';
+      return 'Every phase already has a person or a decision before its end.';
     }
     if(/short|clear|instruction|tighten/.test(l)){
       var n = 0;

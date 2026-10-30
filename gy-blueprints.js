@@ -16,7 +16,12 @@
     {k:'bo', name:'Boothby',      ini:'BO', cls:'mxt-bo', phase:'Start'},
     {k:'sh', name:'Spains Hall',  ini:'SH', cls:'mxt-sh', phase:'Plan'},
     {k:'wa', name:'The Wash',     ini:'WA', cls:'mxt-wa', phase:'Plan'},
-    {k:'ot', name:'Ock & Thame',  ini:'OT', cls:'mxt-ot', phase:'Discover'}
+    {k:'ot', name:'Ock & Thame',  ini:'OT', cls:'mxt-ot', phase:'Discover'},
+    /* 30 Oct: the programmes the example Deliverables belong to; no overview page yet */
+    {k:'wv', name:'Walkham Valley',       ini:'WV', cls:'mxt-wv'},
+    {k:'ud', name:'Upper Dee',            ini:'UD', cls:'mxt-ud'},
+    {k:'nn', name:'North Norfolk Rivers', ini:'NN', cls:'mxt-nn'},
+    {k:'ect', name:'Ernest Cook Trust',   ini:'EC', cls:'mxt-ect', phase:'Discover', href:'deliverables-landing.html'}
   ];
 
   var DEPTS = [
@@ -127,7 +132,8 @@
      the people from there, so starting one asks only which Blueprint. The
      agents come with the Blueprint and are never picked at the start. */
   var PROGRAMME_ROLES = {
-    ev:{champion:'Caitlin Ciceri', advisory:'Emily Norton', trade:'Izzie Bell', capital:'Parisa', analysis:'Harry Fox'}
+    ev:{champion:'Caitlin Ciceri', advisory:'Emily Norton', trade:'Izzie Bell', capital:'Parisa', analysis:'Harry Fox'},
+    ect:{champion:'Emily Norton', advisory:'Fran Brosnahan', trade:'Izzie Bell', capital:'Parisa', analysis:'Harry Fox'}
   };
   var ROLE_NAMES = {champion:'Champion', advisory:'Advisory lead', trade:'Trade', capital:'Capital', analysis:'Analysis'};
   /* id: [roles the Blueprint uses, coordinator agent] */

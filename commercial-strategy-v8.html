@@ -6,7 +6,7 @@
 <title>Upper Dee: Commercial Strategy &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=37561f66">
+<link rel="stylesheet" href="gy-shell.css?v=cfc4e767">
 <style>
 /* v4-chat, the same deliverable with the assistant in the lead.
    Everything from the document view is still here; it has just swapped
@@ -1516,9 +1516,10 @@ body.docview .v8docw > .v8setc{margin-left:auto !important;margin-right:auto !im
 
 <div class="shell">
 <script>window.GYNAV={"active":"commercial-strategy","arts":"demand","rail":true,"reader":true};</script>
-<script src="gy-nav.js?v=9d5b5620"></script>
+<script src="gy-nav.js?v=e1bbcbfe"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-notion-blueprints.js?v=d9027465"></script>
+<script src="gy-docs.js?v=913e52c6"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -1578,6 +1579,17 @@ body.docview .v8docw > .v8setc{margin-left:auto !important;margin-right:auto !im
    as steps finish. Decisions look like decisions. Ecosystem Service agents
    are visible where they contribute, each with the expert who manages them.
    State is in memory only, so a reload is a fresh run. */
+
+/* 30 Oct: ?d=<id> opens one of a programme's own Deliverables (Ernest Cook Trust), made from this
+   Blueprint and not started. Nothing is pre-filled because its Demand Maps have not run yet, Part B
+   gets one chapter per estate, and the Upper Dee demo run does not play. */
+var EMPTY = (function(){ try{ var d = new URLSearchParams(location.search).get('d'); return (d && window.GYD && GYD.byId(d)) || null; }catch(e){ return null; } })();
+var PLACE = EMPTY ? EMPTY.prog : 'Upper Dee';
+var ESTS = EMPTY ? GYD.deliverables().filter(function(x){ return x.prog === EMPTY.prog && x.estate; }) : [];
+if(EMPTY){
+  document.title = EMPTY.name+' \u00b7 Great Yellow';
+  var crl = document.querySelector('.crumbs .cr:last-child'); if(crl) crl.textContent = EMPTY.name;
+}
 
 var TEAM = [
   ['Emily Norton','EN','#378ADD','Lead'],
@@ -2025,6 +2037,7 @@ function startHtml(){
 }
 function startDeliverable(){
   if(!Q || Q.t !== 'start') return;
+  if(EMPTY){ gyToast('This strategy starts once the five estate Demand Maps are done. The Upper Dee Commercial Strategy shows a full run.'); return; }
   act('Emily Norton','step','Started the deliverable');
   CUR = '1.1'; LOG.push(lab('1.1')); BI = 1;
   Q = S[1]; BI = 2;
@@ -2303,6 +2316,16 @@ MKEYS.forEach(function(k){
 SRC.interventions = {t:'Upper Dee interventions', at:'1.1', pre:1, by:'know:Customer Demand Mapping record', cf:['ok','Confirmed by client'], inj:1,
   how:'The estate\'s interventions and the ecosystem services they create, pre-filled from the Demand Map and the client\'s plans.',
   from:DMSRC.concat([['ti-file-type-pdf','Client restoration plans']])};
+if(EMPTY) ESTS.forEach(function(e, i){
+  var cp = function(k, t){ var o = {}; for(var x in SRC[k]) o[x] = SRC[k][x]; o.t = t; o.how = String(o.how).replace(/Upper Dee/g, e.estate); SRC[k+'@'+i] = o; };
+  cp('interventions', e.estate+' interventions');
+  MKEYS.forEach(function(k){
+    var m = mk(k);
+    cp('o_'+k, m.title+': '+e.estate+' opportunity');
+    cp('sd_'+k, m.title+': supply and demand insights');
+    if(SRC['t_'+k]) cp('t_'+k, m.title+': strategic customer targets');
+  });
+});
 function srcWho(s){
   if(!s.by) return '';
   if(s.by === 'ai') return 'Commercial Strategy agent';
@@ -2319,7 +2342,7 @@ function srcTip(k){
 var SRCSEL = null;
 /* one block: a skeleton until its step is done, then the content */
 function cb(k, html, sk){
-  var s = SRC[k], done = HUMAN[k] || s.pre || (s.at && isDone(s.at));
+  var s = SRC[k], done = HUMAN[k] || (s.pre && !EMPTY) || (s.at && isDone(s.at));
   if(WRITING === k){
     var mh = 48; (sk || [92,86,64]).forEach(function(w){ mh += w === 't' ? 28 : 22; });
     return '<div class="csb src writing"><div class="csc" style="min-height:'+mh+'px" contenteditable="true" spellcheck="true" data-k="'+k+'" data-ph="Start writing '+s.t+'. The agent will build on what you write."></div></div>';
@@ -2376,6 +2399,8 @@ function docFlowBp(){
   });
   b.push(hd(1,'sec-stack','Ground Rules: Stacking and Bundling'));
   b.push(cb('stack', '<p>'+U.stacking_bundling+'</p>', [94,88,70]));
+  if(EMPTY){ ESTS.forEach(function(e, i){ estateB(b, U, e.estate, i); }); }
+  else {
   b.push(hd(1,'sec-estate', est));
   b.push(hd(2,'sec-interventions','Interventions', false));
   b.push(cb('interventions', U.project_vision.interventions.map(function(i){ return ptxt(i.name, i.text); }).join('')
@@ -2390,10 +2415,24 @@ function docFlowBp(){
     if(m.customer_targets.length)
       b.push(cb('t_'+k, '<p><b>Strategic customer targets</b> (shortlist)</p>' + tbl(['Organisation','Why relevant'], m.customer_targets.map(function(c){ return [c.name, c.why]; })), ['t','t','t','t']));
   });
+  }
   b.push(hd(1,'sec-next','Next Steps and Conclusion'));
   if(isDone('4.3') || CUR === '4.3') b.push(cb('dir', '<p><b>Agreed with the client:</b> '+(DIR || 'engage the eight Upper Dee landowners first, leading with peatland carbon and Scottish Water')+'.</p>', [70]));
   b.push(cb('next', '<p>'+U.next_steps+'</p><p>'+U.conclusion+'</p>', [94,88,90,60]));
   return b.join('');
+}
+/* Part B for one estate of a multi-estate programme: same sections, its own ids and sources */
+function estateB(b, U, est, i){
+  b.push(hd(1,'sec-estate-'+i, est));
+  b.push(hd(2,'sec-interventions-'+i,'Interventions', false));
+  b.push(cb('interventions@'+i, '', [94,88,40,90,84,40,92,70]));
+  MKEYS.forEach(function(k){
+    var m = mk(k);
+    b.push(hd(2,'sec-'+k+'-est-'+i, m.title, false));
+    if(m.supply_demand) b.push(cb('sd_'+k+'@'+i, '', [92,86,70]));
+    b.push(cb('o_'+k+'@'+i, '', k === 'carbon' ? [92,88,90,'t','t','t','t'] : [92,88,90,64]));
+    if(SRC['t_'+k+'@'+i]) b.push(cb('t_'+k+'@'+i, '', ['t','t','t','t']));
+  });
 }
 function docFlowOld(){
   var b = [], U = UD;
@@ -2465,8 +2504,8 @@ function paginate(){
   }
   var logo = '<img class="cslogo" src="gy-logo-wordmark.png" alt="Great Yellow">';
   var html = '<div class="cspg cover" id="sec-cover"><img class="big" src="gy-logo-stacked.png" alt="Great Yellow">'
-    + '<div class="ttl">Commercial Strategy</div><div class="sub">Upper River Dee</div><div class="dt">'+UD.meta.date+'</div>'
-    + '<div class="by">Prepared by: Great Yellow<br>For: '+UD.meta.client+'</div></div>';
+    + '<div class="ttl">Commercial Strategy</div><div class="sub">'+(EMPTY ? EMPTY.prog : 'Upper River Dee')+'</div><div class="dt">'+(EMPTY ? 'Draft' : UD.meta.date)+'</div>'
+    + '<div class="by">Prepared by: Great Yellow<br>For: '+(EMPTY ? EMPTY.prog : UD.meta.client)+'</div></div>';
   html += '<div class="cspg" id="sec-contents">'+logo+'<div class="cstoc"><div class="tt">Contents</div>'
     + toc.map(function(t){ return '<a class="l'+t[0]+'" onclick="setJump(\''+t[2]+'\')"><span>'+t[1]+'</span><span class="dots"></span><span>'+t[3]+'</span></a>'; }).join('')
     + '</div><div class="cspno">2</div></div>';
@@ -2705,15 +2744,18 @@ var TOCG = 'frame', TOCACT = 'sec-cover', TOCSHUT = {}; /* 30 Oct: every chapter
 function tocNav(){
   var A = function(id, t, ic, cls){ return '<a class="'+(cls||'')+'" data-id="'+id+'" title="'+t+'" onclick="setJump(\''+id+'\')">'+(ic ? '<i class="ti '+ic+'"></i>' : (cls === 'l2' ? '<i class="ti ti-corner-down-right"></i>' : ''))+'<span>'+(HNUM[id] ? HNUM[id]+'. ' : '')+t+'</span></a>'; };
   var GI = {frame:'ti-layout-list', markets:'ti-chart-arcs', finance:'ti-coins', close:'ti-flag-check'};
-  var G = function(g, t, body){ return '<div class="csg'+(TOCSHUT[g] ? '' : ' open')+'" data-g="'+g+'"><button class="csgh" onclick="toggleGroup(\''+g+'\')"><i class="ti ti-caret-right-filled cr"></i><span>'+t+'</span></button><div class="csgb">'+body+'</div></div>'; };
+  var G = function(g, t, body){ return '<div class="csg'+(TOCSHUT[g] ? '' : ' open')+'" data-g="'+g+'"><button class="csgh" title="'+t+'" onclick="toggleGroup(\''+g+'\')"><i class="ti ti-caret-right-filled cr"></i><span>'+t+'</span></button><div class="csgb">'+body+'</div></div>'; };
   if(TPL){
     var GI2 = A('sec-cover','Cover','ti-book') + A('sec-contents','Contents','ti-list')
       + G('frame','Shared strategy', A('sec-exec','Executive Summary','ti-file-description')
           + '<div class="csm">'+A('sec-intro','Introduction','ti-flag')+'</div>'
           + '<div class="csm">'+A('sec-markets','Nature Markets','ti-chart-arcs')+'</div>'
           + A('sec-stack','Stacking and Bundling','ti-stack-2'))
-      + G('markets','Upper Dee', A('sec-interventions','Interventions','ti-shovel') + MKEYS.map(function(k){
-          return '<div class="csm">'+A('sec-'+k+'-est', MSHORT[k], MICON[k])+'</div>'; }).join(''))
+      + (EMPTY ? ESTS.map(function(e, i){
+          return G('est'+i, e.estate, A('sec-interventions-'+i,'Interventions','ti-shovel') + MKEYS.map(function(k){
+            return '<div class="csm">'+A('sec-'+k+'-est-'+i, MSHORT[k], MICON[k])+'</div>'; }).join('')); }).join('')
+        : G('markets','Upper Dee', A('sec-interventions','Interventions','ti-shovel') + MKEYS.map(function(k){
+          return '<div class="csm">'+A('sec-'+k+'-est', MSHORT[k], MICON[k])+'</div>'; }).join('')))
       + G('close','Close', A('sec-next','Next Steps','ti-arrow-right'));
     return '<nav class="v8anc" id="setnav"><div><div class="csnavt">Table of Contents</div>'+GI2+'</div></nav>';
   }
@@ -2782,7 +2824,7 @@ var VIEWS = {
         + '<div class="t">All '+all.length+' steps done</div><div class="w">The report is in Outputs, the handoff is out and the learnings are with Andrew.</div></div>';
     } else {
       h += '<div class="v8now idle"><div class="h"><span class="k">Not started</span></div>'
-        + '<div class="t">'+all.length+' steps across 4 chapters</div><div class="w">The agent starts once you answer its first question.</div></div>';
+        + '<div class="t">'+all.length+' steps across 4 phases</div><div class="w">The agent starts once you answer its first question.</div></div>';
     }
 
     /* the shape of the whole run */
@@ -2845,8 +2887,8 @@ var VIEWS = {
       +   '<span class="bt"><span class="bk">Blueprint</span><span class="bn">Commercial Strategy <em>v0.1</em></span></span>'
       +   '<span class="bo">Open blueprint<i class="ti ti-chevron-right"></i></span></div>'
       + '<div class="v8exb">'
-      +   '<div class="v8ext">Upper Dee: Commercial Strategy</div>'
-      +   '<p class="v8exp-why">Turns the Upper Dee Demand Map into a recommended commercial direction: what to sell, to whom, by which route. It feeds the Financial Model and the Blended Finance Plan.</p>'
+      +   '<div class="v8ext">'+PLACE+': Commercial Strategy</div>'
+      +   '<p class="v8exp-why">Turns the '+(EMPTY ? PLACE+' Demand Maps' : 'Upper Dee Demand Map')+' into a recommended commercial direction: what to sell, to whom, by which route. It feeds the Financial Model and the Blended Finance Plan.</p>'
       +   '<div class="v8exk">Team</div>'
       + '<div class="ptm">' + TEAM.map(function(p){
           return '<div class="pp">'+av(p)+'<div><b>'+p[0]+'</b><span>'+p[3]+'</span></div></div>';
@@ -2857,7 +2899,7 @@ var VIEWS = {
           return '<button onclick="addMember('+i+')">'+av(p)+'<b>'+p[0]+'</b><span>'+p[3]+'</span><i class="ti ti-plus"></i></button>';
         }).join('') + '</div>' : '')
       + '</div>'
-      + '<div class="v8exc"><span><i class="ti ti-map-pin"></i>Upper Dee, Cairngorms</span><span><i class="ti ti-calendar"></i>Started 8 Oct 2026</span><span><i class="ti ti-link"></i>Needs Customer Demand Mapping</span></div>'
+      + '<div class="v8exc"><span><i class="ti ti-map-pin"></i>'+(EMPTY ? ESTS.length+' estates' : 'Upper Dee, Cairngorms')+'</span><span><i class="ti ti-calendar"></i>'+(EMPTY ? 'Created 30 Oct 2026' : 'Started 8 Oct 2026')+'</span><span><i class="ti ti-link"></i>Needs Customer Demand Mapping'+(EMPTY ? ', one per estate' : '')+'</span></div>'
       + '</div>';
     var ESFOR = {peat:'Assesses peatland carbon', wood:'Assesses woodland carbon', bio:'Assesses biodiversity', water:'Assesses water quality'};
     var agTile = function(icn, bg, fg){ return '<span class="v8agi" style="background:'+bg+';color:'+fg+'"><i class="ti '+icn+'"></i></span>'; };
@@ -2891,7 +2933,7 @@ var VIEWS = {
         + '<div class="tx">PDF will be generated once the report is issued</div></div></div>'
       : '<div class="v8out"><div class="pg live cov" onclick="window.open(\'GY_CommercialStrategy_Upper-Dee_2026-10.pdf\',\'_blank\')">'
         + '<img src="pdf-cover-commercial-strategy-upper-dee.jpg" alt="Commercial Strategy, Upper Dee cover"></div>'
-        + '<div class="nm">GY Commercial Strategy, Upper Dee</div>'
+        + '<div class="nm">GY Commercial Strategy, '+PLACE+'</div>'
         + '<div class="mt">PDF &middot; 25 pages &middot; created just now</div>'
         + '<a class="v8flag" style="margin-top:14px;text-decoration:none" href="GY_CommercialStrategy_Upper-Dee_2026-10.pdf" download><i class="ti ti-download"></i>Download</a></div>';
     var ks = Object.keys(SITEMS).filter(function(k){ return SITEMS[k].kind === 'Outputs'; });
@@ -3071,7 +3113,7 @@ var SITEMS = {
   cnno:{kind:'Connections', n:'Notion', ic:'ti-brand-notion', used:['1.1'], st:['Connected','ok'],
     what:'Programme pages and meeting notes.', det:[['Status','Connected'],['Access','Read only']]},
   cngd:{kind:'Connections', n:'Google Drive', ic:'ti-brand-google-drive', used:['1.1','4.1'], st:['Connected','ok'],
-    what:'Client documents come in here, and the finished report goes back.', det:[['Status','Connected'],['Folder','Upper Dee / Commercial Strategy']]},
+    what:'Client documents come in here, and the finished report goes back.', det:[['Status','Connected'],['Folder',PLACE+' / Commercial Strategy']]},
   cnhs:{kind:'Connections', n:'HubSpot', ic:'ti-address-book', used:['3.1'], st:['Connected','ok'],
     what:'Who GY already talks to, per buyer.', det:[['Status','Connected'],['Access','Read only']]},
   cndp:{kind:'Connections', n:'GY Data platform', ic:'ti-chart-dots-3', used:['4.5'], st:['Connected','ok'],
@@ -3084,7 +3126,7 @@ var SITEMS = {
   tlpdf:{kind:'Tools', n:'PDF generator', ic:'ti-file-type-pdf', used:['4.1'], tag:'Makes the client PDF',
     what:'Renders the report into the Great Yellow template.', det:[['Type','Built by GY'],['Template','GY report, 2026']]},
 
-  in1:{kind:'Inputs', n:'Customer Demand Mapping, Upper Dee', ic:'ti-map-search', used:['1.1','2.1'], inp:['Received','ok'],
+  in1:{kind:'Inputs', n:EMPTY ? 'Customer Demand Mapping, '+ESTS.length+' estates' : 'Customer Demand Mapping, Upper Dee', ic:'ti-map-search', used:['1.1','2.1'], inp:EMPTY ? ['Not started','warn'] : ['Received','ok'],
     what:'The finished Demand Map: context, buyers and decisions.', det:[['From','Customer Demand Mapping'],['Status','Finished']]},
   in2:{kind:'Inputs', n:'upper_dee_land_management_plan.pdf', ic:'ti-file-type-pdf', used:['2.1'], inp:['Received','ok'],
     what:'The estates\' land management plan: site, interventions and outcomes.', det:[['From','Client'],['Pages','38']]},
@@ -3093,7 +3135,7 @@ var SITEMS = {
   in4:{kind:'Inputs', n:'Landowner commitments', ic:'ti-file-text', used:['1.2'], inp:['Outstanding','warn'], miss:1,
     what:'Whether the eight Upper Dee estates, plus NTS at Mar Lodge, will take part.', det:[['From','Not received'],['Asked at','1.2 Scope markets and sites']]}
   ,
-  out1:{kind:'Outputs', n:'GY Commercial Strategy, Upper Dee', ic:'ti-file-type-pdf', used:['4.1'], tag:'The client report',
+  out1:{kind:'Outputs', n:'GY Commercial Strategy, '+PLACE, ic:'ti-file-type-pdf', used:['4.1'], tag:'The client report',
     what:'The report Dee Rivers Trust receives, in the GY Commercial Strategy structure.', det:[['Format','PDF, 25 pages'],['Goes to','Google Drive, then the estates'],['Approved by','Emily Norton']]},
   out2:{kind:'Outputs', n:'Decisions log', ic:'ti-list-check', used:['4.3'], tag:'What was decided and why',
     what:'Every decision in this run, with who made it, plus the direction the estates agreed.', det:[['Format','Rows on the programme record']]},
@@ -3309,10 +3351,16 @@ var CHAT_MIN = 340, CHAT_MAX = 680;
 /* the sidebar opens on the collapsed icon rail here: GYNAV.rail in gy-nav.js */
 
 /* opening state: the agent introduces itself and asks the first question */
+if(EMPTY){
+act(EMPTY.by,'start','Created the deliverable from the Commercial Strategy Blueprint '+EMPTY.bpv);
+LOG.push(say('I am set up for <b>'+PLACE+'</b> from the Commercial Strategy Blueprint '+EMPTY.bpv+': a shared strategy, one chapter per estate ('+ESTS.map(function(e){ return e.estate; }).join(', ')+'), then next steps.'));
+LOG.push(say('The Introduction, Client Vision, methodology and customer targets come from the estates\' Customer Demand Mapping. None of the five has started yet, so the document is empty for now; click any grey block to see what fills it and when.'));
+} else {
 act('Emily Norton','start','Created the deliverable from the Commercial Strategy Blueprint v0.1');
 act('ai','start','Pre-filled 4 parts of the report from Customer Demand Mapping');
 LOG.push(say('I am set up for <b>Upper Dee</b> from the Commercial Strategy Blueprint: thirteen steps, three decisions. I pre-filled the Introduction, Project Vision, Demand Mapping Methodology and the customer targets for six markets from the finished Customer Demand Mapping. The rest fills in as we go; click any grey block to see where it comes from or write it yourself, and select text to leave me a comment.'));
 LOG.push(dmCard());
+}
 BI = 0;
 Q = {t:'start'};
 paintTabs(); paintProg(); openTab('doc'); paintChat();
@@ -3321,6 +3369,7 @@ paintTabs(); paintProg(); openTab('doc'); paintChat();
 var FF = null, FFSP = null;
 function ffTo(k){
   if(FF) return;
+  if(EMPTY){ gyToast('This Deliverable has not started yet'); return; }
   if(isDone(k)){ gyToast('Step '+k+' is already done. Restart the run from the page menu to go back.'); return; }
   FF = k; FFSP = {say:SP.say, item:SP.item, settle:SP.settle, con:SP.con};
   SP.say = SP.item = SP.settle = SP.con = 0;
