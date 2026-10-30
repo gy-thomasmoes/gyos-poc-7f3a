@@ -1438,6 +1438,22 @@ body.docview .v8docw .v8anc a.on i{color:var(--ink)}
 mark.cscm{background:#F7EBC2;color:inherit;border-bottom:2px solid #DDBF5C;border-radius:2px;cursor:pointer;padding:0 1px}
 mark.cscm.sug{background:#EAF1E4;border-bottom-color:#7BA05B}
 mark.cscm.pending{background:#E6EEF8;border-bottom-color:#7AA2D6}
+/* 30 Oct: the Comments drawer lists every comment on the document, newest first */
+.cml{display:flex;flex-direction:column;gap:10px}
+.cmc{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer}
+.cmc:hover{border-color:var(--line2);background:var(--bg)}
+.cmc.done{opacity:.6}
+.cmc .hd{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600}
+.cmc .hd .dlav{flex:none}
+.cmc .hd .tm{font-weight:400;font-size:12.5px;color:var(--ink3);margin-left:auto;white-space:nowrap}
+.cmc .on{font-size:12.5px;color:var(--ink3);margin:8px 0 0}
+.cmc .q{font-size:13px;color:var(--ink2);border-left:2px solid #DDBF5C;padding-left:8px;margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmc .m{font-size:14px;line-height:1.5;margin-top:8px}
+.cmc .st{display:inline-block;font-size:12px;font-weight:600;margin-top:10px;color:var(--ink3)}
+.cmc .st.ok{color:var(--greend)}
+.cmback{display:inline-flex;align-items:center;gap:6px;border:none;background:none;font:inherit;font-size:13px;color:var(--ink2);padding:0;margin:0 0 14px;cursor:pointer}
+.cmback:hover{color:var(--ink)}
+.cmempty{font-size:14px;color:var(--ink3);padding:24px 0;text-align:center}
 .cmbtn{position:fixed;z-index:1300;display:none;align-items:center;gap:6px;background:#1A0C12;color:#fff;border:none;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;box-shadow:0 6px 18px rgba(26,12,18,.25)}
 .cmbtn.on{display:inline-flex}
 .cmpop{position:fixed;z-index:1300;display:none;width:300px;background:var(--card,#fff);border:1px solid #E3DDCD;border-radius:12px;box-shadow:0 12px 32px rgba(26,12,18,.18);padding:12px}
@@ -2585,6 +2601,22 @@ function openSrc(k){
 var EDITS = {}, HUMAN = {}, EDITED = {}, LASTHTML = {}, WRITING = null, DOCPEND = false;
 var COMMENTS = {}, CMN = 0, CMSEL = null, CMOPEN = false;
 var ME = 'Emily Norton';
+/* 30 Oct: Fran's review comments on the Ernest Cook Trust draft (from her Google Doc), on the Introduction as a whole */
+var FRAN = ['Fran Brosnahan','FR','#8E5BA8','Project associate'];
+if(EMPTY && EMPTY.prog === 'Ernest Cook Trust'){
+  [['16:44 27 Oct','Focus should be on the strategic goals, not necessarily the multiple values framework'],
+   ['11:32 today','Set the context of the project, e.g. what are some of the ecological challenges that the trust hopes to overcome through nature restoration?'],
+   ['11:32 today','What are the core strengths of the projects and key aims: e.g. natural flood management benefits, restoration of unique habitats, educational goals']]
+    .forEach(function(c){ COMMENTS['c'+(++CMN)] = {sec:'sec-intro', st:'Introduction', by:FRAN, when:c[0], msg:c[1], status:'open'}; });
+}
+function cmT(c){ return c.k ? SRC[c.k].t : c.st; }
+function cmBy(c){ return c.by || [ME]; }
+function cmOpen(){ return Object.keys(COMMENTS).filter(function(id){ var s = COMMENTS[id].status; return s === 'open' || s === 'asked' || s === 'suggested'; }).length; }
+function cmGo(id){ var c = COMMENTS[id]; if(!c) return;
+  if(TAB !== 'doc') openTab('doc');
+  var m = document.querySelector('#cspages mark[data-c="'+id+'"]');
+  if(m) m.scrollIntoView({block:'center', behavior:'smooth'}); else if(c.sec) setJump(c.sec);
+  openComment(id); }
 function docBusy(){ var a = document.activeElement; return CMOPEN || !!(a && a.classList && a.classList.contains('csc')); }
 function writeSelf(k){ WRITING = k; openTab('doc', true); setTimeout(function(){ var el = document.querySelector('#cspages .csc[data-k="'+k+'"]'); if(el){ el.focus(); } }, 30); }
 document.addEventListener('focusin', function(e){ var el = e.target; if(el && el.classList && el.classList.contains('csc')) LASTHTML[el.dataset.k] = el.innerHTML; });
@@ -2652,12 +2684,13 @@ function sendCm(){
   if(!m){ closeCmPop(); return; }
   var id = 'c' + (++CMN), t = SRC[k].t;
   m.className = 'cscm'; m.setAttribute('data-c', id);
-  COMMENTS[id] = {k:k, quote:m.textContent, msg:msg, toAgent:toAgent, status:'open'};
+  COMMENTS[id] = {k:k, quote:m.textContent, msg:msg, toAgent:toAgent, status:'open', when:'Just now'};
   EDITS[k] = el.innerHTML; LASTHTML[k] = EDITS[k];
   closeCmPop();
   push(you('Comment on <b>'+t+'</b>: '+esc(msg)));
   act(ME,'ask','Commented on '+t+(toAgent ? ' for the agent' : ''));
   openTab('doc', true);
+  if(DR === 'comments') document.getElementById('drbody').innerHTML = VIEWS.comments();
   if(!toAgent){ gyToast('Comment added for the team'); return; }
   setTimeout(function(){
     var c = COMMENTS[id], alt = rewrite(c.quote, c.msg);
@@ -2690,6 +2723,7 @@ function rewrite(q, msg){
   return t.replace(/\s{2,}/g, ' ').trim();
 }
 function resolveMark(id, text){
+  if(!COMMENTS[id].k) return; /* a comment on a whole section has no highlight */
   var c = COMMENTS[id], d = document.createElement('div'); d.innerHTML = EDITS[c.k];
   var m = d.querySelector('mark[data-c="'+id+'"]'); if(m) m.replaceWith(document.createTextNode(text));
   EDITS[c.k] = d.innerHTML;
@@ -2698,15 +2732,17 @@ function cmAccept(id){ var c = COMMENTS[id]; resolveMark(id, c.alt); c.status = 
   push(say('Applied. I will note what you asked for, so the next draft starts closer.')); openTab('doc', true); openComment(id); }
 function cmReject(id){ var c = COMMENTS[id]; resolveMark(id, c.quote); c.status = 'rejected'; act(ME,'reply','Rejected the rewrite in '+SRC[c.k].t);
   openTab('doc', true); openComment(id); }
-function cmResolve(id){ var c = COMMENTS[id]; resolveMark(id, c.quote); c.status = 'resolved'; openTab('doc', true); closeDrawer(); }
+function cmResolve(id){ var c = COMMENTS[id]; resolveMark(id, c.quote); c.status = 'resolved'; act(ME,'reply','Resolved a comment on '+cmT(c)); openTab('doc', true); openDrawer('comments'); }
 function openComment(id){
   var c = COMMENTS[id]; if(!c) return; DR = 'cmt';
   var ic = document.getElementById('dricon');
   ic.className = 'v5dri'; ic.style.borderRadius = ''; ic.style.background = 'var(--graybg)'; ic.style.color = 'var(--ink)';
   ic.innerHTML = '<i class="ti ti-message"></i>';
-  document.getElementById('drtitle').textContent = 'Comment on '+SRC[c.k].t;
-  var b = '<div class="v8dr"><div class="v8dk2">Selected text</div><div class="cmq'+(c.status==='suggested'||c.status==='accepted'?' old':'')+'">'+esc(c.quote)+'</div>'
-    + '<div class="v8dk2">Comment</div><div class="v8them"><div class="who">'+avName(ME)+ME+'</div><div class="bub">'+esc(c.msg)+'</div></div>';
+  document.getElementById('drtitle').textContent = 'Comment on '+cmT(c);
+  var by = cmBy(c);
+  var b = '<div class="v8dr"><button class="cmback" onclick="openDrawer(\'comments\')"><i class="ti ti-arrow-left"></i>All comments</button>'
+    + (c.quote ? '<div class="v8dk2">Selected text</div><div class="cmq'+(c.status==='suggested'||c.status==='accepted'?' old':'')+'">'+esc(c.quote)+'</div>' : '')
+    + '<div class="v8dk2">Comment</div><div class="v8them"><div class="who">'+(by.length > 1 ? av(by) : avName(by[0]))+by[0]+'</div><div class="bub">'+esc(c.msg)+'</div></div>';
   if(c.toAgent){
     b += '<div class="v8dk2">Agent</div>';
     if(c.status === 'open') b += '<div class="v8dtxt"><i class="ti ti-loader-2 gyspin"></i> Rewriting</div>';
@@ -2717,6 +2753,8 @@ function openComment(id){
         + '<button class="v8flag" onclick="cmReject(\''+id+'\')"><i class="ti ti-x"></i>Reject</button></div>';
       else b += '<div class="v8istat '+(c.status==='accepted'?'ok':'')+'">'+(c.status==='accepted'?'Accepted':'Rejected')+'</div>';
     }
+  } else if(c.status === 'resolved'){
+    b += '<div class="v8istat ok">Resolved</div>';
   } else if(c.status === 'open'){
     b += '<div class="cmacts"><button class="v8flag" onclick="cmResolve(\''+id+'\')"><i class="ti ti-check"></i>Resolve</button></div>';
   }
@@ -2814,6 +2852,22 @@ function tocFollow(nav){
 }
 
 var VIEWS = {
+  /* 30 Oct: every comment on the document, open ones first, newest first; click one to go to it */
+  comments: function(){
+    var ids = Object.keys(COMMENTS).reverse(), done = function(id){ var s = COMMENTS[id].status; return s === 'resolved' || s === 'accepted' || s === 'rejected'; };
+    ids = ids.filter(function(id){ return !done(id); }).concat(ids.filter(done));
+    if(!ids.length) return '<div class="v8dr"><div class="cmempty">No comments yet</div></div>';
+    var ST = {suggested:['Rewrite suggested',''], asked:['Agent asked a question',''], accepted:['Accepted','ok'], rejected:['Rejected',''], resolved:['Resolved','ok']};
+    return '<div class="v8dr"><div class="cml">' + ids.map(function(id){
+      var c = COMMENTS[id], by = cmBy(c), st = ST[c.status];
+      return '<button class="cmc'+(done(id)?' done':'')+'" onclick="cmGo(\''+id+'\')">'
+        + '<div class="hd">'+(by.length > 1 ? av(by) : avName(by[0]))+'<span>'+by[0]+'</span><span class="tm">'+(c.when || '')+'</span></div>'
+        + '<div class="on">On '+esc(cmT(c))+'</div>'
+        + (c.quote ? '<div class="q">'+esc(c.quote)+'</div>' : '')
+        + '<div class="m">'+esc(c.msg)+'</div>'
+        + (st ? '<span class="st '+st[1]+'">'+st[0]+'</span>' : '') + '</button>';
+    }).join('') + '</div></div>';
+  },
   doc: function(){
     return '<div class="v8setw v8docw"><div class="v8setc">'+gyDocBar.html()+'<div class="cspages" id="cspages"></div><div class="csflow cspg grow" id="csflow">'+docFlow()+'</div></div>'
       + tocNav() + '</div>';
@@ -3264,7 +3318,7 @@ function doFlag(id, quiet){
 
 /* ── tabs and panels ───────────────────────────────────────────────────── */
 var TABS = [['doc','ti-file-text','Document'],['workflow','ti-hierarchy-2','Workflow'],['activity','ti-activity','Activity'],['settings','ti-settings','Settings']];
-var DRAWERS = [['outputs','ti-package','Outputs','']];
+var DRAWERS = [['comments','ti-message','Comments',''],['outputs','ti-package','Outputs','']];
 var TAB = 'doc', DR = null;
 function paintTabs(){
   var shut = document.body.classList.contains('pclosed');
@@ -3278,8 +3332,9 @@ function paintTabs(){
           + '<i class="ti '+t[1]+'"></i><span class="lb">'+t[2]+'</span>'+(badge?'<b>'+badge+'</b>':'')+'</button>';
       }).join('') + '</div>'
     + '<div class="v5drgrp">' + DRAWERS.map(function(d){
-        return '<button class="v5tab dr'+(DR===d[0]?' on':'')+'" onclick="openDrawer(\''+d[0]+'\')">'
-          + '<i class="ti '+d[1]+'"></i><span class="lb">'+d[2]+'</span>'+(isDone('4.1')?'<b>1</b>':'')+'</button>';
+        var n = d[0] === 'comments' ? cmOpen() : (isDone('4.1') ? 1 : 0);
+        return '<button class="v5tab dr'+(DR===d[0] || (d[0]==='comments' && DR==='cmt')?' on':'')+'" onclick="openDrawer(\''+d[0]+'\')">'
+          + '<i class="ti '+d[1]+'"></i><span class="lb">'+d[2]+'</span>'+(n?'<b>'+n+'</b>':'')+'</button>';
       }).join('') + '</div>';
 }
 function openTab(k, keep){
@@ -3295,7 +3350,7 @@ function openTab(k, keep){
   el.parentNode.scrollTop = keep ? sc : 0;
 }
 function paintAll(){ paintTabs(); paintProg(); openTab(TAB, true);
-  if(DR === 'outputs') document.getElementById('drbody').innerHTML = VIEWS.outputs(); }
+  if(DR === 'outputs' || DR === 'comments') document.getElementById('drbody').innerHTML = VIEWS[DR](); }
 function scrollDoc(k){
   if(TAB !== 'doc') return;
   var map = {'1.1':'sec-intro','1.2':'sec-intro','2.1':'sec-carbon-targets','2.2':'sec-carbon','3.1':'sec-exec','3.2':'sec-exec','4.3':'sec-rec'};
