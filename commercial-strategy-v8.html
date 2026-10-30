@@ -1377,6 +1377,10 @@ body.docview .v8docw .v8setc{max-width:none;flex:0 1 660px}
 .cstoc a .dots{flex:1;border-bottom:1px dotted #B9B4A9;transform:translateY(-3px)}
 .cstoc a:hover{color:#1F6FB2}
 .cstoc .tt{font-family:var(--serif);font-weight:500;font-size:20px;margin-bottom:14px;color:#1A0C12}
+/* 30 Oct: the Contents page groups its chapters into parts (Shared strategy, Estates); the last chapter stands apart */
+.cstoc .cspart{font-size:9.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#766B62;margin:16px 0 4px}
+.cstoc .cspart:first-of-type{margin-top:0}
+.cstoc a.csgap{margin-top:14px}
 .csb{position:relative;margin:0 0 12px;border-radius:4px}
 .csb.h1{margin:6px 0 10px}
 .csb.h2{margin:10px 0 6px}
@@ -1475,6 +1479,9 @@ body.docview.flat .v8docw .v8anc a.on{background:#EFEBE1 !important}
 @media (prefers-reduced-motion:reduce){.v8waith .pip{animation:none}}
 
 /* grouped Table of Contents */
+/* 30 Oct: part labels (Shared strategy, Estates), the same parts as the Contents page */
+body.docview .v8docw .v8anc .cslab{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:16px 0 6px}
+body.docview .v8docw .v8anc .csgap{margin-top:14px}
 body.docview .v8docw .v8anc .csgh{display:flex;align-items:center;gap:9px;width:100%;border:none;background:none;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink3);padding:12px 10px 4px;margin-left:-10px;cursor:pointer;text-align:left}
 body.docview .v8docw .v8anc .csgh .ti{font-size:14px;transition:transform .15s;flex:none;width:16px}
 body.docview .v8docw .v8anc .csgh:hover,body.docview .v8docw .v8anc .csg.has .csgh{color:var(--ink)}
@@ -1519,7 +1526,9 @@ body.docview .v8docw > .v8setc{margin-left:auto !important;margin-right:auto !im
 <script src="gy-nav.js?v=e1bbcbfe"></script>
 <script src="gy-versions.js?v=30654df5"></script>
 <script src="gy-notion-blueprints.js?v=d9027465"></script>
-<script src="gy-docs.js?v=913e52c6"></script>
+<script src="gy-docs.js?v=04f01500"></script>
+<script src="gy-ect-context.js?v=ed0c974d"></script>
+<script src="gy-ect-strategy.js?v=6de9e3dd"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -2336,13 +2345,23 @@ function srcWho(s){
 function srcTip(k){
   var s = SRC[k];
   if(HUMAN[k]) return 'Written by '+ME+' in the document. Click for details';
+  if(known(k)) return 'Already known: from Fran\'s draft strategy v0.1 and ECT\'s documents. Click for the source';
   if(s.pre) return 'Pre-filled from Customer Demand Mapping. Click for the source';
   return (isDone(s.at) ? 'Written at ' : 'Fills in at ')+s.at+' by '+srcWho(s)+'. Click for the source';
 }
 var SRCSEL = null;
 /* one block: a skeleton until its step is done, then the content */
+/* 30 Oct: for ECT, the blocks we already know (gy-ect-strategy.js, from Fran's draft v0.1; an estate's
+   interventions from its Chapter 1 draft in gy-ect-context.js) are filled before the run starts */
+function known(k){
+  if(!EMPTY) return null;
+  if(window.GY_ECT_CS && GY_ECT_CS[k]) return GY_ECT_CS[k];
+  var m = /^interventions@(\d+)$/.exec(k), e = m && ESTS[+m[1]], c = e && window.GY_ECT_CTX && GY_ECT_CTX[e.id];
+  return c && c.a2 ? '<p>'+c.a2+'</p>' : null;
+}
 function cb(k, html, sk){
-  var s = SRC[k], done = HUMAN[k] || (s.pre && !EMPTY) || (s.at && isDone(s.at));
+  var KN = known(k); if(KN) html = KN;
+  var s = SRC[k], done = HUMAN[k] || KN || (s.pre && !EMPTY) || (s.at && isDone(s.at));
   if(WRITING === k){
     var mh = 48; (sk || [92,86,64]).forEach(function(w){ mh += w === 't' ? 28 : 22; });
     return '<div class="csb src writing"><div class="csc" style="min-height:'+mh+'px" contenteditable="true" spellcheck="true" data-k="'+k+'" data-ph="Start writing '+s.t+'. The agent will build on what you write."></div></div>';
@@ -2356,7 +2375,8 @@ function cb(k, html, sk){
   }
   return '<div class="csb src'+(JUST===s.at?' just':'')+'">'
     + '<button class="csi'+(SRCSEL===k?' on':'')+'" onclick="openSrc(\''+k+'\')" data-tip="'+srcTip(k)+'" aria-label="Where this comes from"><i class="ti ti-info-circle"></i></button>'
-    + (s.inj && !HUMAN[k] ? '<div class="csinj" contenteditable="false" onclick="openDM()" style="cursor:pointer" data-tip="Open the Customer Demand Mapping it came from"><i class="ti ti-arrow-bar-to-down"></i>From Customer Demand Mapping</div>' : '')
+    + (KN && !HUMAN[k] && !EDITED[k] ? '<div class="csby"><i class="ti ti-file-text"></i>From Fran\'s draft v0.1 and ECT\'s documents, not yet checked</div>' : '')
+    + (s.inj && !HUMAN[k] && !KN ? '<div class="csinj" contenteditable="false" onclick="openDM()" style="cursor:pointer" data-tip="Open the Customer Demand Mapping it came from"><i class="ti ti-arrow-bar-to-down"></i>From Customer Demand Mapping</div>' : '')
     + (HUMAN[k] ? '<div class="csby"><i class="ti ti-pencil"></i>Written by '+ME+'</div>' : EDITED[k] ? '<div class="csby"><i class="ti ti-pencil"></i>Edited by '+ME+'</div>' : '')
     + '<div class="csc" contenteditable="true" spellcheck="false" data-k="'+k+'">'+(EDITS[k] || html)+'</div></div>';
 }
@@ -2489,14 +2509,16 @@ var PAGE_H = 905 - 84 - 70 - 16;
 function paginate(){
   var flow = document.getElementById('csflow'), out = document.getElementById('cspages');
   if(!flow || !out) return;
-  var kids = [].slice.call(flow.children), pages = [[]], big = [false], used = 0, toc = [];
+  var kids = [].slice.call(flow.children), pages = [[]], big = [false], used = 0, toc = [], heads = false;
   var hOf = function(el){ var cs = getComputedStyle(el); return el.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom); };
   for(var i=0;i<kids.length;i++){
     var el = kids[i], h = hOf(el);
     if(el.dataset.h){ /* keep a heading with what follows: further headings, then the first content block */
       for(var j=i+1;j<kids.length;j++){ var hj = hOf(kids[j]); if(kids[j].dataset.h){ h += hj; continue; } h += Math.min(hj, PAGE_H - 40); break; }
     }
-    if(used + h > PAGE_H && pages[pages.length-1].length){ pages.push([]); big.push(false); used = 0; }
+    /* 30 Oct: never break straight after a heading, or a page ends on a lone heading */
+    if(used + h > PAGE_H && pages[pages.length-1].length && !heads){ pages.push([]); big.push(false); used = 0; }
+    heads = !!el.dataset.h;
     pages[pages.length-1].push(el.outerHTML);
     if(hOf(el) > PAGE_H) big[big.length-1] = true;
     if(el.dataset.h && !el.dataset.notoc) toc.push([el.dataset.h, el.dataset.t, el.id, pages.length + 2]);
@@ -2507,7 +2529,7 @@ function paginate(){
     + '<div class="ttl">Commercial Strategy</div><div class="sub">'+(EMPTY ? EMPTY.prog : 'Upper River Dee')+'</div><div class="dt">'+(EMPTY ? 'Draft' : UD.meta.date)+'</div>'
     + '<div class="by">Prepared by: Great Yellow<br>For: '+(EMPTY ? EMPTY.prog : UD.meta.client)+'</div></div>';
   html += '<div class="cspg" id="sec-contents">'+logo+'<div class="cstoc"><div class="tt">Contents</div>'
-    + toc.map(function(t){ return '<a class="l'+t[0]+'" onclick="setJump(\''+t[2]+'\')"><span>'+t[1]+'</span><span class="dots"></span><span>'+t[3]+'</span></a>'; }).join('')
+    + toc.map(function(t){ return tocPart(t[2], 'cspart') + '<a class="l'+t[0]+(TPL && t[2] === 'sec-next' ? ' csgap' : '')+'" onclick="setJump(\''+t[2]+'\')"><span>'+t[1]+'</span><span class="dots"></span><span>'+t[3]+'</span></a>'; }).join('')
     + '</div><div class="cspno">2</div></div>';
   html += pages.map(function(p, n){ return '<div class="cspg'+(big[n]?' grow':'')+'">'+logo+p.join('')+'<div class="cspno">'+(n+3)+'</div></div>'; }).join('');
   out.innerHTML = html;
@@ -2740,23 +2762,33 @@ function dmCard(){
 
 /* grouped Table of Contents (Thomas, 8 Oct): four parts, only the group you are reading is open;
    a chapter shows its sections when you are in it */
+/* 30 Oct: part labels, shared by the Contents page and the Table of Contents. Only when there are two or
+   more estates (a single estate would sit under "Shared strategy"); the last chapter (Next Steps) stands apart without a label */
+function tocPart(id, cls){
+  if(!TPL || ESTS.length < 2) return '';
+  if(id === 'sec-exec') return '<div class="'+cls+'">Shared strategy</div>';
+  if(id === 'sec-estate-0') return '<div class="'+cls+'">Estates</div>';
+  return '';
+}
 var TOCG = 'frame', TOCACT = 'sec-cover', TOCSHUT = {}; /* 30 Oct: every chapter group starts open; a click closes just that one */
+/* 30 Oct: with two or more estates, the estate groups start closed; the one you scroll into opens (tocFollow) */
+if(ESTS.length > 1) ESTS.forEach(function(e, i){ TOCSHUT['est'+i] = true; });
 function tocNav(){
   var A = function(id, t, ic, cls){ return '<a class="'+(cls||'')+'" data-id="'+id+'" title="'+t+'" onclick="setJump(\''+id+'\')">'+(ic ? '<i class="ti '+ic+'"></i>' : (cls === 'l2' ? '<i class="ti ti-corner-down-right"></i>' : ''))+'<span>'+(HNUM[id] ? HNUM[id]+'. ' : '')+t+'</span></a>'; };
   var GI = {frame:'ti-layout-list', markets:'ti-chart-arcs', finance:'ti-coins', close:'ti-flag-check'};
   var G = function(g, t, body){ return '<div class="csg'+(TOCSHUT[g] ? '' : ' open')+'" data-g="'+g+'"><button class="csgh" title="'+t+'" onclick="toggleGroup(\''+g+'\')"><i class="ti ti-caret-right-filled cr"></i><span>'+t+'</span></button><div class="csgb">'+body+'</div></div>'; };
   if(TPL){
     var GI2 = A('sec-cover','Cover','ti-book') + A('sec-contents','Contents','ti-list')
-      + G('frame','Shared strategy', A('sec-exec','Executive Summary','ti-file-description')
+      + tocPart('sec-exec','cslab') + A('sec-exec','Executive Summary','ti-file-description')
           + '<div class="csm">'+A('sec-intro','Introduction','ti-flag')+'</div>'
           + '<div class="csm">'+A('sec-markets','Nature Markets','ti-chart-arcs')+'</div>'
-          + A('sec-stack','Stacking and Bundling','ti-stack-2'))
-      + (EMPTY ? ESTS.map(function(e, i){
-          return G('est'+i, e.estate, A('sec-interventions-'+i,'Interventions','ti-shovel') + MKEYS.map(function(k){
+          + A('sec-stack','Stacking and Bundling','ti-stack-2')
+      + (EMPTY ? tocPart('sec-estate-0','cslab') + ESTS.map(function(e, i){
+          return G('est'+i, (HNUM['sec-estate-'+i] ? HNUM['sec-estate-'+i]+'. ' : '')+e.estate, A('sec-interventions-'+i,'Interventions','ti-shovel') + MKEYS.map(function(k){
             return '<div class="csm">'+A('sec-'+k+'-est-'+i, MSHORT[k], MICON[k])+'</div>'; }).join('')); }).join('')
-        : G('markets','Upper Dee', A('sec-interventions','Interventions','ti-shovel') + MKEYS.map(function(k){
+        : G('markets',(HNUM['sec-estate'] ? HNUM['sec-estate']+'. ' : '')+'Upper Dee', A('sec-interventions','Interventions','ti-shovel') + MKEYS.map(function(k){
           return '<div class="csm">'+A('sec-'+k+'-est', MSHORT[k], MICON[k])+'</div>'; }).join('')))
-      + G('close','Close', A('sec-next','Next Steps','ti-arrow-right'));
+      + A('sec-next','Next Steps and Conclusion','ti-arrow-right','csgap');
     return '<nav class="v8anc" id="setnav"><div><div class="csnavt">Table of Contents</div>'+GI2+'</div></nav>';
   }
   var html = A('sec-cover','Cover','ti-book') + A('sec-contents','Contents','ti-list')
@@ -3354,7 +3386,7 @@ var CHAT_MIN = 340, CHAT_MAX = 680;
 if(EMPTY){
 act(EMPTY.by,'start','Created the deliverable from the Commercial Strategy Blueprint '+EMPTY.bpv);
 LOG.push(say('I am set up for <b>'+PLACE+'</b> from the Commercial Strategy Blueprint '+EMPTY.bpv+': a shared strategy, one chapter per estate ('+ESTS.map(function(e){ return e.estate; }).join(', ')+'), then next steps.'));
-LOG.push(say('The Introduction, Client Vision, methodology and customer targets come from the estates\' Customer Demand Mapping. None of the five has started yet, so the document is empty for now; click any grey block to see what fills it and when.'));
+LOG.push(say('I filled in what we already know from Fran\'s draft v0.1 and ECT\'s own documents: the Trust\'s vision, the market primers, stacking risks, each estate\'s interventions and Little Dalby\'s supply and demand. Gaps, judgements and recommendations stay grey until the run writes them; click any grey block to see what fills it and when.'));
 } else {
 act('Emily Norton','start','Created the deliverable from the Commercial Strategy Blueprint v0.1');
 act('ai','start','Pre-filled 4 parts of the report from Customer Demand Mapping');
