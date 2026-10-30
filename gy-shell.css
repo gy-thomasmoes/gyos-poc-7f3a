@@ -238,20 +238,20 @@ html body :is(nav#gytocx,nav).v8anc.gytoc-col:hover > div > *{flex:none !importa
    A page opts in with the class "datadoc" on <html>. */
 /* Document view, 28 Oct: titles that scan, a sticky bar once the page title has scrolled away,
    text before a table in its own card, and indented sub-entries in the Table of Contents */
-html.datadoc .v8docw .v5cht{font-size:30px;letter-spacing:-.015em}
-html.datadoc .v8docw .v5ch{margin-bottom:34px}
+html.datadoc .v8docw .v5cht,.bpdoc .v5ch .v5cht{font-size:30px;letter-spacing:-.015em}
+html.datadoc .v8docw .v5ch,.bpdoc .v5ch{margin-bottom:34px}
 html.datadoc .v8docw .v5sec{margin-top:72px}
 html.datadoc .v8docw .v5f{margin-bottom:44px}
 html.datadoc .v8docw .v5flab{margin-bottom:12px}
 html.datadoc .v8docw .v5fl{font-family:var(--serif);font-size:21px;font-weight:500;letter-spacing:-.01em;text-transform:none;color:var(--ink);line-height:1.25}
 html.datadoc .v8docw .v5sh{font-family:var(--serif);font-size:21px;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin:52px 0 10px}
 html.datadoc .v5fbody > .v5inp + .v5tw,html.datadoc .v5fbody > .v5tw + .v5inp{margin-top:14px}
-/* Document view, 29 Oct: the chapter number is plain text in the title's size, and written body text sits on the
+/* Document view, 29 Oct (Blueprint Content .bpdoc shares the chapter heading): the chapter number is plain text in the title's size, and written body text sits on the
    page without a box (empty fields keep their dashed frame, tables keep theirs) */
-html.datadoc .v8docw .v5ch .v5chn{width:auto;height:auto;background:none;border-radius:0;color:var(--ink);
+html.datadoc .v8docw .v5ch .v5chn,.bpdoc .v5ch .v5chn{width:auto;height:auto;background:none;border-radius:0;color:var(--ink);
   font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-.015em;line-height:inherit}
-html.datadoc .v8docw .v5ch .v5chn:after{content:"."}
-html.datadoc .v8docw .v5ch{gap:10px}
+html.datadoc .v8docw .v5ch .v5chn:after,.bpdoc .v5ch .v5chn:after{content:"."}
+html.datadoc .v8docw .v5ch,.bpdoc .v5ch{gap:10px}
 html.datadoc .v8docw .v5inp:not(.empty){border-color:transparent;background:none;box-shadow:none;padding:0;border-radius:6px}
 html.datadoc .v8docw .v5inp:not(.empty):hover{border-color:transparent;box-shadow:none}
 html.datadoc .v8docw .v5inp:not(.empty):focus{box-shadow:0 0 0 6px var(--card),0 0 0 7px #9FC4E4}
@@ -269,3 +269,13 @@ html body .v8dec .v8dopt{padding:8px 11px;border-radius:9px;font-size:13.5px;bor
 html body .v8dec .v8dopt:hover{border-color:var(--line2)}
 html body .v8dec .v8dopt.pri{border-color:var(--blue)}
 html body .v8dec .v8dopt .ti{font-size:14px}
+
+/* Wide screens (30 Oct): the document's content sits in the middle of its column instead of hugging the left edge.
+   Direct children only, so wide tables that run to the column's right edge keep doing so */
+body:is(.reader,.docview) .v8docw .v8setc > :not(.gydbar){--gyside:max(0px, calc((100% - 880px) / 2));margin-left:var(--gyside) !important;margin-right:var(--gyside) !important}
+/* blocks that reach past the text edge on purpose (clickable Blueprint sections) keep their overhang */
+body:is(.reader,.docview) .v8docw .v8setc > .bsclk{margin-left:calc(var(--gyside) - 18px) !important;margin-right:calc(var(--gyside) - 18px) !important}
+/* 30 Oct: opening a drawer (Outputs, a step) never moves the Table of Contents to the left of the document */
+html body:is(.docview,.reader) .v8docw > .v8setc{order:1 !important}
+html body:is(.docview,.reader) .v8docw > .v8anc:not(.gytoc-col){order:2 !important;background:none !important;box-shadow:none !important}
+html body:is(.docview,.reader) .v8docw > .v8anc.gytoc-col{order:2 !important}

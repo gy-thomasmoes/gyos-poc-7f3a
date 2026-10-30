@@ -6,7 +6,7 @@
 <title>Upper Dee: Commercial Strategy &middot; Great Yellow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="gy-manner-font.css?v=96c98a0d">
-<link rel="stylesheet" href="gy-shell.css?v=aa2e119c">
+<link rel="stylesheet" href="gy-shell.css?v=37561f66">
 <style>
 /* v4-chat, the same deliverable with the assistant in the lead.
    Everything from the document view is still here; it has just swapped
@@ -1507,6 +1507,10 @@ body.docview .v8docw .v8anc .csg.open .csgh .cr{transform:rotate(90deg) !importa
 .v8ws .mk:hover{box-shadow:0 0 0 4px rgba(26,12,18,.12)}
 </style>
 <script src="gy-brand.js?v=4266a1fb"></script>
+<style>
+/* Word documents (30 Oct): the page column sits in the middle of the space left of the Table of Contents */
+body.docview .v8docw > .v8setc{margin-left:auto !important;margin-right:auto !important}
+</style>
 </head>
 <body>
 
@@ -1514,6 +1518,7 @@ body.docview .v8docw .v8anc .csg.open .csgh .cr{transform:rotate(90deg) !importa
 <script>window.GYNAV={"active":"commercial-strategy","arts":"demand","rail":true,"reader":true};</script>
 <script src="gy-nav.js?v=9d5b5620"></script>
 <script src="gy-versions.js?v=30654df5"></script>
+<script src="gy-notion-blueprints.js?v=d9027465"></script>
 
 <div class="mainc">
 <div class="topbar">
@@ -1871,7 +1876,7 @@ var S = [
   {t:'step',k:'3.3'},
   {t:'wait', who:'Alex Godfrey', h:'Asked <b>Alex Godfrey</b> to check the routes to market and customer targets.',
    b:'Show Alex\'s reply', r:'Routes look right. Lead with Scottish Water across all three water markets, and keep Scottish Power warm for biodiversity.'},
-  {t:'wait', who:'Parisa Rahnama', h:'Asked <b>Parisa Rahnama</b> to check the blended finance and private capital chapters.',
+  {t:'wait', who:'Parisa Rahnama', h:'Asked <b>Parisa Rahnama</b> to check the indicative figures.',
    b:'Show Parisa\'s reply', r:'Fine as indicative. The Financial Model will test the &pound;27 million to &pound;35 million restoration cost against the carbon income.'},
   {t:'dec', k:'3.3', q:'Is the draft ready to issue to Dee Rivers Trust?',
    rec:'<b>Issue.</b> Trade and Capital have checked it, and every figure is labelled indicative.',
@@ -2230,6 +2235,11 @@ var MSHORT = {carbon:'Carbon', bng:'BNG', volbio:'Voluntary Biodiversity', nfm:'
 var MICON = {carbon:'ti-leaf', bng:'ti-plant', volbio:'ti-butterfly', nfm:'ti-ripple', wq:'ti-droplet', replenish:'ti-droplet-half-2', deer:'ti-paw'};
 function mk(k){ return UD.markets.filter(function(m){ return m.key === k; })[0]; }
 var DMSRC = [['ti-map-search','Customer Demand Mapping, Upper Dee']];
+/* the Commercial Strategy Blueprint as synced from Notion (30 Oct): its Template decides which
+   sections this document has and in what order. For the demo, Upper Dee follows the latest version. */
+var BP = (function(){ var N = window.GY_NOTION_BP, r = null; if(N) N.rows.forEach(function(x){ if(x.n === 'Commercial Strategy') r = x; }); return r; })();
+var TPL = BP && BP.tpl;
+function inTpl(k){ return !TPL || TPL.out.indexOf(k) < 0; }
 var SRC = {
   exec:{t:'Executive Summary', at:'3.1', by:'ai', cf:['ai',"Agent's reading, reviewed"],
     how:'Drafted last, from every chapter. Caitlin reviews it at 3.2 and Trade and Capital check it at 3.3.',
@@ -2242,7 +2252,7 @@ var SRC = {
     from:DMSRC.concat([['ti-microphone','Kick-off notes, via the Demand Map']])},
   scope:{t:'Scope', at:'1.2', by:'Emily Norton', cf:['ok','Set by the Lead'],
     how:'Written from the scope the Lead sets: which markets, and whether public funding is in.',
-    from:[['ti-target','Scope set at 1.2'],['ti-hierarchy-2','Commercial Strategy Blueprint v0.1']]},
+    from:[['ti-target','Scope set at 1.2'],['ti-hierarchy-2','Commercial Strategy Blueprint '+(BP ? BP.v : 'v0.1')]]},
   vision:{t:'Project Vision', at:'1.1', pre:1, by:'know:Customer Demand Mapping record', cf:['ok','Confirmed by client'], inj:1,
     how:'The interventions and the ecosystem services they create, pre-filled from the Demand Map and the client\'s plans.',
     from:DMSRC.concat([['ti-file-type-pdf','Client restoration plans']])},
@@ -2284,6 +2294,15 @@ MKEYS.forEach(function(k){
     how:'The buyers the Demand Map found for this market, pre-filled when this Deliverable was created and checked against HubSpot at 2.1.',
     from:DMSRC.concat([['ti-address-book','HubSpot']])};
 });
+MKEYS.forEach(function(k){
+  var m = mk(k);
+  SRC['sd_'+k] = {t:m.title+': supply and demand insights', at:'2.1', pre:1, by:'know:Customer Demand Mapping record', cf:['ok','From the Demand Map'], inj:1,
+    how:'Upper Dee supply and demand for this market, pre-filled from the Demand Map when this Deliverable was created.',
+    from:DMSRC.slice()};
+});
+SRC.interventions = {t:'Upper Dee interventions', at:'1.1', pre:1, by:'know:Customer Demand Mapping record', cf:['ok','Confirmed by client'], inj:1,
+  how:'The estate\'s interventions and the ecosystem services they create, pre-filled from the Demand Map and the client\'s plans.',
+  from:DMSRC.concat([['ti-file-type-pdf','Client restoration plans']])};
 function srcWho(s){
   if(!s.by) return '';
   if(s.by === 'ai') return 'Commercial Strategy agent';
@@ -2318,13 +2337,65 @@ function cb(k, html, sk){
     + (HUMAN[k] ? '<div class="csby"><i class="ti ti-pencil"></i>Written by '+ME+'</div>' : EDITED[k] ? '<div class="csby"><i class="ti ti-pencil"></i>Edited by '+ME+'</div>' : '')
     + '<div class="csc" contenteditable="true" spellcheck="false" data-k="'+k+'">'+(EDITS[k] || html)+'</div></div>';
 }
-function hd(lv, id, t, toc){ return '<div class="csb h'+lv+'" id="'+id+'" data-h="'+lv+'" data-t="'+t+'"'+(toc===false?' data-notoc="1"':'')+'><h'+lv+'>'+t+'</h'+lv+'></div>'; }
+/* 30 Oct: top-level headings are numbered (1. Executive Summary ...), and the Table of Contents shows the same numbers */
+var HN = 0, HNUM = {};
+function hd(lv, id, t, toc){
+  if(lv === 1 && toc !== false){ HN++; HNUM[id] = HN; t = HN+'. '+t; }
+  return '<div class="csb h'+lv+'" id="'+id+'" data-h="'+lv+'" data-t="'+t+'"'+(toc===false?' data-notoc="1"':'')+'><h'+lv+'>'+t+'</h'+lv+'></div>'; }
 function tbl(cols, rows){
   return '<table><thead><tr>'+cols.map(function(c){ return '<th>'+c+'</th>'; }).join('')+'</tr></thead><tbody>'
     + rows.map(function(r){ return '<tr>'+r.map(function(c){ return '<td>'+c+'</td>'; }).join('')+'</tr>'; }).join('')+'</tbody></table>';
 }
 function ptxt(label, t){ return t ? '<p><b>'+label+'.</b> '+t+'</p>' : ''; }
-function docFlow(){
+function docFlow(){ HN = 0; HNUM = {}; return TPL ? docFlowBp() : docFlowOld(); }
+/* Blueprint v0.2 shape: Part A shared (one client vision, market primers), Part B one chapter per
+   estate (Upper Dee is single-site), Part C next steps; no governance, finance or recommendations */
+function docFlowBp(){
+  var b = [], U = UD, est = 'Upper Dee';
+  b.push(hd(1,'sec-exec','Executive Summary'));
+  b.push(cb('exec', (isDone('3.2') ? '<p><b>All figures are indicative:</b> they come from desktop GIS analysis, and baseline surveys to code standard come next.</p>' : '')
+    + '<p>'+U.exec_summary+'</p>', [94,90,96,88,92,60]));
+  b.push(hd(2,'sec-questions','Questions for the Client to Consider', false));
+  b.push(cb('questions', '<ol>'+U.questions_for_client.map(function(q){ return '<li>'+q+'</li>'; }).join('')+'</ol>', [90,84,88,80,86,70]));
+  b.push(hd(1,'sec-intro','Introduction'));
+  b.push(cb('intro', '<p>'+U.introduction+'</p>', [96,90,94,60]));
+  b.push(cb('scope', '<p>This strategy covers seven markets: carbon, Biodiversity Net Gain, voluntary biodiversity, Natural Flood Management, water quality, Replenish and regenerative deer management.</p>', [92,80]));
+  b.push(hd(2,'sec-vision','Client Vision', false));
+  b.push(cb('vision', '<p>'+U.project_vision.intro+'</p>', [94,88,70]));
+  b.push(hd(2,'sec-ready','Market Readiness', false));
+  b.push(cb('ready', '<p>'+U.market_readiness.intro+'</p>' + tbl(['Market','Risk (1 low, 5 high)','Maturity'],
+    U.market_readiness.rows.map(function(r){ return [r.market, r.risk, (r.market === 'Voluntary Carbon' && isDone('3.2')) ? r.note+'; Peatland Code units are avoidance credits, and buyers prefer removals' : r.note]; })), [80,'t','t','t','t']));
+  b.push(hd(2,'sec-method','Demand Mapping Methodology', false));
+  b.push(cb('method', '<p>'+U.demand_mapping_methodology+'</p>', [94,90,86,62]));
+  b.push(hd(1,'sec-markets','Nature Markets'));
+  MKEYS.forEach(function(k){
+    var m = mk(k);
+    b.push(hd(2,'sec-'+k, m.title, false));
+    b.push(cb('m_'+k, ptxt('Market introduction', m.introduction) + ptxt('Market status', m.status)
+      + ptxt('MRV', m.mrv) + ptxt('Routes to market', m.routes) + ptxt('Pricing', m.pricing), [92,86,80,88,84,90,70]));
+  });
+  b.push(hd(1,'sec-stack','Ground Rules: Stacking and Bundling'));
+  b.push(cb('stack', '<p>'+U.stacking_bundling+'</p>', [94,88,70]));
+  b.push(hd(1,'sec-estate', est));
+  b.push(hd(2,'sec-interventions','Interventions', false));
+  b.push(cb('interventions', U.project_vision.interventions.map(function(i){ return ptxt(i.name, i.text); }).join('')
+    + ptxt('Identifying a natural capital opportunity', U.project_vision.es_opportunity), [94,88,40,90,84,40,92,70]));
+  MKEYS.forEach(function(k){
+    var m = mk(k);
+    b.push(hd(2,'sec-'+k+'-est', m.title, false));
+    if(m.supply_demand) b.push(cb('sd_'+k, ptxt('Supply and demand insights', m.supply_demand), [92,86,70]));
+    b.push(cb('o_'+k, '<p><b>'+est+' opportunity.</b> '+m.opportunity+'</p>'
+      + (m.opportunity_table && m.opportunity_table.length ? tbl(m.opportunity_table[0], m.opportunity_table.slice(1)) : '')
+      + (m.case_study ? '<p><i>Case study: '+m.case_study+'</i></p>' : ''), k === 'carbon' ? [92,88,90,'t','t','t','t'] : [92,88,90,64]));
+    if(m.customer_targets.length)
+      b.push(cb('t_'+k, '<p><b>Strategic customer targets</b> (shortlist)</p>' + tbl(['Organisation','Why relevant'], m.customer_targets.map(function(c){ return [c.name, c.why]; })), ['t','t','t','t']));
+  });
+  b.push(hd(1,'sec-next','Next Steps and Conclusion'));
+  if(isDone('4.3') || CUR === '4.3') b.push(cb('dir', '<p><b>Agreed with the client:</b> '+(DIR || 'engage the eight Upper Dee landowners first, leading with peatland carbon and Scottish Water')+'.</p>', [70]));
+  b.push(cb('next', '<p>'+U.next_steps+'</p><p>'+U.conclusion+'</p>', [94,88,90,60]));
+  return b.join('');
+}
+function docFlowOld(){
   var b = [], U = UD;
   b.push(hd(1,'sec-exec','Executive Summary'));
   b.push(cb('exec', (isDone('3.2') ? '<p><b>All figures are indicative:</b> they come from desktop GIS analysis, and baseline surveys to code standard come next.</p>' : '')
@@ -2411,7 +2482,8 @@ function fitPages(){
   var ns = nav ? getComputedStyle(nav) : null;
   var nw = ns && ns.display !== 'none' ? nav.offsetWidth + parseFloat(ns.marginLeft) + parseFloat(ns.marginRight) : 0;
   var w = sc.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - nw;
-  var z = Math.max(.6, Math.min(FLAT || document.body.classList.contains('pclosed') ? 1.7 : 1.3, w / 640));
+  /* 30 Oct: pages stop growing at a comfortable reading size and sit in the middle of the free space */
+  var z = Math.max(.6, Math.min(FLAT ? 1.25 : 1.15, w / 640));
   pg.style.zoom = z; pg.parentNode.style.width = Math.floor(640 * z) + 'px';
 }
 if(window.ResizeObserver) new ResizeObserver(function(){ if(TAB === 'doc') fitPages(); }).observe(document.querySelector('.v5body'));
@@ -2629,11 +2701,22 @@ function dmCard(){
 
 /* grouped Table of Contents (Thomas, 8 Oct): four parts, only the group you are reading is open;
    a chapter shows its sections when you are in it */
-var TOCG = 'frame', TOCACT = 'sec-cover';
+var TOCG = 'frame', TOCACT = 'sec-cover', TOCSHUT = {}; /* 30 Oct: every chapter group starts open; a click closes just that one */
 function tocNav(){
-  var A = function(id, t, ic, cls){ return '<a class="'+(cls||'')+'" data-id="'+id+'" title="'+t+'" onclick="setJump(\''+id+'\')">'+(ic ? '<i class="ti '+ic+'"></i>' : (cls === 'l2' ? '<i class="ti ti-corner-down-right"></i>' : ''))+'<span>'+t+'</span></a>'; };
+  var A = function(id, t, ic, cls){ return '<a class="'+(cls||'')+'" data-id="'+id+'" title="'+t+'" onclick="setJump(\''+id+'\')">'+(ic ? '<i class="ti '+ic+'"></i>' : (cls === 'l2' ? '<i class="ti ti-corner-down-right"></i>' : ''))+'<span>'+(HNUM[id] ? HNUM[id]+'. ' : '')+t+'</span></a>'; };
   var GI = {frame:'ti-layout-list', markets:'ti-chart-arcs', finance:'ti-coins', close:'ti-flag-check'};
-  var G = function(g, t, body){ return '<div class="csg'+(TOCG === g ? ' open' : '')+'" data-g="'+g+'"><button class="csgh" onclick="toggleGroup(\''+g+'\')"><i class="ti ti-caret-right-filled cr"></i><span>'+t+'</span></button><div class="csgb">'+body+'</div></div>'; };
+  var G = function(g, t, body){ return '<div class="csg'+(TOCSHUT[g] ? '' : ' open')+'" data-g="'+g+'"><button class="csgh" onclick="toggleGroup(\''+g+'\')"><i class="ti ti-caret-right-filled cr"></i><span>'+t+'</span></button><div class="csgb">'+body+'</div></div>'; };
+  if(TPL){
+    var GI2 = A('sec-cover','Cover','ti-book') + A('sec-contents','Contents','ti-list')
+      + G('frame','Shared strategy', A('sec-exec','Executive Summary','ti-file-description')
+          + '<div class="csm">'+A('sec-intro','Introduction','ti-flag')+'</div>'
+          + '<div class="csm">'+A('sec-markets','Nature Markets','ti-chart-arcs')+'</div>'
+          + A('sec-stack','Stacking and Bundling','ti-stack-2'))
+      + G('markets','Upper Dee', A('sec-interventions','Interventions','ti-shovel') + MKEYS.map(function(k){
+          return '<div class="csm">'+A('sec-'+k+'-est', MSHORT[k], MICON[k])+'</div>'; }).join(''))
+      + G('close','Close', A('sec-next','Next Steps','ti-arrow-right'));
+    return '<nav class="v8anc" id="setnav"><div><div class="csnavt">Table of Contents</div>'+GI2+'</div></nav>';
+  }
   var html = A('sec-cover','Cover','ti-book') + A('sec-contents','Contents','ti-list')
     + G('frame','Frame', A('sec-exec','Executive Summary','ti-file-description')
         + '<div class="csm">'+A('sec-intro','Introduction','ti-flag')+'</div>')
@@ -2644,8 +2727,8 @@ function tocNav(){
   return '<nav class="v8anc" id="setnav"><div><div class="csnavt">Table of Contents</div>'+html+'</div></nav>';
 }
 function toggleGroup(g){
-  TOCG = TOCG === g ? null : g;
-  [].forEach.call(document.querySelectorAll('#setnav .csg'), function(el){ el.classList.toggle('open', el.dataset.g === TOCG); });
+  TOCSHUT[g] = !TOCSHUT[g];
+  [].forEach.call(document.querySelectorAll('#setnav .csg'), function(el){ el.classList.toggle('open', !TOCSHUT[el.dataset.g]); });
 }
 function tocFollow(nav){
   var on = nav.querySelector('a.on'); if(!on || !nav.querySelector('.csg')) return;
@@ -2653,7 +2736,7 @@ function tocFollow(nav){
   [].forEach.call(nav.querySelectorAll('.csm'), function(m){ m.classList.toggle('cur', m.contains(on)); });
   [].forEach.call(nav.querySelectorAll('.csg'), function(g){ g.classList.toggle('has', g.contains(on)); });
   var g = on.closest('.csg');
-  if(g && TOCG !== g.dataset.g){ TOCG = g.dataset.g; [].forEach.call(nav.querySelectorAll('.csg'), function(el){ el.classList.toggle('open', el.dataset.g === TOCG); }); }
+  if(g && TOCSHUT[g.dataset.g]){ TOCSHUT[g.dataset.g] = false; g.classList.add('open'); }
 }
 
 var VIEWS = {
@@ -2844,13 +2927,13 @@ var STEPD = {
    t:[['es:peat','Peatland carbon'],['es:wood','Woodland carbon'],['es:bng','Biodiversity Net Gain'],['es:bio','Voluntary biodiversity'],['es:nfm','Natural Flood Management'],['es:water','Water quality'],['es:replenish','Replenish'],['es:deer','Regenerative deer management'],['ai','Writes the Market Readiness grid']],
    a:'Seven market chapters are written; every market has a verdict.'},
  '3.1':{w:'Write the chapters that cut across markets, then the summary.',
-   t:[['ai','Writes stacking and bundling, governance, blended finance and private capital'],['ai','Drafts the Executive Summary, recommendations and next steps']],
+   t:[['ai','Writes stacking and bundling'],['ai','Drafts the Executive Summary and next steps']],
    a:'A full draft.'},
  '3.2':{w:'Advisory reviews the draft in the document and leaves comments.',
    t:[['Caitlin Ciceri','Reviews and comments'],['ai','Applies the comments']],
    a:'A corrected draft.'},
  '3.3':{w:'A decision: is the draft ready to go to the client? Trade and Capital check their parts first.',
-   t:[['Alex Godfrey','Checks routes and customer targets'],['Parisa Rahnama','Checks blended finance and private capital'],['Emily Norton','Decides: issue or another round']],
+   t:[['Alex Godfrey','Checks routes and customer targets'],['Parisa Rahnama','Checks the indicative figures'],['Emily Norton','Decides: issue or another round']],
    a:'The report can be issued.'},
  '4.1':{w:'Produce the on-brand report and send it to the client.',
    t:[['tool:PDF generator','Renders the GY template'],['Emily Norton','Sends it to Dee Rivers Trust']],

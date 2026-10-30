@@ -3,7 +3,8 @@
    Source: THE HIVE > The Hive Mind > Blueprint Agent > Blueprints
    (collection://fcc3149c-e3e3-4d32-a4cb-906c76e897dd). Runs are the rows per
    Blueprint in All Deliverables (collection://3b48a14e-d56a-80f8-8616-000b9355d72a).
-   o is the owner's initials in the page's PEOPLE table; null when Notion has no owner. */
+   o is the owner's initials in the page's PEOPLE table; null when Notion has no owner.
+   tpl (where present) is written from the Blueprint page's Template section on each sync. */
 window.GY_NOTION_BP = {
   synced: '2026-10-29',
   url: 'https://app.notion.com/p/5f914b230158469e801fdd92c8c300e4',
@@ -11,7 +12,13 @@ window.GY_NOTION_BP = {
     {n:'Customer Demand Mapping',   stage:'2 What good looks like', v:'v0.4', o:null, runs:4, oq:11, type:'Document',
      notion:'https://app.notion.com/p/4078a14ed56a81bf824fc1873c0c10c5', go:'blueprint-notion.html?bp=cdm'},
     {n:'Commercial Strategy',       stage:'1 Requirements',         v:'v0.2', o:'FB', runs:0, oq:2,  type:'Document',
-     notion:'https://app.notion.com/p/4088a14ed56a81769b44e22f0e33aa76', go:'blueprint-notion.html?bp=comm'},
+     notion:'https://app.notion.com/p/4088a14ed56a81769b44e22f0e33aa76', go:'blueprint-notion.html?bp=comm',
+     /* tpl: the Blueprint's Template section as section keys, read by commercial-strategy-v8.html.
+        A: shared once per client; B: one chapter per estate; C: close; out: removed in this version */
+     tpl:{A:['exec','questions','intro','scope','vision','ready','method','markets','stack'],
+          B:['interventions','supplydemand','opportunity','targets'],
+          C:['next'],
+          out:['gov','bf','pc','rec']}},
     {n:'Catchment Investment Plan', stage:'1 Requirements',         v:'v0.1', o:'AM', runs:0, oq:7,  type:'Document',
      notion:'https://app.notion.com/p/4068a14ed56a815abec2e8052b4a3f57', go:'blueprint-notion.html?bp=cip'}
   ]
